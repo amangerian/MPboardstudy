@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antidepressant Jeopardy!</title>
+<style>
+  :root{
+    --board-navy: #0a1172;
+    --board-navy-deep: #060a4d;
+    --tile-blue: #1116a8;
+    --tile-blue-light: #2c33d6;
+    --gold: #ffcc4d;
+    --gold-dim: #e0ac1f;
+    --white: #ffffff;
+    --text-shadow-c: #000637;
+    --correct: #1fae5a;
+    --wrong: #d43b3b;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: radial-gradient(ellipse at center, #0d1391 0%, var(--board-navy-deep) 75%);
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 18px 16px 40px; }
+
+  /* ---------- HEADER ---------- */
+  .titlebar {
+    text-align: center;
+    padding: 10px 0 6px;
+  }
+  .titlebar h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(32px, 6vw, 54px);
+    letter-spacing: 1px;
+    margin: 0;
+    color: var(--gold);
+    text-shadow: 0 3px 0 var(--text-shadow-c), 0 6px 14px rgba(0,0,0,.55);
+  }
+  .titlebar p {
+    margin: 6px 0 0;
+    color: #cfd3ff;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- SCOREBOARD ---------- */
+  .scoreboard {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    justify-content: center;
+    margin: 18px 0 24px;
+  }
+  .team-card {
+    background: linear-gradient(180deg, var(--tile-blue-light), var(--tile-blue));
+    border: 2px solid #4a52ff;
+    border-radius: 10px;
+    padding: 10px 16px;
+    min-width: 190px;
+    text-align: center;
+    box-shadow: 0 4px 0 rgba(0,0,0,.35);
+  }
+  .team-card input.team-name {
+    background: transparent; border: none; border-bottom: 1px dashed #7d83ff;
+    color: var(--gold); font-weight: 700; font-size: 15px; text-align: center;
+    width: 100%; padding: 2px 0 4px; font-family: inherit; letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .team-card input.team-name:focus { outline: none; border-bottom: 1px solid var(--gold); }
+  .team-score {
+    font-family: Georgia, serif;
+    font-size: 30px; font-weight: 900; margin: 8px 0 6px;
+    color: var(--white);
+  }
+  .score-buttons { display: flex; gap: 6px; justify-content: center; }
+  .score-buttons button {
+    flex: 1;
+    background: var(--board-navy-deep);
+    color: var(--gold);
+    border: 1px solid #4a52ff;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 0;
+    cursor: pointer;
+  }
+  .score-buttons button:hover { background: #191fbf; }
+  .score-buttons button.reset { color: #ffb3b3; }
+
+  .add-team-btn {
+    background: transparent;
+    border: 2px dashed #4a52ff;
+    color: #b9bdff;
+    border-radius: 10px;
+    min-width: 150px;
+    font-size: 13px;
+    cursor: pointer;
+    letter-spacing: .5px;
+  }
+  .add-team-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+  /* ---------- BOARD ---------- */
+  .board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    background: var(--board-navy-deep);
+    padding: 6px;
+    border-radius: 8px;
+    border: 3px solid #050833;
+  }
+  .cat-header {
+    background: linear-gradient(180deg, var(--tile-blue-light), var(--tile-blue));
+    color: var(--white);
+    font-family: Georgia, serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    display: flex; align-items: center; justify-content: center;
+    padding: 10px 6px;
+    min-height: 74px;
+    font-size: clamp(11px, 1.5vw, 15px);
+    line-height: 1.25;
+    border-radius: 4px;
+    text-shadow: 0 2px 0 rgba(0,0,0,.5);
+  }
+  .clue-tile {
+    background: linear-gradient(180deg, var(--tile-blue-light) 0%, var(--tile-blue) 55%, var(--board-navy) 100%);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    aspect-ratio: 1.5 / 1;
+    cursor: pointer;
+    color: var(--gold);
+    font-family: Georgia, serif;
+    font-weight: 900;
+    font-size: clamp(20px, 3vw, 32px);
+    text-shadow: 0 2px 0 rgba(0,0,0,.5);
+    transition: transform .12s ease, background .15s ease;
+    user-select: none;
+    border: 1px solid #050833;
+  }
+  .clue-tile:hover:not(.done) {
+    transform: scale(1.035);
+    background: linear-gradient(180deg, #3840ea 0%, #2229c9 55%, var(--board-navy) 100%);
+  }
+  .clue-tile.done {
+    cursor: default;
+    color: #232a7a;
+    background: var(--board-navy-deep);
+    box-shadow: inset 0 0 0 1px #14174f;
+  }
+
+  /* ---------- MODAL ---------- */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(3,5,40,.85);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 50;
+    padding: 20px;
+  }
+  .overlay.active { display: flex; }
+  .clue-modal {
+    background: linear-gradient(160deg, var(--tile-blue-light), var(--board-navy));
+    border: 3px solid var(--gold);
+    border-radius: 14px;
+    width: min(920px, 100%);
+    padding: clamp(24px, 5vw, 56px);
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    position: relative;
+  }
+  .clue-modal .eyebrow {
+    color: var(--gold);
+    letter-spacing: 3px;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .clue-modal .value {
+    color: var(--gold);
+    font-family: Georgia, serif;
+    font-weight: 900;
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+  .clue-text {
+    font-family: Georgia, serif;
+    font-size: clamp(20px, 3.4vw, 32px);
+    font-weight: 700;
+    line-height: 1.4;
+    text-transform: uppercase;
+    min-height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white);
+  }
+  .answer-text {
+    font-family: Georgia, serif;
+    font-size: clamp(18px, 2.8vw, 26px);
+    font-weight: 700;
+    color: var(--gold);
+    margin-top: 18px;
+    display: none;
+  }
+  .answer-text.shown { display: block; }
+
+  .modal-actions {
+    margin-top: 28px;
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  }
+  .modal-actions button {
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: .5px;
+    border-radius: 8px;
+    padding: 12px 22px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+  .btn-reveal { background: var(--gold); color: var(--board-navy-deep); }
+  .btn-reveal:hover { background: #ffd873; }
+  .btn-close { background: transparent; border: 2px solid #7d83ff; color: #cfd3ff; }
+  .btn-close:hover { border-color: var(--gold); color: var(--gold); }
+
+  .award-panel {
+    margin-top: 22px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .award-panel.shown { display: flex; }
+  .award-panel .label { color: #cfd3ff; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+  .award-row {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  }
+  .award-row button {
+    background: var(--board-navy-deep);
+    border: 1px solid #4a52ff;
+    color: var(--white);
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .award-row button.correct { border-color: var(--correct); color: #7bffb0; }
+  .award-row button.correct:hover { background: var(--correct); color: #05210f; }
+  .award-row button.wrong { border-color: var(--wrong); color: #ffb0b0; }
+  .award-row button.wrong:hover { background: var(--wrong); color: #2b0505; }
+
+  .close-x {
+    position: absolute; top: 12px; right: 16px;
+    background: none; border: none; color: #cfd3ff;
+    font-size: 22px; cursor: pointer; line-height: 1;
+  }
+  .close-x:hover { color: var(--gold); }
+
+  footer.hint {
+    text-align: center; color: #8288d6; font-size: 12px; margin-top: 22px;
+    letter-spacing: .5px;
+  }
+
+  @media (max-width: 720px) {
+    .board { grid-template-columns: repeat(6, 1fr); gap: 4px; }
+    .cat-header { min-height: 62px; font-size: 9px; padding: 6px 3px; }
+    .clue-tile { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="titlebar">
+    <h1>Antidepressant Jeopardy!</h1>
+    <p>Receptor Profiles &middot; Mechanisms &middot; Side Effects &middot; Special Considerations</p>
+  </div>
+
+  <div class="scoreboard" id="scoreboard"></div>
+
+  <div class="board" id="board"></div>
+
+  <footer class="hint">Click a tile to reveal the clue &nbsp;&bull;&nbsp; phrase your response as a question &nbsp;&bull;&nbsp; award points to the team that answers correctly</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="clue-modal">
+    <button class="close-x" id="closeX" title="Close">&times;</button>
+    <div class="eyebrow" id="modalCategory">Category</div>
+    <div class="value" id="modalValue">$100</div>
+    <div class="clue-text" id="modalClue">Clue text goes here</div>
+    <div class="answer-text" id="modalAnswer"></div>
+
+    <div class="modal-actions" id="revealRow">
+      <button class="btn-reveal" id="revealBtn">Reveal Answer</button>
+    </div>
+
+    <div class="award-panel" id="awardPanel">
+      <div class="label">Award points</div>
+      <div class="award-row" id="awardRow"></div>
+      <div class="modal-actions">
+        <button class="btn-close" id="doneBtn">Done — Close Clue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------------- GAME DATA ----------------
+const CATEGORIES = [
+  {
+    name: "SSRIs",
+    clues: [
+      { value: 100, clue: "This SSRI is preferred in pregnancy and also treats PTSD, OCD, panic disorder, and PMDD.", answer: "What is sertraline?" },
+      { value: 200, clue: "This SSRI's primary FDA indication is OCD, and it also acts as a sigma-1 receptor agonist.", answer: "What is fluvoxamine?" },
+      { value: 300, clue: "This SSRI is FDA-approved specifically for generalized anxiety disorder and is the S-enantiomer of another SSRI.", answer: "What is escitalopram?" },
+      { value: 400, clue: "This SSRI is capped at 40mg/day because of dose-dependent QT prolongation risk.", answer: "What is citalopram?" },
+      { value: 500, clue: "This SSRI has mild muscarinic antagonism, treats menstrual disorders, and should be avoided in pregnancy due to a cardiac malformation signal.", answer: "What is paroxetine?" },
+    ]
+  },
+  {
+    name: "SNRIs",
+    clues: [
+      { value: 100, clue: "This SNRI is FDA-approved for fibromyalgia but not for MDD in the US.", answer: "What is milnacipran?" },
+      { value: 200, clue: "This SNRI is the active metabolite of venlafaxine and is also used for vasomotor symptoms of menopause.", answer: "What is desvenlafaxine?" },
+      { value: 300, clue: "With roughly balanced SERT/NET activity, this SNRI has the strongest evidence for chronic pain conditions like diabetic neuropathy and fibromyalgia.", answer: "What is duloxetine?" },
+      { value: 400, clue: "This SNRI can cause dose-dependent blood pressure elevation, requiring BP monitoring.", answer: "What is venlafaxine?" },
+      { value: 500, clue: "This SNRI preferentially blocks NET over SERT, making it a good option for depression with prominent fatigue or psychomotor retardation.", answer: "What is levomilnacipran?" },
+    ]
+  },
+  {
+    name: "Atypical & Novel",
+    clues: [
+      { value: 100, clue: "This NDRI has no serotonergic activity at all and is a popular choice for smoking cessation.", answer: "What is bupropion?" },
+      { value: 200, clue: "This rapid-acting NMDA antagonist is administered under a REMS program with mandatory 2-hour post-dose monitoring.", answer: "What is esketamine (Spravato)?" },
+      { value: 300, clue: "Through SERT inhibition plus 5-HT3/5-HT7 antagonism, this drug specifically targets cognitive dysfunction in depression.", answer: "What is vortioxetine?" },
+      { value: 400, clue: "This combination drug pairs dextromethorphan with bupropion for rapid-onset depression treatment.", answer: "What is Auvelity (dextromethorphan/bupropion)?" },
+      { value: 500, clue: "This melatonergic antidepressant, an MT1/MT2 agonist, requires LFT monitoring and isn't FDA-approved in the US.", answer: "What is agomelatine?" },
+    ]
+  },
+  {
+    name: "TCAs & MAOIs",
+    clues: [
+      { value: 100, clue: "This class of antidepressants requires dietary tyramine restriction to avoid a hypertensive crisis.", answer: "What are MAOIs?" },
+      { value: 200, clue: "This TCA is FDA-approved specifically to treat OCD.", answer: "What is clomipramine?" },
+      { value: 300, clue: "This MAOI comes in a transdermal patch that avoids dietary restriction at its lowest dose.", answer: "What is selegiline?" },
+      { value: 400, clue: "This TCA is the most NET-selective of the class and is sometimes used off-label for ADHD.", answer: "What is desipramine?" },
+      { value: 500, clue: "After stopping this long-half-life SSRI, a 5-week washout is required before starting an MAOI.", answer: "What is fluoxetine?" },
+    ]
+  },
+  {
+    name: "Receptor Profiles",
+    clues: [
+      { value: 100, clue: "This transporter, blocked by SSRIs, is the serotonin reuptake protein.", answer: "What is SERT?" },
+      { value: 200, clue: "TCA blockade of this receptor causes dry mouth, constipation, and urinary retention.", answer: "What is the muscarinic (M1) receptor?" },
+      { value: 300, clue: "Mirtazapine's antagonism at this receptor largely explains its weight gain and sedation.", answer: "What is the histamine H1 receptor?" },
+      { value: 400, clue: "Blockade of this adrenergic receptor causes the orthostatic hypotension seen with TCAs and trazodone.", answer: "What is the alpha-1 (α1) receptor?" },
+      { value: 500, clue: "This enzyme, inhibited by MAOIs, breaks down serotonin, norepinephrine, and dopamine.", answer: "What is monoamine oxidase (MAO)?" },
+    ]
+  },
+  {
+    name: "Side Effects & Safety",
+    clues: [
+      { value: 100, clue: "This life-threatening triad — autonomic instability, neuromuscular abnormalities, and altered mental status — can occur when serotonergic drugs are combined.", answer: "What is serotonin syndrome?" },
+      { value: 200, clue: "Abruptly stopping an SSRI or SNRI, especially short-half-life ones, can cause this syndrome of dizziness and 'brain zaps.'", answer: "What is discontinuation syndrome?" },
+      { value: 300, clue: "This rare but urgent trazodone side effect involves a prolonged, painful erection.", answer: "What is priapism?" },
+      { value: 400, clue: "This dose-dependent bupropion risk is why it's contraindicated in seizure disorders and eating disorders.", answer: "What is seizure risk?" },
+      { value: 500, clue: "This electrolyte abnormality, related to SIADH, is a notable SSRI risk especially in elderly patients.", answer: "What is hyponatremia?" },
+    ]
+  },
+];
+
+// ---------------- STATE ----------------
+let teams = [
+  { name: "Team 1", score: 0 },
+  { name: "Team 2", score: 0 },
+];
+let currentClueEl = null;
+let currentValue = 0;
+
+// ---------------- RENDER SCOREBOARD ----------------
+const scoreboardEl = document.getElementById('scoreboard');
+
+function renderScoreboard() {
+  scoreboardEl.innerHTML = "";
+  teams.forEach((team, i) => {
+    const card = document.createElement('div');
+    card.className = 'team-card';
+    card.innerHTML = `
+      <input class="team-name" value="${team.name}" data-idx="${i}" maxlength="16">
+      <div class="team-score">${team.score}</div>
+      <div class="score-buttons">
+        <button class="reset" data-action="reset" data-idx="${i}">Reset</button>
+        ${teams.length > 1 ? `<button data-action="remove" data-idx="${i}">Remove</button>` : ''}
+      </div>
+    `;
+    scoreboardEl.appendChild(card);
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-team-btn';
+  addBtn.textContent = '+ Add Team';
+  addBtn.onclick = () => {
+    teams.push({ name: `Team ${teams.length + 1}`, score: 0 });
+    renderScoreboard();
+  };
+  scoreboardEl.appendChild(addBtn);
+
+  scoreboardEl.querySelectorAll('input.team-name').forEach(inp => {
+    inp.addEventListener('change', e => {
+      teams[+e.target.dataset.idx].name = e.target.value || `Team ${+e.target.dataset.idx + 1}`;
+      renderScoreboard();
+    });
+  });
+  scoreboardEl.querySelectorAll('button[data-action]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = +e.target.dataset.idx;
+      const action = e.target.dataset.action;
+      if (action === 'reset') teams[idx].score = 0;
+      if (action === 'remove') teams.splice(idx, 1);
+      renderScoreboard();
+    });
+  });
+}
+renderScoreboard();
+
+// ---------------- RENDER BOARD ----------------
+const boardEl = document.getElementById('board');
+
+function renderBoard() {
+  boardEl.innerHTML = "";
+  CATEGORIES.forEach(cat => {
+    const header = document.createElement('div');
+    header.className = 'cat-header';
+    header.textContent = cat.name;
+    boardEl.appendChild(header);
+  });
+  for (let row = 0; row < 5; row++) {
+    CATEGORIES.forEach(cat => {
+      const clueObj = cat.clues[row];
+      const tile = document.createElement('div');
+      tile.className = 'clue-tile';
+      tile.textContent = '$' + clueObj.value;
+      tile.dataset.done = "false";
+      tile.addEventListener('click', () => openClue(tile, cat.name, clueObj));
+      boardEl.appendChild(tile);
+    });
+  }
+}
+renderBoard();
+
+// ---------------- MODAL LOGIC ----------------
+const overlay = document.getElementById('overlay');
+const modalCategory = document.getElementById('modalCategory');
+const modalValue = document.getElementById('modalValue');
+const modalClue = document.getElementById('modalClue');
+const modalAnswer = document.getElementById('modalAnswer');
+const revealRow = document.getElementById('revealRow');
+const revealBtn = document.getElementById('revealBtn');
+const awardPanel = document.getElementById('awardPanel');
+const awardRow = document.getElementById('awardRow');
+const doneBtn = document.getElementById('doneBtn');
+const closeX = document.getElementById('closeX');
+
+function openClue(tileEl, categoryName, clueObj) {
+  if (tileEl.dataset.done === "true") return;
+  currentClueEl = tileEl;
+  currentValue = clueObj.value;
+
+  modalCategory.textContent = categoryName;
+  modalValue.textContent = '$' + clueObj.value;
+  modalClue.textContent = clueObj.clue;
+  modalAnswer.textContent = clueObj.answer;
+  modalAnswer.classList.remove('shown');
+  revealRow.style.display = 'flex';
+  awardPanel.classList.remove('shown');
+
+  renderAwardRow();
+  overlay.classList.add('active');
+}
+
+function renderAwardRow() {
+  awardRow.innerHTML = "";
+  teams.forEach((team, i) => {
+    const correctBtn = document.createElement('button');
+    correctBtn.className = 'correct';
+    correctBtn.textContent = `${team.name} +${currentValue}`;
+    correctBtn.onclick = () => { teams[i].score += currentValue; renderScoreboard(); };
+    awardRow.appendChild(correctBtn);
+
+    const wrongBtn = document.createElement('button');
+    wrongBtn.className = 'wrong';
+    wrongBtn.textContent = `${team.name} −${currentValue}`;
+    wrongBtn.onclick = () => { teams[i].score -= currentValue; renderScoreboard(); };
+    awardRow.appendChild(wrongBtn);
+  });
+}
+
+revealBtn.addEventListener('click', () => {
+  modalAnswer.classList.add('shown');
+  revealRow.style.display = 'none';
+  awardPanel.classList.add('shown');
+});
+
+function closeModal() {
+  overlay.classList.remove('active');
+  if (currentClueEl) {
+    currentClueEl.dataset.done = "true";
+    currentClueEl.classList.add('done');
+    currentClueEl.textContent = '';
+  }
+}
+doneBtn.addEventListener('click', closeModal);
+closeX.addEventListener('click', closeModal);
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+  if (e.key === ' ' && overlay.classList.contains('active') && revealRow.style.display !== 'none') {
+    e.preventDefault();
+    revealBtn.click();
+  }
+});
+</script>
+</body>
+</html>
