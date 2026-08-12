@@ -257,6 +257,31 @@
   .award-row button.wrong { border-color: var(--wrong); color: #ffb0b0; }
   .award-row button.wrong:hover { background: var(--wrong); color: #2b0505; }
 
+  /* one award per clue: dim the rest, highlight the pick */
+  .award-row button[disabled] { opacity: .3; cursor: default; }
+  .award-row button.picked { opacity: 1; }
+  .award-row button.correct.picked { background: var(--correct); color: #05210f; }
+  .award-row button.wrong.picked { background: var(--wrong); color: #2b0505; }
+
+  .award-status {
+    color: #cfd3ff; font-size: 13px; min-height: 20px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .award-status button {
+    background: none; border: none; color: var(--gold);
+    text-decoration: underline; cursor: pointer;
+    font-size: 13px; font-weight: 700; padding: 0;
+  }
+
+  .reset-board-btn {
+    display: block; margin: 18px auto 0;
+    background: transparent; border: 1px solid #4a52ff; color: #8288d6;
+    border-radius: 8px; padding: 8px 16px; font-size: 12px;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    font-family: Arial, sans-serif; font-weight: 700;
+  }
+  .reset-board-btn:hover { border-color: var(--gold); color: var(--gold); }
+
   .close-x {
     position: absolute; top: 12px; right: 16px;
     background: none; border: none; color: #cfd3ff;
@@ -287,6 +312,8 @@
 
   <div class="board" id="board"></div>
 
+  <button class="reset-board-btn" id="resetBoardBtn">Reset board &amp; scores</button>
+
   <footer class="hint">Click a tile to reveal the clue &nbsp;&bull;&nbsp; phrase your response as a question &nbsp;&bull;&nbsp; award points to the team that answers correctly</footer>
 </div>
 
@@ -305,6 +332,7 @@
     <div class="award-panel" id="awardPanel">
       <div class="label">Award points</div>
       <div class="award-row" id="awardRow"></div>
+      <div class="award-status" id="awardStatus"></div>
       <div class="modal-actions">
         <button class="btn-close" id="doneBtn">Done — Close Clue</button>
       </div>
@@ -384,6 +412,8 @@ let teams = [
 ];
 let currentClueEl = null;
 let currentValue = 0;
+let revealed = false;   // has the answer been shown for the open clue?
+let awarded = null;     // { idx, delta } once a team has been scored on this clue
 
 // ---------------- RENDER SCOREBOARD ----------------
 const scoreboardEl = document.getElementById('scoreboard');
@@ -393,14 +423,44 @@ function renderScoreboard() {
   teams.forEach((team, i) => {
     const card = document.createElement('div');
     card.className = 'team-card';
-    card.innerHTML = `
-      <input class="team-name" value="${team.name}" data-idx="${i}" maxlength="16">
-      <div class="team-score">${team.score}</div>
-      <div class="score-buttons">
-        <button class="reset" data-action="reset" data-idx="${i}">Reset</button>
-        ${teams.length > 1 ? `<button data-action="remove" data-idx="${i}">Remove</button>` : ''}
-      </div>
-    `;
+
+    // Built with DOM nodes rather than an HTML string, so quotes, angle
+    // brackets and ampersands in a team name are treated as plain text.
+    const nameInput = document.createElement('input');
+    nameInput.className = 'team-name';
+    nameInput.maxLength = 16;
+    nameInput.value = team.name;
+    nameInput.addEventListener('change', () => {
+      teams[i].name = nameInput.value.trim() || `Team ${i + 1}`;
+      renderScoreboard();
+      if (overlay.classList.contains('active')) renderAwardRow();
+    });
+
+    const scoreDiv = document.createElement('div');
+    scoreDiv.className = 'team-score';
+    scoreDiv.textContent = team.score;
+
+    const btnRow = document.createElement('div');
+    btnRow.className = 'score-buttons';
+
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'reset';
+    resetBtn.textContent = 'Reset';
+    resetBtn.onclick = () => { teams[i].score = 0; renderScoreboard(); };
+    btnRow.appendChild(resetBtn);
+
+    if (teams.length > 1) {
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = 'Remove';
+      removeBtn.onclick = () => {
+        teams.splice(i, 1);
+        renderScoreboard();
+        if (overlay.classList.contains('active')) renderAwardRow();
+      };
+      btnRow.appendChild(removeBtn);
+    }
+
+    card.append(nameInput, scoreDiv, btnRow);
     scoreboardEl.appendChild(card);
   });
 
@@ -410,24 +470,9 @@ function renderScoreboard() {
   addBtn.onclick = () => {
     teams.push({ name: `Team ${teams.length + 1}`, score: 0 });
     renderScoreboard();
+    if (overlay.classList.contains('active')) renderAwardRow();
   };
   scoreboardEl.appendChild(addBtn);
-
-  scoreboardEl.querySelectorAll('input.team-name').forEach(inp => {
-    inp.addEventListener('change', e => {
-      teams[+e.target.dataset.idx].name = e.target.value || `Team ${+e.target.dataset.idx + 1}`;
-      renderScoreboard();
-    });
-  });
-  scoreboardEl.querySelectorAll('button[data-action]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const idx = +e.target.dataset.idx;
-      const action = e.target.dataset.action;
-      if (action === 'reset') teams[idx].score = 0;
-      if (action === 'remove') teams.splice(idx, 1);
-      renderScoreboard();
-    });
-  });
 }
 renderScoreboard();
 
@@ -468,11 +513,16 @@ const awardPanel = document.getElementById('awardPanel');
 const awardRow = document.getElementById('awardRow');
 const doneBtn = document.getElementById('doneBtn');
 const closeX = document.getElementById('closeX');
+const awardStatus = document.getElementById('awardStatus');
+const resetBoardBtn = document.getElementById('resetBoardBtn');
 
 function openClue(tileEl, categoryName, clueObj) {
   if (tileEl.dataset.done === "true") return;
   currentClueEl = tileEl;
   currentValue = clueObj.value;
+  revealed = false;
+  awarded = null;
+  awardStatus.textContent = "";
 
   modalCategory.textContent = categoryName;
   modalValue.textContent = '$' + clueObj.value;
@@ -492,34 +542,87 @@ function renderAwardRow() {
     const correctBtn = document.createElement('button');
     correctBtn.className = 'correct';
     correctBtn.textContent = `${team.name} +${currentValue}`;
-    correctBtn.onclick = () => { teams[i].score += currentValue; renderScoreboard(); };
+    correctBtn.onclick = () => award(i, currentValue);
     awardRow.appendChild(correctBtn);
 
     const wrongBtn = document.createElement('button');
     wrongBtn.className = 'wrong';
     wrongBtn.textContent = `${team.name} −${currentValue}`;
-    wrongBtn.onclick = () => { teams[i].score -= currentValue; renderScoreboard(); };
+    wrongBtn.onclick = () => award(i, -currentValue);
     awardRow.appendChild(wrongBtn);
   });
+  applyAwardLock();
+}
+
+// Only one award per clue. A second click can't double the score; the
+// scored button stays highlighted and an Undo link reverses it.
+function award(idx, delta) {
+  if (awarded) return;
+  teams[idx].score += delta;
+  awarded = { idx, delta };
+  renderScoreboard();
+  applyAwardLock();
+}
+
+function undoAward() {
+  if (!awarded) return;
+  const t = teams[awarded.idx];
+  if (t) t.score -= awarded.delta;
+  awarded = null;
+  renderScoreboard();
+  applyAwardLock();
+}
+
+function applyAwardLock() {
+  const buttons = [...awardRow.children];
+  buttons.forEach(b => { b.disabled = false; b.classList.remove('picked'); });
+  awardStatus.textContent = "";
+
+  if (!awarded) return;
+
+  const pickedBtn = buttons[awarded.idx * 2 + (awarded.delta > 0 ? 0 : 1)];
+  buttons.forEach(b => { b.disabled = true; });
+  if (pickedBtn) pickedBtn.classList.add('picked');
+
+  const team = teams[awarded.idx];
+  const label = document.createElement('span');
+  label.textContent = team
+    ? `${team.name} ${awarded.delta > 0 ? '+' : '−'}${Math.abs(awarded.delta)} awarded`
+    : 'Award recorded';
+  const undoBtn = document.createElement('button');
+  undoBtn.textContent = 'Undo';
+  undoBtn.onclick = undoAward;
+  awardStatus.append(label, undoBtn);
 }
 
 revealBtn.addEventListener('click', () => {
+  revealed = true;
   modalAnswer.classList.add('shown');
   revealRow.style.display = 'none';
   awardPanel.classList.add('shown');
 });
 
+// A tile is only used up once its answer has been revealed. Opening a clue by
+// mistake and backing out (X, Esc, or clicking outside) leaves it on the board.
 function closeModal() {
   overlay.classList.remove('active');
-  if (currentClueEl) {
+  if (currentClueEl && revealed) {
     currentClueEl.dataset.done = "true";
     currentClueEl.classList.add('done');
     currentClueEl.textContent = '';
   }
+  currentClueEl = null;
 }
 doneBtn.addEventListener('click', closeModal);
 closeX.addEventListener('click', closeModal);
 overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+resetBoardBtn.addEventListener('click', () => {
+  if (!confirm('Reset the board and set every score back to 0?')) return;
+  teams.forEach(t => { t.score = 0; });
+  renderScoreboard();
+  renderBoard();
+});
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
   if (e.key === ' ' && overlay.classList.contains('active') && revealRow.style.display !== 'none') {
