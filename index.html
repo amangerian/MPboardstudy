@@ -440,6 +440,11 @@
     font-style: normal;
   }
   #wizardView .titlebar p { color: var(--violet); }
+  /* During a run the big title gives up its space so the room and its question
+     fit on screen together. */
+  #wizardView.playing .titlebar { display: none; }
+  #wizardView.playing .wrap { padding-top: 10px; }
+  #wizardView.playing footer.hint { margin-top: 12px; }
 
   /* ---- setup ---- */
   .wiz-panel {
@@ -558,24 +563,6 @@
     transform-origin: left center;
   }
 
-  .wiz-prompt {
-    background: linear-gradient(180deg, rgba(36,28,68,.95), rgba(20,15,42,.95));
-    border: 2px solid var(--violet-deep);
-    border-left: 5px solid var(--arcane);
-    border-radius: 10px;
-    padding: 14px 18px;
-    font-family: Georgia, serif;
-    font-size: clamp(15px, 2vw, 19px);
-    line-height: 1.45;
-    color: #f0eaff;
-    margin-bottom: 12px;
-  }
-  .wiz-prompt .cat {
-    display: block; font-family: Arial, sans-serif; font-size: 10.5px;
-    letter-spacing: 2px; text-transform: uppercase; color: var(--arcane);
-    margin-bottom: 5px;
-  }
-
   /* ---- play: stage ---- */
   .wiz-stage { display: grid; grid-template-columns: 1fr; gap: 12px; }
   .wiz-stage.two { grid-template-columns: 1fr 1fr; }
@@ -597,9 +584,12 @@
   .pip.on { background: var(--arcane); border-color: var(--arcane); box-shadow: 0 0 8px rgba(124,240,216,.7); }
   .pane-score { font-family: Georgia, serif; font-weight: 900; font-size: 17px; color: var(--gold); }
 
+  /* Height-driven rather than aspect-ratio driven: the room has to fit the
+     viewport alongside the question, so everything inside scales off its
+     height instead of pushing the furniture below the fold. */
   .scene {
     position: relative;
-    aspect-ratio: 16 / 11;
+    height: clamp(300px, 54vh, 520px);
     border-radius: 12px;
     overflow: hidden;
     border: 2px solid #3d2f6b;
@@ -628,16 +618,43 @@
   .scene.flash-bad  .vignette { background: radial-gradient(ellipse 78% 70% at 50% 45%, rgba(255,90,90,.28) 0%, rgba(5,3,15,.85) 100%); transition: background .18s ease; }
 
   /* 55.5% keeps the door centred behind the middle piece, since the furniture
-     row is offset right to leave the wizard his corner. */
-  .scene .door { position: absolute; left: 55.5%; bottom: 26%; width: 26%; transform: translateX(-50%); z-index: 2; }
-  .scene .door svg { width: 100%; height: auto; display: block; }
+     row is offset right to leave the wizard his corner. Sized by height so it
+     scales with the room instead of overflowing it. */
+  .scene .door { position: absolute; left: 55.5%; bottom: 20%; height: 53%; transform: translateX(-50%); z-index: 2; }
+  .scene .door svg { height: 100%; width: auto; display: block; }
   .door-glow { opacity: 0; transition: opacity .5s ease; }
   .scene.open .door-glow { opacity: 1; }
 
-  .scene .torch { position: absolute; top: 16%; width: 7%; z-index: 3; }
-  .scene .torch.l { left: 5%; }
-  .scene .torch.r { right: 5%; }
-  .scene .torch svg { width: 100%; height: auto; display: block; }
+  /* The question banner takes the top of the room, so the wall dressing sits
+     below it. */
+  .room-prompt {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 6;
+    background: linear-gradient(180deg, rgba(9,6,26,.97), rgba(14,9,34,.88));
+    border-bottom: 2px solid var(--violet-deep);
+    box-shadow: 0 6px 16px rgba(0,0,0,.5);
+    padding: 9px 14px 11px;
+    max-height: 33%; overflow-y: auto;
+    text-align: center;
+  }
+  .room-prompt .cat {
+    display: block;
+    font: 700 10px/1 Arial, sans-serif;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--arcane); margin-bottom: 5px;
+  }
+  .room-prompt .text {
+    font-family: Georgia, serif;
+    font-size: clamp(14px, 1.5vw, 19px);
+    line-height: 1.35;
+    color: #f4efff;
+  }
+  .wiz-stage.two .room-prompt .text { font-size: clamp(11.5px, 1.15vw, 15px); }
+  .wiz-stage.two .room-prompt { padding: 7px 10px 9px; }
+
+  .scene .torch { position: absolute; top: 36%; height: 24%; z-index: 3; }
+  .scene .torch.l { left: 4%; }
+  .scene .torch.r { right: 3%; }
+  .scene .torch svg { height: 100%; width: auto; display: block; }
   .flame { transform-origin: 50% 100%; animation: flicker 1.6s ease-in-out infinite; }
   .torch.r .flame { animation-delay: -.7s; }
   @keyframes flicker {
@@ -654,13 +671,13 @@
   .torch-light.l { left: -6%; }
   .torch-light.r { right: -6%; }
 
-  .scene .web { position: absolute; top: 0; width: 17%; opacity: .28; z-index: 3; }
+  .scene .web { position: absolute; top: 33%; width: 15%; opacity: .28; z-index: 3; }
   .scene .web.l { left: 0; }
   .scene .web.r { right: 0; transform: scaleX(-1); }
   .scene .web svg { width: 100%; height: auto; display: block; }
 
-  .scene .wizard { position: absolute; left: 1%; bottom: 2%; width: 11.5%; z-index: 5; }
-  .scene .wizard svg { width: 100%; height: auto; display: block; }
+  .scene .wizard { position: absolute; left: 1%; bottom: 3%; height: 34%; z-index: 5; }
+  .scene .wizard svg { height: 100%; width: auto; display: block; }
   .staff-arm { transform-origin: 62% 55%; transition: transform .18s ease; }
   .scene.casting .staff-arm { transform: rotate(-16deg); }
   .orb { transform-origin: center; }
@@ -672,43 +689,55 @@
   }
 
   /* ---- furniture ---- */
-  /* Left padding leaves the corner to the wizard, who casts from there. */
+  /* Left padding leaves the corner to the wizard, who casts from there.
+     The row is a fixed share of the room height and the art flexes inside it,
+     so the furniture scales with the room rather than overflowing it. */
   .furni-row {
-    position: absolute; left: 0; right: 0; bottom: 4%;
-    display: flex; align-items: flex-end; justify-content: center;
+    position: absolute; left: 0; right: 0; bottom: 3%;
+    height: 58%;
+    display: flex; align-items: stretch; justify-content: center;
     gap: 2.5%; padding: 0 3% 0 14%; z-index: 4;
   }
   .furni {
     position: relative;
-    flex: 1 1 0; max-width: 31%;
+    /* min-width:0 is load-bearing: without it the flex item refuses to shrink
+       below the artwork's intrinsic width and the third piece leaves the room. */
+    flex: 1 1 0; max-width: 31%; min-width: 0;
     background: none; border: none; padding: 0; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: flex-end; gap: 6px;
     font-family: Arial, sans-serif;
     transition: transform .14s ease, filter .14s ease;
   }
-  .furni .art { width: 100%; filter: drop-shadow(0 8px 10px rgba(0,0,0,.6)); }
-  .furni .art svg { width: 100%; height: auto; display: block; }
+  .furni .art {
+    flex: 1 1 auto; min-height: 0; min-width: 0; width: 100%;
+    display: flex; align-items: flex-end; justify-content: center;
+    filter: drop-shadow(0 8px 10px rgba(0,0,0,.6));
+  }
+  .furni .art svg { height: 100%; width: auto; max-width: 100%; display: block; }
   .furni:hover:not(:disabled) { transform: translateY(-5px); }
   .furni:hover:not(:disabled) .art { filter: drop-shadow(0 10px 14px rgba(124,240,216,.4)); }
   .furni:focus-visible { outline: none; }
   .furni:focus-visible .label { border-color: var(--arcane); box-shadow: 0 0 0 2px rgba(124,240,216,.5); }
 
   .furni .label {
+    flex: 0 0 auto;
     width: 100%;
-    background: linear-gradient(180deg, rgba(15,10,34,.96), rgba(9,6,24,.96));
-    border: 1px solid #5b4a94;
-    border-radius: 7px;
-    padding: 6px 7px;
-    font-size: clamp(9.5px, 1.15vw, 13px);
-    line-height: 1.25;
+    background: linear-gradient(180deg, rgba(15,10,34,.97), rgba(9,6,24,.97));
+    border: 2px solid #6b58ad;
+    border-radius: 8px;
+    padding: 8px 8px 9px;
+    font-size: clamp(13px, 1.6vw, 19px);
+    line-height: 1.22;
     font-weight: 700;
-    color: #ece4ff;
+    color: #f4efff;
     text-align: center;
     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 2.4em;
+    text-shadow: 0 1px 2px rgba(0,0,0,.8);
   }
-  .wiz-stage.two .furni .label { font-size: clamp(8.5px, .95vw, 11.5px); }
+  .wiz-stage.two .furni .label { font-size: clamp(11px, 1.25vw, 15.5px); padding: 6px 6px 7px; }
   .furni .key {
     position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
     background: #0b0722; border: 1px solid var(--violet);
@@ -797,6 +826,57 @@
     text-shadow: 0 2px 6px #000;
   }
 
+  /* ---- results: the walk out ---- */
+  .escape-scene {
+    position: relative;
+    height: clamp(200px, 34vh, 320px);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #3d2f6b;
+    background: linear-gradient(180deg, #0a0722 0%, #1a1140 46%, #241a52 68%, #120c28 100%);
+    margin-bottom: 18px;
+  }
+  .escape-scene svg.backdrop { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  /* Starts in the lit doorway and walks off to the right. */
+  .escape-walker {
+    position: absolute; bottom: 9%; width: 6%; min-width: 32px; z-index: 3;
+    animation: walkOut 7s cubic-bezier(.36,.05,.5,1) .4s forwards;
+    left: 14%;
+  }
+  .escape-walker svg { width: 100%; height: auto; display: block; }
+  .escape-walker .bob { animation: bob .62s ease-in-out infinite; transform-origin: 50% 100%; }
+  @keyframes walkOut {
+    0%   { left: 14%; opacity: 0; transform: scale(.66); }
+    14%  { opacity: 1; }
+    100% { left: 86%; opacity: 1; transform: scale(1.04); }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-1.4deg); }
+    50%      { transform: translateY(-5%) rotate(1.4deg); }
+  }
+  .moon-glow { animation: moonPulse 5s ease-in-out infinite; transform-origin: center; }
+  @keyframes moonPulse { 0%,100% { opacity: .5; } 50% { opacity: .8; } }
+  .bat { animation: batFlap 3.4s linear infinite; transform-origin: center; }
+  .bat.b2 { animation-duration: 4.6s; animation-delay: -1.4s; }
+  .bat.b3 { animation-duration: 5.4s; animation-delay: -2.6s; }
+  @keyframes batFlap {
+    0%   { transform: translate(0,0) scaleY(1); }
+    25%  { transform: translate(14px,-9px) scaleY(.55); }
+    50%  { transform: translate(30px,-4px) scaleY(1); }
+    75%  { transform: translate(46px,-13px) scaleY(.6); }
+    100% { transform: translate(62px,-7px) scaleY(1); }
+  }
+  .castle-door-light { animation: doorFlicker 3.2s ease-in-out infinite; }
+  @keyframes doorFlicker { 0%,100% { opacity: .85; } 45% { opacity: .55; } 70% { opacity: .95; } }
+  .escape-caption {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
+    text-align: center; padding: 8px 12px 10px;
+    font-family: Georgia, serif; font-style: italic;
+    font-size: clamp(12px, 1.5vw, 16px);
+    color: #cfc2ff;
+    background: linear-gradient(180deg, transparent, rgba(6,4,18,.85));
+  }
+
   /* ---- results ---- */
   .wiz-result-title {
     font-family: Georgia, serif; font-weight: 900; font-style: italic;
@@ -828,14 +908,27 @@
 
   @media (max-width: 780px) {
     .wiz-stage.two { grid-template-columns: 1fr; }
-    .scene { aspect-ratio: 16 / 12; }
     .furni .label { -webkit-line-clamp: 4; }
+    .furni-row { padding-left: 16%; gap: 2%; }
+  }
+  @media (max-width: 520px) {
+    /* narrow rooms are width-limited, so a shorter room wastes less space */
+    .scene { height: clamp(260px, 44vh, 380px); }
+    .furni .label { font-size: clamp(11px, 3.1vw, 15px); padding: 6px 4px 7px; }
+    .room-prompt .text { font-size: clamp(12.5px, 3.4vw, 16px); }
+    .scene .wizard { height: 28%; }
+    .scene .torch { height: 19%; top: 38%; }
+    .scene .torch.r { right: 0; }
+    .scene .web { width: 20%; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .flame, .torch-light, .furni.spent .art, .shard, .puff, .bolt, .toast { animation: none !important; }
+    .flame, .torch-light, .furni.spent .art, .shard, .puff, .bolt, .toast,
+    .bat, .moon-glow, .castle-door-light, .escape-walker .bob { animation: none !important; }
     .furni.spent .art { opacity: 0; }
     .furni.wrong { animation: none; }
+    /* still move the wizard out of the castle, just without the bobbing walk */
+    .escape-walker { animation: walkOut 2.5s ease-out .2s forwards; }
   }
 </style>
 </head>
@@ -931,7 +1024,6 @@
       </div>
     </div>
 
-    <div class="wiz-prompt" id="wizPrompt"></div>
     <div class="wiz-stage" id="wizStage"></div>
   </div>
 
@@ -1423,7 +1515,6 @@ const WIZ = (function () {
   const noteEl = document.getElementById('wizSetupNote');
   const modeSeg = document.getElementById('wizMode');
   const roomsSeg = document.getElementById('wizRooms');
-  const promptEl = document.getElementById('wizPrompt');
   const stageEl = document.getElementById('wizStage');
   const powerFill = document.getElementById('wizPowerFill');
   const powerNum = document.getElementById('wizPowerNum');
@@ -1564,6 +1655,14 @@ const WIZ = (function () {
     });
   }
 
+  // How many rooms the castle can actually be. A two-wizard race needs enough
+  // questions for the losing wizard's rooms too, so the castle shrinks rather
+  // than running out of questions with nobody escaping.
+  function roomsFor(poolSize) {
+    const cap = mode === 2 ? Math.floor((poolSize + 1) / 2) : poolSize;
+    return Math.max(0, Math.min(roomsWanted, cap));
+  }
+
   function refreshStart() {
     const pool = buildPool();
     const n = pool.length;
@@ -1578,7 +1677,7 @@ const WIZ = (function () {
     } else {
       startBtn.disabled = false;
       noteEl.className = 'wiz-note';
-      const rooms = Math.min(roomsWanted, n);
+      const rooms = roomsFor(n);
       noteEl.textContent = rooms < roomsWanted
         ? `${n} questions available — the castle will be ${rooms} rooms.`
         : `${n} questions available.`;
@@ -1601,6 +1700,7 @@ const WIZ = (function () {
   // ---------- scene art ----------
   function sceneChrome() {
     return `
+      <div class="room-prompt"><span class="cat"></span><span class="text"></span></div>
       <div class="torch-light l"></div><div class="torch-light r"></div>
       <div class="web l">${webSVG()}</div><div class="web r">${webSVG()}</div>
       <div class="torch l">${torchSVG()}</div><div class="torch r">${torchSVG()}</div>
@@ -1799,6 +1899,8 @@ const WIZ = (function () {
         scene: scene,
         row: scene.querySelector('.furni-row'),
         fx: scene.querySelector('.fx'),
+        promptCat: scene.querySelector('.room-prompt .cat'),
+        promptText: scene.querySelector('.room-prompt .text'),
         pips: pips,
         score: score,
       };
@@ -1807,11 +1909,14 @@ const WIZ = (function () {
 
   function start() {
     const pool = shuffle(buildPool());
-    const total = Math.min(roomsWanted, pool.length);
+    const total = roomsFor(pool.length);
     if (!total) return;
 
     run = {
-      questions: pool.slice(0, total),
+      // In a race only one wizard clears a room per question, so a split race
+      // burns through up to (2 x rooms - 1) questions before someone gets out.
+      // Dealing only `total` used to run the deck dry mid-game.
+      questions: pool.slice(0, mode === 2 ? total * 2 - 1 : total),
       total: total,
       idx: 0,
       resolved: false,
@@ -1826,11 +1931,19 @@ const WIZ = (function () {
     setupEl.hidden = true;
     resultEl.hidden = true;
     playEl.hidden = false;
+    view.classList.add('playing');
     buildPanes();
     renderRoom();
   }
 
   function renderRoom() {
+    // Belt and braces: if the deck ever empties before anyone reaches the exit,
+    // end on who got furthest instead of rendering an undefined question.
+    if (run.idx >= run.questions.length) {
+      const best = run.panes.reduce((a, b) => (b.rooms > a.rooms ? b : a), run.panes[0]);
+      finish(run.panes.indexOf(best), true);
+      return;
+    }
     const q = run.questions[run.idx];
     const type = FURNITURE[run.idx % FURNITURE.length];
     const order = shuffle([0, 1, 2]);
@@ -1838,15 +1951,14 @@ const WIZ = (function () {
     run.resolved = false;
     run.roomStart = performance.now();
 
-    promptEl.innerHTML = '';
-    const cat = document.createElement('span');
-    cat.className = 'cat';
-    cat.textContent = q.category + (GAMES.length > 1 ? ' — ' + q.game : '');
-    const text = document.createElement('span');
-    text.textContent = q.prompt;
-    promptEl.append(cat, text);
+    const catLabel = q.category + (GAMES.length > 1 ? ' — ' + q.game : '');
 
     run.panes.forEach((pane, pi) => {
+      // The question lives inside each room, so a player never has to look away
+      // from their own half of the screen to read it.
+      pane.el.promptCat.textContent = catLabel;
+      pane.el.promptText.textContent = q.prompt;
+
       pane.wrongs = new Set();
       pane.buttons = [];
       pane.el.scene.classList.remove('open', 'dimmed', 'casting', 'flash-good', 'flash-bad');
@@ -2048,28 +2160,107 @@ const WIZ = (function () {
   }
 
   // ---------- results ----------
-  function finish(winnerIdx) {
+  // The castle the wizard has just walked out of. A lit window holds the wizard
+  // who did not make it, in a two-wizard race.
+  function castleSVG(showLoser) {
+    // Wide and short so the banner crops as little as possible, and anchored to
+    // the bottom so the ground line always sits where the wizard walks.
+    return `
+    <svg class="backdrop" viewBox="0 0 480 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <circle class="moon-glow" cx="378" cy="32" r="30" fill="#cfc2ff" opacity=".20"/>
+      <circle cx="378" cy="32" r="15" fill="#efe9ff"/>
+      <circle cx="372" cy="28" r="3.4" fill="#cfc2ff" opacity=".65"/>
+      <circle cx="384" cy="37" r="2.4" fill="#cfc2ff" opacity=".5"/>
+      ${[[28,20],[64,9],[96,30],[133,15],[176,8],[214,26],[252,13],[292,31],[330,9],[356,40],[440,16],[462,44],[210,52],[300,58],[386,62]]
+        .map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="${i % 3 === 0 ? 1.5 : 1}" fill="#fff" opacity="${.3 + (i % 4) * .16}"/>`).join('')}
+      <g class="bat" fill="#07040f"><path d="M232 44 q6 -6 12 0 q6 -6 12 0 q-6 7 -12 3 q-6 4 -12 -3z"/></g>
+      <g class="bat b2" fill="#07040f"><path d="M292 26 q5 -5 10 0 q5 -5 10 0 q-5 6 -10 2.5 q-5 3.5 -10 -2.5z"/></g>
+      <g class="bat b3" fill="#07040f"><path d="M344 54 q4 -4 8 0 q4 -4 8 0 q-4 5 -8 2 q-4 3 -8 -2z"/></g>
+
+      <!-- castle: near-black against the lit sky, with a faint moonlit edge -->
+      <g fill="#07040f" stroke="#2e2456" stroke-width="1.2">
+        <rect x="0" y="56" width="152" height="82"/>
+        <rect x="6" y="30" width="34" height="108"/>
+        <path d="M5 31 L23 7 L41 31 Z"/>
+        <rect x="106" y="40" width="42" height="98"/>
+        <path d="M105 41 L127 14 L149 41 Z"/>
+        <rect x="152" y="94" width="48" height="44"/>
+      </g>
+      <g fill="#07040f">
+        ${[0,1,2,3,4,5].map(i => `<rect x="${46 + i * 11}" y="48" width="7" height="10"/>`).join('')}
+        ${[0,1,2].map(i => `<rect x="${156 + i * 16}" y="86" width="9" height="10"/>`).join('')}
+      </g>
+
+      <!-- the door he came out of, still standing open -->
+      <path d="M62 138 V112 a16 16 0 0 1 32 0 V138 Z" fill="#2a2160"/>
+      <path class="castle-door-light" d="M66 138 V114 a12 12 0 0 1 24 0 V138 Z" fill="#ffcf7a"/>
+      <ellipse class="castle-door-light" cx="78" cy="137" rx="52" ry="12" fill="#ffcf7a" opacity=".14"/>
+
+      <!-- lit windows -->
+      <rect x="15" y="60" width="12" height="15" rx="2" fill="#ffcf7a" opacity=".7"/>
+      <rect x="117" y="52" width="13" height="16" rx="2" fill="#ffcf7a" opacity=".55"/>
+      ${showLoser ? `
+      <g>
+        <rect x="112" y="80" width="24" height="28" rx="3" fill="#ffcf7a" opacity=".9"/>
+        <g fill="#241a52">
+          <path d="M124 88 L116 106 h16 Z"/>
+          <circle cx="124" cy="86" r="4.2"/>
+          <path d="M124 76 L116 87 h16 Z"/>
+        </g>
+      </g>` : ''}
+
+      <!-- ground -->
+      <rect x="0" y="136" width="480" height="14" fill="#05030c"/>
+      <path d="M0 137 Q140 131 300 138 T480 135" stroke="#2e2456" stroke-width="3" fill="none"/>
+    </svg>`;
+  }
+
+  function finish(winnerIdx, ranOut) {
     cancelAnimationFrame(rafId);
     const seconds = Math.round((Date.now() - run.startedAt) / 1000);
     const panes = run.panes;
     const rooms = run.total;
+    const escaped = !ranOut;
+    const tie = ranOut && mode === 2 && panes[0].rooms === panes[1].rooms;
     run = null;
 
     playEl.hidden = true;
     resultEl.hidden = false;
+    view.classList.remove('playing');
     resultBody.innerHTML = '';
+
+    // The walk out of the castle.
+    if (escaped) {
+      const scene = document.createElement('div');
+      scene.className = 'escape-scene';
+      scene.innerHTML = castleSVG(mode === 2) +
+        `<div class="escape-walker"><div class="bob">${wizardSVG()}</div></div>` +
+        `<div class="escape-caption"></div>`;
+      scene.querySelector('.escape-caption').textContent = mode === 2
+        ? `Wizard ${winnerIdx + 1} walks out into the night. Wizard ${winnerIdx === 0 ? 2 : 1} is still in there.`
+        : 'Out through the last door, and away down the hill.';
+      resultBody.appendChild(scene);
+    }
 
     const h = document.createElement('h2');
     h.className = 'wiz-result-title';
-    h.textContent = mode === 2 ? `Wizard ${winnerIdx + 1} escapes!` : 'You escape!';
+    h.textContent = !escaped
+      ? (tie ? 'A draw in the dark' : 'Out of questions')
+      : (mode === 2 ? `Wizard ${winnerIdx + 1} escapes!` : 'You escape!');
     resultBody.appendChild(h);
 
     const sub = document.createElement('p');
     sub.className = 'sub';
     sub.style.textAlign = 'center';
-    sub.textContent = mode === 2
-      ? `Wizard ${winnerIdx + 1} shattered the last door and made it out into the night.`
-      : 'The last splinters settle. The night air has never tasted better.';
+    if (!escaped) {
+      sub.textContent = tie
+        ? 'The castle ran out of rooms with both wizards level. Pick more categories for a longer game.'
+        : 'The castle ran out of questions before anyone reached the last door. Pick more categories for a longer game.';
+    } else {
+      sub.textContent = mode === 2
+        ? `Wizard ${winnerIdx + 1} shattered the last door and made it out into the night.`
+        : 'The last splinters settle. The night air has never tasted better.';
+    }
     resultBody.appendChild(sub);
 
     const stats = document.createElement('div');
@@ -2114,6 +2305,7 @@ const WIZ = (function () {
     playEl.hidden = true;
     resultEl.hidden = true;
     setupEl.hidden = false;
+    view.classList.remove('playing');
     refreshStart();
   }
 
@@ -2144,6 +2336,7 @@ const WIZ = (function () {
       playEl.hidden = true;
       resultEl.hidden = true;
       setupEl.hidden = false;
+      view.classList.remove('playing');
       renderCats();
       refreshStart();
     },
