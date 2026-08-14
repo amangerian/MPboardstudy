@@ -519,6 +519,85 @@
   .cat-chip .n { color: #9b8fc4; font-size: 11px; }
   .cat-chip.on .n { color: #a9e6d8; }
 
+  /* ---- initials ---- */
+  .initials-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .initials-field { display: flex; flex-direction: column; gap: 5px; }
+  .initials-field span {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #a99ccd;
+  }
+  .initials-field input {
+    width: 92px;
+    background: rgba(10,6,26,.7);
+    border: 1px solid var(--violet-deep);
+    border-radius: 8px;
+    color: var(--gold);
+    font-family: Georgia, serif;
+    font-size: 20px; font-weight: 900; letter-spacing: 4px;
+    text-align: center; text-transform: uppercase;
+    padding: 7px 6px;
+  }
+  .initials-field input:focus { outline: none; border-color: var(--arcane); box-shadow: 0 0 0 2px rgba(124,240,216,.3); }
+  .initials-field input::placeholder { color: #5b4a94; letter-spacing: 4px; }
+
+  /* ---- saved scores ---- */
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .link-btn {
+    background: none; border: none; color: var(--muted-dim);
+    font: 700 11px Arial, sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; text-decoration: underline; padding: 0;
+  }
+  .link-btn:hover { color: var(--ember); }
+
+  .score-list { display: flex; flex-direction: column; gap: 7px; }
+  .score-row {
+    display: grid;
+    grid-template-columns: 26px 62px 1fr auto;
+    align-items: center; gap: 10px;
+    background: rgba(10,6,26,.5);
+    border: 1px solid #33285e;
+    border-radius: 9px;
+    padding: 8px 12px;
+  }
+  .score-row.fresh {
+    border-color: var(--arcane);
+    background: rgba(47,174,149,.14);
+    box-shadow: 0 0 14px rgba(124,240,216,.2);
+  }
+  .score-row .rank { font: 900 13px Georgia, serif; color: #7b6ea8; text-align: center; }
+  .score-row .who {
+    font: 900 19px Georgia, serif; letter-spacing: 2px; color: var(--gold);
+  }
+  .score-row .mid { min-width: 0; }
+  .score-row .pts { font: 900 18px Georgia, serif; color: #eae2ff; }
+  .score-row .meta {
+    font-size: 11px; color: #a99ccd; margin-top: 2px;
+    display: flex; flex-wrap: wrap; gap: 5px 9px; align-items: center;
+  }
+  .score-row .badge {
+    border: 1px solid #4a3a7d; border-radius: 20px; padding: 1px 7px;
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .score-row .badge.win { border-color: var(--arcane); color: var(--arcane); }
+  .score-row .cats {
+    font-size: 11px; color: #cbbff0; margin-top: 4px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .score-row .cats b { color: var(--arcane); font-weight: 700; }
+  .score-row .when { font-size: 11px; color: #7b6ea8; text-align: right; white-space: nowrap; }
+  .score-empty {
+    border: 2px dashed #33285e; border-radius: 10px; padding: 20px;
+    text-align: center; color: var(--muted-dim); font-size: 13px;
+  }
+  .saved-as {
+    text-align: center; font-size: 13px; color: #c3b8e8; margin-top: 16px;
+  }
+  .saved-as b { color: var(--gold); font-family: Georgia, serif; letter-spacing: 2px; font-size: 15px; }
+
+  @media (max-width: 560px) {
+    .score-row { grid-template-columns: 22px 54px 1fr; }
+    .score-row .when { grid-column: 2 / -1; text-align: left; }
+  }
+
   .wiz-start {
     display: block; width: 100%; margin-top: 20px;
     background: linear-gradient(180deg, var(--arcane), var(--arcane-deep));
@@ -993,6 +1072,16 @@
             <button type="button" data-mode="1" aria-pressed="true">One wizard<span class="seg-note">Escape for score</span></button>
             <button type="button" data-mode="2" aria-pressed="false">Two wizards<span class="seg-note">Split screen race</span></button>
           </div>
+          <div class="initials-row" id="wizNames">
+            <label class="initials-field">
+              <span id="wizName1Label">Your initials</span>
+              <input id="wizName1" maxlength="3" placeholder="AM" autocomplete="off" spellcheck="false">
+            </label>
+            <label class="initials-field" id="wizName2Wrap" hidden>
+              <span>Wizard 2</span>
+              <input id="wizName2" maxlength="3" placeholder="JS" autocomplete="off" spellcheck="false">
+            </label>
+          </div>
         </div>
         <div>
           <h3>Castle size</h3>
@@ -1011,6 +1100,15 @@
       <div id="wizCats"></div>
       <button class="wiz-start" id="wizStart">Enter the castle</button>
       <div class="wiz-note" id="wizSetupNote"></div>
+    </div>
+
+    <div class="wiz-panel">
+      <div class="panel-head">
+        <h3>Best escapes</h3>
+        <button class="link-btn" id="wizClearScores">Clear scores</button>
+      </div>
+      <p class="sub" id="wizScoresSub">Kept on this device only, with the categories each run covered.</p>
+      <div id="wizScoreList"></div>
     </div>
   </div>
 
@@ -1515,16 +1613,168 @@ const WIZ = (function () {
   const noteEl = document.getElementById('wizSetupNote');
   const modeSeg = document.getElementById('wizMode');
   const roomsSeg = document.getElementById('wizRooms');
+  const nameInput1 = document.getElementById('wizName1');
+  const nameInput2 = document.getElementById('wizName2');
+  const name1Label = document.getElementById('wizName1Label');
+  const name2Wrap = document.getElementById('wizName2Wrap');
+  const scoreListEl = document.getElementById('wizScoreList');
+  const clearScoresBtn = document.getElementById('wizClearScores');
   const stageEl = document.getElementById('wizStage');
   const powerFill = document.getElementById('wizPowerFill');
   const powerNum = document.getElementById('wizPowerNum');
   const fleeBtn = document.getElementById('wizFlee');
+
+  const SCORE_KEY = 'bsg.wiz.scores.v1';
+  const NAME_KEY = 'bsg.wiz.names.v1';
+  const MAX_KEPT = 100;
 
   let mode = 1;
   let roomsWanted = 7;
   let selected = new Set();
   let run = null;
   let rafId = null;
+  let storageOk = true;
+
+  // ---------- saved scores (this device only) ----------
+  // Every read and write is guarded: private-browsing and file:// can both make
+  // localStorage throw, and a study game is not worth an exception over.
+  function readJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      const val = JSON.parse(raw);
+      return Array.isArray(val) ? val : fallback;
+    } catch (e) {
+      storageOk = false;
+      return fallback;
+    }
+  }
+  function writeJSON(key, val) {
+    try {
+      localStorage.setItem(key, JSON.stringify(val));
+      return true;
+    } catch (e) {
+      storageOk = false;
+      return false;
+    }
+  }
+  const loadScores = () => readJSON(SCORE_KEY, []);
+  const saveScores = list => writeJSON(SCORE_KEY, list.slice(0, MAX_KEPT));
+  const loadNames = () => readJSON(NAME_KEY, []);
+  const saveNames = names => writeJSON(NAME_KEY, names);
+
+  const cleanInitials = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 3);
+
+  // What gets stored against a score.
+  function nameFor(i) {
+    const el = i === 0 ? nameInput1 : nameInput2;
+    return cleanInitials(el.value) || (mode === 2 ? 'W' + (i + 1) : '???');
+  }
+
+  // What gets shown in prose. Initials if given, otherwise something readable.
+  function displayName(i) {
+    const el = i === 0 ? nameInput1 : nameInput2;
+    return cleanInitials(el.value) || (mode === 2 ? 'Wizard ' + (i + 1) : 'You');
+  }
+
+  function recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped) {
+    const stamp = Date.now();
+    const rows = panes.map((p, i) => ({
+      id: stamp + '-' + i,
+      who: nameFor(i),
+      score: p.score,
+      rooms: p.rooms,
+      total: run ? run.total : p.rooms,
+      mode: mode,
+      escaped: escaped && i === winnerIdx,
+      seconds: seconds,
+      cats: catNames,
+      allCats: allCats,
+      at: stamp,
+    }));
+    // A wizard who never cleared a room has no run worth keeping.
+    const keep = rows.filter(r => r.rooms > 0 || r.score > 0);
+    const merged = keep.concat(loadScores()).sort((a, b) => b.score - a.score);
+    saveScores(merged);
+    return keep.map(r => r.id);
+  }
+
+  function renderScores(container, limit, freshIds) {
+    const list = loadScores().slice(0, limit);
+    container.innerHTML = '';
+
+    if (!list.length) {
+      const empty = document.createElement('div');
+      empty.className = 'score-empty';
+      empty.textContent = storageOk
+        ? 'No runs saved yet — escape the castle and your score lands here.'
+        : 'This browser is blocking local storage, so scores cannot be kept on this device.';
+      container.appendChild(empty);
+      return;
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'score-list';
+    list.forEach((row, i) => {
+      const el = document.createElement('div');
+      el.className = 'score-row' + (freshIds && freshIds.indexOf(row.id) >= 0 ? ' fresh' : '');
+
+      const rank = document.createElement('div');
+      rank.className = 'rank';
+      rank.textContent = i + 1;
+
+      const who = document.createElement('div');
+      who.className = 'who';
+      who.textContent = row.who;
+
+      const mid = document.createElement('div');
+      mid.className = 'mid';
+
+      const pts = document.createElement('div');
+      pts.className = 'pts';
+      pts.textContent = row.score;
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const rooms = document.createElement('span');
+      rooms.textContent = `${row.rooms}/${row.total} rooms`;
+      const modeBadge = document.createElement('span');
+      modeBadge.className = 'badge';
+      modeBadge.textContent = row.mode === 2 ? '2 wizards' : 'solo';
+      meta.append(rooms, modeBadge);
+      if (row.escaped) {
+        const win = document.createElement('span');
+        win.className = 'badge win';
+        win.textContent = 'escaped';
+        meta.appendChild(win);
+      }
+      if (row.seconds) {
+        const t = document.createElement('span');
+        t.textContent = row.seconds + 's';
+        meta.appendChild(t);
+      }
+
+      const cats = document.createElement('div');
+      cats.className = 'cats';
+      const label = document.createElement('b');
+      label.textContent = row.allCats ? 'All categories' : (row.cats || []).length + ' categories';
+      cats.appendChild(label);
+      if ((row.cats || []).length) {
+        cats.appendChild(document.createTextNode(' · ' + row.cats.join(' · ')));
+      }
+      cats.title = (row.cats || []).join(', ');
+
+      mid.append(pts, meta, cats);
+
+      const when = document.createElement('div');
+      when.className = 'when';
+      when.textContent = new Date(row.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+      el.append(rank, who, mid, when);
+      wrap.appendChild(el);
+    });
+    container.appendChild(wrap);
+  }
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1694,8 +1944,30 @@ const WIZ = (function () {
       };
     });
   }
-  bindSeg(modeSeg, 'mode', v => { mode = v; });
+  bindSeg(modeSeg, 'mode', v => {
+    mode = v;
+    name2Wrap.hidden = mode !== 2;
+    name1Label.textContent = mode === 2 ? 'Wizard 1' : 'Your initials';
+  });
   bindSeg(roomsSeg, 'rooms', v => { roomsWanted = v; });
+
+  [nameInput1, nameInput2].forEach(input => {
+    input.addEventListener('input', () => {
+      const pos = input.selectionStart;
+      input.value = cleanInitials(input.value);
+      try { input.setSelectionRange(pos, pos); } catch (e) { /* ignore */ }
+    });
+    input.addEventListener('change', () => {
+      saveNames([cleanInitials(nameInput1.value), cleanInitials(nameInput2.value)]);
+    });
+  });
+
+  clearScoresBtn.onclick = () => {
+    if (!loadScores().length) return;
+    if (!confirm('Delete every saved score on this device?')) return;
+    saveScores([]);
+    renderScores(scoreListEl, 10);
+  };
 
   // ---------- scene art ----------
   function sceneChrome() {
@@ -1875,7 +2147,23 @@ const WIZ = (function () {
       hud.className = 'pane-hud';
       const nameEl = document.createElement('div');
       nameEl.className = 'pane-name';
-      nameEl.innerHTML = mode === 2 ? `Wizard <b>${i + 1}</b>` : 'Your escape';
+      // Initials, when given, label the pane so a race is legible at a glance.
+      const initials = cleanInitials(i === 0 ? nameInput1.value : nameInput2.value);
+      if (mode === 2) {
+        nameEl.textContent = 'Wizard ' + (i + 1) + (initials ? ' · ' : '');
+        if (initials) {
+          const b = document.createElement('b');
+          b.textContent = initials;
+          nameEl.appendChild(b);
+        }
+      } else {
+        nameEl.textContent = initials ? '' : 'Your escape';
+        if (initials) {
+          const b = document.createElement('b');
+          b.textContent = initials;
+          nameEl.appendChild(b);
+        }
+      }
       const pips = document.createElement('div');
       pips.className = 'pips';
       for (let r = 0; r < run.total; r++) {
@@ -1922,6 +2210,10 @@ const WIZ = (function () {
       resolved: false,
       roomStart: 0,
       startedAt: Date.now(),
+      // Captured at the start so the saved score records what was actually
+      // studied, even if the picker is changed afterwards.
+      cats: allCategories().filter(c => selected.has(c.key)).map(c => c.cat.name),
+      allCats: allCategories().every(c => selected.has(c.key)),
       panes: [],
     };
     for (let i = 0; i < mode; i++) {
@@ -2222,6 +2514,9 @@ const WIZ = (function () {
     const rooms = run.total;
     const escaped = !ranOut;
     const tie = ranOut && mode === 2 && panes[0].rooms === panes[1].rooms;
+    const catNames = run.cats;
+    const allCats = run.allCats;
+    const freshIds = recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped);
     run = null;
 
     playEl.hidden = true;
@@ -2237,7 +2532,7 @@ const WIZ = (function () {
         `<div class="escape-walker"><div class="bob">${wizardSVG()}</div></div>` +
         `<div class="escape-caption"></div>`;
       scene.querySelector('.escape-caption').textContent = mode === 2
-        ? `Wizard ${winnerIdx + 1} walks out into the night. Wizard ${winnerIdx === 0 ? 2 : 1} is still in there.`
+        ? `${displayName(winnerIdx)} walks out into the night. ${displayName(winnerIdx === 0 ? 1 : 0)} is still in there.`
         : 'Out through the last door, and away down the hill.';
       resultBody.appendChild(scene);
     }
@@ -2246,7 +2541,7 @@ const WIZ = (function () {
     h.className = 'wiz-result-title';
     h.textContent = !escaped
       ? (tie ? 'A draw in the dark' : 'Out of questions')
-      : (mode === 2 ? `Wizard ${winnerIdx + 1} escapes!` : 'You escape!');
+      : `${displayName(winnerIdx)} escape${displayName(winnerIdx) === 'You' ? '' : 's'}!`;
     resultBody.appendChild(h);
 
     const sub = document.createElement('p');
@@ -2258,7 +2553,7 @@ const WIZ = (function () {
         : 'The castle ran out of questions before anyone reached the last door. Pick more categories for a longer game.';
     } else {
       sub.textContent = mode === 2
-        ? `Wizard ${winnerIdx + 1} shattered the last door and made it out into the night.`
+        ? `${displayName(winnerIdx)} shattered the last door and made it out into the night.`
         : 'The last splinters settle. The night air has never tasted better.';
     }
     resultBody.appendChild(sub);
@@ -2274,14 +2569,37 @@ const WIZ = (function () {
       stats.appendChild(s);
     };
     if (mode === 2) {
-      panes.forEach((p, i) => add(`Wizard ${i + 1}`, `${p.rooms}/${rooms}`));
-      panes.forEach((p, i) => add(`W${i + 1} score`, p.score));
+      panes.forEach((p, i) => add(displayName(i), `${p.rooms}/${rooms}`));
+      panes.forEach((p, i) => add(displayName(i) + ' score', p.score));
     } else {
       add('Score', panes[0].score);
       add('Rooms', `${panes[0].rooms}/${rooms}`);
     }
     add('Time', seconds + 's');
     resultBody.appendChild(stats);
+
+    // What was saved, and where it lands among past runs.
+    const savedAs = document.createElement('div');
+    savedAs.className = 'saved-as';
+    if (storageOk) {
+      savedAs.textContent = mode === 2 ? 'Saved on this device for ' : 'Saved on this device as ';
+      panes.forEach((p, i) => {
+        if (i) savedAs.appendChild(document.createTextNode(' and '));
+        const b = document.createElement('b');
+        b.textContent = nameFor(i);
+        savedAs.appendChild(b);
+      });
+      savedAs.appendChild(document.createTextNode(
+        ' · ' + (allCats ? 'all categories' : catNames.length + ' categories')));
+    } else {
+      savedAs.textContent = 'This browser is blocking local storage, so this run was not saved.';
+    }
+    resultBody.appendChild(savedAs);
+
+    const board = document.createElement('div');
+    board.style.marginTop = '14px';
+    renderScores(board, 5, freshIds);
+    resultBody.appendChild(board);
 
     const actions = document.createElement('div');
     actions.className = 'wiz-actions';
@@ -2291,7 +2609,12 @@ const WIZ = (function () {
     again.onclick = () => { resultEl.hidden = true; start(); };
     const back = document.createElement('button');
     back.textContent = 'Change categories';
-    back.onclick = () => { resultEl.hidden = true; setupEl.hidden = false; refreshStart(); };
+    back.onclick = () => {
+      resultEl.hidden = true;
+      setupEl.hidden = false;
+      renderScores(scoreListEl, 10);
+      refreshStart();
+    };
     const hub = document.createElement('a');
     hub.href = '#';
     hub.textContent = 'All games';
@@ -2299,6 +2622,7 @@ const WIZ = (function () {
     resultBody.appendChild(actions);
   }
 
+  // Abandoning is not a result, so nothing is saved.
   function abandon() {
     cancelAnimationFrame(rafId);
     run = null;
@@ -2306,6 +2630,7 @@ const WIZ = (function () {
     resultEl.hidden = true;
     setupEl.hidden = false;
     view.classList.remove('playing');
+    renderScores(scoreListEl, 10);
     refreshStart();
   }
 
@@ -2337,7 +2662,16 @@ const WIZ = (function () {
       resultEl.hidden = true;
       setupEl.hidden = false;
       view.classList.remove('playing');
+
+      // Whoever played last gets their initials back.
+      const names = loadNames();
+      if (names[0] && !nameInput1.value) nameInput1.value = cleanInitials(names[0]);
+      if (names[1] && !nameInput2.value) nameInput2.value = cleanInitials(names[1]);
+      name2Wrap.hidden = mode !== 2;
+      name1Label.textContent = mode === 2 ? 'Wizard 1' : 'Your initials';
+
       renderCats();
+      renderScores(scoreListEl, 10);
       refreshStart();
     },
     close() {
