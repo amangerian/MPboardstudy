@@ -213,7 +213,9 @@
   /* ---------- BOARD ---------- */
   .board {
     display: grid;
-    grid-template-columns: repeat(var(--cols, 6), 1fr);
+    /* minmax(0, 1fr), not 1fr: a plain 1fr will not shrink below the tiles'
+       min-content width, which pushed the last category off a phone screen. */
+    grid-template-columns: repeat(var(--cols, 6), minmax(0, 1fr));
     gap: 6px;
     background: var(--board-navy-deep);
     padding: 6px;
@@ -403,6 +405,16 @@
     .board { gap: 4px; }
     .cat-header { min-height: 62px; font-size: 9px; padding: 6px 3px; }
     .clue-tile { font-size: 16px; }
+  }
+  @media (max-width: 560px) {
+    /* Six columns on a phone: squarer tiles keep the tap target usable once
+       the columns are narrow. */
+    .board { gap: 3px; padding: 4px; }
+    .cat-header { min-height: 52px; font-size: clamp(7px, 2vw, 10px); padding: 5px 2px; }
+    .clue-tile { aspect-ratio: 1.15 / 1; font-size: clamp(11px, 3.2vw, 15px); }
+    .team-card { min-width: 140px; flex: 1 1 140px; }
+    .scoreboard { gap: 8px; }
+    .add-team-btn { min-width: 120px; padding: 10px; }
   }
 
   /* ============================================================
@@ -906,9 +918,15 @@
   }
 
   /* ---- results: the walk out ---- */
+  /* Matches the backdrop's own 480x150 so the castle and moon stay in frame at
+     every width — a fixed height cropped both away on a phone. */
   .escape-scene {
     position: relative;
-    height: clamp(200px, 34vh, 320px);
+    width: 100%;
+    aspect-ratio: 480 / 150;
+    /* No min/max height here: with aspect-ratio set, a height constraint makes
+       the box derive its *width* from that height, which burst it out of the
+       panel on a phone. Let the width lead and the height follow. */
     border-radius: 12px;
     overflow: hidden;
     border: 2px solid #3d2f6b;
@@ -989,6 +1007,37 @@
     .wiz-stage.two { grid-template-columns: 1fr; }
     .furni .label { -webkit-line-clamp: 4; }
     .furni-row { padding-left: 16%; gap: 2%; }
+    /* Two stacked rooms have to share one screen — a racer who has to scroll to
+       see their own furniture has already lost. */
+    .wiz-stage.two .scene { height: clamp(200px, 30vh, 320px); }
+    .wiz-stage.two .furni .label { font-size: clamp(10.5px, 2.7vw, 14px); padding: 5px 4px 6px; -webkit-line-clamp: 3; }
+    .wiz-stage.two .room-prompt { padding: 6px 8px 7px; }
+    .wiz-stage.two .room-prompt .text { font-size: clamp(11px, 2.9vw, 14px); }
+    .wiz-stage.two .pane-hud { margin-bottom: 3px; }
+    .wiz-stage.two .scene .wizard { height: 26%; }
+  }
+
+  /* On a touch device the key hints are noise — there is no keyboard. */
+  @media (hover: none) and (pointer: coarse) {
+    .furni .key { display: none; }
+    #wizardView footer.hint { display: none; }
+  }
+
+  .flip-hint {
+    display: none;
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--arcane);
+    border-left: 2px solid var(--arcane);
+    padding-left: 10px;
+  }
+  /* Two players on one handset: the top room is turned to face the player
+     sitting opposite, so the phone can lie flat between them like a board.
+     (This block must follow the base rule above, or it loses on source order.) */
+  @media (max-width: 780px) and (pointer: coarse) {
+    .wiz-stage.two .wiz-pane:first-child { transform: rotate(180deg); }
+    .flip-hint { display: block; }
   }
   @media (max-width: 520px) {
     /* narrow rooms are width-limited, so a shorter room wastes less space */
@@ -1072,6 +1121,7 @@
             <button type="button" data-mode="1" aria-pressed="true">One wizard<span class="seg-note">Escape for score</span></button>
             <button type="button" data-mode="2" aria-pressed="false">Two wizards<span class="seg-note">Split screen race</span></button>
           </div>
+          <p class="flip-hint" id="wizFlipHint">Two wizards on a phone: lay it flat between you — the top room is turned around so you can sit facing each other.</p>
           <div class="initials-row" id="wizNames">
             <label class="initials-field">
               <span id="wizName1Label">Your initials</span>
@@ -1212,21 +1262,21 @@ const GAMES = [
       {
         name: "TCAs & MAOIs",
         clues: [
-          { value: 100, clue: "This class of antidepressants requires dietary tyramine restriction to avoid a hypertensive crisis.", answer: "What are MAOIs?" },
-          { value: 200, clue: "This TCA is FDA-approved specifically to treat OCD.", answer: "What is clomipramine?" },
-          { value: 300, clue: "This MAOI comes in a transdermal patch that avoids dietary restriction at its lowest dose.", answer: "What is selegiline?" },
-          { value: 400, clue: "This TCA is the most NET-selective of the class and is sometimes used off-label for ADHD.", answer: "What is desipramine?" },
-          { value: 500, clue: "After stopping this long-half-life SSRI, a 5-week washout is required before starting an MAOI.", answer: "What is fluoxetine?" }
+          { value: 100, clue: "This class of antidepressants requires dietary tyramine restriction to avoid a hypertensive crisis.", answer: "What are MAOIs?", decoys: ["TCAs", "SSRIs"] },
+          { value: 200, clue: "This TCA is FDA-approved specifically to treat OCD.", answer: "What is clomipramine?", decoys: ["Amitriptyline", "Nortriptyline"] },
+          { value: 300, clue: "This MAOI comes in a transdermal patch that avoids dietary restriction at its lowest dose.", answer: "What is selegiline?", decoys: ["Phenelzine", "Tranylcypromine"] },
+          { value: 400, clue: "This TCA is the most NET-selective of the class and is sometimes used off-label for ADHD.", answer: "What is desipramine?", decoys: ["Amitriptyline", "Doxepin"] },
+          { value: 500, clue: "After stopping this long-half-life SSRI, a 5-week washout is required before starting an MAOI.", answer: "What is fluoxetine?", decoys: ["Paroxetine", "Sertraline"] }
         ]
       },
       {
         name: "Receptor Profiles",
         clues: [
-          { value: 100, clue: "This transporter, blocked by SSRIs, is the serotonin reuptake protein.", answer: "What is SERT?" },
-          { value: 200, clue: "TCA blockade of this receptor causes dry mouth, constipation, and urinary retention.", answer: "What is the muscarinic (M1) receptor?" },
-          { value: 300, clue: "Mirtazapine's antagonism at this receptor largely explains its weight gain and sedation.", answer: "What is the histamine H1 receptor?" },
-          { value: 400, clue: "Blockade of this adrenergic receptor causes the orthostatic hypotension seen with TCAs and trazodone.", answer: "What is the alpha-1 (α1) receptor?" },
-          { value: 500, clue: "This enzyme, inhibited by MAOIs, breaks down serotonin, norepinephrine, and dopamine.", answer: "What is monoamine oxidase (MAO)?" }
+          { value: 100, clue: "This transporter, blocked by SSRIs, is the serotonin reuptake protein.", answer: "What is SERT?", decoys: ["NET, the noradrenaline transporter", "DAT, the dopamine transporter"] },
+          { value: 200, clue: "TCA blockade of this receptor causes dry mouth, constipation, and urinary retention.", answer: "What is the muscarinic (M1) receptor?", decoys: ["The histamine H1 receptor", "The alpha-1 receptor"] },
+          { value: 300, clue: "Mirtazapine's antagonism at this receptor largely explains its weight gain and sedation.", answer: "What is the histamine H1 receptor?", decoys: ["The muscarinic M1 receptor", "The 5-HT2C receptor"] },
+          { value: 400, clue: "Blockade of this adrenergic receptor causes the orthostatic hypotension seen with TCAs and trazodone.", answer: "What is the alpha-1 (α1) receptor?", decoys: ["The alpha-2 receptor", "The beta-1 receptor"] },
+          { value: 500, clue: "This enzyme, inhibited by MAOIs, breaks down serotonin, norepinephrine, and dopamine.", answer: "What is monoamine oxidase (MAO)?", decoys: ["Catechol-O-methyltransferase (COMT)", "Tryptophan hydroxylase"] }
         ]
       },
       {
@@ -1237,6 +1287,72 @@ const GAMES = [
           { value: 300, clue: "This rare but urgent trazodone side effect involves a prolonged, painful erection.", answer: "What is priapism?" },
           { value: 400, clue: "This dose-dependent bupropion risk is why it's contraindicated in seizure disorders and eating disorders.", answer: "What is seizure risk?" },
           { value: 500, clue: "This electrolyte abnormality, related to SIADH, is a notable SSRI risk especially in elderly patients.", answer: "What is hyponatremia?" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "depression-jeopardy",
+    title: "Depression Jeopardy!",
+    kind: "Jeopardy",
+    blurb: "A board-review round on major depressive disorder — criteria and specifiers, sleep architecture and course, the classic TCAs and MAOIs, and the newest approved treatments.",
+    tags: ["Board review", "6 categories", "26 clues"],
+    subtitle: "Criteria · Specifiers · Sleep & Course · TCAs & MAOIs · Newer Treatments",
+    categories: [
+      {
+        name: "The Basics",
+        clues: [
+          { value: 100, clue: "For a major depressive episode, how many symptoms must be present, and for how long?", answer: "5 or more symptoms present nearly every day during a 2-week period, representing a change from previous functioning.", short: "5+ symptoms for 2 weeks", decoys: ["4+ symptoms for 2 weeks", "5+ symptoms for 1 month"] },
+          { value: 200, clue: "Name the 2 required “anchor” symptoms of MDD — at least 1 must be present to diagnose.", answer: "Depressed mood most of the day nearly daily, and diminished interest or pleasure (anhedonia).", short: "Depressed mood or anhedonia", decoys: ["Fatigue or poor concentration", "Insomnia or appetite change"] },
+          { value: 300, clue: "What percentage of body weight change in 1 month is clinically significant for the MDD criterion?", answer: "5% of body weight, gain or loss, in 1 month.", short: "5% of body weight in a month", decoys: ["10% of body weight in a month", "5% of body weight in 6 months"] },
+          { value: 400, clue: "MDD has a 72% lifetime comorbidity rate with any mental disorder. What is the most common comorbid disorder, and its rate?", answer: "Anxiety disorders — 59%. (Impulse control disorders 30%, substance use disorders 24%.)", short: "Anxiety disorders (59%)", decoys: ["Impulse control disorders (30%)", "Substance use disorders (24%)"] },
+          { value: 500, clue: "STAR*D: what percentage achieved full remission on the initial medication trial, what percentage of those relapsed by month 15, and what HAM-D17 score defines remission?", answer: "About 30% achieved full remission initially; 25% of those full remitters relapsed by month 15; remission is a HAM-D17 score below 7.", short: "~30%; HAM-D17 under 7", decoys: ["~50%; HAM-D17 under 7", "~30%; HAM-D17 under 12"] }
+        ]
+      },
+      {
+        name: "Specifiers",
+        clues: [
+          { value: 100, clue: "Which specifier requires mood reactivity plus 2 of: hypersomnia, increased appetite, leaden paralysis, or sensitivity to rejection?", answer: "The atypical features specifier.", short: "Atypical features", decoys: ["Melancholic features", "Seasonal pattern"] },
+          { value: 200, clue: "For the melancholic specifier, one of 2 core symptoms must be present. Name both.", answer: "Loss of pleasure in all, or almost all, activities; and lack of reactivity to usually pleasurable stimuli.", short: "Anhedonia plus lack of reactivity", decoys: ["Early waking plus weight loss", "Mood reactivity plus leaden paralysis"] },
+          { value: 300, clue: "For the seasonal pattern specifier, 2 requirements must be met regarding the last 2 years. What are they?", answer: "The pattern has been maintained for the last 2 years, with no non-seasonal episodes in that window; and seasonal episodes substantially outnumber non-seasonal episodes over the lifetime.", short: "2 years, seasonal episodes dominant", decoys: ["1 year, seasonal episodes dominant", "2 years, seasonal and non-seasonal equal"] },
+          { value: 400, clue: "Psychotic features can be mood-congruent or mood-incongruent. Give an example of a mood-congruent psychotic feature.", answer: "Delusions or hallucinations with depressive themes: personal inadequacy, guilt, disease, death, nihilism, or deserved punishment.", short: "Delusions with depressive themes", decoys: ["Delusions of thought insertion", "Persecutory delusions unrelated to mood"] },
+          { value: 500, clue: "Persistent depressive disorder: state the duration criterion for adults versus children, and how many additional symptoms are required.", answer: "Adults: 2 years or more of depressed mood. Children and adolescents: 1 year or more. Plus 2 or more of poor appetite or overeating, insomnia or hypersomnia, low energy, low self-esteem, poor concentration, or hopelessness.", short: "2 years in adults, 1 in children", decoys: ["1 year in adults, 6 months in children", "2 years in both adults and children"] }
+        ]
+      },
+      {
+        name: "Sleep & Course",
+        clues: [
+          { value: 100, clue: "In depression, is REM latency increased or decreased, and what does that mean clinically?", answer: "Decreased REM latency — patients enter REM sleep faster than normal. REM density is also increased, with more rapid eye movements per unit time.", short: "Decreased REM latency", decoys: ["Increased REM latency", "Decreased REM density"] },
+          { value: 200, clue: "What percentage of depressed patients experience insomnia, versus hypersomnia?", answer: "Insomnia 88%, hypersomnia 27%. Deep N3 slow-wave sleep is also lost.", short: "Insomnia 88%, hypersomnia 27%", decoys: ["Insomnia 27%, hypersomnia 88%", "Insomnia 60%, hypersomnia 40%"] },
+          { value: 300, clue: "What is the average duration of a single major depressive episode, and what percentage achieve remission at 6 months and at 2 years?", answer: "An average episode runs 3–5 months, by which point about 50% reach remission; 63% by 6 months, and 80% by 2 years.", short: "3–5 months; 63% by 6 months", decoys: ["6–9 months; 63% by 6 months", "3–5 months; 80% by 6 months"] },
+          { value: 400, clue: "At what number of prior depressive episodes is maintenance treatment very strongly recommended, and by how much does maintenance reduce recurrence?", answer: "3 or more episodes, which carries over 80% recurrence risk. Maintenance treatment reduces recurrence by about 50% — “what gets you well, keeps you well.”", short: "3 or more episodes", decoys: ["2 or more episodes", "5 or more episodes"] },
+          { value: 500, clue: "What effect do antidepressants have on REM sleep, and what is the clinical implication of that relationship?", answer: "Antidepressants suppress REM sleep, and REM suppression correlates with treatment response. The relationship is bidirectional: sleep affects depression and depression affects sleep.", short: "They suppress REM sleep", decoys: ["They increase REM sleep", "They have no effect on REM sleep"] }
+        ]
+      },
+      {
+        name: "TCAs & MAOIs",
+        clues: [
+          { value: 100, clue: "Which TCA is the most serotonergic and used in OCD — and which carries the highest seizure risk?", answer: "Clomipramine — the most serotonergic TCA, used in OCD, and also the one with the highest seizure risk of the class.", short: "Clomipramine", decoys: ["Amitriptyline", "Imipramine"] },
+          { value: 200, clue: "Name any 3 cardiac risks of TCAs.", answer: "Increased heart rate, orthostatic hypotension, quinidine-like QT prolongation, QRS prolongation, heart block where a bundle branch block is present, and increased morbidity in ischemic heart disease. Get an EKG if the patient is over 45.", short: "Orthostasis, QT and QRS prolongation", decoys: ["Bradycardia and QT shortening", "Hypertension and cardiomyopathy"] },
+          { value: 300, clue: "What is the washout period before starting an MAOI after stopping fluoxetine, and why is it different from other antidepressants?", answer: "A 5-week gap, versus 2 weeks for other antidepressants — fluoxetine's half-life is 4–7 days and its active metabolite norfluoxetine runs 7–14 days, giving a very long elimination time.", short: "5 weeks, for norfluoxetine", decoys: ["2 weeks, as for other SSRIs", "10 days, for norfluoxetine"] },
+          { value: 400, clue: "Match each classic MAOI to its trade name: phenelzine, tranylcypromine, isocarboxazid, selegiline.", answer: "Phenelzine is Nardil, tranylcypromine is Parnate, isocarboxazid is Marplan, and selegiline is the Emsam patch. Selegiline is selective for MAO-B and does not require a low-tyramine diet at lower doses.", short: "Nardil, Parnate, Marplan, Emsam", decoys: ["Nardil, Marplan, Parnate, Emsam", "Nardil, Parnate, Emsam, Wellbutrin"] },
+          { value: 500, clue: "Which secondary TCA is most noradrenergic, which tertiary TCA is most anti-histaminergic, and which receptor blockades cause dry mouth and retention, orthostasis, and sedation with weight gain?", answer: "Desipramine is the most noradrenergic secondary TCA; doxepin the most anti-histaminergic tertiary. Dry mouth and retention come from anticholinergic blockade, orthostasis from alpha-1 blockade, and sedation with weight gain from H1 blockade.", short: "Desipramine and doxepin", decoys: ["Nortriptyline and amitriptyline", "Desipramine and imipramine"] }
+        ]
+      },
+      {
+        name: "Newer Treatments",
+        clues: [
+          { value: 100, clue: "Brexanolone (Zulresso) is FDA-approved for what condition, and what is its mechanism of action?", answer: "Postpartum depression, approved in 2019 for ages 15 and up. It is IV allopregnanolone, a metabolite of progesterone, acting as a GABA-A positive modulator — a GABAergic neurosteroid.", short: "Postpartum depression", decoys: ["Treatment-resistant depression", "Premenstrual dysphoric disorder"] },
+          { value: 200, clue: "Vagus nerve stimulation: how many failed medication trials are required, which nerve is stimulated, and what is the stimulation pattern?", answer: "Failure of at least 4 medication trials; the left vagus nerve is stimulated; the pattern is 30 seconds on and 5 minutes off.", short: "Left vagus, 30 seconds on", decoys: ["Right vagus, 30 seconds on", "Left vagus, 5 minutes on"] },
+          { value: 300, clue: "Mirtazapine is sedating at low doses but activating at high doses. Explain the mechanism behind each.", answer: "At low doses H1 antihistamine blockade dominates, giving sedation. At high doses noradrenergic and dopaminergic release via alpha-2 antagonism outweighs the H1 effect, giving activation. It is also a 5-HT2 and 5-HT3 antagonist, reducing GI and sexual side effects.", short: "H1 blockade at low doses", decoys: ["Alpha-2 antagonism at low doses", "5-HT3 antagonism at low doses"] },
+          { value: 400, clue: "Gepirone (Exxua): when was it FDA-approved, what are its 3 mechanisms of action, and what ECG finding prevents initiation?", answer: "Approved in 2023. It is a 5-HT1A agonist and a 5-HT2A antagonist, with an active metabolite that is an alpha-2 adrenergic antagonist. Do not initiate if the QTc is above 450 msec — correct electrolytes and get an ECG first.", short: "2023; not if QTc over 450", decoys: ["2023; not if QTc over 500", "2019; not if QTc over 450"] },
+          { value: 500, clue: "Auvelity (dextromethorphan/bupropion), FDA 2022: why is bupropion in the combination, and what are dextromethorphan's 2 mechanisms of action?", answer: "Bupropion is a CYP2D6 inhibitor, which slows dextromethorphan's metabolism and extends its half-life from 2–4 hours up to therapeutic levels. Dextromethorphan is an NMDA receptor antagonist, like ketamine, and a sigma-1 receptor agonist.", short: "CYP2D6 inhibition; NMDA and sigma-1", decoys: ["CYP3A4 inhibition; NMDA and sigma-1", "CYP2D6 inhibition; AMPA and mu-opioid"] }
+        ]
+      },
+      {
+        name: "Final Jeopardy ★",
+        clues: [
+          { value: 1000, clue: "In STAR*D, partial remitters and full remitters had very different relapse rates by month 15. State both rates, and the key clinical lesson about the target of treatment.", answer: "Full remitters: 25% relapsed by month 15. Partial remitters: 76% relapsed. The lesson is to treat to full remission rather than partial improvement, to optimise both symptom control and functional recovery — “what gets you well, keeps you well.”", short: "25% versus 76% relapse", decoys: ["25% versus 50% relapse", "40% versus 76% relapse"] }
         ]
       }
     ]
@@ -1787,6 +1903,13 @@ const WIZ = (function () {
     s = s.replace(/\?+\s*$/, '').trim();
     return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
   }
+
+  // A clue may carry a `short` label for use here. Jeopardy answers are often
+  // full teaching answers — several sentences, sometimes a numbered list — which
+  // read well on the board but cannot go on a piece of furniture. When `short`
+  // is absent the Jeopardy answer is used, which is right for one-word answers.
+  const labelFor = clueObj =>
+    (clueObj && clueObj.short) ? String(clueObj.short).trim() : cleanAnswer(clueObj && clueObj.answer);
   const norm = s => String(s).toLowerCase().replace(/\s+/g, ' ').trim();
   const shuffle = arr => {
     const a = arr.slice();
@@ -1810,17 +1933,29 @@ const WIZ = (function () {
   function buildPool() {
     const cats = allCategories().filter(c => selected.has(c.key));
     const everyAnswer = [];
-    cats.forEach(c => c.cat.clues.forEach(cl => everyAnswer.push(cleanAnswer(cl.answer))));
+    cats.forEach(c => c.cat.clues.forEach(cl => everyAnswer.push(labelFor(cl))));
 
     const questions = [];
     cats.forEach(c => {
-      const siblings = c.cat.clues.map(cl => cleanAnswer(cl.answer));
+      const siblings = c.cat.clues.map(labelFor);
       c.cat.clues.forEach(cl => {
-        const correct = cleanAnswer(cl.answer);
+        const correct = labelFor(cl);
         if (!correct || !String(cl.clue || '').trim()) return;
 
         const seen = new Set([norm(correct)]);
         const decoys = [];
+
+        // Hand-written decoys come first. Falling back to other answers in the
+        // same category only works where the category is a homogeneous list —
+        // five SSRI names, five receptors. Where a category mixes question
+        // types, the siblings are not even the right *kind* of answer, so the
+        // correct one can be found by elimination without knowing anything.
+        // Those clues need `decoys` authored to match the question.
+        (Array.isArray(cl.decoys) ? cl.decoys : []).forEach(d => {
+          const t = String(d || '').trim();
+          if (decoys.length < 2 && t && !seen.has(norm(t))) { decoys.push(t); seen.add(norm(t)); }
+        });
+
         shuffle(siblings).forEach(a => {
           if (decoys.length < 2 && a && !seen.has(norm(a))) { decoys.push(a); seen.add(norm(a)); }
         });
@@ -2184,6 +2319,7 @@ const WIZ = (function () {
       stageEl.appendChild(wrapEl);
 
       pane.el = {
+        pane: wrapEl,
         scene: scene,
         row: scene.querySelector('.furni-row'),
         fx: scene.querySelector('.fx'),
@@ -2373,10 +2509,19 @@ const WIZ = (function () {
     const orb = pane.el.scene.querySelector('.wizard .orb').getBoundingClientRect();
     const t = targetBtn.getBoundingClientRect();
 
-    const x1 = orb.left + orb.width / 2 - scene.left;
-    const y1 = orb.top + orb.height / 2 - scene.top;
-    const x2 = t.left + t.width / 2 - scene.left;
-    const y2 = t.top + t.height / 2 - scene.top;
+    // Effects are positioned inside the room, but these rects are in screen
+    // space. When the pane is turned to face the opposite player, the two
+    // spaces differ by a half turn, so the points need turning back.
+    const flipped = getComputedStyle(pane.el.pane).transform.indexOf('matrix(-1') === 0;
+    const toLocal = (r) => {
+      const x = r.left + r.width / 2 - scene.left;
+      const y = r.top + r.height / 2 - scene.top;
+      return flipped ? { x: scene.width - x, y: scene.height - y } : { x: x, y: y };
+    };
+
+    const p1 = toLocal(orb);
+    const p2 = toLocal(t);
+    const x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
     const len = Math.hypot(x2 - x1, y2 - y1);
     const ang = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
 
