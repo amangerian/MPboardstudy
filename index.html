@@ -849,7 +849,7 @@
     font-weight: 700;
     color: #f4efff;
     text-align: center;
-    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 2.4em;
     text-shadow: 0 1px 2px rgba(0,0,0,.8);
@@ -1036,7 +1036,7 @@
     /* Two stacked rooms have to share one screen — a racer who has to scroll to
        see their own furniture has already lost. */
     .wiz-stage.two .scene { height: clamp(200px, 30vh, 320px); }
-    .wiz-stage.two .furni .label { font-size: clamp(10.5px, 2.7vw, 14px); padding: 5px 4px 6px; -webkit-line-clamp: 3; }
+    .wiz-stage.two .furni .label { font-size: clamp(10.5px, 2.7vw, 14px); padding: 5px 4px 6px; -webkit-line-clamp: 4; }
     .wiz-stage.two .room-prompt { padding: 6px 8px 7px; }
     .wiz-stage.two .room-prompt .text { font-size: clamp(11px, 2.9vw, 14px); }
     .wiz-stage.two .pane-hud { margin-bottom: 3px; }
@@ -1506,6 +1506,133 @@ const GAMES = [
         name: "Final Jeopardy ★",
         clues: [
           { value: 2000, clue: "Neuroimaging in psychiatry: what disorder would show decreased prefrontal cortex activity and increased amygdala activation during emotional tasks on fMRI?", answer: "What is major depressive disorder?", short: "Major depressive disorder", decoys: ["Schizophrenia", "Bipolar disorder"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "depression-pharm-jeopardy",
+    title: "Depression Pharmacology Jeopardy",
+    kind: "Jeopardy",
+    blurb: "Receptors, CYP interactions, TCAs, sexual side effects, cautions and the alternative agents — the pharmacology half of the depression review.",
+    tags: ["Psychopharm", "6 categories", "28 clues"],
+    subtitle: "Receptors · CYP · TCAs · Side Effects · Cautions · Alternatives",
+    categories: [
+      {
+        name: "Losing Reception",
+        clues: [
+          { value: 100, clue: "The antagonism of this receptor by mirtazapine indirectly causes the increased release of monoamines.", answer: "The presynaptic alpha-2 adrenergic receptor. Mirtazapine is also a 5-HT2 and 5-HT3 receptor antagonist.", short: "Presynaptic alpha-2 receptor", decoys: ["Presynaptic 5-HT1A autoreceptor", "Postsynaptic 5-HT2A receptor"] },
+          { value: 200, clue: "Which three receptors does vortioxetine work on?", answer: "A 5-HT1A partial agonist, with 5-HT3 and 5-HT7 antagonism.", short: "5-HT1A, 5-HT3 and 5-HT7", decoys: ["5-HT1A, 5-HT2A and 5-HT6", "5-HT1B, 5-HT3 and 5-HT7"] },
+          { value: 300, clue: "Brexanolone is a positive modulator at what receptor?", answer: "The GABA-A receptor. Brexanolone is the IV formulation of allopregnanolone.", short: "GABA-A receptor", decoys: ["NMDA receptor", "GABA-B receptor"] },
+          { value: 400, clue: "Which MAOI is a selective inhibitor of MAO-B?", answer: "Selegiline. As the dose rises it inhibits both MAO-A and MAO-B; at the recommended 6 mg/day patch dose there are no dietary restrictions.", short: "Selegiline", decoys: ["Phenelzine", "Tranylcypromine"] },
+          { value: 500, clue: "Which serotonin receptors are usually thought to be heavy contributors to the sexual side effects of antidepressants?", answer: "The 5-HT2A and 5-HT2C receptors, inhibiting desire, arousal and orgasm. This correlates with serotonin transporter binding affinity across agents.", short: "5-HT2A and 5-HT2C", decoys: ["5-HT1A and 5-HT1B", "5-HT3 and 5-HT4"] }
+        ]
+      },
+      {
+        name: "Can You Party (CYP)",
+        clues: [
+          { value: 100, clue: "Vortioxetine must be dose reduced if given with strong inhibitors of which CYP enzyme?", answer: "CYP2D6. Inhibitors include amiodarone, bupropion, diphenhydramine, escitalopram and fluoxetine.", short: "CYP2D6", decoys: ["CYP3A4", "CYP2C19"] },
+          { value: 200, clue: "Venlafaxine is converted into desvenlafaxine by this CYP enzyme.", answer: "CYP2D6.", short: "CYP2D6", decoys: ["CYP1A2", "CYP2C9"] },
+          { value: 300, clue: "Citalopram should be capped at 20 mg for poor metabolisers at this CYP enzyme.", answer: "CYP2C19.", short: "CYP2C19", decoys: ["CYP2D6", "CYP3A4"] },
+          { value: 400, clue: "This antidepressant is a strong inhibitor at CYP3A4.", answer: "Nefazodone.", short: "Nefazodone", decoys: ["Fluvoxamine", "Sertraline"] },
+          { value: 500, clue: "Trazodone must be dose reduced if given concurrently with strong inhibitors of which CYP enzyme?", answer: "CYP3A4. Inhibitors include grapefruit, pomegranate, amlodipine, ciprofloxacin, diltiazem, esomeprazole, fluvoxamine, several HIV medications, star fruit, ticagrelor and voriconazole.", short: "CYP3A4", decoys: ["CYP2D6", "CYP2B6"] }
+        ]
+      },
+      {
+        name: "TCAs",
+        clues: [
+          { value: 100, clue: "This property is the proposed cause of sedation from TCAs and also of their increased risk of arrhythmias.", answer: "Inhibition of voltage-gated sodium channels on the neuronal cell membrane, causing conduction delays, QT prolongation, ventricular tachycardia and torsades de pointes.", short: "Sodium channel blockade", decoys: ["Potassium channel blockade", "Calcium channel blockade"] },
+          { value: 200, clue: "What is the therapeutic plasma range for TCAs?", answer: "50 to 150 ng/mL.", short: "50 to 150 ng/mL", decoys: ["10 to 50 ng/mL", "150 to 300 ng/mL"] },
+          { value: 300, clue: "Which TCA is the most histaminergic?", answer: "Doxepin.", short: "Doxepin", decoys: ["Desipramine", "Nortriptyline"] },
+          { value: 400, clue: "Which TCA performed worse than placebo for the treatment of depression?", answer: "Clomipramine.", short: "Clomipramine", decoys: ["Imipramine", "Amitriptyline"] },
+          { value: 500, clue: "TCAs may lead to this pattern of heart block in patients with an underlying left bundle branch block.", answer: "A 2:1 AV block.", short: "2:1 AV block", decoys: ["First-degree AV block", "Complete heart block"] }
+        ]
+      },
+      {
+        name: "Below the Belt",
+        clues: [
+          { value: 100, clue: "A proposed mechanism of SSRI-induced sexual dysfunction is the suppression of this neurotransmitter in the mesolimbic circuits.", answer: "Dopamine. Animal models show sexual behaviour is inhibited by serotonin-enhancing agents and normalised only when both dopamine and noradrenaline signalling are increased.", short: "Dopamine", decoys: ["Noradrenaline", "Acetylcholine"] },
+          { value: 200, clue: "What percentage of individuals with depression have sexual dysfunction?", answer: "50% to 70%.", short: "50% to 70%", decoys: ["20% to 30%", "80% to 90%"] },
+          { value: 300, clue: "Which SNRI is approved for patients with stress urinary incontinence?", answer: "Duloxetine.", short: "Duloxetine", decoys: ["Venlafaxine", "Milnacipran"] }
+        ]
+      },
+      {
+        name: "Proceed with Caution",
+        clues: [
+          { value: 100, clue: "This substance, sometimes used as a vasopressor, carries a risk of serotonin syndrome through potential inhibition of monoamine oxidase.", answer: "Methylene blue.", short: "Methylene blue", decoys: ["Phenylephrine", "Vasopressin"] },
+          { value: 200, clue: "How does cyproheptadine work to treat serotonin syndrome?", answer: "It competes with serotonin and histamine at their receptor sites.", short: "Serotonin and histamine blockade", decoys: ["Dopamine receptor blockade", "GABA-A potentiation"] },
+          { value: 300, clue: "Which receptor subtypes are heavily implicated in serotonin syndrome?", answer: "5-HT1A and 5-HT2A, particularly the latter.", short: "5-HT1A and 5-HT2A", decoys: ["5-HT2C and 5-HT3", "5-HT4 and 5-HT7"] },
+          { value: 400, clue: "FDA approved in 2023, this 5-HT1A agonist and 5-HT2A antagonist should not be started if the QTc is above 450.", answer: "Gepirone ER (Exxua).", short: "Gepirone ER (Exxua)", decoys: ["Vilazodone", "Buspirone"] },
+          { value: 500, clue: "What GFR cut-off is used for stopping duloxetine in chronic kidney disease or end-stage renal disease?", answer: "A GFR below 30.", short: "GFR below 30", decoys: ["GFR below 60", "GFR below 15"] }
+        ]
+      },
+      {
+        name: "Bring in the Alternate",
+        clues: [
+          { value: 100, clue: "A 2022 meta-analysis found no benefit from supplementation of this vitamin in acute depression.", answer: "Vitamin B12. Taken long term it can decrease the risk of relapse and delay the onset of symptoms.", short: "Vitamin B12", decoys: ["Vitamin D", "Folate"] },
+          { value: 200, clue: "Bright light therapy for seasonal affective disorder uses 10,000 lux at this distance for 20 to 30 minutes a day.", answer: "18 inches.", short: "18 inches", decoys: ["6 inches", "3 feet"] },
+          { value: 300, clue: "This supplement was found to significantly reduce depressive symptoms, but only when given as monotherapy.", answer: "Zinc.", short: "Zinc", decoys: ["Magnesium", "Selenium"] },
+          { value: 400, clue: "This hormone, occasionally used when treating depression, affects monoaminergic and glutamatergic neurotransmission.", answer: "DHEA.", short: "DHEA", decoys: ["Oestradiol", "Testosterone"] },
+          { value: 500, clue: "Approved by the FDA in 2023 for postpartum depression, what is the oral formulation of allopregnanolone?", answer: "Zurzuvae (zuranolone).", short: "Zurzuvae (zuranolone)", decoys: ["Zulresso (brexanolone)", "Spravato (esketamine)"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "depression-treatment-jeopardy",
+    title: "Depression Treatment Jeopardy",
+    kind: "Jeopardy",
+    blurb: "ECT, TMS and esketamine, treatment resistance, maintenance, the DOD/VA guidelines and the psychotherapies.",
+    tags: ["Treatment", "5 categories", "24 clues"],
+    subtitle: "Interventions · Treatment Resistance · Maintenance · DOD/VA · Psychotherapy",
+    categories: [
+      {
+        name: "Let's Intervene",
+        clues: [
+          { value: 100, clue: "What are the absolute contraindications for ECT?", answer: "There are none. There are several relative contraindications, both CNS and cardiac.", short: "There are none", decoys: ["Raised intracranial pressure", "Recent myocardial infarction"] },
+          { value: 200, clue: "Name one of the four TMS variants with proven efficacy.", answer: "Bilateral repetitive TMS, priming TMS, theta burst stimulation, or adjunctive D-cycloserine added to theta burst stimulation.", short: "Theta burst stimulation", decoys: ["Deep brain stimulation", "Transcranial direct current stimulation"] },
+          { value: 300, clue: "Why has methohexital been used for ECT induction, and why is it preferred over propofol?", answer: "It keeps the therapeutic seizure duration stable without heavily suppressing brain activity, unlike sedatives such as propofol, and gives fast unconsciousness with very quick recovery.", short: "It keeps seizure duration stable", decoys: ["It lengthens the seizure", "It gives deeper anaesthesia"] },
+          { value: 400, clue: "What is the dosing schedule for induction with esketamine?", answer: "Twice a week for four weeks, which can move to once a week in maintenance.", short: "Twice a week for four weeks", decoys: ["Once a week for eight weeks", "Three times a week for two weeks"] },
+          { value: 500, clue: "This TMS treatment protocol involves MRI-guided region selection and multiple sessions over the course of five days.", answer: "SAINT, as compared with the original protocol of 30 or more sessions over 6 to 8 weeks.", short: "SAINT", decoys: ["Standard 10 Hz rTMS", "Deep TMS with an H-coil"] }
+        ]
+      },
+      {
+        name: "Resisting Treatment",
+        clues: [
+          { value: 100, clue: "What is the definition of treatment-resistant depression?", answer: "Failure to respond to two or more antidepressant regimens despite adequate dose, duration and adherence. Failed courses of psychotherapy do not count towards TRD.", short: "Two failed adequate trials", decoys: ["One failed adequate trial", "Three failed adequate trials"] },
+          { value: 200, clue: "A failure to respond is defined as a lack of improvement by how much?", answer: "Less than 25% symptom improvement.", short: "Less than 25%", decoys: ["Less than 50%", "Less than 10%"] },
+          { value: 300, clue: "In the VAST-D trial, what was the only augmentation strategy that yielded statistical significance?", answer: "Aripiprazole (Abilify), with a 28.9% remission rate. Bupropion switch and bupropion augmentation were not significant.", short: "Aripiprazole", decoys: ["Bupropion augmentation", "Bupropion switch"] },
+          { value: 400, clue: "The elderly may need a trial of at least this duration before being called treatment resistant, because of slowed response rates.", answer: "12 weeks.", short: "12 weeks", decoys: ["6 weeks", "8 weeks"] },
+          { value: 500, clue: "FDA approved in 2005 for treatment-resistant depression, this treatment requires failure of at least 4 medication trials.", answer: "The vagus nerve stimulator. It delivers pulses to the left vagus nerve, 30 seconds on and 5 minutes off; the 2022 DOD/VA guidelines recommend against it.", short: "Vagus nerve stimulation", decoys: ["Deep brain stimulation", "Esketamine"] }
+        ]
+      },
+      {
+        name: "Long Term Thinking",
+        clues: [
+          { value: 100, clue: "There is a strong-for recommendation in the DOD/VA guidelines for continuing medication for this duration in patients who have achieved remission in MDD.", answer: "Six months.", short: "Six months", decoys: ["Three months", "Twelve months"] },
+          { value: 200, clue: "Who requires maintenance or indefinite treatment for depression?", answer: "Patients with 3 episodes of major depression, carrying over 80% risk of recurrence; or 2 episodes plus family history, early onset, severe episodes, or serious suicide risk during episodes.", short: "Three episodes", decoys: ["Two episodes", "Four episodes"] },
+          { value: 300, clue: "According to STAR*D, what is remission defined as?", answer: "A score of 7 or less on the HAM-D17.", short: "HAM-D17 of 7 or less", decoys: ["HAM-D17 of 12 or less", "HAM-D17 of 3 or less"] },
+          { value: 400, clue: "Maintenance treatment reduces the risk of recurrence of major depressive episodes by how much?", answer: "By more than 50%.", short: "More than 50%", decoys: ["More than 25%", "More than 80%"] },
+          { value: 500, clue: "A 2023 meta-analysis showed these antidepressants had the best balance of efficacy and tolerability for maintenance treatment in MDD.", answer: "Desvenlafaxine, paroxetine, venlafaxine and vortioxetine.", short: "Desvenlafaxine, paroxetine, venlafaxine, vortioxetine", decoys: ["Fluoxetine, sertraline, citalopram", "Amitriptyline, nortriptyline, doxepin"] }
+        ]
+      },
+      {
+        name: "Warfighter Guidelines",
+        clues: [
+          { value: 100, clue: "What are the recommended first-line medications in the DOD/VA guidelines?", answer: "SSRIs, SNRIs, serotonin modulators and stimulators, bupropion and mirtazapine.", short: "SSRI, SNRI, bupropion, mirtazapine", decoys: ["MAOI, TCA, ketamine, nefazodone", "Lithium, lamotrigine, quetiapine"] },
+          { value: 200, clue: "Which medications are recommended against as first line?", answer: "MAOIs, TCAs, ketamine and esketamine, and nefazodone.", short: "MAOI, TCA, ketamine, nefazodone", decoys: ["SSRI, SNRI, bupropion, mirtazapine", "Lithium, buspirone, thyroid hormone"] },
+          { value: 300, clue: "What is the DOD/VA strength of recommendation for pharmacogenetic testing to help guide the selection of antidepressants?", answer: "Neither for nor against.", short: "Neither for nor against", decoys: ["Strong against", "Weak for"] },
+          { value: 400, clue: "The 2022 DOD/VA guidelines recommend against the use of these supplements for the treatment of MDD.", answer: "Omega-3 and vitamin D.", short: "Omega-3 and vitamin D", decoys: ["St John's wort and SAMe", "Folate and vitamin B12"] },
+          { value: 500, clue: "The DOD/VA guidelines have a strong-for recommendation for this treatment as first line in pregnancy and breastfeeding.", answer: "Psychotherapy.", short: "Psychotherapy", decoys: ["Sertraline", "Bright light therapy"] }
+        ]
+      },
+      {
+        name: "Psychotherapy",
+        clues: [
+          { value: 100, clue: "Identify which step of CBT this is: “Now, what's the likelihood of that happening?”", answer: "Step 2: reappraise, and replace with logical thoughts.", short: "Step 2: reappraise and replace", decoys: ["Step 1: identify automatic thoughts", "Step 3: behavioural experiment"] },
+          { value: 200, clue: "What is the primary focus of interpersonal therapy for depression?", answer: "Social functioning. In IPT depression has three components — symptom formation, personality contributors and social functioning — and social functioning is IPT's focus.", short: "Social functioning", decoys: ["Automatic thoughts", "Unconscious conflict"] },
+          { value: 300, clue: "What therapy modality involves behavioural activation, psychoeducation and problem-solving skills?", answer: "Problem-solving therapy.", short: "Problem-solving therapy", decoys: ["Dialectical behaviour therapy", "Interpersonal therapy"] },
+          { value: 400, clue: "What psychodynamic intervention involves bringing to the patient's awareness some aspect of themselves that they are consciously aware of?", answer: "Confrontation.", short: "Confrontation", decoys: ["Interpretation", "Clarification"] }
         ]
       }
     ]
