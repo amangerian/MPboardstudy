@@ -687,6 +687,28 @@
     border: 1px solid #4a3a7d; border-radius: 2px;
   }
   .pip.on { background: var(--arcane); border-color: var(--arcane); box-shadow: 0 0 8px rgba(124,240,216,.7); }
+
+  /* ---- survival: lives and depth ---- */
+  .depth {
+    font: 700 11px Arial, sans-serif; letter-spacing: 2px;
+    text-transform: uppercase; color: #d4c9f5;
+  }
+  .lives { display: flex; gap: 5px; align-items: center; }
+  .life {
+    width: 11px; height: 14px;
+    border-radius: 50% 50% 46% 46%;
+    background: radial-gradient(ellipse at 50% 70%, #fff6dd 0%, var(--ember) 45%, #c2410c 100%);
+    box-shadow: 0 0 9px rgba(255,157,60,.85);
+  }
+  .life.out {
+    background: #241c44;
+    box-shadow: none;
+    opacity: .55;
+  }
+  /* the clock turning against you */
+  .power-track.hot .power-fill { background: linear-gradient(90deg, var(--ember), #ff5a5a); }
+  .power-track.hot { border-color: var(--wrong); }
+  .score-row .badge.survival { border-color: var(--ember); color: var(--ember); }
   .pane-score { font-family: Georgia, serif; font-weight: 900; font-size: 17px; color: var(--gold); }
 
   /* Height-driven rather than aspect-ratio driven: the room has to fit the
@@ -1146,6 +1168,7 @@
           <div class="seg" id="wizMode">
             <button type="button" data-mode="1" aria-pressed="true">One wizard<span class="seg-note">Escape for score</span></button>
             <button type="button" data-mode="2" aria-pressed="false">Two wizards<span class="seg-note">Split screen race</span></button>
+            <button type="button" data-mode="survival" aria-pressed="false">Survival<span class="seg-note">Three lives, no exit</span></button>
           </div>
           <p class="flip-hint" id="wizFlipHint">Two wizards on a phone: lay it flat between you — the top room is turned around so you can sit facing each other.</p>
           <div class="initials-row" id="wizNames">
@@ -1159,7 +1182,7 @@
             </label>
           </div>
         </div>
-        <div>
+        <div id="wizRoomsBlock">
           <h3>Castle size</h3>
           <div class="seg" id="wizRooms">
             <button type="button" data-rooms="5" aria-pressed="false">5 rooms</button>
@@ -1194,7 +1217,7 @@
       <button class="wiz-flee" id="wizFlee">&larr; Abandon run</button>
       <div class="power-wrap">
         <div class="power-label"><span>Spell power</span><span id="wizPowerNum">100%</span></div>
-        <div class="power-track"><div class="power-fill" id="wizPowerFill"></div></div>
+        <div class="power-track" id="wizPowerTrack"><div class="power-fill" id="wizPowerFill"></div></div>
       </div>
     </div>
 
@@ -2000,6 +2023,10 @@ document.addEventListener('keydown', (e) => {
 // from GAMES, so a new Jeopardy game becomes new wizard content for free.
 const WIZ = (function () {
   const ROOM_TIME = 18000;      // ms over which spell power decays to zero
+  const SURVIVAL_LIVES = 3;
+  const SURVIVAL_START = 14000; // survival gives less time from the outset...
+  const SURVIVAL_MIN = 6000;    // ...tightening to this floor...
+  const SURVIVAL_STEP = 400;    // ...by this much per room.
   const BASE_POINTS = 100;      // for clearing a room at all
   const MAX_SPEED_BONUS = 150;  // added at full power
   const STREAK_BONUS = 25;      // per consecutive first-try room
@@ -2018,6 +2045,7 @@ const WIZ = (function () {
   const noteEl = document.getElementById('wizSetupNote');
   const modeSeg = document.getElementById('wizMode');
   const roomsSeg = document.getElementById('wizRooms');
+  const roomsBlock = document.getElementById('wizRoomsBlock');
   const nameInput1 = document.getElementById('wizName1');
   const nameInput2 = document.getElementById('wizName2');
   const name1Label = document.getElementById('wizName1Label');
@@ -2026,6 +2054,7 @@ const WIZ = (function () {
   const clearScoresBtn = document.getElementById('wizClearScores');
   const stageEl = document.getElementById('wizStage');
   const powerFill = document.getElementById('wizPowerFill');
+  const powerTrack = document.getElementById('wizPowerTrack');
   const powerNum = document.getElementById('wizPowerNum');
   const fleeBtn = document.getElementById('wizFlee');
 
@@ -2034,6 +2063,7 @@ const WIZ = (function () {
   const MAX_KEPT = 100;
 
   let mode = 1;
+  let variant = 'escape';   // 'escape' | 'survival'
   let roomsWanted = 7;
   let selected = new Set();
   let run = null;
@@ -2082,15 +2112,17 @@ const WIZ = (function () {
     return cleanInitials(el.value) || (mode === 2 ? 'Wizard ' + (i + 1) : 'You');
   }
 
-  function recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped) {
+  function recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped, runVariant) {
     const stamp = Date.now();
+    const survival = runVariant === 'survival';
     const rows = panes.map((p, i) => ({
       id: stamp + '-' + i,
       who: nameFor(i),
       score: p.score,
       rooms: p.rooms,
-      total: run ? run.total : p.rooms,
-      mode: mode,
+      // Survival has no target, so there is no "out of" to record.
+      total: survival ? null : (run ? run.total : p.rooms),
+      mode: survival ? 'survival' : mode,
       escaped: escaped && i === winnerIdx,
       seconds: seconds,
       cats: catNames,
@@ -2142,10 +2174,11 @@ const WIZ = (function () {
       const meta = document.createElement('div');
       meta.className = 'meta';
       const rooms = document.createElement('span');
-      rooms.textContent = `${row.rooms}/${row.total} rooms`;
+      rooms.textContent = row.total ? `${row.rooms}/${row.total} rooms` : `${row.rooms} rooms`;
       const modeBadge = document.createElement('span');
-      modeBadge.className = 'badge';
-      modeBadge.textContent = row.mode === 2 ? '2 wizards' : 'solo';
+      modeBadge.className = 'badge' + (row.mode === 'survival' ? ' survival' : '');
+      modeBadge.textContent = row.mode === 'survival' ? 'survival'
+        : row.mode === 2 ? '2 wizards' : 'solo';
       meta.append(rooms, modeBadge);
       if (row.escaped) {
         const win = document.createElement('span');
@@ -2356,6 +2389,10 @@ const WIZ = (function () {
     } else {
       startBtn.disabled = false;
       noteEl.className = 'wiz-note';
+      if (variant === 'survival') {
+        noteEl.textContent = `${n} questions available — survival runs until your lives run out, and repeats questions if you get that far.`;
+        return;
+      }
       const rooms = roomsFor(n);
       noteEl.textContent = rooms < roomsWanted
         ? `${n} questions available — the castle will be ${rooms} rooms.`
@@ -2373,10 +2410,19 @@ const WIZ = (function () {
       };
     });
   }
-  bindSeg(modeSeg, 'mode', v => {
-    mode = v;
-    name2Wrap.hidden = mode !== 2;
-    name1Label.textContent = mode === 2 ? 'Wizard 1' : 'Your initials';
+  // Not bindSeg: this control sets the player count *and* the run type.
+  modeSeg.querySelectorAll('button').forEach(b => {
+    b.onclick = () => {
+      modeSeg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      const v = b.dataset.mode;
+      variant = v === 'survival' ? 'survival' : 'escape';
+      mode = v === '2' ? 2 : 1;
+      name2Wrap.hidden = mode !== 2;
+      name1Label.textContent = mode === 2 ? 'Wizard 1' : 'Your initials';
+      roomsBlock.hidden = variant === 'survival';  // no fixed castle to size
+      refreshStart();
+    };
   });
   bindSeg(roomsSeg, 'rooms', v => { roomsWanted = v; });
 
@@ -2586,24 +2632,44 @@ const WIZ = (function () {
           nameEl.appendChild(b);
         }
       } else {
-        nameEl.textContent = initials ? '' : 'Your escape';
+        const fallback = run.variant === 'survival' ? 'Survival' : 'Your escape';
+        nameEl.textContent = initials ? '' : fallback;
         if (initials) {
           const b = document.createElement('b');
           b.textContent = initials;
           nameEl.appendChild(b);
         }
       }
-      const pips = document.createElement('div');
-      pips.className = 'pips';
-      for (let r = 0; r < run.total; r++) {
-        const pip = document.createElement('div');
-        pip.className = 'pip';
-        pips.appendChild(pip);
-      }
+
       const score = document.createElement('div');
       score.className = 'pane-score';
       score.textContent = '0';
-      hud.append(nameEl, pips, score);
+
+      // Survival has no fixed number of rooms to pip out, so the HUD shows how
+      // deep you are and how many lives are left.
+      let pips = null, lives = null, depth = null;
+      if (run.variant === 'survival') {
+        depth = document.createElement('div');
+        depth.className = 'depth';
+        depth.textContent = 'Cleared 0';
+        lives = document.createElement('div');
+        lives.className = 'lives';
+        for (let l = 0; l < run.lives; l++) {
+          const life = document.createElement('span');
+          life.className = 'life';
+          lives.appendChild(life);
+        }
+        hud.append(nameEl, depth, lives, score);
+      } else {
+        pips = document.createElement('div');
+        pips.className = 'pips';
+        for (let r = 0; r < run.total; r++) {
+          const pip = document.createElement('div');
+          pip.className = 'pip';
+          pips.appendChild(pip);
+        }
+        hud.append(nameEl, pips, score);
+      }
 
       const scene = document.createElement('div');
       scene.className = 'scene';
@@ -2622,6 +2688,8 @@ const WIZ = (function () {
         promptText: scene.querySelector('.room-prompt .text'),
         promptImg: scene.querySelector('.room-prompt .prompt-image'),
         pips: pips,
+        lives: lives,
+        depth: depth,
         score: score,
       };
     });
@@ -2629,6 +2697,7 @@ const WIZ = (function () {
 
   function start() {
     const pool = shuffle(buildPool());
+    if (variant === 'survival') return startSurvival(pool);
     const total = roomsFor(pool.length);
     if (!total) return;
 
@@ -2660,13 +2729,54 @@ const WIZ = (function () {
     renderRoom();
   }
 
+  // Survival: one wizard, no exit, three lives. The deck is looped rather than
+  // dealt, so the run ends only when the lives do.
+  function startSurvival(pool) {
+    if (pool.length < 1) return;
+    mode = 1;
+    run = {
+      variant: 'survival',
+      pool: pool,
+      questions: pool.slice(),
+      total: 0,
+      lives: SURVIVAL_LIVES,
+      idx: 0,
+      resolved: false,
+      roomStart: 0,
+      startedAt: Date.now(),
+      cats: allCategories().filter(c => selected.has(c.key)).map(c => c.cat.name),
+      allCats: allCategories().every(c => selected.has(c.key)),
+      panes: [{ rooms: 0, score: 0, streak: 0, wrongs: new Set(), buttons: [], el: null }],
+    };
+    setupEl.hidden = true;
+    resultEl.hidden = true;
+    playEl.hidden = false;
+    view.classList.add('playing');
+    buildPanes();
+    renderRoom();
+  }
+
+  // How long this room's spell power lasts. Escape mode is generous and fixed;
+  // survival starts tighter and squeezes with depth.
+  function roomTime() {
+    if (!run || run.variant !== 'survival') return ROOM_TIME;
+    return Math.max(SURVIVAL_MIN, SURVIVAL_START - run.idx * SURVIVAL_STEP);
+  }
+
   function renderRoom() {
     // Belt and braces: if the deck ever empties before anyone reaches the exit,
     // end on who got furthest instead of rendering an undefined question.
     if (run.idx >= run.questions.length) {
-      const best = run.panes.reduce((a, b) => (b.rooms > a.rooms ? b : a), run.panes[0]);
-      finish(run.panes.indexOf(best), true);
-      return;
+      if (run.variant === 'survival') {
+        // Loop the deck, without repeating the question just asked.
+        const more = shuffle(run.pool);
+        if (more.length > 1 && more[0] === run.questions[run.questions.length - 1]) more.push(more.shift());
+        run.questions = run.questions.concat(more);
+      } else {
+        const best = run.panes.reduce((a, b) => (b.rooms > a.rooms ? b : a), run.panes[0]);
+        finish(run.panes.indexOf(best), true);
+        return;
+      }
     }
     const q = run.questions[run.idx];
     const type = FURNITURE[run.idx % FURNITURE.length];
@@ -2674,6 +2784,9 @@ const WIZ = (function () {
 
     run.resolved = false;
     run.roomStart = performance.now();
+    if (run.variant === 'survival' && run.panes[0].el.depth) {
+      run.panes[0].el.depth.textContent = 'Cleared ' + run.panes[0].rooms;
+    }
 
     const catLabel = q.category + (GAMES.length > 1 ? ' — ' + q.game : '');
 
@@ -2737,6 +2850,8 @@ const WIZ = (function () {
       const p = power();
       powerFill.style.transform = `scaleX(${p})`;
       powerNum.textContent = Math.round(p * 100) + '%';
+      powerTrack.classList.toggle('hot', run.variant === 'survival' && p < 0.34);
+      if (run.variant === 'survival' && p <= 0) { timeUp(); return; }
       rafId = requestAnimationFrame(tick);
     };
     rafId = requestAnimationFrame(tick);
@@ -2744,7 +2859,54 @@ const WIZ = (function () {
 
   function power() {
     const elapsed = performance.now() - run.roomStart;
-    return Math.max(0, 1 - elapsed / ROOM_TIME);
+    return Math.max(0, 1 - elapsed / roomTime());
+  }
+
+  // ---------- survival: losing a life ----------
+  function spendLife() {
+    run.lives -= 1;
+    const holder = run.panes[0].el.lives;
+    if (holder) [...holder.children].forEach((el, i) => el.classList.toggle('out', i >= run.lives));
+    return run.lives <= 0;
+  }
+
+  function revealCorrect(pane) {
+    const q = run.questions[run.idx];
+    pane.buttons.forEach(b => {
+      b.btn.disabled = true;
+      if (q.options[b.optIdx] === q.correct) b.btn.classList.add('reveal');
+    });
+  }
+
+  // The room's clock ran out: costs a life, shows the answer, moves on.
+  function timeUp() {
+    if (!run || run.resolved) return;
+    run.resolved = true;
+    cancelAnimationFrame(rafId);
+    powerTrack.classList.remove('hot');
+    const pane = run.panes[0];
+    pane.streak = 0;
+    const over = spendLife();
+    revealCorrect(pane);
+    pane.el.scene.classList.add('flash-bad');
+    toast(pane, over ? 'Out of lives' : 'Too slow!', true);
+    setTimeout(() => pane.el.scene.classList.remove('flash-bad'), 700);
+    setTimeout(() => {
+      if (!run) return;
+      if (over) { endSurvival(); return; }
+      run.idx += 1;
+      renderRoom();
+    }, RESOLVE_PAUSE);
+  }
+
+  function endSurvival() {
+    const pane = run.panes[0];
+    pane.el.scene.classList.add('dimmed');
+    const v = document.createElement('div');
+    v.className = 'pane-verdict';
+    v.textContent = 'Out of lives';
+    pane.el.scene.appendChild(v);
+    setTimeout(() => { if (run) finish(0, true); }, RESOLVE_PAUSE);
   }
 
   function pick(paneIdx, optIdx, btn) {
@@ -2760,6 +2922,14 @@ const WIZ = (function () {
       btn.classList.add('wrong');
       btn.disabled = true;
       fizzle(pane, btn);
+      // Escape mode forgives a miss; survival charges a life for it.
+      if (run.variant === 'survival' && spendLife()) {
+        run.resolved = true;
+        cancelAnimationFrame(rafId);
+        powerTrack.classList.remove('hot');
+        revealCorrect(pane);
+        endSurvival();
+      }
       return;
     }
     resolve(paneIdx, btn);
@@ -2780,7 +2950,11 @@ const WIZ = (function () {
     winner.score += gained;
     winner.rooms += 1;
     winner.el.score.textContent = winner.score;
-    winner.el.pips.children[winner.rooms - 1].classList.add('on');
+    if (run.variant === 'survival') {
+      if (winner.el.depth) winner.el.depth.textContent = 'Cleared ' + winner.rooms;
+    } else {
+      winner.el.pips.children[winner.rooms - 1].classList.add('on');
+    }
 
     cast(winner, btn, gained, clean && winner.streak > 1 ? winner.streak : 0);
 
@@ -2804,7 +2978,7 @@ const WIZ = (function () {
 
     setTimeout(() => {
       if (!run) return;
-      if (winner.rooms >= run.total) { finish(winnerIdx); return; }
+      if (run.variant !== 'survival' && winner.rooms >= run.total) { finish(winnerIdx); return; }
       run.idx += 1;
       renderRoom();
     }, RESOLVE_PAUSE);
@@ -2964,16 +3138,19 @@ const WIZ = (function () {
     const seconds = Math.round((Date.now() - run.startedAt) / 1000);
     const panes = run.panes;
     const rooms = run.total;
-    const escaped = !ranOut;
-    const tie = ranOut && mode === 2 && panes[0].rooms === panes[1].rooms;
+    const runVariant = run.variant || 'escape';
+    const survival = runVariant === 'survival';
+    const escaped = !ranOut && !survival;
+    const tie = ranOut && !survival && mode === 2 && panes[0].rooms === panes[1].rooms;
     const catNames = run.cats;
     const allCats = run.allCats;
-    const freshIds = recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped);
+    const freshIds = recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped, runVariant);
     run = null;
 
     playEl.hidden = true;
     resultEl.hidden = false;
     view.classList.remove('playing');
+    powerTrack.classList.remove('hot');
     resultBody.innerHTML = '';
 
     // The walk out of the castle.
@@ -2991,15 +3168,21 @@ const WIZ = (function () {
 
     const h = document.createElement('h2');
     h.className = 'wiz-result-title';
-    h.textContent = !escaped
-      ? (tie ? 'A draw in the dark' : 'Out of questions')
-      : `${displayName(winnerIdx)} escape${displayName(winnerIdx) === 'You' ? '' : 's'}!`;
+    h.textContent = survival
+      ? (panes[0].rooms === 0 ? 'The castle wins' : `${panes[0].rooms} room${panes[0].rooms === 1 ? '' : 's'} deep`)
+      : !escaped
+        ? (tie ? 'A draw in the dark' : 'Out of questions')
+        : `${displayName(winnerIdx)} escape${displayName(winnerIdx) === 'You' ? '' : 's'}!`;
     resultBody.appendChild(h);
 
     const sub = document.createElement('p');
     sub.className = 'sub';
     sub.style.textAlign = 'center';
-    if (!escaped) {
+    if (survival) {
+      sub.textContent = panes[0].rooms === 0
+        ? 'Not a single door. The castle is still standing, and so are its bookcases.'
+        : 'Your last spell fizzled and the dark closed in. The rooms never did stop coming.';
+    } else if (!escaped) {
       sub.textContent = tie
         ? 'The castle ran out of rooms with both wizards level. Pick more categories for a longer game.'
         : 'The castle ran out of questions before anyone reached the last door. Pick more categories for a longer game.';
@@ -3020,7 +3203,10 @@ const WIZ = (function () {
       s.append(kk, vv);
       stats.appendChild(s);
     };
-    if (mode === 2) {
+    if (survival) {
+      add('Rooms survived', panes[0].rooms);
+      add('Score', panes[0].score);
+    } else if (mode === 2) {
       panes.forEach((p, i) => add(displayName(i), `${p.rooms}/${rooms}`));
       panes.forEach((p, i) => add(displayName(i) + ' score', p.score));
     } else {
@@ -3057,7 +3243,7 @@ const WIZ = (function () {
     actions.className = 'wiz-actions';
     const again = document.createElement('button');
     again.className = 'primary';
-    again.textContent = 'Escape again';
+    again.textContent = survival ? 'Run again' : 'Escape again';
     again.onclick = () => { resultEl.hidden = true; start(); };
     const back = document.createElement('button');
     back.textContent = 'Change categories';
