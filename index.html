@@ -136,6 +136,23 @@
   }
   .game-card:hover .play-cue { color: var(--gold); }
 
+  /* Parked game: visible, legible, and plainly not available yet. */
+  .game-card.soon {
+    background: linear-gradient(160deg, #2a2c50, #1e2044 60%, #14152e);
+    border-color: #3a3d6b;
+    border-style: dashed;
+    box-shadow: none;
+    cursor: default;
+    opacity: .78;
+  }
+  .game-card.soon:hover { transform: none; border-color: #3a3d6b; box-shadow: none; }
+  .game-card.soon h2 { color: #b9b6d8; text-shadow: none; }
+  .game-card.soon .kind { color: #8f8ab5; }
+  .game-card.soon p { color: #a9a5c8; }
+  .game-card.soon .tag { border-color: #3a3d6b; color: #8f8ab5; }
+  .game-card.soon .play-cue { color: var(--gold-dim); }
+  .game-card.soon:hover .play-cue { color: var(--gold-dim); }
+
   .section-label {
     margin: 34px 0 0;
     color: var(--muted-dim);
@@ -1537,6 +1554,10 @@ const GAMES = [
     id: "depression-pharm-jeopardy",
     title: "Depression Pharmacology Jeopardy",
     kind: "Jeopardy",
+    // Parked: the card shows as coming soon and cannot be opened, and these
+    // categories are kept out of Wizard's Escape. The clues below are intact —
+    // delete this one line to bring the game back.
+    comingSoon: true,
     blurb: "Receptors, CYP interactions, TCAs, sexual side effects, cautions and the alternative agents — the pharmacology half of the depression review.",
     tags: ["Psychopharm", "6 categories", "28 clues"],
     subtitle: "Receptors · CYP · TCAs · Side Effects · Cautions · Alternatives",
@@ -1742,9 +1763,16 @@ function renderHub() {
     return;
   }
   entries.forEach(game => {
-    const card = document.createElement('a');
-    card.className = 'game-card' + (game.arcane ? ' arcane' : '');
-    card.href = '#' + game.id;
+    // A parked game is a plain div, not a link: nothing to click, nothing to
+    // focus, and no hash to follow.
+    const soon = !!game.comingSoon;
+    const card = document.createElement(soon ? 'div' : 'a');
+    card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (soon ? ' soon' : '');
+    if (soon) {
+      card.setAttribute('aria-disabled', 'true');
+    } else {
+      card.href = '#' + game.id;
+    }
 
     const kind = document.createElement('div');
     kind.className = 'kind';
@@ -1772,7 +1800,7 @@ function renderHub() {
 
     const cue = document.createElement('div');
     cue.className = 'play-cue';
-    cue.textContent = 'Play →';
+    cue.textContent = soon ? 'Coming soon' : 'Play →';
     card.appendChild(cue);
 
     gameGrid.appendChild(card);
@@ -2244,7 +2272,8 @@ const WIZ = (function () {
 
   function allCategories() {
     const out = [];
-    GAMES.forEach(g => (g.categories || []).forEach((cat, ci) => {
+    // Parked games contribute no questions here either.
+    GAMES.filter(g => !g.comingSoon).forEach(g => (g.categories || []).forEach((cat, ci) => {
       out.push({ key: g.id + '::' + ci, gameId: g.id, gameTitle: g.title, cat: cat });
     }));
     return out;
@@ -3324,7 +3353,7 @@ const WIZ = (function () {
 // hub. That keeps the browser Back button working with no history juggling.
 function route() {
   const id = decodeURIComponent(location.hash.replace(/^#/, ''));
-  const game = GAMES.find(g => g.id === id);
+  const game = GAMES.find(g => g.id === id && !g.comingSoon);
   const extra = EXTRAS.find(x => x.id === id);
 
   overlay.classList.remove('active');
