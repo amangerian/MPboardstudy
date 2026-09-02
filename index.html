@@ -309,6 +309,8 @@
     text-transform: uppercase;
     font-weight: 700;
     margin-bottom: 6px;
+    /* keeps a long category name clear of the timer (left) and close (right) */
+    padding: 0 48px;
   }
   .clue-modal .value {
     color: var(--gold);
@@ -420,12 +422,140 @@
   }
   .reset-board-btn:hover { border-color: var(--gold); color: var(--gold); }
 
+  /* Deliberately silent for the first half minute, so a team gets to think
+     before the clock starts staring at them. */
+  .clue-timer {
+    position: absolute; top: 12px; left: 16px;
+    font-family: Georgia, serif;
+    font-weight: 900;
+    font-size: clamp(15px, 2.2vw, 20px);
+    letter-spacing: 1px;
+    color: var(--gold);
+    text-shadow: 0 2px 0 rgba(0,0,0,.45);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity .45s ease, transform .45s ease, color .3s ease;
+    pointer-events: none;
+  }
+  .clue-timer.shown { opacity: 1; transform: translateY(0); }
+  .clue-timer.stopped { color: var(--muted); }
+
   .close-x {
     position: absolute; top: 12px; right: 16px;
     background: none; border: none; color: var(--muted);
     font-size: 22px; cursor: pointer; line-height: 1;
   }
   .close-x:hover { color: var(--gold); }
+
+  /* ---------- end-of-board celebration ---------- */
+  .celebration {
+    position: fixed; inset: 0; z-index: 80;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at center, rgba(10,17,114,.72), rgba(3,5,40,.92));
+    overflow: hidden;
+    animation: celebFade .4s ease;
+  }
+  .celebration[hidden] { display: none !important; }
+  .celebration.leaving { animation: celebOut .6s ease forwards; }
+  @keyframes celebFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes celebOut { to { opacity: 0; } }
+
+  .celebration-card {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: clamp(22px, 4vw, 40px) clamp(26px, 6vw, 64px);
+    background: linear-gradient(160deg, rgba(44,51,214,.96), rgba(10,17,114,.96));
+    border: 3px solid var(--gold);
+    border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(0,0,0,.6);
+    max-width: min(560px, 92vw);
+    animation: celebPop .5s cubic-bezier(.2,1.4,.5,1);
+  }
+  @keyframes celebPop {
+    from { transform: scale(.82) translateY(14px); opacity: 0; }
+    to   { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .celebration-eyebrow {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .celebration-title {
+    margin: 0;
+    font-family: Georgia, serif; font-weight: 900; font-style: italic;
+    font-size: clamp(26px, 5.5vw, 46px);
+    color: var(--gold);
+    text-shadow: 0 3px 0 var(--text-shadow-c), 0 6px 20px rgba(0,0,0,.5);
+    line-height: 1.15;
+  }
+  .celebration-scores {
+    margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px 18px;
+    justify-content: center;
+    font-size: 14px; color: #e6e9ff;
+  }
+  .celebration-scores b { color: var(--gold); font-family: Georgia, serif; font-size: 16px; }
+  .celebration-dismiss {
+    margin-top: 18px; font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted-dim);
+  }
+
+  /* A line of wizards having a moment along the bottom of the screen. */
+  .dancers {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    z-index: 1; pointer-events: none;
+    display: flex; align-items: flex-end; justify-content: center;
+    gap: clamp(6px, 4vw, 54px);
+    padding: 0 clamp(6px, 3vw, 40px) clamp(8px, 3vh, 28px);
+  }
+  .dancer {
+    width: clamp(46px, 8.5vw, 104px);
+    transform-origin: 50% 100%;
+    animation: wizDance var(--beat, .82s) ease-in-out var(--offbeat, 0s) infinite;
+  }
+  .dancer svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 8px 14px rgba(0,0,0,.55)); }
+  .dancer .staff-arm {
+    transform-origin: 62% 55%;
+    animation: staffWave calc(var(--beat, .82s) * 2) ease-in-out var(--offbeat, 0s) infinite;
+  }
+  .dancer .orb { animation: orbPulse calc(var(--beat, .82s) * 1.6) ease-in-out infinite; }
+  @keyframes wizDance {
+    0%, 100% { transform: translateY(0) rotate(-6deg); }
+    50%      { transform: translateY(-13%) rotate(6deg); }
+  }
+  @keyframes staffWave {
+    0%, 100% { transform: rotate(-20deg); }
+    50%      { transform: rotate(10deg); }
+  }
+  @keyframes orbPulse {
+    0%, 100% { transform: scale(1); opacity: .95; }
+    50%      { transform: scale(1.35); opacity: 1; }
+  }
+  @media (max-width: 620px) {
+    .dancer:nth-child(n+4) { display: none; }   /* three is a crowd on a phone */
+  }
+
+  .streamers { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  /* Each streamer is a thin ribbon that falls, drifts sideways and twists. */
+  .streamer {
+    position: absolute; top: -14vh;
+    width: var(--w); height: var(--h);
+    background: var(--c);
+    border-radius: 2px;
+    opacity: .95;
+    animation: streamerFall var(--dur) linear var(--delay) forwards;
+  }
+  .streamer.curl { border-radius: 50% / 18%; }
+  @keyframes streamerFall {
+    0%   { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translate3d(var(--drift), 118vh, 0) rotate(var(--spin)); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .streamers { display: none; }
+    .celebration, .celebration-card { animation: none; }
+    /* the wizards stay, they just stop dancing */
+    .dancer, .dancer .staff-arm, .dancer .orb { animation: none; }
+  }
 
   footer.hint {
     text-align: center; color: var(--muted-dim); font-size: 12px; margin-top: 22px;
@@ -1158,6 +1288,18 @@
   <footer class="hint">Click a tile to reveal the clue &nbsp;&bull;&nbsp; phrase your response as a question &nbsp;&bull;&nbsp; award points to the team that answers correctly</footer>
 </div>
 
+<!-- ============ END-OF-BOARD CELEBRATION (Jeopardy) ============ -->
+<div class="celebration" id="celebration" hidden>
+  <div class="streamers" id="streamers" aria-hidden="true"></div>
+  <div class="dancers" id="dancers" aria-hidden="true"></div>
+  <div class="celebration-card">
+    <div class="celebration-eyebrow">Board complete</div>
+    <h2 class="celebration-title" id="celebrationTitle"></h2>
+    <div class="celebration-scores" id="celebrationScores"></div>
+    <div class="celebration-dismiss">Click anywhere to dismiss</div>
+  </div>
+</div>
+
 <!-- ===================== WIZARD'S ESCAPE ===================== -->
 <div class="wrap" id="wizardView" hidden>
   <div class="topbar"><a class="back-link" href="#">&larr; All games</a></div>
@@ -1253,6 +1395,7 @@
 <div class="overlay" id="overlay">
   <div class="clue-modal">
     <button class="close-x" id="closeX" title="Close">&times;</button>
+    <div class="clue-timer" id="clueTimer" aria-live="off">0:30</div>
     <div class="eyebrow" id="modalCategory">Category</div>
     <div class="value" id="modalValue">$100</div>
     <div class="clue-text" id="modalClue"></div>
@@ -1709,6 +1852,7 @@ const modalCategory = document.getElementById('modalCategory');
 const modalValue = document.getElementById('modalValue');
 const modalClue = document.getElementById('modalClue');
 const modalImage = document.getElementById('modalImage');
+const clueTimerEl = document.getElementById('clueTimer');
 const modalAnswer = document.getElementById('modalAnswer');
 const revealRow = document.getElementById('revealRow');
 const revealBtn = document.getElementById('revealBtn');
@@ -1737,6 +1881,7 @@ function stateFor(game) {
     gameStates.set(game.id, {
       teams: [{ name: 'Team 1', score: 0 }, { name: 'Team 2', score: 0 }],
       done: new Set(),
+      celebrated: false,
     });
   }
   return gameStates.get(game.id);
@@ -1909,6 +2054,37 @@ function renderBoard() {
 }
 
 // ---------------- CLUE MODAL ----------------
+// ---------------- CLUE TIMER ----------------
+// Starts the moment a tile is opened but stays invisible for 30 seconds; after
+// that it fades in and keeps counting up. It freezes when the answer is
+// revealed, so the elapsed time stays readable while points are awarded.
+const CLUE_TIMER_DELAY = 30000;
+let clueTimerId = null;
+let clueTimerStart = 0;
+
+function clueTimeText(ms) {
+  const total = Math.floor(ms / 1000);
+  return Math.floor(total / 60) + ':' + String(total % 60).padStart(2, '0');
+}
+
+function startClueTimer() {
+  stopClueTimer();
+  clueTimerStart = Date.now();
+  clueTimerEl.classList.remove('shown', 'stopped');
+  clueTimerEl.textContent = clueTimeText(CLUE_TIMER_DELAY);
+  clueTimerId = setInterval(() => {
+    const elapsed = Date.now() - clueTimerStart;
+    if (elapsed < CLUE_TIMER_DELAY) return;
+    clueTimerEl.textContent = clueTimeText(elapsed);
+    clueTimerEl.classList.add('shown');
+  }, 250);
+}
+
+function stopClueTimer() {
+  if (clueTimerId) clearInterval(clueTimerId);
+  clueTimerId = null;
+}
+
 function openClue(tileEl, key, categoryName, clueObj, value) {
   if (tileEl.dataset.done === 'true') return;
   currentClueEl = tileEl;
@@ -1935,6 +2111,7 @@ function openClue(tileEl, key, categoryName, clueObj, value) {
   awardPanel.classList.remove('shown');
 
   renderAwardRow();
+  startClueTimer();
   overlay.classList.add('active');
 }
 
@@ -2000,6 +2177,10 @@ function applyAwardLock() {
 
 revealBtn.addEventListener('click', () => {
   revealed = true;
+  // Deliberation is over; hold the final time on screen rather than letting it
+  // tick on through the scoring.
+  stopClueTimer();
+  clueTimerEl.classList.add('stopped');
   modalAnswer.classList.add('shown');
   revealRow.style.display = 'none';
   awardPanel.classList.add('shown');
@@ -2007,8 +2188,124 @@ revealBtn.addEventListener('click', () => {
 
 // A tile is only used up once its answer has been revealed. Opening a clue by
 // mistake and backing out (X, Esc, or clicking outside) leaves it on the board.
+// ---------------- END-OF-BOARD CELEBRATION ----------------
+const celebrationEl = document.getElementById('celebration');
+const streamersEl = document.getElementById('streamers');
+const dancersEl = document.getElementById('dancers');
+const celebrationTitle = document.getElementById('celebrationTitle');
+const celebrationScores = document.getElementById('celebrationScores');
+const STREAMER_COLOURS = ['#ffcc4d', '#7cf0d8', '#b98cff', '#ff9d3c', '#4a52ff', '#ffffff', '#1fae5a'];
+const CELEBRATION_MS = 8000;
+let celebrationTimer = null;
+
+const clueCount = game =>
+  (game.categories || []).reduce((n, cat) => n + (cat.clues || []).length, 0);
+
+// Who won, in words. Handles ties, a solo team, and everyone on zero.
+function winnerLine(teams) {
+  if (!teams.length) return { title: 'Board complete!', tie: false };
+  const best = Math.max(...teams.map(t => t.score));
+  const winners = teams.filter(t => t.score === best);
+  if (teams.length === 1) return { title: `${teams[0].name} finishes with ${best}!` };
+  if (winners.length === teams.length) {
+    return { title: `All square on ${best} — it's a draw!` };
+  }
+  if (winners.length > 1) {
+    const names = winners.map(w => w.name);
+    const joined = names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+    return { title: `${joined} tie on ${best}!` };
+  }
+  return { title: `${winners[0].name} wins with ${best}!` };
+}
+
+function buildStreamers() {
+  streamersEl.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < 70; i++) {
+    const el = document.createElement('div');
+    el.className = 'streamer' + (i % 3 === 0 ? ' curl' : '');
+    const long = i % 4 !== 0;
+    el.style.left = (Math.random() * 100) + 'vw';
+    el.style.setProperty('--w', (long ? 6 + Math.random() * 6 : 9 + Math.random() * 5) + 'px');
+    el.style.setProperty('--h', (long ? 26 + Math.random() * 40 : 9 + Math.random() * 6) + 'px');
+    el.style.setProperty('--c', STREAMER_COLOURS[i % STREAMER_COLOURS.length]);
+    el.style.setProperty('--dur', (3.4 + Math.random() * 2.6) + 's');
+    el.style.setProperty('--delay', (Math.random() * 4.2) + 's');
+    el.style.setProperty('--drift', (Math.random() * 220 - 110) + 'px');
+    el.style.setProperty('--spin', (Math.random() * 1080 - 540) + 'deg');
+    frag.appendChild(el);
+  }
+  streamersEl.appendChild(frag);
+}
+
+function buildDancers() {
+  dancersEl.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < 5; i++) {
+    const d = document.createElement('div');
+    d.className = 'dancer';
+    // Slightly different tempos and offsets, so it reads as a crowd rather
+    // than one wizard copied five times.
+    d.style.setProperty('--beat', (0.68 + Math.random() * 0.34).toFixed(2) + 's');
+    d.style.setProperty('--offbeat', '-' + (Math.random() * 0.6).toFixed(2) + 's');
+    d.style.width = 'clamp(' + (42 + i % 2 * 8) + 'px, ' + (7.5 + (i % 3)) + 'vw, ' + (92 + (i % 2) * 18) + 'px)';
+    d.innerHTML = WIZ.art();
+    frag.appendChild(d);
+  }
+  dancersEl.appendChild(frag);
+}
+
+function celebrate() {
+  const teams = stateFor(current).teams;
+  const { title } = winnerLine(teams);
+  celebrationTitle.textContent = title;
+
+  celebrationScores.innerHTML = '';
+  teams.forEach(t => {
+    const row = document.createElement('span');
+    row.textContent = t.name + ' ';
+    const b = document.createElement('b');
+    b.textContent = t.score;
+    row.appendChild(b);
+    celebrationScores.appendChild(row);
+  });
+
+  buildStreamers();
+  buildDancers();
+  celebrationEl.classList.remove('leaving');
+  celebrationEl.hidden = false;
+
+  clearTimeout(celebrationTimer);
+  celebrationTimer = setTimeout(endCelebration, CELEBRATION_MS);
+}
+
+function endCelebration() {
+  if (celebrationEl.hidden) return;
+  clearTimeout(celebrationTimer);
+  celebrationEl.classList.add('leaving');
+  setTimeout(() => {
+    celebrationEl.hidden = true;
+    celebrationEl.classList.remove('leaving');
+    streamersEl.innerHTML = '';   // stop 70 animations running in the background
+    dancersEl.innerHTML = '';
+  }, 600);
+}
+
+celebrationEl.addEventListener('click', endCelebration);
+
+// Fires once the last tile on the board has been used up.
+function checkBoardComplete() {
+  if (!current) return;
+  const st = stateFor(current);
+  if (st.celebrated || st.done.size < clueCount(current)) return;
+  st.celebrated = true;
+  setTimeout(celebrate, 350);   // let the tile finish going dark first
+}
+
 function closeModal() {
   overlay.classList.remove('active');
+  stopClueTimer();
+  clueTimerEl.classList.remove('shown', 'stopped');
   if (currentClueEl && revealed) {
     currentClueEl.dataset.done = 'true';
     currentClueEl.classList.add('done');
@@ -2017,6 +2314,7 @@ function closeModal() {
   }
   currentClueEl = null;
   currentKey = null;
+  checkBoardComplete();
 }
 
 doneBtn.addEventListener('click', closeModal);
@@ -2028,11 +2326,14 @@ resetBoardBtn.addEventListener('click', () => {
   const st = stateFor(current);
   st.teams.forEach(t => { t.score = 0; });
   st.done.clear();
+  st.celebrated = false;
+  endCelebration();
   renderScoreboard();
   renderBoard();
 });
 
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !celebrationEl.hidden) { endCelebration(); return; }
   if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
   if (e.key === ' ' && overlay.classList.contains('active') && revealRow.style.display !== 'none') {
     e.preventDefault();
@@ -3340,7 +3641,10 @@ const WIZ = (function () {
     close() {
       cancelAnimationFrame(rafId);
       run = null;
-    }
+    },
+    // The Jeopardy celebration borrows the wizard for its dancers, rather than
+    // keeping a second copy of the same drawing.
+    art() { return wizardSVG(); }
   };
 })();
 
