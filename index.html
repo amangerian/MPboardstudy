@@ -421,6 +421,15 @@
     font-family: Arial, sans-serif; font-weight: 700;
   }
   .reset-board-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .board-actions {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    align-items: center; justify-content: center;
+    margin-top: 18px;
+  }
+  .board-actions .reset-board-btn { margin: 0; }
+  .anki-btn { border-color: #3f7d5e; color: #8fd8b4; }
+  .anki-btn:hover { border-color: var(--correct); color: #bfffdd; }
+  .anki-btn.done { border-color: var(--correct); color: var(--correct); }
 
   /* Deliberately silent for the first half minute, so a team gets to think
      before the clock starts staring at them. */
@@ -1283,7 +1292,11 @@
 
   <div class="board" id="board"></div>
 
-  <button class="reset-board-btn" id="resetBoardBtn">Reset board &amp; scores</button>
+  <div class="board-actions">
+    <button class="reset-board-btn" id="resetBoardBtn">Reset board &amp; scores</button>
+    <button class="reset-board-btn anki-btn" id="ankiExportBtn"
+            title="Downloads a .apkg you can open straight into Anki — it lands in its own deck, images included.">Download Anki deck (.apkg)</button>
+  </div>
 
   <footer class="hint">Click a tile to reveal the clue &nbsp;&bull;&nbsp; phrase your response as a question &nbsp;&bull;&nbsp; award points to the team that answers correctly</footer>
 </div>
@@ -2320,6 +2333,347 @@ function closeModal() {
 doneBtn.addEventListener('click', closeModal);
 closeX.addEventListener('click', closeModal);
 overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+// ---------------- ANKI .apkg EXPORT ----------------
+// An .apkg is a zip around a SQLite database, so this writes both formats by
+// hand — no library, so the page stays one self-contained file. The byte layout
+// was prototyped against real SQLite before being ported here.
+const APKG = (function () {
+  const PAGE = 4096;                 // no record here comes close to overflowing
+  const enc = new TextEncoder();
+
+  // ---- little helpers ----
+  function varint(n) {
+    if (n === 0) return [0];
+    const out = [];
+    while (n > 0) { out.unshift((n & 0x7F) | 0x80); n = Math.floor(n / 128); }
+    out[out.length - 1] &= 0x7F;
+    return out;
+  }
+  function be(n, bytes) {
+    const out = [];
+    for (let i = bytes - 1; i >= 0; i--) out.push(Math.floor(n / Math.pow(256, i)) & 0xFF);
+    return out;
+  }
+
+  // one column value -> [serial type, bytes]
+  function serial(v) {
+    if (v === null || v === undefined) return [0, []];
+    if (typeof v === 'number') {
+      if (v >= -128 && v <= 127) return [1, be(v < 0 ? v + 256 : v, 1)];
+      if (v >= -32768 && v <= 32767) return [2, be(v < 0 ? v + 65536 : v, 2)];
+      if (v >= -2147483648 && v <= 2147483647) return [4, be(v < 0 ? v + 4294967296 : v, 4)];
+      return [6, be(v, 8)];
+    }
+    const b = Array.from(enc.encode(String(v)));
+    return [13 + 2 * b.length, b];
+  }
+
+  function record(values) {
+    const types = [], bodies = [];
+    values.forEach(v => { const [st, b] = serial(v); types.push(...varint(st)); bodies.push(...b); });
+    let hlen = types.length + 1;
+    if (varint(hlen).length !== 1) hlen = types.length + varint(types.length + 2).length;
+    return [...varint(hlen), ...types, ...bodies];
+  }
+
+  // ---- b-tree pages ----
+  function leafPage(cells, offset) {
+    const body = new Uint8Array(PAGE);
+    let end = PAGE; const ptrs = [];
+    cells.forEach(([rowid, payload]) => {
+      const cell = [...varint(payload.length), ...varint(rowid), ...payload];
+      end -= cell.length;
+      body.set(cell, end); ptrs.push(end);
+    });
+    body[offset] = 0x0D;
+    body.set(be(0, 2), offset + 1);
+    body.set(be(cells.length, 2), offset + 3);
+    body.set(be(end, 2), offset + 5);
+    body[offset + 7] = 0;
+    ptrs.forEach((p, i) => body.set(be(p, 2), offset + 8 + 2 * i));
+    return body;
+  }
+
+  function interiorPage(kids, offset) {
+    const body = new Uint8Array(PAGE);
+    const right = kids[kids.length - 1], rest = kids.slice(0, -1);
+    let end = PAGE; const ptrs = [];
+    rest.forEach(([child, key]) => {
+      const cell = [...be(child, 4), ...varint(key)];
+      end -= cell.length; body.set(cell, end); ptrs.push(end);
+    });
+    body[offset] = 0x05;
+    body.set(be(0, 2), offset + 1);
+    body.set(be(rest.length, 2), offset + 3);
+    body.set(be(end, 2), offset + 5);
+    body[offset + 7] = 0;
+    body.set(be(right[0], 4), offset + 8);
+    ptrs.forEach((p, i) => body.set(be(p, 2), offset + 12 + 2 * i));
+    return body;
+  }
+
+  function buildTree(pager, rows, root, isPage1) {
+    const offset = isPage1 ? 100 : 0;
+    const usable = PAGE - offset;
+    const leaves = []; let cur = [], used = 8;
+    rows.forEach(([rowid, payload]) => {
+      const cellLen = varint(payload.length).length + varint(rowid).length + payload.length;
+      if (cur.length && used + cellLen + 2 > usable - 20) { leaves.push(cur); cur = []; used = 8; }
+      cur.push([rowid, payload]); used += cellLen + 2;
+    });
+    leaves.push(cur);
+    if (leaves.length === 1) { pager.put(root, leafPage(leaves[0], offset)); return; }
+    const kids = leaves.map(cells => {
+      const p = pager.alloc();
+      pager.put(p, leafPage(cells, 0));
+      return [p, cells.length ? cells[cells.length - 1][0] : 0];
+    });
+    pager.put(root, interiorPage(kids, offset));
+  }
+
+  const SCHEMA = [
+    ['col', 'CREATE TABLE col (id integer primary key, crt integer not null, mod integer not null, scm integer not null, ver integer not null, dty integer not null, usn integer not null, ls integer not null, conf text not null, models text not null, decks text not null, dconf text not null, tags text not null)'],
+    ['notes', 'CREATE TABLE notes (id integer primary key, guid text not null, mid integer not null, mod integer not null, usn integer not null, tags text not null, flds text not null, sfld integer not null, csum integer not null, flags integer not null, data text not null)'],
+    ['cards', 'CREATE TABLE cards (id integer primary key, nid integer not null, did integer not null, ord integer not null, mod integer not null, usn integer not null, type integer not null, queue integer not null, due integer not null, ivl integer not null, factor integer not null, reps integer not null, lapses integer not null, left integer not null, odue integer not null, odid integer not null, flags integer not null, data text not null)'],
+    ['revlog', 'CREATE TABLE revlog (id integer primary key, cid integer not null, usn integer not null, ease integer not null, ivl integer not null, lastIvl integer not null, factor integer not null, time integer not null, type integer not null)'],
+    ['graves', 'CREATE TABLE graves (usn integer not null, oid integer not null, type integer not null)'],
+  ];
+
+  function buildDb(notes, cards, colRow) {
+    const pager = {
+      pages: [null],
+      alloc() { this.pages.push(null); return this.pages.length - 1; },
+      put(n, d) { this.pages[n] = d; }
+    };
+    for (let i = 0; i < 1 + SCHEMA.length; i++) pager.alloc();
+    const roots = {};
+    SCHEMA.forEach(([name], i) => { roots[name] = 2 + i; });
+    const master = SCHEMA.map(([name, sql], i) =>
+      [i + 1, record(['table', name, name, roots[name], sql])]);
+
+    buildTree(pager, master, 1, true);
+    buildTree(pager, [[1, record(colRow)]], roots.col);
+    buildTree(pager, notes, roots.notes);
+    buildTree(pager, cards, roots.cards);
+    buildTree(pager, [], roots.revlog);
+    buildTree(pager, [], roots.graves);
+
+    const out = new Uint8Array((pager.pages.length - 1) * PAGE);
+    for (let i = 1; i < pager.pages.length; i++) {
+      if (pager.pages[i]) out.set(pager.pages[i], (i - 1) * PAGE);
+    }
+    const h = new Uint8Array(100);
+    h.set(enc.encode('SQLite format 3'), 0); h[15] = 0;
+    h.set(be(PAGE, 2), 16);
+    h[18] = 1; h[19] = 1; h[20] = 0; h[21] = 64; h[22] = 32; h[23] = 32;
+    h.set(be(1, 4), 24);                          // change counter
+    h.set(be(pager.pages.length - 1, 4), 28);     // page count
+    h.set(be(1, 4), 40);                          // schema cookie
+    h.set(be(4, 4), 44);                          // schema format
+    h.set(be(1, 4), 56);                          // utf-8
+    h.set(be(1, 4), 92);
+    h.set(be(3045000, 4), 96);
+    out.set(h, 0);
+    return out;
+  }
+
+  // ---- SHA1, for the duplicate-detection checksum Anki stores ----
+  function sha1(str) {
+    const msg = enc.encode(str);
+    const len = msg.length;
+    const withOne = new Uint8Array((((len + 8) >> 6) + 1) * 64);
+    withOne.set(msg); withOne[len] = 0x80;
+    new DataView(withOne.buffer).setUint32(withOne.length - 4, len * 8, false);
+    let h0 = 0x67452301, h1 = 0xEFCDAB89, h2 = 0x98BADCFE, h3 = 0x10325476, h4 = 0xC3D2E1F0;
+    const w = new Int32Array(80);
+    const view = new DataView(withOne.buffer);
+    for (let i = 0; i < withOne.length; i += 64) {
+      for (let j = 0; j < 16; j++) w[j] = view.getInt32(i + j * 4, false);
+      for (let j = 16; j < 80; j++) {
+        const n = w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16];
+        w[j] = (n << 1) | (n >>> 31);
+      }
+      let a = h0, b = h1, c = h2, d = h3, e = h4;
+      for (let j = 0; j < 80; j++) {
+        let f, k;
+        if (j < 20) { f = (b & c) | (~b & d); k = 0x5A827999; }
+        else if (j < 40) { f = b ^ c ^ d; k = 0x6ED9EBA1; }
+        else if (j < 60) { f = (b & c) | (b & d) | (c & d); k = 0x8F1BBCDC; }
+        else { f = b ^ c ^ d; k = 0xCA62C1D6; }
+        const t = (((a << 5) | (a >>> 27)) + f + e + k + w[j]) | 0;
+        e = d; d = c; c = (b << 30) | (b >>> 2); b = a; a = t;
+      }
+      h0 = (h0 + a) | 0; h1 = (h1 + b) | 0; h2 = (h2 + c) | 0;
+      h3 = (h3 + d) | 0; h4 = (h4 + e) | 0;
+    }
+    return [h0, h1, h2, h3, h4].map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
+  }
+
+  // ---- zip (stored, no compression) ----
+  const CRC_TABLE = (() => {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function le(n, bytes) {
+    const out = [];
+    for (let i = 0; i < bytes; i++) { out.push(n & 0xFF); n = Math.floor(n / 256); }
+    return out;
+  }
+  function zip(entries) {
+    const chunks = [], central = [];
+    let offset = 0;
+    entries.forEach(({ name, bytes }) => {
+      const nameBytes = Array.from(enc.encode(name));
+      const crc = crc32(bytes);
+      const local = [...le(0x04034b50, 4), ...le(20, 2), ...le(0, 2), ...le(0, 2),
+                     ...le(0, 2), ...le(0, 2), ...le(crc, 4), ...le(bytes.length, 4),
+                     ...le(bytes.length, 4), ...le(nameBytes.length, 2), ...le(0, 2), ...nameBytes];
+      chunks.push(new Uint8Array(local), bytes);
+      central.push([...le(0x02014b50, 4), ...le(20, 2), ...le(20, 2), ...le(0, 2), ...le(0, 2),
+                    ...le(0, 2), ...le(0, 2), ...le(crc, 4), ...le(bytes.length, 4),
+                    ...le(bytes.length, 4), ...le(nameBytes.length, 2), ...le(0, 2), ...le(0, 2),
+                    ...le(0, 2), ...le(0, 2), ...le(0, 4), ...le(offset, 4), ...nameBytes]);
+      offset += local.length + bytes.length;
+    });
+    const dir = [].concat(...central);
+    const eocd = [...le(0x06054b50, 4), ...le(0, 2), ...le(0, 2), ...le(entries.length, 2),
+                  ...le(entries.length, 2), ...le(dir.length, 4), ...le(offset, 4), ...le(0, 2)];
+    const total = offset + dir.length + eocd.length;
+    const out = new Uint8Array(total);
+    let at = 0;
+    chunks.forEach(c => { out.set(c, at); at += c.length; });
+    out.set(dir, at); at += dir.length;
+    out.set(eocd, at);
+    return out;
+  }
+
+  const b64ToBytes = uri => {
+    const bin = atob(uri.slice(uri.indexOf(',') + 1));
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  };
+  // Everything identifying is derived from the content, not the clock: import
+  // the same deck twice and Anki matches the notes it already has instead of
+  // creating duplicates.
+  const hashInt = str => parseInt(sha1(str).slice(0, 11), 16);
+  const stableGuid = str => {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const h = sha1(str);
+    let out = '';
+    for (let i = 0; i < 10; i++) out += chars[parseInt(h.substr(i * 2, 2), 16) % chars.length];
+    return out;
+  };
+
+  function build(game) {
+    const nowMs = Date.now(), nowS = Math.floor(nowMs / 1000);
+    const mid = hashInt('bsg-notetype');            // one shared note type
+    const did = hashInt('bsg-deck-' + game.id);     // one stable deck per game
+    const nidBase = hashInt('bsg-notes-' + game.id);
+    const deckName = 'Board Study Games::' + String(game.title).replace(/::/g, ' ');
+
+    const model = { id: mid, name: 'Board Study Basic', type: 0, mod: nowS, usn: -1, sortf: 0,
+      did: did, latexPre: '', latexPost: '', vers: [], tags: [],
+      flds: [{ name: 'Front', ord: 0, sticky: false, rtl: false, font: 'Arial', size: 20, media: [] },
+             { name: 'Back', ord: 1, sticky: false, rtl: false, font: 'Arial', size: 20, media: [] }],
+      tmpls: [{ name: 'Card 1', ord: 0, qfmt: '{{Front}}',
+                afmt: '{{FrontSide}}\n\n<hr id=answer>\n\n{{Back}}', did: null, bqfmt: '', bafmt: '' }],
+      css: '.card { font-family: arial; font-size: 20px; text-align: center; color: black; background-color: white; }',
+      req: [[0, 'any', [0]]] };
+    const deckBase = { mod: nowS, usn: -1, lrnToday: [0, 0], revToday: [0, 0], newToday: [0, 0],
+      timeToday: [0, 0], conf: 1, desc: '', dyn: 0, collapsed: false, extendNew: 10,
+      extendRev: 50, browserCollapsed: false };
+    const decks = { '1': Object.assign({}, deckBase, { id: 1, name: 'Default' }) };
+    decks[String(did)] = Object.assign({}, deckBase, { id: did, name: deckName });
+    const dconf = { '1': { id: 1, name: 'Default', mod: 0, usn: 0, maxTaken: 60, autoplay: true,
+      timer: 0, replayq: true,
+      new: { bury: true, delays: [1, 10], initialFactor: 2500, ints: [1, 4, 7], order: 1, perDay: 20, separate: true },
+      rev: { bury: true, ease4: 1.3, fuzz: 0.05, ivlFct: 1, maxIvl: 36500, minSpace: 1, perDay: 200 },
+      lapse: { delays: [10], leechAction: 1, leechFails: 8, minInt: 1, mult: 0 }, dyn: false } };
+    const conf = { nextPos: 1, estTimes: true, activeDecks: [1], sortType: 'noteFld', timeLim: 0,
+      sortBackwards: false, addToCur: true, curDeck: 1, newBury: true, newSpread: 0,
+      dueCounts: true, curModel: String(mid), collapseTime: 1200 };
+
+    const colRow = [null, nowS - 86400, nowMs, nowMs, 11, 0, 0, 0,
+      JSON.stringify(conf), JSON.stringify({ [String(mid)]: model }),
+      JSON.stringify(decks), JSON.stringify(dconf), '{}'];
+
+    const notes = [], cards = [], media = {}, mediaFiles = [];
+    let i = 0;
+    (game.categories || []).forEach(cat => (cat.clues || []).forEach(clue => {
+      let front = htmlEscape(clue.clue);
+      if (clue.image) {                       // pictures travel as real media files
+        const name = 'bsg-' + game.id + '-' + mediaFiles.length + '.jpg';
+        media[String(mediaFiles.length)] = name;
+        mediaFiles.push({ name: String(mediaFiles.length), bytes: b64ToBytes(clue.image) });
+        front += '<br><img src="' + name + '">';
+      }
+      const back = htmlEscape(clue.answer);
+      const tags = ' board-study-games bsg::' + tagSlug(game.id) +
+                   ' bsg::' + tagSlug(game.id) + '::' + tagSlug(cat.name) + ' ';
+      const nid = nidBase + i * 2;
+      notes.push([nid, record([null, stableGuid(game.id + '::' + clue.clue), mid, nowS, -1, tags, front + '\x1f' + back,
+                               front, parseInt(sha1(front).slice(0, 8), 16), 0, ''])]);
+      cards.push([nid + 1, record([null, nid, did, 0, nowS, -1, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, ''])]);
+      i++;
+    }));
+
+    const db = buildDb(notes, cards, colRow);
+    return zip([{ name: 'collection.anki2', bytes: db },
+                { name: 'media', bytes: enc.encode(JSON.stringify(media)) },
+                ...mediaFiles]);
+  }
+
+  return { build: build, sha1: sha1 };
+})();
+
+// ---------------- ANKI EXPORT ----------------
+// A real .apkg is a zip around a SQLite database, which a page like this cannot
+// build without shipping a SQLite library. Anki imports tab-separated text
+// natively, so that is what this writes: one note per clue, with the header
+// lines Anki 2.1.55+ reads to set the note type, deck and column order.
+const ankiExportBtn = document.getElementById('ankiExportBtn');
+
+const htmlEscape = t => String(t == null ? '' : t)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// Category and game names become Anki tags, so they need to be tag-safe.
+const tagSlug = t => String(t || '')
+  .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+function downloadAnki() {
+  if (!current) return;
+  const blob = new Blob([APKG.build(current)], { type: 'application/octet-stream' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = current.id + '.apkg';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  const label = ankiExportBtn.textContent;
+  ankiExportBtn.textContent = 'Downloaded — import in Anki';
+  ankiExportBtn.classList.add('done');
+  setTimeout(() => {
+    ankiExportBtn.textContent = label;
+    ankiExportBtn.classList.remove('done');
+  }, 2600);
+}
+
+ankiExportBtn.addEventListener('click', downloadAnki);
 
 resetBoardBtn.addEventListener('click', () => {
   if (!confirm('Reset the board and set every score back to 0?')) return;
