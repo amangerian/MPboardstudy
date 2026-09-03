@@ -482,6 +482,8 @@
   }
   .buzz-url { font-size: 13px; color: #cfd3ff; word-break: break-all; }
   .buzz-players { font-size: 12px; color: var(--muted-dim); margin-top: 4px; }
+  .buzz-hostlink { font-size: 11px; color: var(--muted-dim); margin-top: 6px; word-break: break-all; }
+  .buzz-hostlink span { color: var(--gold-dim); }
   .buzz-controls { display: flex; gap: 8px; flex-wrap: wrap; }
   .buzz-controls .reset-board-btn { margin: 0; }
   .buzz-toggle[aria-pressed="true"] { border-color: var(--correct); color: #8fd8b4; }
@@ -510,6 +512,81 @@
   .buzz-queue-list .rank { font-family: Georgia, serif; font-weight: 900; opacity: .7; min-width: 1.4em; }
   .buzz-queue-list .gap { margin-left: auto; font-size: 12px; opacity: .7; }
   .buzz-queue-empty { text-align: center; color: var(--muted-dim); font-size: 13px; }
+
+  /* ---------- wizard phone controller ---------- */
+  .pad-status {
+    text-align: center; font-size: clamp(15px, 4.2vw, 20px);
+    color: var(--muted); margin: 4px 0 16px; min-height: 1.4em;
+  }
+  .pad-status.go { color: var(--arcane); font-weight: 700; }
+  .pad-status.hit { color: var(--correct); font-weight: 700; }
+  .pad-status.miss { color: #ff8f8f; font-weight: 700; }
+  .pad-buttons { display: flex; flex-direction: column; gap: 12px; }
+  .pad-btn {
+    width: 100%; min-height: clamp(84px, 19vh, 150px);
+    border-radius: 16px;
+    border: 3px solid #3d2f6b;
+    background: linear-gradient(180deg, #241c44, #150f28);
+    color: #5d5590;
+    font-family: Georgia, serif; font-weight: 900;
+    font-size: clamp(34px, 11vw, 60px);
+    cursor: not-allowed;
+    transition: transform .08s ease, background .18s ease, border-color .18s ease, color .18s ease;
+  }
+  .pad-btn.live {
+    cursor: pointer; color: #fff;
+    border-color: var(--arcane);
+    background: linear-gradient(180deg, var(--violet-deep), #2a1c66);
+    box-shadow: 0 0 26px rgba(124,240,216,.25);
+  }
+  .pad-btn.live:active { transform: scale(.97); }
+  .pad-btn.chosen { border-color: var(--gold); color: var(--gold); background: linear-gradient(180deg, #4a3a1a, #2a2010); }
+  .pad-btn.right { border-color: var(--correct); color: #bfffdd; background: linear-gradient(180deg, #17603c, #0c3a24); }
+  .pad-btn.wrong { border-color: var(--wrong); color: #ffc9c9; background: linear-gradient(180deg, #6b1f1f, #3a1212); }
+  .pad-hint { text-align: center; font-size: 12px; color: var(--muted-dim); margin: 14px 0 16px; line-height: 1.5; }
+  #padPlayPane .reset-board-btn { display: block; margin: 0 auto; }
+
+  /* ---------- wizard: phones panel on the setup screen ---------- */
+  .wizroom { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .wizroom-code {
+    font-family: Georgia, serif; font-weight: 900;
+    font-size: clamp(28px, 4.5vw, 42px); letter-spacing: 6px; color: var(--gold);
+  }
+  .wizroom-url { font-size: 12.5px; color: #cfd3ff; word-break: break-all; }
+  .wizroom-seats { font-size: 12.5px; color: var(--muted-dim); margin-top: 4px; }
+  .wizroom-seats b { color: var(--arcane); }
+
+  /* ---------- host console ---------- */
+  .host-card {
+    background: linear-gradient(160deg, rgba(44,51,214,.5), rgba(10,17,114,.75));
+    border: 2px solid var(--gold-dim);
+    border-radius: 14px;
+    padding: 18px;
+    min-height: 200px;
+  }
+  .host-idle { color: var(--muted-dim); text-align: center; padding: 40px 10px; font-size: 14px; }
+  .host-cat {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .host-clue {
+    font-family: Georgia, serif; font-size: clamp(15px, 4vw, 19px);
+    line-height: 1.45; color: #f0eaff;
+  }
+  .host-answer-label {
+    margin-top: 16px; font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted-dim);
+  }
+  .host-answer {
+    margin-top: 4px; padding: 12px 14px;
+    background: rgba(255,204,77,.14); border: 1px solid var(--gold);
+    border-radius: 10px;
+    font-family: Georgia, serif; font-weight: 700;
+    font-size: clamp(15px, 4vw, 20px); color: var(--gold); line-height: 1.4;
+  }
+  .host-buzz { margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .host-buzz b { color: #8fd8b4; }
+  #hostLivePane .reset-board-btn { display: block; margin: 16px auto 0; }
 
   /* ---------- buzzer: player view ---------- */
   .buzz-input {
@@ -871,6 +948,23 @@
   }
   .score-row .cats b { color: var(--arcane); font-weight: 700; }
   .score-row .when { font-size: 11px; color: #7b6ea8; text-align: right; white-space: nowrap; }
+  .lb-post {
+    margin-top: 18px; padding: 14px;
+    border: 1px solid var(--violet-deep); border-radius: 12px;
+    background: rgba(10,6,26,.45);
+  }
+  .lb-post-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; justify-content: center; }
+  .lb-post input {
+    background: rgba(10,6,26,.7); border: 1px solid var(--violet-deep);
+    border-radius: 8px; color: var(--gold);
+    font-family: Georgia, serif; font-size: 18px; font-weight: 700;
+    text-align: center; padding: 8px 10px; width: 190px; letter-spacing: 1px;
+  }
+  .lb-post input:focus { outline: none; border-color: var(--arcane); }
+  .lb-post .hint { font-size: 11.5px; color: var(--muted-dim); text-align: center; margin-top: 8px; }
+  .lb-post button { margin: 0; }
+  .lb-posted { text-align: center; color: var(--arcane); font-size: 13px; }
+
   .score-empty {
     border: 2px dashed #33285e; border-radius: 10px; padding: 20px;
     text-align: center; color: var(--muted-dim); font-size: 13px;
@@ -1411,6 +1505,7 @@
         <div class="buzz-label">Players join at</div>
         <div class="buzz-url" id="buzzJoinUrl"></div>
         <div class="buzz-players" id="buzzPlayers">No one has joined yet</div>
+        <div class="buzz-hostlink">Host console (shows answers): <span id="buzzHostUrl"></span></div>
       </div>
       <div class="buzz-controls">
         <button class="reset-board-btn buzz-toggle" id="buzzToggleBtn" aria-pressed="true">Buzzers on</button>
@@ -1427,6 +1522,83 @@
   </div>
 
   <footer class="hint">Click a tile to reveal the clue &nbsp;&bull;&nbsp; phrase your response as a question &nbsp;&bull;&nbsp; award points to the team that answers correctly</footer>
+</div>
+
+<!-- ===================== WIZARD PHONE (player controller) ===================== -->
+<div class="wrap buzzer-view" id="padView" hidden>
+  <div class="topbar"><a class="back-link" href="#">&larr; All games</a></div>
+
+  <div id="padJoinPane">
+    <div class="titlebar">
+      <h1>Wizard's Escape</h1>
+      <p>Play from your phone</p>
+    </div>
+    <div class="wiz-panel">
+      <label class="initials-field" style="width:100%">
+        <span>Room code</span>
+        <input id="padCodeInput" maxlength="6" placeholder="ABCD" autocomplete="off" spellcheck="false" class="buzz-input">
+      </label>
+      <label class="initials-field" style="width:100%;margin-top:14px">
+        <span>Your name</span>
+        <input id="padNameInput" maxlength="14" placeholder="Alex" autocomplete="off" class="buzz-input buzz-input-name">
+      </label>
+      <button class="wiz-start" id="padJoinBtn">Take a seat</button>
+      <div class="wiz-note" id="padJoinNote"></div>
+    </div>
+  </div>
+
+  <div id="padPlayPane" hidden>
+    <div class="buzz-player-head">
+      <span id="padName"></span>
+      <span class="buzz-room-tag" id="padSeat"></span>
+    </div>
+    <div class="pad-status" id="padStatus">Waiting for the screen…</div>
+    <div class="pad-buttons" id="padButtons">
+      <button class="pad-btn" data-choice="0" disabled><span class="pad-num">1</span></button>
+      <button class="pad-btn" data-choice="1" disabled><span class="pad-num">2</span></button>
+      <button class="pad-btn" data-choice="2" disabled><span class="pad-num">3</span></button>
+    </div>
+    <div class="pad-hint">Read the room on the big screen — tap the number underneath the piece you want.</div>
+    <button class="reset-board-btn" id="padLeaveBtn">Leave seat</button>
+  </div>
+</div>
+
+<!-- ===================== HOST CONSOLE ===================== -->
+<div class="wrap buzzer-view" id="hostView" hidden>
+  <div class="topbar"><a class="back-link" href="#">&larr; All games</a></div>
+
+  <div id="hostJoinPane">
+    <div class="titlebar">
+      <h1>Host Console</h1>
+      <p>See the answer before the room does</p>
+    </div>
+    <div class="wiz-panel">
+      <label class="initials-field" style="width:100%">
+        <span>Room code</span>
+        <input id="hostCodeInput" maxlength="6" placeholder="ABCD" autocomplete="off" spellcheck="false" class="buzz-input">
+      </label>
+      <button class="wiz-start" id="hostJoinBtn">Open console</button>
+      <div class="wiz-note" id="hostJoinNote"></div>
+    </div>
+  </div>
+
+  <div id="hostLivePane" hidden>
+    <div class="buzz-player-head">
+      <span>Host console</span>
+      <span class="buzz-room-tag" id="hostRoomTag"></span>
+    </div>
+    <div class="host-card" id="hostCard">
+      <div class="host-idle" id="hostIdle">Waiting for a clue to be opened on the big screen…</div>
+      <div id="hostClueWrap" hidden>
+        <div class="host-cat" id="hostCat"></div>
+        <div class="host-clue" id="hostClue"></div>
+        <div class="host-answer-label">Answer</div>
+        <div class="host-answer" id="hostAnswer"></div>
+        <div class="host-buzz" id="hostBuzz"></div>
+      </div>
+    </div>
+    <button class="reset-board-btn" id="hostLeaveBtn">Leave console</button>
+  </div>
 </div>
 
 <!-- ===================== BUZZER (player view) ===================== -->
@@ -1504,6 +1676,22 @@
             <button type="button" data-mode="2" aria-pressed="false">Two wizards<span class="seg-note">Split screen race</span></button>
             <button type="button" data-mode="survival" aria-pressed="false">Survival<span class="seg-note">Three lives, no exit</span></button>
           </div>
+          <div class="wizroom" id="wizRoomPanel" style="margin-top:12px">
+            <button class="reset-board-btn" id="wizRoomBtn" style="margin:0">Play from phones</button>
+            <span class="buzzer-blurb" id="wizRoomBlurb">Optional. Opens a room so players tap 1, 2 or 3 on their own phone instead of sharing a keyboard.</span>
+          </div>
+          <div class="wizroom" id="wizRoomLive" hidden style="margin-top:12px">
+            <div>
+              <div class="buzz-label">Room code</div>
+              <div class="wizroom-code" id="wizRoomCode">----</div>
+            </div>
+            <div>
+              <div class="buzz-label">Players join at</div>
+              <div class="wizroom-url" id="wizRoomUrl"></div>
+              <div class="wizroom-seats" id="wizRoomSeats">Waiting for players…</div>
+            </div>
+            <button class="reset-board-btn" id="wizRoomClose" style="margin:0">Close room</button>
+          </div>
           <p class="flip-hint" id="wizFlipHint">Two wizards on a phone: lay it flat between you — the top room is turned around so you can sit facing each other.</p>
           <div class="initials-row" id="wizNames">
             <label class="initials-field">
@@ -1533,6 +1721,15 @@
       <div id="wizCats"></div>
       <button class="wiz-start" id="wizStart">Enter the castle</button>
       <div class="wiz-note" id="wizSetupNote"></div>
+    </div>
+
+    <div class="wiz-panel">
+      <div class="panel-head">
+        <h3>Shared survival board</h3>
+        <button class="link-btn" id="wizLbRefresh">Refresh</button>
+      </div>
+      <p class="sub">Survival runs that players chose to post, from every device.</p>
+      <div id="wizLbList"></div>
     </div>
 
     <div class="wiz-panel">
@@ -2054,7 +2251,7 @@ let currentClueEl = null;
 let currentKey = null;   // "categoryIndex-row" of the open clue
 let currentValue = 0;
 let revealed = false;    // has the answer been shown for the open clue?
-let awarded = null;      // { idx, delta } once a team has been scored on this clue
+let awards = [];         // every team scored on this clue, in order
 
 function stateFor(game) {
   if (!gameStates.has(game.id)) {
@@ -2271,7 +2468,7 @@ function openClue(tileEl, key, categoryName, clueObj, value) {
   currentKey = key;
   currentValue = value;
   revealed = false;
-  awarded = null;
+  awards = [];
   awardStatus.textContent = '';
 
   modalCategory.textContent = categoryName;
@@ -2294,6 +2491,7 @@ function openClue(tileEl, key, categoryName, clueObj, value) {
   startClueTimer();
   overlay.classList.add('active');
   BUZZ.arm();          // no-op unless a room is open and buzzers are on
+  BUZZ.showClue(current ? current.id : '', key);   // host console follows along
 }
 
 function renderAwardRow() {
@@ -2317,41 +2515,55 @@ function renderAwardRow() {
 
 // Only one award per clue. A second click can't double the score; the
 // scored button stays highlighted and an Undo link reverses it.
+// Real Jeopardy scoring: several teams can go down on one clue, buzzing in and
+// missing one after another, but only one can take it. So wrong answers stack —
+// one per team — and a correct answer closes the clue.
 function award(idx, delta) {
-  if (awarded) return;
+  if (awardedCorrect()) return;                       // clue is already won
+  if (awards.some(a => a.idx === idx)) return;        // this team already had its go
   stateFor(current).teams[idx].score += delta;
-  awarded = { idx, delta };
+  awards.push({ idx: idx, delta: delta });
   renderScoreboard();
   applyAwardLock();
 }
 
+const awardedCorrect = () => awards.some(a => a.delta > 0);
+
 function undoAward() {
-  if (!awarded) return;
-  const t = stateFor(current).teams[awarded.idx];
-  if (t) t.score -= awarded.delta;
-  awarded = null;
+  const last = awards.pop();
+  if (!last) return;
+  const t = stateFor(current).teams[last.idx];
+  if (t) t.score -= last.delta;
   renderScoreboard();
   applyAwardLock();
 }
 
 function applyAwardLock() {
   const buttons = [...awardRow.children];
-  buttons.forEach(b => { b.disabled = false; b.classList.remove('picked'); });
+  const teams = stateFor(current).teams;
+  const won = awardedCorrect();
+
+  buttons.forEach((b, i) => {
+    const teamIdx = Math.floor(i / 2);
+    const scored = awards.some(a => a.idx === teamIdx);
+    b.disabled = won || scored;
+    b.classList.remove('picked');
+  });
+  awards.forEach(a => {
+    const btn = buttons[a.idx * 2 + (a.delta > 0 ? 0 : 1)];
+    if (btn) btn.classList.add('picked');
+  });
+
   awardStatus.textContent = '';
+  if (!awards.length) return;
 
-  if (!awarded) return;
-
-  const pickedBtn = buttons[awarded.idx * 2 + (awarded.delta > 0 ? 0 : 1)];
-  buttons.forEach(b => { b.disabled = true; });
-  if (pickedBtn) pickedBtn.classList.add('picked');
-
-  const team = stateFor(current).teams[awarded.idx];
   const label = document.createElement('span');
-  label.textContent = team
-    ? `${team.name} ${awarded.delta > 0 ? '+' : '−'}${Math.abs(awarded.delta)} awarded`
-    : 'Award recorded';
+  label.textContent = awards.map(a => {
+    const t = teams[a.idx];
+    return (t ? t.name : 'Team') + ' ' + (a.delta > 0 ? '+' : '−') + Math.abs(a.delta);
+  }).join('   ');
   const undoBtn = document.createElement('button');
-  undoBtn.textContent = 'Undo';
+  undoBtn.textContent = awards.length > 1 ? 'Undo last' : 'Undo';
   undoBtn.onclick = undoAward;
   awardStatus.append(label, undoBtn);
 }
@@ -2518,6 +2730,8 @@ const BUZZ = (function () {
       host.code = code; host.round = 0; host.room = {}; host.enabled = true;
       codeEl.textContent = code;
       joinUrlEl.textContent = joinLink(code);
+      document.getElementById('buzzHostUrl').textContent =
+        location.origin + location.pathname + '#host-' + code;
       toggleBtn.textContent = 'Buzzers on';
       toggleBtn.setAttribute('aria-pressed', 'true');
       idleEl.hidden = true; liveEl.hidden = false;
@@ -2679,8 +2893,118 @@ const BUZZ = (function () {
     codeInput.value = codeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
   });
 
+  // ================= HOST CONSOLE =================
+  // Only the *coordinates* of the open clue go into the database — never the
+  // answer. The console looks the answer up in its own copy of GAMES, so the
+  // text never travels over the wire.
+  const consoleView = document.getElementById('hostView');
+  const consoleJoin = document.getElementById('hostJoinPane');
+  const consoleLive = document.getElementById('hostLivePane');
+  const consoleCode = document.getElementById('hostCodeInput');
+  const consoleBtn = document.getElementById('hostJoinBtn');
+  const consoleNote = document.getElementById('hostJoinNote');
+  const consoleTag = document.getElementById('hostRoomTag');
+  const consoleIdle = document.getElementById('hostIdle');
+  const consoleWrap = document.getElementById('hostClueWrap');
+  const consoleCat = document.getElementById('hostCat');
+  const consoleClue = document.getElementById('hostClue');
+  const consoleAnswer = document.getElementById('hostAnswer');
+  const consoleBuzz = document.getElementById('hostBuzz');
+  const consoleLeave = document.getElementById('hostLeaveBtn');
+
+  const console_ = { code: null, stream: null };
+
+  function lookupClue(ref) {
+    if (!ref) return null;
+    const game = GAMES.find(g => g.id === ref.g);
+    const cat = game && (game.categories || [])[ref.c];
+    const clue = cat && (cat.clues || [])[ref.r];
+    return clue ? { game: game, cat: cat, clue: clue } : null;
+  }
+
+  function renderConsole(room) {
+    if (console_.code && (!room || !room.meta)) {
+      leaveConsole('The host closed that room.');
+      return;
+    }
+    const found = lookupClue(room.clue);
+    consoleWrap.hidden = !found;
+    consoleIdle.hidden = !!found;
+    if (!found) return;
+    consoleCat.textContent = found.cat.name + '  ·  $' + (found.clue.value != null ? found.clue.value : '');
+    consoleClue.textContent = found.clue.clue;
+    consoleAnswer.textContent = found.clue.answer;
+
+    const round = (room.round || {}).id;
+    const buzzes = Object.keys(room.buzzes || {})
+      .map(k => room.buzzes[k])
+      .filter(b => b && b.round === round && typeof b.t === 'number')
+      .sort((a, b) => a.t - b.t);
+    consoleBuzz.textContent = '';
+    if (buzzes.length) {
+      consoleBuzz.append('First in: ');
+      const b = document.createElement('b');
+      b.textContent = buzzes[0].name;
+      consoleBuzz.append(b);
+      if (buzzes.length > 1) consoleBuzz.append(' (then ' + buzzes.slice(1).map(x => x.name).join(', ') + ')');
+    }
+  }
+
+  function openConsole() {
+    const code = (consoleCode.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (code.length < 4) {
+      consoleNote.className = 'wiz-note warn';
+      consoleNote.textContent = 'Enter the room code shown on the big screen.';
+      return;
+    }
+    consoleNote.className = 'wiz-note';
+    consoleNote.textContent = 'Connecting…';
+    consoleBtn.disabled = true;
+    fetch(url('/rooms/' + code + '/meta')).then(r => r.json()).then(meta => {
+      if (!meta) throw new Error('no room');
+      console_.code = code;
+      consoleNote.textContent = '';
+      consoleJoin.hidden = true; consoleLive.hidden = false;
+      consoleTag.textContent = 'Room ' + code;
+      console_.stream = listen('/rooms/' + code, renderConsole, () => {});
+    }).catch(() => {
+      consoleNote.className = 'wiz-note warn';
+      consoleNote.textContent = 'No room ' + code + ' is open.';
+    }).then(() => { consoleBtn.disabled = false; });
+  }
+
+  function leaveConsole(msg) {
+    if (console_.stream) { console_.stream.close(); console_.stream = null; }
+    console_.code = null;
+    consoleLive.hidden = true; consoleJoin.hidden = false;
+    consoleNote.className = 'wiz-note';
+    consoleNote.textContent = msg || '';
+  }
+
+  consoleBtn.addEventListener('click', openConsole);
+  consoleLeave.addEventListener('click', () => leaveConsole(''));
+  consoleCode.addEventListener('input', () => {
+    consoleCode.value = consoleCode.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  });
+
   return {
     // router hooks
+    openConsole(code) {
+      consoleView.hidden = false;
+      if (code && !console_.code) consoleCode.value = code.toUpperCase();
+    },
+    closeConsole() { consoleView.hidden = true; },
+    // the screen tells the room which clue is live (coordinates only)
+    showClue(gameId, key) {
+      if (!host.code || !key) return;
+      const parts = String(key).split('-');
+      patch('/rooms/' + host.code, { clue: { g: gameId, c: Number(parts[0]), r: Number(parts[1]) } })
+        .catch(() => {});
+    },
+    hideClue() {
+      if (!host.code) return;
+      del('/rooms/' + host.code + '/clue');
+    },
     openPlayer(code) {
       view.hidden = false;
       if (code && !player.code) codeInput.value = code.toUpperCase();
@@ -2816,6 +3140,7 @@ function checkBoardComplete() {
 function closeModal() {
   overlay.classList.remove('active');
   BUZZ.lock();
+  BUZZ.hideClue();
   BUZZ.refreshQueue();
   stopClueTimer();
   clueTimerEl.classList.remove('shown', 'stopped');
@@ -3485,6 +3810,75 @@ const WIZ = (function () {
     return questions;
   }
 
+  // ---------- shared survival board ----------
+  // Posting is opt-in, and the name is editable at that moment — the initials
+  // used during a run are only a default.
+  const LB_URL = 'https://mp-board-study-default-rtdb.firebaseio.com/leaderboard/survival';
+  const lbListEl = document.getElementById('wizLbList');
+  const lbRefreshEl = document.getElementById('wizLbRefresh');
+
+  function lbRender(rows, note) {
+    lbListEl.innerHTML = '';
+    if (note) {
+      const n = document.createElement('div');
+      n.className = 'score-empty';
+      n.textContent = note;
+      lbListEl.appendChild(n);
+      return;
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'score-list';
+    rows.forEach((row, i) => {
+      const el = document.createElement('div');
+      el.className = 'score-row';
+      const rank = document.createElement('div');
+      rank.className = 'rank'; rank.textContent = i + 1;
+      const who = document.createElement('div');
+      who.className = 'who'; who.style.fontSize = '15px'; who.textContent = row.who;
+      const mid = document.createElement('div');
+      mid.className = 'mid';
+      const pts = document.createElement('div');
+      pts.className = 'pts'; pts.textContent = row.score;
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const rooms = document.createElement('span');
+      rooms.textContent = row.rooms + ' rooms';
+      const badge = document.createElement('span');
+      badge.className = 'badge survival'; badge.textContent = 'survival';
+      meta.append(rooms, badge);
+      mid.append(pts, meta);
+      if (row.cats) {
+        const cats = document.createElement('div');
+        cats.className = 'cats'; cats.textContent = row.cats; cats.title = row.cats;
+        mid.appendChild(cats);
+      }
+      const when = document.createElement('div');
+      when.className = 'when';
+      when.textContent = new Date(row.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      el.append(rank, who, mid, when);
+      wrap.appendChild(el);
+    });
+    lbListEl.appendChild(wrap);
+  }
+
+  function lbLoad() {
+    lbRender([], 'Loading…');
+    fetch(LB_URL + '.json').then(r => r.json()).then(data => {
+      const rows = Object.keys(data || {}).map(k => data[k]).filter(Boolean)
+        .sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 15);
+      if (!rows.length) return lbRender([], 'Nothing posted yet — finish a survival run and put yourself up there.');
+      lbRender(rows);
+    }).catch(() => lbRender([], 'Could not reach the shared board.'));
+  }
+
+  function lbPost(entry) {
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    return fetch(LB_URL + '/' + id + '.json', { method: 'PUT', body: JSON.stringify(entry) })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r; });
+  }
+
+  lbRefreshEl.addEventListener('click', lbLoad);
+
   // ---------- setup screen ----------
   function renderCats() {
     catsEl.innerHTML = '';
@@ -3790,6 +4184,160 @@ const WIZ = (function () {
     }
   }
 
+  // ---------- phones ----------
+  // The screen stays authoritative: it owns the clock, the scoring and the
+  // room sequence. A phone only ever says "seat 0 chose option 2"; the screen
+  // decides what that means. Nothing about the game moves onto the network.
+  const NET_DB = 'https://mp-board-study-default-rtdb.firebaseio.com';
+  const netUrl = path => NET_DB + path + '.json';
+  const netPut = (path, data) => fetch(netUrl(path), { method: 'PUT', body: JSON.stringify(data) });
+  const netPatch = (path, data) => fetch(netUrl(path), { method: 'PATCH', body: JSON.stringify(data) });
+  const netDel = path => fetch(netUrl(path), { method: 'DELETE' });
+
+  const roomBtn = document.getElementById('wizRoomBtn');
+  const roomPanel = document.getElementById('wizRoomPanel');
+  const roomLive = document.getElementById('wizRoomLive');
+  const roomCodeEl = document.getElementById('wizRoomCode');
+  const roomUrlEl = document.getElementById('wizRoomUrl');
+  const roomSeatsEl = document.getElementById('wizRoomSeats');
+  const roomCloseEl = document.getElementById('wizRoomClose');
+
+  const net = { code: null, stream: null, seats: {}, roundHandled: -1 };
+
+  const seatCapacity = () => (variant === 'survival' ? 4 : mode);
+
+  function seatList() {
+    return Object.keys(net.seats)
+      .map(pid => ({ pid: pid, name: net.seats[pid].name, slot: net.seats[pid].slot }))
+      .sort((a, b) => a.slot - b.slot);
+  }
+
+  function renderSeats() {
+    const list = seatList();
+    roomSeatsEl.innerHTML = '';
+    if (!list.length) { roomSeatsEl.textContent = 'Waiting for players…'; return; }
+    list.forEach((p, i) => {
+      if (i) roomSeatsEl.append(' · ');
+      const b = document.createElement('b');
+      b.textContent = 'Seat ' + (p.slot + 1);
+      roomSeatsEl.append(b, ' ' + p.name);
+    });
+  }
+
+  // Seat a new phone, or turn it away when the game is full.
+  function assignSeats(players) {
+    const taken = {};
+    Object.keys(net.seats).forEach(pid => { taken[net.seats[pid].slot] = pid; });
+    Object.keys(players || {}).forEach(pid => {
+      if (net.seats[pid]) { net.seats[pid].name = players[pid].name; return; }
+      let slot = -1;
+      for (let i = 0; i < seatCapacity(); i++) if (!taken[i]) { slot = i; taken[i] = pid; break; }
+      net.seats[pid] = { name: players[pid].name, slot: slot };
+      netPatch('/rooms/' + net.code + '/wiz/seats/' + pid, { slot: slot, name: players[pid].name });
+    });
+    Object.keys(net.seats).forEach(pid => {
+      if (!(players || {})[pid]) delete net.seats[pid];
+    });
+    renderSeats();
+  }
+
+  // A phone's pick, routed into exactly the same code path a click takes.
+  function applyPicks(picks) {
+    if (!run || run.resolved) return;
+    Object.keys(picks || {}).forEach(pid => {
+      const sent = picks[pid];               // not `pick` — that is the handler
+      const seat = net.seats[pid];
+      if (!sent || !seat || seat.slot < 0) return;
+      if (sent.round !== run.idx) return;
+      const paneIdx = Math.min(seat.slot, run.panes.length - 1);
+      const pane = run.panes[paneIdx];
+      if (!pane) return;
+      const entry = pane.buttons[sent.choice];
+      if (!entry || entry.btn.disabled) return;
+      sent.round = -1;                       // only act on it once
+      pick(paneIdx, entry.optIdx, entry.btn);
+    });
+  }
+
+  function openNetRoom() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+    roomBtn.disabled = true;
+    netPut('/rooms/' + code, {
+      meta: { created: { '.sv': 'timestamp' }, game: "Wizard's Escape" },
+      wiz: { round: { n: -1, open: false }, seats: {} }
+    }).then(() => {
+      net.code = code; net.seats = {};
+      roomCodeEl.textContent = code;
+      roomUrlEl.textContent = location.origin + location.pathname + '#play-' + code;
+      roomPanel.hidden = true; roomLive.hidden = false;
+      renderSeats();
+      net.stream = new EventSource(netUrl('/rooms/' + code));
+      let mirror = {};
+      const onEvent = kind => e => {
+        let msg; try { msg = JSON.parse(e.data); } catch (err) { return; }
+        if (!msg) return;
+        mirror = netApply(mirror, kind, msg.path, msg.data);
+        assignSeats(mirror.players);
+        applyPicks(mirror.picks);
+      };
+      net.stream.addEventListener('put', onEvent('put'));
+      net.stream.addEventListener('patch', onEvent('patch'));
+    }).catch(() => {
+      roomBtn.textContent = 'Could not open a room';
+    }).then(() => { roomBtn.disabled = false; });
+  }
+
+  function netApply(root, event, path, data) {
+    if (path === '/') {
+      if (event === 'put') return data === null ? {} : data;
+      Object.keys(data || {}).forEach(k => { root[k] = data[k]; });
+      return root;
+    }
+    const parts = path.split('/').filter(Boolean);
+    let node = root;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (typeof node[parts[i]] !== 'object' || node[parts[i]] === null) node[parts[i]] = {};
+      node = node[parts[i]];
+    }
+    const last = parts[parts.length - 1];
+    if (event === 'patch') {
+      if (typeof node[last] !== 'object' || node[last] === null) node[last] = {};
+      Object.keys(data || {}).forEach(k => { node[last][k] = data[k]; });
+    } else if (data === null) { delete node[last]; }
+    else { node[last] = data; }
+    return root;
+  }
+
+  function closeNetRoom() {
+    if (!net.code) return;
+    const code = net.code;
+    if (net.stream) { net.stream.close(); net.stream = null; }
+    net.code = null; net.seats = {};
+    roomPanel.hidden = false; roomLive.hidden = true;
+    netDel('/rooms/' + code);
+  }
+
+  // Tell the phones a new room is live, and what each seat can press.
+  function netArmRoom() {
+    if (!net.code || !run) return;
+    netDel('/rooms/' + net.code + '/picks')
+      .then(() => netPatch('/rooms/' + net.code + '/wiz/round', { n: run.idx, open: true }));
+  }
+  function netLockRoom() {
+    if (!net.code) return;
+    netPatch('/rooms/' + net.code + '/wiz/round', { open: false });
+  }
+  // Let a phone know how its own pick went.
+  function netResult(slot, ok) {
+    if (!net.code) return;
+    netPatch('/rooms/' + net.code + '/wiz/result', { ['s' + slot]: (ok ? 'right' : 'wrong') + ':' + Date.now() });
+  }
+
+  roomBtn.addEventListener('click', openNetRoom);
+  roomCloseEl.addEventListener('click', closeNetRoom);
+
   // ---------- run ----------
   function buildPanes() {
     stageEl.className = 'wiz-stage' + (mode === 2 ? ' two' : '');
@@ -4021,6 +4569,7 @@ const WIZ = (function () {
     });
 
     startPowerLoop();
+    netArmRoom();
   }
 
   function startPowerLoop() {
@@ -4102,6 +4651,7 @@ const WIZ = (function () {
       btn.classList.add('wrong');
       btn.disabled = true;
       fizzle(pane, btn);
+      netResult(paneIdx, false);
       // Escape mode forgives a miss; survival charges a life for it.
       if (run.variant === 'survival' && spendLife()) {
         run.resolved = true;
@@ -4118,6 +4668,8 @@ const WIZ = (function () {
   function resolve(winnerIdx, btn) {
     run.resolved = true;
     cancelAnimationFrame(rafId);
+    netResult(winnerIdx, true);
+    netLockRoom();
 
     const winner = run.panes[winnerIdx];
     const clean = winner.wrongs.size === 0;
@@ -4419,6 +4971,52 @@ const WIZ = (function () {
     renderScores(board, 5, freshIds);
     resultBody.appendChild(board);
 
+    // Survival runs can be posted to the shared board — opt in, and rename first
+    // if the initials you played under are not how you want to appear.
+    if (survival && panes[0].rooms > 0) {
+      const box = document.createElement('div');
+      box.className = 'lb-post';
+      const row = document.createElement('div');
+      row.className = 'lb-post-row';
+      const input = document.createElement('input');
+      input.maxLength = 14;
+      input.value = nameFor(0) === '???' ? '' : nameFor(0);
+      input.placeholder = 'Your name';
+      input.setAttribute('aria-label', 'Name for the shared board');
+      const postBtn = document.createElement('button');
+      postBtn.className = 'reset-board-btn anki-btn';
+      postBtn.textContent = 'Post to shared board';
+      row.append(input, postBtn);
+      const hint = document.createElement('div');
+      hint.className = 'hint';
+      hint.textContent = 'Optional. Posts your name, score, rooms and categories where anyone on the site can see them.';
+      box.append(row, hint);
+      resultBody.appendChild(box);
+
+      postBtn.onclick = () => {
+        const who = (input.value || '').trim().slice(0, 14);
+        if (!who) { hint.textContent = 'Put a name in first.'; return; }
+        postBtn.disabled = true; postBtn.textContent = 'Posting…';
+        lbPost({
+          who: who,
+          score: panes[0].score,
+          rooms: panes[0].rooms,
+          cats: (allCats ? 'All categories' : (catNames || []).join(', ')).slice(0, 120),
+          at: Date.now()
+        }).then(() => {
+          box.innerHTML = '';
+          const done = document.createElement('div');
+          done.className = 'lb-posted';
+          done.textContent = 'Posted as ' + who + '.';
+          box.appendChild(done);
+          lbLoad();
+        }).catch(() => {
+          postBtn.disabled = false; postBtn.textContent = 'Post to shared board';
+          hint.textContent = 'Could not reach the shared board — try again in a moment.';
+        });
+      };
+    }
+
     const actions = document.createElement('div');
     actions.className = 'wiz-actions';
     const again = document.createElement('button');
@@ -4490,15 +5088,193 @@ const WIZ = (function () {
 
       renderCats();
       renderScores(scoreListEl, 10);
+      lbLoad();
       refreshStart();
     },
     close() {
       cancelAnimationFrame(rafId);
       run = null;
+      closeNetRoom();
     },
     // The Jeopardy celebration borrows the wizard for its dancers, rather than
     // keeping a second copy of the same drawing.
     art() { return wizardSVG(); }
+  };
+})();
+
+// ---------------- WIZARD PHONE CONTROLLER ----------------
+// Three numbered buttons and nothing else. The phone never learns the answers —
+// the labels live on the big screen, which is the point of playing together.
+const PAD = (function () {
+  const DB = 'https://mp-board-study-default-rtdb.firebaseio.com';
+  const url = path => DB + path + '.json';
+  const put = (path, data) => fetch(url(path), { method: 'PUT', body: JSON.stringify(data) });
+  const del = path => fetch(url(path), { method: 'DELETE' });
+
+  const view = document.getElementById('padView');
+  const joinPane = document.getElementById('padJoinPane');
+  const playPane = document.getElementById('padPlayPane');
+  const codeInput = document.getElementById('padCodeInput');
+  const nameInput = document.getElementById('padNameInput');
+  const joinBtn = document.getElementById('padJoinBtn');
+  const note = document.getElementById('padJoinNote');
+  const nameEl = document.getElementById('padName');
+  const seatEl = document.getElementById('padSeat');
+  const statusEl = document.getElementById('padStatus');
+  const buttons = [...document.querySelectorAll('.pad-btn')];
+  const leaveBtn = document.getElementById('padLeaveBtn');
+
+  const NAME_KEY = 'bsg.buzz.name.v1';
+  const me = { code: null, id: null, name: '', slot: -1, stream: null, round: -1, picked: false, lastResult: '' };
+
+  function paint(open) {
+    buttons.forEach(b => {
+      b.disabled = !open || me.picked;
+      b.classList.toggle('live', open && !me.picked);
+    });
+  }
+
+  function render(room) {
+    if (me.code && (!room || !room.meta)) return leave('The screen closed that room.');
+    const wiz = room.wiz || {};
+    const seat = (wiz.seats || {})[me.id];
+    if (seat && seat.slot !== me.slot) {
+      me.slot = seat.slot;
+      seatEl.textContent = me.slot >= 0 ? 'Seat ' + (me.slot + 1) : 'No seat free';
+    }
+    const round = wiz.round || {};
+    if (round.n !== me.round) {
+      me.round = round.n; me.picked = false;
+      buttons.forEach(b => b.classList.remove('chosen', 'right', 'wrong'));
+    }
+
+    // outcome of this seat's own pick, published by the screen
+    const res = (wiz.result || {})['s' + me.slot];
+    if (res && res !== me.lastResult && me.picked) {
+      me.lastResult = res;
+      const ok = res.indexOf('right') === 0;
+      const chosen = buttons.find(b => b.classList.contains('chosen'));
+      if (chosen) chosen.classList.add(ok ? 'right' : 'wrong');
+      statusEl.className = 'pad-status ' + (ok ? 'hit' : 'miss');
+      statusEl.textContent = ok ? 'That was it.' : 'Fizzle — wrong one.';
+      return;
+    }
+
+    if (me.slot < 0) {
+      statusEl.className = 'pad-status';
+      statusEl.textContent = 'That game is full. You are next in line if someone leaves.';
+      paint(false);
+      return;
+    }
+    if (round.open && !me.picked) {
+      statusEl.className = 'pad-status go';
+      statusEl.textContent = 'Pick one.';
+      paint(true);
+    } else if (me.picked) {
+      statusEl.className = 'pad-status';
+      statusEl.textContent = 'Sent — watch the screen.';
+      paint(false);
+    } else {
+      statusEl.className = 'pad-status';
+      statusEl.textContent = 'Waiting for the next room…';
+      paint(false);
+    }
+  }
+
+  function join() {
+    const code = (codeInput.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const name = (nameInput.value || '').trim();
+    if (code.length < 4) { note.className = 'wiz-note warn'; note.textContent = 'Enter the code from the screen.'; return; }
+    if (!name) { note.className = 'wiz-note warn'; note.textContent = 'Enter a name so the screen knows who you are.'; return; }
+    note.className = 'wiz-note'; note.textContent = 'Taking a seat…';
+    joinBtn.disabled = true;
+    fetch(url('/rooms/' + code + '/meta')).then(r => r.json()).then(meta => {
+      if (!meta) throw new Error('no room');
+      me.code = code; me.name = name;
+      me.id = 'w' + Math.random().toString(36).slice(2, 10);
+      try { localStorage.setItem(NAME_KEY, name); } catch (e) { /* fine */ }
+      return put('/rooms/' + code + '/players/' + me.id, { name: name, joined: { '.sv': 'timestamp' } });
+    }).then(() => {
+      note.textContent = '';
+      joinPane.hidden = true; playPane.hidden = false;
+      nameEl.textContent = me.name;
+      seatEl.textContent = 'Seating…';
+      me.stream = new EventSource(url('/rooms/' + me.code));
+      let mirror = {};
+      const onEvent = kind => e => {
+        let msg; try { msg = JSON.parse(e.data); } catch (err) { return; }
+        if (!msg) return;
+        mirror = apply(mirror, kind, msg.path, msg.data);
+        render(mirror);
+      };
+      me.stream.addEventListener('put', onEvent('put'));
+      me.stream.addEventListener('patch', onEvent('patch'));
+    }).catch(() => {
+      note.className = 'wiz-note warn';
+      note.textContent = 'No room ' + code + ' is open.';
+    }).then(() => { joinBtn.disabled = false; });
+  }
+
+  function apply(root, event, path, data) {
+    if (path === '/') {
+      if (event === 'put') return data === null ? {} : data;
+      Object.keys(data || {}).forEach(k => { root[k] = data[k]; });
+      return root;
+    }
+    const parts = path.split('/').filter(Boolean);
+    let node = root;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (typeof node[parts[i]] !== 'object' || node[parts[i]] === null) node[parts[i]] = {};
+      node = node[parts[i]];
+    }
+    const last = parts[parts.length - 1];
+    if (event === 'patch') {
+      if (typeof node[last] !== 'object' || node[last] === null) node[last] = {};
+      Object.keys(data || {}).forEach(k => { node[last][k] = data[k]; });
+    } else if (data === null) { delete node[last]; }
+    else { node[last] = data; }
+    return root;
+  }
+
+  function leave(msg) {
+    if (me.stream) { me.stream.close(); me.stream = null; }
+    if (me.code && me.id) del('/rooms/' + me.code + '/players/' + me.id);
+    me.code = null; me.id = null; me.slot = -1; me.picked = false; me.round = -1;
+    playPane.hidden = true; joinPane.hidden = false;
+    note.className = 'wiz-note';
+    note.textContent = msg || '';
+  }
+
+  buttons.forEach(btn => btn.addEventListener('click', () => {
+    if (btn.disabled || me.picked || !me.code) return;
+    me.picked = true;
+    btn.classList.add('chosen');
+    paint(false);
+    statusEl.className = 'pad-status';
+    statusEl.textContent = 'Sent — watch the screen.';
+    put('/rooms/' + me.code + '/picks/' + me.id,
+        { slot: me.slot, choice: Number(btn.dataset.choice), round: me.round, t: { '.sv': 'timestamp' } })
+      .catch(() => {
+        me.picked = false; btn.classList.remove('chosen'); paint(true);
+        statusEl.textContent = 'That did not get through — tap again.';
+      });
+  }));
+  joinBtn.addEventListener('click', join);
+  leaveBtn.addEventListener('click', () => leave(''));
+  codeInput.addEventListener('input', () => {
+    codeInput.value = codeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  });
+
+  return {
+    open(code) {
+      view.hidden = false;
+      if (code && !me.code) codeInput.value = code.toUpperCase();
+      try {
+        const saved = localStorage.getItem(NAME_KEY);
+        if (saved && !nameInput.value) nameInput.value = saved;
+      } catch (e) { /* fine */ }
+    },
+    close() { view.hidden = true; }
   };
 })();
 
@@ -4507,6 +5283,30 @@ const WIZ = (function () {
 // hub. That keeps the browser Back button working with no history juggling.
 function route() {
   const id = decodeURIComponent(location.hash.replace(/^#/, ''));
+
+  // A phone joining the wizard game: #play-ABCD
+  if (/^play(-|$)/i.test(id)) {
+    current = null;
+    hubView.hidden = true; gameView.hidden = true; wizardView.hidden = true;
+    WIZ.close(); BUZZ.closePlayer(); BUZZ.closeConsole();
+    document.title = "Wizard's Escape — phone";
+    PAD.open(id.slice(5));
+    window.scrollTo(0, 0);
+    return;
+  }
+  PAD.close();
+
+  // Host console: #host-ABCD
+  if (/^host(-|$)/i.test(id)) {
+    current = null;
+    hubView.hidden = true; gameView.hidden = true; wizardView.hidden = true;
+    WIZ.close(); BUZZ.closePlayer();
+    document.title = 'Host Console';
+    BUZZ.openConsole(id.slice(5));
+    window.scrollTo(0, 0);
+    return;
+  }
+  BUZZ.closeConsole();
 
   // Players land here from the host screen's link: #buzz or #buzz-ABCD
   if (/^buzz(-|$)/i.test(id)) {
