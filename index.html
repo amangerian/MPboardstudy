@@ -456,6 +456,111 @@
   }
   .close-x:hover { color: var(--gold); }
 
+  /* ---------- buzzer: host panel ---------- */
+  .buzzer-panel {
+    margin-top: 18px;
+    border: 1px solid #2a3080;
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: rgba(6,10,77,.45);
+  }
+  .buzzer-idle { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: center; }
+  .buzzer-idle .reset-board-btn { margin: 0; }
+  .buzz-start { border-color: #4a52ff; color: #b9bdff; }
+  .buzz-start:hover { border-color: var(--gold); color: var(--gold); }
+  .buzzer-blurb { font-size: 12px; color: var(--muted-dim); max-width: 46ch; line-height: 1.45; }
+
+  .buzzer-live { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: center; }
+  .buzz-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted-dim); margin-bottom: 3px;
+  }
+  .buzz-code {
+    font-family: Georgia, serif; font-weight: 900;
+    font-size: clamp(30px, 5vw, 46px); letter-spacing: 6px;
+    color: var(--gold); text-shadow: 0 3px 0 var(--text-shadow-c);
+  }
+  .buzz-url { font-size: 13px; color: #cfd3ff; word-break: break-all; }
+  .buzz-players { font-size: 12px; color: var(--muted-dim); margin-top: 4px; }
+  .buzz-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .buzz-controls .reset-board-btn { margin: 0; }
+  .buzz-toggle[aria-pressed="true"] { border-color: var(--correct); color: #8fd8b4; }
+  .buzz-toggle[aria-pressed="false"] { border-color: #7a4a4a; color: #ffb3b3; }
+  .buzz-error {
+    margin-top: 10px; text-align: center; font-size: 12.5px; color: var(--ember);
+  }
+
+  /* ---------- buzzer: queue inside the clue ---------- */
+  .buzz-queue { margin-top: 20px; text-align: left; }
+  .buzz-queue-label {
+    font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); text-align: center; margin-bottom: 8px;
+  }
+  .buzz-queue-list { list-style: none; margin: 0 auto; padding: 0; max-width: 420px; }
+  .buzz-queue-list li {
+    display: flex; align-items: baseline; gap: 10px;
+    background: rgba(6,10,77,.7); border: 1px solid #4a52ff;
+    border-radius: 8px; padding: 7px 12px; margin-bottom: 6px;
+    font-size: 15px; color: #e6e9ff;
+  }
+  .buzz-queue-list li:first-child {
+    border-color: var(--gold); background: rgba(255,204,77,.16);
+    color: var(--gold); font-weight: 700;
+  }
+  .buzz-queue-list .rank { font-family: Georgia, serif; font-weight: 900; opacity: .7; min-width: 1.4em; }
+  .buzz-queue-list .gap { margin-left: auto; font-size: 12px; opacity: .7; }
+  .buzz-queue-empty { text-align: center; color: var(--muted-dim); font-size: 13px; }
+
+  /* ---------- buzzer: player view ---------- */
+  .buzz-input {
+    width: 100%; text-align: center; letter-spacing: 6px;
+    font-size: 26px; text-transform: uppercase;
+  }
+  .buzz-input-name { letter-spacing: 1px; text-transform: none; font-size: 20px; }
+  .buzz-player-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px; color: var(--muted); margin: 6px 0 14px;
+  }
+  .buzz-room-tag { letter-spacing: 3px; color: var(--muted-dim); font-size: 11px; text-transform: uppercase; }
+  .buzz-big {
+    display: block; width: 100%;
+    aspect-ratio: 1 / 1; max-height: 58vh;
+    border-radius: 50%;
+    border: 6px solid #4a3a7d;
+    background: radial-gradient(circle at 50% 35%, #2a2f6b, #12143a);
+    color: #6f76b8;
+    font-family: Georgia, serif; font-weight: 900;
+    font-size: clamp(26px, 9vw, 54px);
+    letter-spacing: 2px; text-transform: uppercase;
+    cursor: not-allowed;
+    transition: transform .08s ease, background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .buzz-big.armed {
+    cursor: pointer;
+    border-color: var(--gold);
+    background: radial-gradient(circle at 50% 35%, #e04b4b, #a01d1d);
+    color: #fff;
+    box-shadow: 0 0 40px rgba(224,75,75,.5);
+    animation: buzzPulse 1.4s ease-in-out infinite;
+  }
+  .buzz-big.armed:active { transform: scale(.96); }
+  .buzz-big.sent {
+    animation: none; border-color: var(--correct);
+    background: radial-gradient(circle at 50% 35%, #2f8f5e, #14532d);
+    color: #eafff4; cursor: default;
+  }
+  @keyframes buzzPulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(224,75,75,.45); }
+    50%      { box-shadow: 0 0 60px rgba(224,75,75,.8); }
+  }
+  .buzz-status {
+    text-align: center; margin: 16px 0 18px;
+    font-size: 15px; color: var(--muted);
+  }
+  .buzz-status b { color: var(--gold); }
+  #buzzPlayPane .reset-board-btn { display: block; margin: 0 auto; }
+  @media (prefers-reduced-motion: reduce) { .buzz-big.armed { animation: none; } }
+
   /* ---------- end-of-board celebration ---------- */
   .celebration {
     position: fixed; inset: 0; z-index: 80;
@@ -1292,6 +1397,29 @@
 
   <div class="board" id="board"></div>
 
+  <div class="buzzer-panel" id="buzzerPanel">
+    <div class="buzzer-idle" id="buzzerIdle">
+      <button class="reset-board-btn buzz-start" id="buzzStartBtn">Open buzzer room</button>
+      <span class="buzzer-blurb">Players buzz in from their phones. The board plays exactly as it does now until you open one.</span>
+    </div>
+    <div class="buzzer-live" id="buzzerLive" hidden>
+      <div class="buzz-code-block">
+        <div class="buzz-label">Room code</div>
+        <div class="buzz-code" id="buzzCode">----</div>
+      </div>
+      <div class="buzz-join">
+        <div class="buzz-label">Players join at</div>
+        <div class="buzz-url" id="buzzJoinUrl"></div>
+        <div class="buzz-players" id="buzzPlayers">No one has joined yet</div>
+      </div>
+      <div class="buzz-controls">
+        <button class="reset-board-btn buzz-toggle" id="buzzToggleBtn" aria-pressed="true">Buzzers on</button>
+        <button class="reset-board-btn" id="buzzCloseBtn">Close room</button>
+      </div>
+    </div>
+    <div class="buzz-error" id="buzzError" hidden></div>
+  </div>
+
   <div class="board-actions">
     <button class="reset-board-btn" id="resetBoardBtn">Reset board &amp; scores</button>
     <button class="reset-board-btn anki-btn" id="ankiExportBtn"
@@ -1299,6 +1427,40 @@
   </div>
 
   <footer class="hint">Click a tile to reveal the clue &nbsp;&bull;&nbsp; phrase your response as a question &nbsp;&bull;&nbsp; award points to the team that answers correctly</footer>
+</div>
+
+<!-- ===================== BUZZER (player view) ===================== -->
+<div class="wrap buzzer-view" id="buzzerView" hidden>
+  <div class="topbar"><a class="back-link" href="#">&larr; All games</a></div>
+
+  <div id="buzzJoinPane">
+    <div class="titlebar">
+      <h1>Buzz In</h1>
+      <p>Join the room on the host screen</p>
+    </div>
+    <div class="wiz-panel">
+      <label class="initials-field" style="width:100%">
+        <span>Room code</span>
+        <input id="buzzCodeInput" maxlength="6" placeholder="ABCD" autocomplete="off" spellcheck="false" class="buzz-input">
+      </label>
+      <label class="initials-field" style="width:100%;margin-top:14px">
+        <span>Your name</span>
+        <input id="buzzNameInput" maxlength="18" placeholder="Alex" autocomplete="off" class="buzz-input buzz-input-name">
+      </label>
+      <button class="wiz-start" id="buzzJoinBtn">Join room</button>
+      <div class="wiz-note" id="buzzJoinNote"></div>
+    </div>
+  </div>
+
+  <div id="buzzPlayPane" hidden>
+    <div class="buzz-player-head">
+      <span id="buzzPlayerName"></span>
+      <span class="buzz-room-tag" id="buzzRoomTag"></span>
+    </div>
+    <button class="buzz-big" id="buzzBigBtn" disabled>Waiting…</button>
+    <div class="buzz-status" id="buzzStatus">Waiting for the host to open a clue</div>
+    <button class="reset-board-btn" id="buzzLeaveBtn">Leave room</button>
+  </div>
 </div>
 
 <!-- ============ END-OF-BOARD CELEBRATION (Jeopardy) ============ -->
@@ -1414,6 +1576,11 @@
     <div class="clue-text" id="modalClue"></div>
     <img class="clue-image" id="modalImage" alt="Imaging for this clue" hidden>
     <div class="answer-text" id="modalAnswer"></div>
+
+    <div class="buzz-queue" id="buzzQueue" hidden>
+      <div class="buzz-queue-label">Buzzed in</div>
+      <ol class="buzz-queue-list" id="buzzQueueList"></ol>
+    </div>
 
     <div class="modal-actions" id="revealRow">
       <button class="btn-reveal" id="revealBtn">Reveal Answer</button>
@@ -2126,6 +2293,7 @@ function openClue(tileEl, key, categoryName, clueObj, value) {
   renderAwardRow();
   startClueTimer();
   overlay.classList.add('active');
+  BUZZ.arm();          // no-op unless a room is open and buzzers are on
 }
 
 function renderAwardRow() {
@@ -2190,6 +2358,7 @@ function applyAwardLock() {
 
 revealBtn.addEventListener('click', () => {
   revealed = true;
+  BUZZ.lock();         // the answer is out; nothing left to buzz for
   // Deliberation is over; hold the final time on screen rather than letting it
   // tick on through the scoring.
   stopClueTimer();
@@ -2201,6 +2370,335 @@ revealBtn.addEventListener('click', () => {
 
 // A tile is only used up once its answer has been revealed. Opening a clue by
 // mistake and backing out (X, Esc, or clicking outside) leaves it on the board.
+// ---------------- BUZZER ----------------
+// Phones buzz in over Firebase Realtime Database, spoken to directly over its
+// REST API (writes) and server-sent events (live updates) — no SDK, so the page
+// stays one self-contained file. The board plays exactly as before unless a
+// room is open, and the host can switch buzzers off mid-game at any time.
+const BUZZ = (function () {
+  const DB = 'https://mp-board-study-default-rtdb.firebaseio.com';
+  const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';   // no O/0/I/1
+  const SERVER_TIME = { '.sv': 'timestamp' };
+
+  const url = path => DB + path + '.json';
+  const write = (method, path, data) =>
+    fetch(url(path), { method: method, body: JSON.stringify(data) })
+      .then(r => { if (!r.ok) throw new Error(method + ' ' + path + ' -> ' + r.status); return r; });
+  const put = (path, data) => write('PUT', path, data);
+  const patch = (path, data) => write('PATCH', path, data);
+  const del = path => fetch(url(path), { method: 'DELETE' });
+
+  // Apply one streaming event onto a local mirror of the room.
+  function applyEvent(root, event, path, data) {
+    if (path === '/') {
+      if (event === 'put') return data === null ? {} : data;
+      Object.keys(data || {}).forEach(k => { root[k] = data[k]; });
+      return root;
+    }
+    const parts = path.split('/').filter(Boolean);
+    let node = root;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (typeof node[parts[i]] !== 'object' || node[parts[i]] === null) node[parts[i]] = {};
+      node = node[parts[i]];
+    }
+    const last = parts[parts.length - 1];
+    if (event === 'patch') {
+      if (typeof node[last] !== 'object' || node[last] === null) node[last] = {};
+      Object.keys(data || {}).forEach(k => { node[last][k] = data[k]; });
+    } else if (data === null) {
+      delete node[last];
+    } else {
+      node[last] = data;
+    }
+    return root;
+  }
+
+  function listen(path, onChange, onError) {
+    const es = new EventSource(url(path));
+    let mirror = {};
+    const handle = kind => e => {
+      let payload;
+      try { payload = JSON.parse(e.data); } catch (err) { return; }
+      if (!payload) return;
+      mirror = applyEvent(mirror, kind, payload.path, payload.data);
+      onChange(mirror);
+    };
+    es.addEventListener('put', handle('put'));
+    es.addEventListener('patch', handle('patch'));
+    es.addEventListener('error', () => { if (onError) onError(); });
+    return es;
+  }
+
+  const randomCode = () => {
+    let c = '';
+    for (let i = 0; i < 4; i++) c += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
+    return c;
+  };
+
+  // ================= HOST =================
+  const panel = document.getElementById('buzzerPanel');
+  const idleEl = document.getElementById('buzzerIdle');
+  const liveEl = document.getElementById('buzzerLive');
+  const codeEl = document.getElementById('buzzCode');
+  const joinUrlEl = document.getElementById('buzzJoinUrl');
+  const playersEl = document.getElementById('buzzPlayers');
+  const toggleBtn = document.getElementById('buzzToggleBtn');
+  const startBtn = document.getElementById('buzzStartBtn');
+  const closeBtn = document.getElementById('buzzCloseBtn');
+  const errEl = document.getElementById('buzzError');
+  const queueEl = document.getElementById('buzzQueue');
+  const queueList = document.getElementById('buzzQueueList');
+
+  const host = { code: null, stream: null, room: {}, enabled: true, round: 0 };
+
+  function hostError(msg) {
+    errEl.textContent = msg;
+    errEl.hidden = !msg;
+  }
+
+  function joinLink(code) {
+    return location.origin + location.pathname + '#buzz-' + code;
+  }
+
+  function renderHost() {
+    const players = host.room.players || {};
+    const names = Object.keys(players).map(k => players[k] && players[k].name).filter(Boolean);
+    playersEl.textContent = names.length
+      ? names.length + (names.length === 1 ? ' player: ' : ' players: ') + names.join(', ')
+      : 'No one has joined yet';
+    renderQueue();
+  }
+
+  function buzzOrder() {
+    const buzzes = host.room.buzzes || {};
+    return Object.keys(buzzes)
+      .map(k => buzzes[k])
+      .filter(b => b && b.round === host.round && typeof b.t === 'number')
+      .sort((a, b) => a.t - b.t);
+  }
+
+  function renderQueue() {
+    if (!host.code || !host.enabled) { queueEl.hidden = true; return; }
+    queueEl.hidden = !overlay.classList.contains('active');
+    const order = buzzOrder();
+    queueList.innerHTML = '';
+    if (!order.length) {
+      const li = document.createElement('li');
+      li.className = 'buzz-queue-empty';
+      li.textContent = 'Waiting for a buzz…';
+      queueList.appendChild(li);
+      return;
+    }
+    const first = order[0].t;
+    order.forEach((b, i) => {
+      const li = document.createElement('li');
+      const rank = document.createElement('span');
+      rank.className = 'rank'; rank.textContent = (i + 1) + '.';
+      const name = document.createElement('span');
+      name.textContent = b.name;
+      li.append(rank, name);
+      if (i > 0) {
+        const gap = document.createElement('span');
+        gap.className = 'gap';
+        gap.textContent = '+' + ((b.t - first) / 1000).toFixed(2) + 's';
+        li.appendChild(gap);
+      }
+      queueList.appendChild(li);
+    });
+  }
+
+  function openRoom() {
+    const code = randomCode();
+    hostError('');
+    startBtn.disabled = true;
+    put('/rooms/' + code, {
+      meta: { created: SERVER_TIME, game: current ? current.title : '' },
+      round: { id: 0, open: false }
+    }).then(() => {
+      host.code = code; host.round = 0; host.room = {}; host.enabled = true;
+      codeEl.textContent = code;
+      joinUrlEl.textContent = joinLink(code);
+      toggleBtn.textContent = 'Buzzers on';
+      toggleBtn.setAttribute('aria-pressed', 'true');
+      idleEl.hidden = true; liveEl.hidden = false;
+      host.stream = listen('/rooms/' + code, room => { host.room = room; renderHost(); },
+        () => hostError('Lost contact with the buzzer service — reconnecting…'));
+      renderHost();
+    }).catch(e => {
+      hostError('Could not open a room: ' + e.message + '. Check the connection and try again.');
+    }).then(() => { startBtn.disabled = false; });
+  }
+
+  function closeRoom() {
+    if (!host.code) return;
+    const code = host.code;
+    if (host.stream) { host.stream.close(); host.stream = null; }
+    host.code = null; host.room = {};
+    idleEl.hidden = false; liveEl.hidden = true;
+    queueEl.hidden = true;
+    del('/rooms/' + code);
+  }
+
+  // Arm the buzzers for a fresh clue: clears the queue and bumps the round, so
+  // a buzz from the previous clue can never land in this one.
+  function armRound() {
+    if (!host.code || !host.enabled) { queueEl.hidden = true; return; }
+    host.round += 1;
+    host.room.buzzes = {};
+    renderQueue();
+    del('/rooms/' + host.code + '/buzzes')
+      .then(() => patch('/rooms/' + host.code + '/round', { id: host.round, open: true }))
+      .catch(() => hostError('Could not arm the buzzers.'));
+  }
+
+  function lockRound() {
+    if (!host.code) return;
+    patch('/rooms/' + host.code + '/round', { open: false }).catch(() => {});
+  }
+
+  startBtn.addEventListener('click', openRoom);
+  closeBtn.addEventListener('click', closeRoom);
+  toggleBtn.addEventListener('click', () => {
+    host.enabled = !host.enabled;
+    toggleBtn.textContent = host.enabled ? 'Buzzers on' : 'Buzzers off';
+    toggleBtn.setAttribute('aria-pressed', String(host.enabled));
+    if (!host.enabled) { lockRound(); queueEl.hidden = true; }
+    else if (overlay.classList.contains('active')) armRound();
+  });
+
+  // ================= PLAYER =================
+  const view = document.getElementById('buzzerView');
+  const joinPane = document.getElementById('buzzJoinPane');
+  const playPane = document.getElementById('buzzPlayPane');
+  const codeInput = document.getElementById('buzzCodeInput');
+  const nameInput = document.getElementById('buzzNameInput');
+  const joinBtn = document.getElementById('buzzJoinBtn');
+  const joinNote = document.getElementById('buzzJoinNote');
+  const bigBtn = document.getElementById('buzzBigBtn');
+  const statusEl = document.getElementById('buzzStatus');
+  const playerNameEl = document.getElementById('buzzPlayerName');
+  const roomTagEl = document.getElementById('buzzRoomTag');
+  const leaveBtn = document.getElementById('buzzLeaveBtn');
+
+  const player = { code: null, id: null, name: '', stream: null, round: -1, buzzed: false };
+
+  const NAME_KEY = 'bsg.buzz.name.v1';
+
+  function setStatus(html) { statusEl.innerHTML = ''; statusEl.append(...html); }
+
+  function renderPlayer(room) {
+    // The host closed the room (or it was cleared): say so rather than leaving
+    // the player staring at a button that will never light up.
+    if (player.code && (!room || !room.meta)) {
+      if (player.stream) { player.stream.close(); player.stream = null; }
+      player.code = null; player.id = null; player.buzzed = false; player.round = -1;
+      playPane.hidden = true; joinPane.hidden = false;
+      joinNote.className = 'wiz-note';
+      joinNote.textContent = 'The host closed that room.';
+      return;
+    }
+    const round = room.round || {};
+    const open = !!round.open;
+    if (round.id !== player.round) { player.round = round.id; player.buzzed = false; }
+
+    const buzzes = room.buzzes || {};
+    const mine = buzzes[player.id];
+    const order = Object.keys(buzzes).map(k => buzzes[k])
+      .filter(b => b && b.round === round.id && typeof b.t === 'number')
+      .sort((a, b) => a.t - b.t);
+    const place = mine && typeof mine.t === 'number'
+      ? order.findIndex(b => b.t === mine.t && b.name === mine.name) + 1 : 0;
+
+    bigBtn.classList.toggle('armed', open && !player.buzzed);
+    bigBtn.classList.toggle('sent', !!player.buzzed);
+    bigBtn.disabled = !open || player.buzzed;
+
+    if (player.buzzed) {
+      bigBtn.textContent = place === 1 ? 'First!' : place ? '#' + place : 'Sent';
+      statusEl.textContent = place === 1
+        ? 'You were first in.'
+        : place ? 'You were number ' + place + ' in.' : 'Buzz sent.';
+    } else if (open) {
+      bigBtn.textContent = 'Buzz';
+      statusEl.textContent = 'Clue is live — hit it.';
+    } else {
+      bigBtn.textContent = 'Waiting…';
+      statusEl.textContent = 'Waiting for the host to open a clue';
+    }
+  }
+
+  function joinRoom() {
+    const code = (codeInput.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const name = (nameInput.value || '').trim();
+    if (code.length < 4) { joinNote.className = 'wiz-note warn'; joinNote.textContent = 'Enter the 4-letter room code from the host screen.'; return; }
+    if (!name) { joinNote.className = 'wiz-note warn'; joinNote.textContent = 'Enter a name so the host knows who buzzed.'; return; }
+    joinNote.className = 'wiz-note'; joinNote.textContent = 'Joining…';
+    joinBtn.disabled = true;
+
+    fetch(url('/rooms/' + code + '/meta')).then(r => r.json()).then(meta => {
+      if (!meta) throw new Error('no such room');
+      player.code = code;
+      player.name = name;
+      player.id = 'p' + Math.random().toString(36).slice(2, 10);
+      try { localStorage.setItem(NAME_KEY, name); } catch (e) { /* fine */ }
+      return put('/rooms/' + code + '/players/' + player.id, { name: name, joined: SERVER_TIME });
+    }).then(() => {
+      joinNote.textContent = '';
+      joinPane.hidden = true; playPane.hidden = false;
+      playerNameEl.textContent = player.name;
+      roomTagEl.textContent = 'Room ' + player.code;
+      player.stream = listen('/rooms/' + player.code, renderPlayer, () => {
+        statusEl.textContent = 'Connection dropped — trying to reconnect…';
+      });
+    }).catch(() => {
+      joinNote.className = 'wiz-note warn';
+      joinNote.textContent = 'Could not find room ' + code + '. Check the code on the host screen.';
+    }).then(() => { joinBtn.disabled = false; });
+  }
+
+  function leaveRoom() {
+    if (player.stream) { player.stream.close(); player.stream = null; }
+    if (player.code && player.id) del('/rooms/' + player.code + '/players/' + player.id);
+    player.code = null; player.id = null; player.buzzed = false; player.round = -1;
+    playPane.hidden = true; joinPane.hidden = false;
+  }
+
+  bigBtn.addEventListener('click', () => {
+    if (bigBtn.disabled || player.buzzed || !player.code) return;
+    player.buzzed = true;
+    bigBtn.classList.remove('armed'); bigBtn.classList.add('sent');
+    bigBtn.disabled = true; bigBtn.textContent = 'Sent';
+    put('/rooms/' + player.code + '/buzzes/' + player.id,
+        { name: player.name, round: player.round, t: SERVER_TIME })
+      .catch(() => { statusEl.textContent = 'That buzz did not get through — tap again.';
+                     player.buzzed = false; bigBtn.disabled = false; bigBtn.classList.add('armed'); });
+  });
+  joinBtn.addEventListener('click', joinRoom);
+  leaveBtn.addEventListener('click', leaveRoom);
+  codeInput.addEventListener('input', () => {
+    codeInput.value = codeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  });
+
+  return {
+    // router hooks
+    openPlayer(code) {
+      view.hidden = false;
+      if (code && !player.code) codeInput.value = code.toUpperCase();
+      try {
+        const saved = localStorage.getItem(NAME_KEY);
+        if (saved && !nameInput.value) nameInput.value = saved;
+      } catch (e) { /* fine */ }
+    },
+    closePlayer() { view.hidden = true; },
+    // clue hooks
+    arm: armRound,
+    lock() { lockRound(); },
+    refreshQueue: renderQueue,
+    active() { return !!host.code && host.enabled; },
+    endHosting: closeRoom
+  };
+})();
+
 // ---------------- END-OF-BOARD CELEBRATION ----------------
 const celebrationEl = document.getElementById('celebration');
 const streamersEl = document.getElementById('streamers');
@@ -2317,6 +2815,8 @@ function checkBoardComplete() {
 
 function closeModal() {
   overlay.classList.remove('active');
+  BUZZ.lock();
+  BUZZ.refreshQueue();
   stopClueTimer();
   clueTimerEl.classList.remove('shown', 'stopped');
   if (currentClueEl && revealed) {
@@ -4007,6 +4507,21 @@ const WIZ = (function () {
 // hub. That keeps the browser Back button working with no history juggling.
 function route() {
   const id = decodeURIComponent(location.hash.replace(/^#/, ''));
+
+  // Players land here from the host screen's link: #buzz or #buzz-ABCD
+  if (/^buzz(-|$)/i.test(id)) {
+    current = null;
+    hubView.hidden = true;
+    gameView.hidden = true;
+    wizardView.hidden = true;
+    WIZ.close();
+    document.title = 'Buzz In';
+    BUZZ.openPlayer(id.slice(5));
+    window.scrollTo(0, 0);
+    return;
+  }
+  BUZZ.closePlayer();
+
   const game = GAMES.find(g => g.id === id && !g.comingSoon);
   const extra = EXTRAS.find(x => x.id === id);
 
