@@ -480,7 +480,10 @@
     font-size: clamp(30px, 5vw, 46px); letter-spacing: 6px;
     color: var(--gold); text-shadow: 0 3px 0 var(--text-shadow-c);
   }
-  .buzz-url { font-size: 13px; color: #cfd3ff; word-break: break-all; }
+  .buzz-url {
+    font-size: clamp(14px, 1.5vw, 18px); font-weight: 700;
+    color: #e2e6ff; word-break: break-all;
+  }
   .buzz-players { font-size: 12px; color: var(--muted-dim); margin-top: 4px; }
   .buzz-hostlink { font-size: 11px; color: var(--muted-dim); margin-top: 6px; word-break: break-all; }
   .buzz-hostlink span { color: var(--gold-dim); }
@@ -552,9 +555,49 @@
     font-family: Georgia, serif; font-weight: 900;
     font-size: clamp(28px, 4.5vw, 42px); letter-spacing: 6px; color: var(--gold);
   }
-  .wizroom-url { font-size: 12.5px; color: #cfd3ff; word-break: break-all; }
+  .wizroom-url {
+    font-size: clamp(14px, 1.5vw, 18px); font-weight: 700;
+    color: #e2e6ff; word-break: break-all;
+  }
   .wizroom-seats { font-size: 12.5px; color: var(--muted-dim); margin-top: 4px; }
   .wizroom-seats b { color: var(--arcane); }
+
+  /* ---------- QR codes and the join screen ---------- */
+  .qr { display: block; border-radius: 4px; }
+  .qr-card {
+    background: #fff; padding: 7px; border-radius: 8px;
+    line-height: 0; box-shadow: 0 3px 10px rgba(0,0,0,.45);
+  }
+  .qr-block { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .qr-block .buzz-label { margin: 0; }
+
+  .join-screen {
+    position: fixed; inset: 0; z-index: 90;
+    background: rgba(4,6,26,.97);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3vmin; cursor: zoom-out;
+    overflow: auto;
+  }
+  .join-inner { text-align: center; max-width: 96vw; }
+  .join-title {
+    font-size: clamp(13px, 1.8vmin, 18px); letter-spacing: 3px;
+    text-transform: uppercase; color: var(--muted-dim); margin-bottom: 2vmin;
+  }
+  .join-qr { display: inline-block; background: #fff; padding: 2.2vmin; border-radius: 14px; line-height: 0; }
+  .join-qr .qr { width: min(58vmin, 520px); height: min(58vmin, 520px); }
+  .join-code {
+    font-family: Georgia, serif; font-weight: 900;
+    font-size: clamp(44px, 13vmin, 150px); letter-spacing: min(3vmin, 18px);
+    color: var(--gold); text-shadow: 0 4px 0 var(--text-shadow-c);
+    margin: 2vmin 0 0; padding-left: min(3vmin, 18px);   /* balance the tracking */
+    line-height: 1.05;
+  }
+  .join-url {
+    font-size: clamp(14px, 2.6vmin, 26px); color: #dfe3ff;
+    word-break: break-all; margin-top: 1vmin;
+  }
+  .join-note { font-size: clamp(12px, 2vmin, 19px); color: var(--arcane); margin-top: 1.6vmin; min-height: 1.2em; }
+  .join-dismiss { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted-dim); margin-top: 2.5vmin; }
 
   /* ---------- host console ---------- */
   .host-card {
@@ -1588,6 +1631,10 @@
         <div class="buzz-label">Room code</div>
         <div class="buzz-code" id="buzzCode">----</div>
       </div>
+      <div class="qr-block">
+        <div class="buzz-label">Scan to join</div>
+        <div class="qr-card" id="buzzQr"></div>
+      </div>
       <div class="buzz-join">
         <div class="buzz-label">Players join at</div>
         <div class="buzz-url" id="buzzJoinUrl"></div>
@@ -1595,6 +1642,7 @@
         <div class="buzz-hostlink">Host console (shows answers): <span id="buzzHostUrl"></span></div>
       </div>
       <div class="buzz-controls">
+        <button class="reset-board-btn" id="buzzBigBtn">Show join screen</button>
         <button class="reset-board-btn buzz-toggle" id="buzzToggleBtn" aria-pressed="true">Buzzers on</button>
         <button class="reset-board-btn" id="buzzCloseBtn">Close room</button>
       </div>
@@ -1734,6 +1782,20 @@
   </div>
 </div>
 
+<!-- ===================== JOIN SCREEN ===================== -->
+<!-- Fills the screen with the code and a large QR, for a room looking at a
+     projector. Click anywhere or press Escape to dismiss it. -->
+<div class="join-screen" id="joinScreen" hidden>
+  <div class="join-inner">
+    <div class="join-title" id="joinTitle"></div>
+    <div class="join-qr" id="joinQr"></div>
+    <div class="join-code" id="joinCode">----</div>
+    <div class="join-url" id="joinUrl"></div>
+    <div class="join-note" id="joinNote"></div>
+    <div class="join-dismiss">Click anywhere or press Esc to close</div>
+  </div>
+</div>
+
 <!-- ===================== WIZARD'S ESCAPE ===================== -->
 <div class="wrap" id="wizardView" hidden>
   <div class="topbar"><a class="back-link" href="#">&larr; All games</a></div>
@@ -1773,12 +1835,19 @@
               <div class="buzz-label">Room code</div>
               <div class="wizroom-code" id="wizRoomCode">----</div>
             </div>
+            <div class="qr-block">
+              <div class="buzz-label">Scan to join</div>
+              <div class="qr-card" id="wizRoomQr"></div>
+            </div>
             <div>
               <div class="buzz-label">Players join at</div>
               <div class="wizroom-url" id="wizRoomUrl"></div>
               <div class="wizroom-seats" id="wizRoomSeats">Waiting for players…</div>
             </div>
-            <button class="reset-board-btn" id="wizRoomClose" style="margin:0">Close room</button>
+            <div class="buzz-controls">
+              <button class="reset-board-btn" id="wizRoomBig" style="margin:0">Show join screen</button>
+              <button class="reset-board-btn" id="wizRoomClose" style="margin:0">Close room</button>
+            </div>
           </div>
           <p class="flip-hint" id="wizFlipHint">Two wizards on a phone: lay it flat between you — the top room is turned around so you can sit facing each other.</p>
           <div class="initials-row" id="wizNames">
@@ -2670,6 +2739,353 @@ revealBtn.addEventListener('click', () => {
 
 // A tile is only used up once its answer has been revealed. Opening a clue by
 // mistake and backing out (X, Esc, or clicking outside) leaves it on the board.
+// ---------------- QR ----------------
+// A join link is easier to scan than to type, and a QR generator is 200 lines
+// of arithmetic rather than a dependency — which matters here, because the site
+// has to stay one file with nothing loaded from a CDN.
+// Byte mode, error correction level M, versions 1-10 (up to 213 characters).
+const QR = (function () {
+  // GF(256) with the QR primitive polynomial x^8+x^4+x^3+x^2+1.
+  const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  (function () {
+    let x = 1;
+    for (let i = 0; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 0x100) x ^= 0x11d; }
+    for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+  })();
+  const mul = (a, b) => (a === 0 || b === 0) ? 0 : EXP[LOG[a] + LOG[b]];
+
+  // [ec codewords per block, blocks in group 1, data per block, group 2, data]
+  const SPEC = {
+    1: [10, 1, 16, 0, 0], 2: [16, 1, 28, 0, 0], 3: [26, 1, 44, 0, 0],
+    4: [18, 2, 32, 0, 0], 5: [24, 2, 43, 0, 0], 6: [16, 4, 27, 0, 0],
+    7: [18, 4, 31, 0, 0], 8: [22, 2, 38, 2, 39], 9: [22, 3, 36, 2, 37],
+    10: [26, 4, 43, 1, 44],
+  };
+  const ALIGN = {
+    1: [], 2: [6, 18], 3: [6, 22], 4: [6, 26], 5: [6, 30],
+    6: [6, 34], 7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50],
+  };
+
+  function generator(n) {
+    let g = [1];
+    for (let i = 0; i < n; i++) {
+      const next = new Array(g.length + 1).fill(0);
+      for (let j = 0; j < g.length; j++) {
+        next[j] ^= g[j];
+        next[j + 1] ^= mul(g[j], EXP[i]);
+      }
+      g = next;
+    }
+    return g;
+  }
+
+  function remainder(data, ecLen) {
+    const g = generator(ecLen);
+    const res = new Array(ecLen).fill(0);
+    for (let k = 0; k < data.length; k++) {
+      const factor = data[k] ^ res[0];
+      res.shift();
+      res.push(0);
+      if (factor !== 0) for (let i = 0; i < ecLen; i++) res[i] ^= mul(g[i + 1], factor);
+    }
+    return res;
+  }
+
+  const dataCodewords = v => { const s = SPEC[v]; return s[1] * s[2] + s[3] * s[4]; };
+
+  function pickVersion(len) {
+    for (let v = 1; v <= 10; v++) {
+      const cc = v < 10 ? 8 : 16;
+      if (4 + cc + 8 * len <= dataCodewords(v) * 8) return v;
+    }
+    return 0;
+  }
+
+  // Mode indicator, length, payload, terminator, padding — then split into
+  // blocks, add error correction, and interleave the lot.
+  function codewords(bytes, version) {
+    const bits = [];
+    const push = (val, n) => { for (let i = n - 1; i >= 0; i--) bits.push((val >> i) & 1); };
+    push(4, 4);                                   // byte mode
+    push(bytes.length, version < 10 ? 8 : 16);
+    bytes.forEach(b => push(b, 8));
+
+    const capacity = dataCodewords(version) * 8;
+    for (let i = 0; i < 4 && bits.length < capacity; i++) bits.push(0);   // terminator
+    while (bits.length % 8) bits.push(0);
+    const data = [];
+    for (let i = 0; i < bits.length; i += 8) {
+      let b = 0;
+      for (let j = 0; j < 8; j++) b = (b << 1) | bits[i + j];
+      data.push(b);
+    }
+    for (let pad = 0xec; data.length < dataCodewords(version); pad ^= 0xec ^ 0x11) data.push(pad);
+
+    const [ecLen, n1, d1, n2, d2] = SPEC[version];
+    const blocks = [], ecs = [];
+    let at = 0;
+    for (let i = 0; i < n1 + n2; i++) {
+      const size = i < n1 ? d1 : d2;
+      const block = data.slice(at, at + size);
+      at += size;
+      blocks.push(block);
+      ecs.push(remainder(block, ecLen));
+    }
+    const out = [];
+    for (let i = 0; i < Math.max(d1, d2); i++) blocks.forEach(b => { if (i < b.length) out.push(b[i]); });
+    for (let i = 0; i < ecLen; i++) ecs.forEach(e => out.push(e[i]));
+    return out;
+  }
+
+  // Error-correcting bits for the format and version information: divide by the
+  // relevant generator polynomial a bit at a time and keep the remainder.
+  function bchRemainder(data, poly, bits) {
+    let rem = data;
+    for (let i = 0; i < bits; i++) rem = (rem << 1) ^ ((rem >>> (bits - 1)) * poly);
+    return rem;
+  }
+
+  const MASKS = [
+    (r, c) => (r + c) % 2 === 0,
+    (r, c) => r % 2 === 0,
+    (r, c) => c % 3 === 0,
+    (r, c) => (r + c) % 3 === 0,
+    (r, c) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0,
+    (r, c) => (r * c) % 2 + (r * c) % 3 === 0,
+    (r, c) => ((r * c) % 2 + (r * c) % 3) % 2 === 0,
+    (r, c) => ((r + c) % 2 + (r * c) % 3) % 2 === 0,
+  ];
+
+  function blank(size) {
+    const m = [], f = [];
+    for (let i = 0; i < size; i++) { m.push(new Array(size).fill(0)); f.push(new Array(size).fill(false)); }
+    return { m: m, fn: f };
+  }
+
+  function functionPatterns(g, size, version) {
+    const set = (r, c, v) => { if (r >= 0 && r < size && c >= 0 && c < size) { g.m[r][c] = v; g.fn[r][c] = true; } };
+
+    // three finders, each with its separator
+    [[0, 0], [0, size - 7], [size - 7, 0]].forEach(([r0, c0]) => {
+      for (let r = -1; r <= 7; r++) for (let c = -1; c <= 7; c++) {
+        const edge = Math.max(Math.abs(r - 3), Math.abs(c - 3));
+        set(r0 + r, c0 + c, (edge === 2 || edge > 3) ? 0 : 1);
+      }
+    });
+
+    // timing
+    for (let i = 8; i < size - 8; i++) { set(6, i, i % 2 === 0 ? 1 : 0); set(i, 6, i % 2 === 0 ? 1 : 0); }
+
+    // alignment, minus the three that would sit on a finder
+    const centres = ALIGN[version];
+    centres.forEach(r0 => centres.forEach(c0 => {
+      const onFinder = (r0 === 6 && c0 === 6)
+        || (r0 === 6 && c0 === size - 7) || (r0 === size - 7 && c0 === 6);
+      if (onFinder) return;
+      for (let r = -2; r <= 2; r++) for (let c = -2; c <= 2; c++) {
+        set(r0 + r, c0 + c, Math.max(Math.abs(r), Math.abs(c)) === 1 ? 0 : 1);
+      }
+    }));
+
+    set(size - 8, 8, 1);                       // the module that is always dark
+
+    // Reserve the format areas so data placement steps over them. Index 6 is
+    // skipped in both: row 6 and column 6 are the timing patterns, which run
+    // through this strip and are not format bits.
+    for (let i = 0; i < 9; i++) { if (i === 6) continue; set(8, i, 0); set(i, 8, 0); }
+    for (let i = 0; i < 8; i++) { set(8, size - 1 - i, 0); set(size - 1 - i, 8, 0); }
+    set(size - 8, 8, 1);
+
+    if (version >= 7) {
+      const info = (version << 12) | bchRemainder(version, 0x1f25, 12);
+      for (let i = 0; i < 18; i++) {
+        const bit = (info >> i) & 1;
+        set(size - 11 + (i % 3), Math.floor(i / 3), bit);
+        set(Math.floor(i / 3), size - 11 + (i % 3), bit);
+      }
+    }
+  }
+
+  function placeData(g, size, words) {
+    let bit = 0;
+    const total = words.length * 8;
+    for (let right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let vert = 0; vert < size; vert++) {
+        for (let j = 0; j < 2; j++) {
+          const c = right - j;
+          const upward = ((right + 1) & 2) === 0;
+          const r = upward ? size - 1 - vert : vert;
+          if (!g.fn[r][c] && bit < total) {
+            g.m[r][c] = (words[bit >> 3] >> (7 - (bit & 7))) & 1;
+            bit++;
+          }
+        }
+      }
+    }
+  }
+
+  function penalty(m, size) {
+    let score = 0;
+    // runs of five or more
+    for (let i = 0; i < size; i++) {
+      for (const line of [m[i], m.map(row => row[i])]) {
+        let run = 1;
+        for (let j = 1; j < size; j++) {
+          if (line[j] === line[j - 1]) { run++; if (run === 5) score += 3; else if (run > 5) score += 1; }
+          else run = 1;
+        }
+      }
+    }
+    // 2x2 blocks of one colour
+    for (let r = 0; r < size - 1; r++) for (let c = 0; c < size - 1; c++) {
+      const v = m[r][c];
+      if (v === m[r][c + 1] && v === m[r + 1][c] && v === m[r + 1][c + 1]) score += 3;
+    }
+    // finder-lookalikes
+    const A = [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0], B = [0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1];
+    const matches = (line, at, pat) => pat.every((p, k) => line[at + k] === p);
+    for (let i = 0; i < size; i++) {
+      const row = m[i], col = m.map(r => r[i]);
+      for (let j = 0; j + 11 <= size; j++) {
+        if (matches(row, j, A) || matches(row, j, B)) score += 40;
+        if (matches(col, j, A) || matches(col, j, B)) score += 40;
+      }
+    }
+    // balance of dark to light
+    let dark = 0;
+    for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) dark += m[r][c];
+    const pct = (dark * 100) / (size * size);
+    score += Math.floor(Math.abs(pct - 50) / 5) * 10;
+    return score;
+  }
+
+  function formatBits(mask) {
+    const data = (0 << 3) | mask;               // 00 is error correction level M
+    return ((data << 10) | bchRemainder(data, 0x537, 10)) ^ 0x5412;
+  }
+
+  function drawFormat(g, size, mask) {
+    const bits = formatBits(mask);
+    const set = (r, c, v) => { g.m[r][c] = v; g.fn[r][c] = true; };
+    for (let i = 0; i < 15; i++) {
+      const bit = (bits >> i) & 1;
+      if (i < 6) set(i, 8, bit);
+      else if (i === 6) set(7, 8, bit);
+      else if (i === 7) set(8, 8, bit);
+      else if (i === 8) set(8, 7, bit);
+      else set(8, 14 - i, bit);
+
+      if (i < 8) set(8, size - 1 - i, bit);
+      else set(size - 15 + i, 8, bit);
+    }
+    set(size - 8, 8, 1);
+  }
+
+  // Returns a size x size array of 0/1, no quiet zone.
+  function matrix(text) {
+    const bytes = [];
+    for (const ch of unescape(encodeURIComponent(text))) bytes.push(ch.charCodeAt(0) & 0xff);
+    const version = pickVersion(bytes.length);
+    if (!version) return null;                  // too long to encode here
+    const size = 17 + 4 * version;
+    const words = codewords(bytes, version);
+
+    let best = null, bestScore = Infinity;
+    for (let mask = 0; mask < 8; mask++) {
+      const g = blank(size);
+      functionPatterns(g, size, version);
+      placeData(g, size, words);
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) {
+        if (!g.fn[r][c] && MASKS[mask](r, c)) g.m[r][c] ^= 1;
+      }
+      drawFormat(g, size, mask);
+      const s = penalty(g.m, size);
+      if (s < bestScore) { bestScore = s; best = g.m; }
+    }
+    return best;
+  }
+
+  return { matrix: matrix };
+})();
+
+// Rendering: a white card with black modules, because that is what scanners
+// expect and this site is otherwise very dark. Four modules of quiet zone on
+// each side, per the spec — scanners need the margin to find the code.
+function qrSVG(text, px, label) {
+  const m = QR.matrix(text);
+  if (!m) return '';
+  const n = m.length, quiet = 4, span = n + quiet * 2;
+  let d = '';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    if (m[r][c]) d += 'M' + (c + quiet) + ' ' + (r + quiet) + 'h1v1h-1z';
+  }
+  return '<svg class="qr" viewBox="0 0 ' + span + ' ' + span + '" width="' + px + '" height="' + px
+    + '" shape-rendering="crispEdges" role="img" aria-label="' + (label || 'QR code') + '">'
+    + '<rect width="' + span + '" height="' + span + '" fill="#ffffff"/>'
+    + '<path d="' + d + '" fill="#000000"/></svg>';
+}
+
+// Where a phone should be sent. Opening the file straight off the disk, or
+// serving it on localhost, gives an address no phone can reach — but the room
+// itself lives in the shared database, so the published copy of the site can
+// join it perfectly well. Point the QR there instead of at a dead link.
+const PUBLISHED_AT = 'https://amangerian.github.io/MPboardstudy/';
+function joinBase() {
+  const unreachable = location.protocol === 'file:'
+    || /^(localhost|127\.|0\.0\.0\.0|\[::1\]|.*\.local)$/.test(location.hostname);
+  return unreachable ? PUBLISHED_AT : location.origin + location.pathname;
+}
+
+// ---------------- JOIN SCREEN ----------------
+// The panel QR is fine for someone standing at the laptop. A room looking at a
+// projector needs the code and the QR as large as the screen will allow.
+const JOIN = (function () {
+  const view = document.getElementById('joinScreen');
+  const titleEl = document.getElementById('joinTitle');
+  const codeEl = document.getElementById('joinCode');
+  const qrEl = document.getElementById('joinQr');
+  const urlEl = document.getElementById('joinUrl');
+  const noteEl = document.getElementById('joinNote');
+  let showing = false;
+
+  function show(title, code, url, note) {
+    titleEl.textContent = title;
+    codeEl.textContent = code;
+    urlEl.textContent = url;
+    noteEl.textContent = note || '';
+    qrEl.innerHTML = qrSVG(url, 460, 'Scan to join room ' + code);
+    view.hidden = false;
+    showing = true;
+    document.body.style.overflow = 'hidden';
+  }
+  function hide() {
+    if (!showing) return;
+    showing = false;
+    view.hidden = true;
+    qrEl.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+  view.addEventListener('click', hide);
+  // While it is up this is a modal over a live game: swallow the keys rather
+  // than letting Escape close the join screen *and* the clue behind it, or a
+  // stray 1/2/3 answer a wizard room nobody can currently see.
+  document.addEventListener('keydown', e => {
+    if (!showing) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') hide();
+  });
+
+  return {
+    show: show,
+    hide: hide,
+    isOpen: () => showing,
+    // Rooms fill up while the join screen is up; keep its caption current.
+    setNote(text) { if (showing) noteEl.textContent = text; },
+  };
+})();
+
 // ---------------- BUZZER ----------------
 // Phones buzz in over Firebase Realtime Database, spoken to directly over its
 // REST API (writes) and server-sent events (live updates) — no SDK, so the page
@@ -2757,7 +3173,7 @@ const BUZZ = (function () {
   }
 
   function joinLink(code) {
-    return location.origin + location.pathname + '#buzz-' + code;
+    return joinBase() + '#buzz-' + code;
   }
 
   function renderHost() {
@@ -2766,6 +3182,8 @@ const BUZZ = (function () {
     playersEl.textContent = names.length
       ? names.length + (names.length === 1 ? ' player: ' : ' players: ') + names.join(', ')
       : 'No one has joined yet';
+    // The join screen is usually up while people are still arriving.
+    JOIN.setNote(names.length ? 'In: ' + names.join(', ') : 'Nobody has joined yet');
     renderQueue();
   }
 
@@ -2818,8 +3236,9 @@ const BUZZ = (function () {
       host.code = code; host.round = 0; host.room = {}; host.enabled = true;
       codeEl.textContent = code;
       joinUrlEl.textContent = joinLink(code);
-      document.getElementById('buzzHostUrl').textContent =
-        location.origin + location.pathname + '#host-' + code;
+      document.getElementById('buzzHostUrl').textContent = joinBase() + '#host-' + code;
+      document.getElementById('buzzQr').innerHTML =
+        qrSVG(joinLink(code), 132, 'Scan to join buzzer room ' + code);
       toggleBtn.textContent = 'Buzzers on';
       toggleBtn.setAttribute('aria-pressed', 'true');
       idleEl.hidden = true; liveEl.hidden = false;
@@ -2838,6 +3257,8 @@ const BUZZ = (function () {
     host.code = null; host.room = {};
     idleEl.hidden = false; liveEl.hidden = true;
     queueEl.hidden = true;
+    document.getElementById('buzzQr').innerHTML = '';
+    JOIN.hide();
     del('/rooms/' + code);
   }
 
@@ -2859,6 +3280,10 @@ const BUZZ = (function () {
   }
 
   startBtn.addEventListener('click', openRoom);
+  document.getElementById('buzzBigBtn').addEventListener('click', () => {
+    if (!host.code) return;
+    JOIN.show('Join the buzzer', host.code, joinLink(host.code), playersEl.textContent);
+  });
   closeBtn.addEventListener('click', closeRoom);
   toggleBtn.addEventListener('click', () => {
     host.enabled = !host.enabled;
@@ -4343,6 +4768,9 @@ const WIZ = (function () {
       b.textContent = 'Seat ' + (p.slot + 1);
       roomSeatsEl.append(b, ' ' + p.name);
     });
+    JOIN.setNote(list.length
+      ? list.map(p => 'Seat ' + (p.slot + 1) + ' ' + p.name).join('  ·  ')
+      : 'Waiting for players…');
     // How many are seated changes what survival is about to build.
     refreshStart();
   }
@@ -4398,7 +4826,9 @@ const WIZ = (function () {
     }).then(() => {
       net.code = code; net.seats = {};
       roomCodeEl.textContent = code;
-      roomUrlEl.textContent = location.origin + location.pathname + '#play-' + code;
+      roomUrlEl.textContent = joinBase() + '#play-' + code;
+      document.getElementById('wizRoomQr').innerHTML =
+        qrSVG(roomUrlEl.textContent, 132, 'Scan to join wizard room ' + code);
       roomPanel.hidden = true; roomLive.hidden = false;
       renderSeats();
       net.stream = new EventSource(netUrl('/rooms/' + code));
@@ -4447,6 +4877,8 @@ const WIZ = (function () {
     if (net.stream) { net.stream.close(); net.stream = null; }
     net.code = null; net.seats = {};
     roomPanel.hidden = false; roomLive.hidden = true;
+    document.getElementById('wizRoomQr').innerHTML = '';
+    JOIN.hide();
     netSay('');
     netDel('/rooms/' + code).catch(() => { /* the room is going away regardless */ });
   }
@@ -4471,6 +4903,10 @@ const WIZ = (function () {
 
   roomBtn.addEventListener('click', openNetRoom);
   roomCloseEl.addEventListener('click', closeNetRoom);
+  document.getElementById('wizRoomBig').addEventListener('click', () => {
+    if (!net.code) return;
+    JOIN.show("Join Wizard's Escape", net.code, roomUrlEl.textContent, roomSeatsEl.textContent);
+  });
 
   // ---------- run ----------
   function buildPanes() {
