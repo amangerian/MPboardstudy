@@ -1061,6 +1061,8 @@
     opacity: .55;
   }
   /* the clock turning against you */
+  .wizroom-note { font-size: 12px; line-height: 1.45; color: #cdbdf5; }
+  .wizroom-note.bad { color: #ffb3b3; }
   .power-track.hot .power-fill { background: linear-gradient(90deg, var(--ember), #ff5a5a); }
   .power-track.hot { border-color: var(--wrong); }
   .score-row .badge.survival { border-color: var(--ember); color: var(--ember); }
@@ -1309,6 +1311,85 @@
     100% { opacity: 0; transform: translate(-50%, -26px) scale(1); }
   }
 
+  /* ---- survival: the coven ---- */
+  /* Every wizard runs the same room, so there is one room to draw: the
+     furniture lifts clear of the floor and the wizards line up along it. That
+     keeps one big question and three full-size labels whether one wizard is
+     running or four — four separate rooms would have shrunk all of it. */
+  .scene.coven .furni-row { bottom: 27%; height: 51%; padding: 0 3%; }
+  .scene.coven .door { bottom: 33%; height: 45%; }
+  .coven-row {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 27%;
+    display: flex; align-items: flex-end; gap: 1%;
+    padding: 0 2% 1.5%; z-index: 5;
+    pointer-events: none;   /* the furniture behind it stays clickable */
+  }
+  .coven-wiz {
+    position: relative; height: 100%;
+    flex: 0 0 auto; width: 23%; max-width: 168px; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  }
+  .cw-art {
+    flex: 1 1 auto; min-height: 0; width: 100%;
+    display: flex; align-items: flex-end; justify-content: center;
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,.55));
+  }
+  .cw-art svg { height: 100%; width: auto; display: block; }
+  .coven-wiz.cleared .cw-art { filter: drop-shadow(0 0 13px rgba(124,240,216,.85)); }
+  .coven-wiz.out .cw-art { animation: wizFall .9s ease-in forwards; }
+  @keyframes wizFall {
+    0%   { transform: none; opacity: 1; filter: none; }
+    35%  { transform: translateY(4%) rotate(-7deg); opacity: .8; }
+    100% { transform: translateY(30%) rotate(-18deg); opacity: .16; filter: grayscale(1); }
+  }
+  /* Name over lives-and-score rather than beside them: four cards across a
+     phone leave a name about seven characters of room on one line. */
+  .cw-tag {
+    flex: 0 0 auto; max-width: 100%;
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+    background: rgba(9,6,24,.9); border: 1px solid #4a3a7d;
+    border-radius: 7px; padding: 2px 7px 3px;
+  }
+  .cw-meta { display: flex; align-items: center; gap: 6px; }
+  .coven-wiz.cleared .cw-tag { border-color: var(--arcane); }
+  .coven-wiz.out .cw-tag { opacity: .5; border-color: #33285c; }
+  .cw-name {
+    font: 700 11px Arial, sans-serif; letter-spacing: 1px; text-transform: uppercase;
+    color: #e7dcff; max-width: 100%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .cw-lives { display: flex; gap: 3px; }
+  .cw-lives .life { width: 8px; height: 10px; }
+  .cw-score { font: 900 12px Georgia, serif; color: var(--gold); }
+  .cw-float {
+    position: absolute; bottom: 72%; left: 50%; opacity: 0;
+    font: 900 clamp(13px, 1.8vw, 20px) Georgia, serif;
+    color: var(--arcane); white-space: nowrap; pointer-events: none;
+    text-shadow: 0 0 14px rgba(124,240,216,.9), 0 2px 0 #04231c;
+  }
+  .cw-float.bad { color: #ff8f8f; text-shadow: 0 0 14px rgba(255,80,80,.85); }
+  .cw-float.show { animation: toastUp 1.15s ease-out forwards; }
+
+  /* how the run finished, when more than one wizard ran it */
+  .coven-standings { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .cs-row {
+    display: grid; grid-template-columns: 26px 1fr auto auto; gap: 12px; align-items: center;
+    row-gap: 10px; flex-wrap: wrap;
+    background: rgba(255,255,255,.03); border: 1px solid #2f2559;
+    border-radius: 10px; padding: 9px 12px;
+  }
+  .cs-row.win { border-color: var(--gold); background: rgba(212,175,90,.08); }
+  .cs-rank { font: 900 15px Georgia, serif; color: var(--gold-dim); text-align: center; }
+  .cs-who { font-weight: 700; color: #f0e9ff; overflow: hidden; text-overflow: ellipsis; }
+  .cs-meta { font-size: 12px; color: #b9a9e6; font-weight: 400; margin-top: 2px; }
+  .cs-pts { font: 900 17px Georgia, serif; color: var(--gold); }
+  .cs-post { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .cs-post input {
+    flex: 1 1 130px; min-width: 0;
+    background: #0d0922; border: 1px solid #4a3a7d; border-radius: 7px;
+    color: #f0e9ff; padding: 7px 9px; font: 700 13px Arial, sans-serif;
+  }
+
   .scene.dimmed { filter: brightness(.45) saturate(.6); transition: filter .3s ease; }
   .pane-verdict {
     position: absolute; inset: 0; z-index: 7;
@@ -1408,6 +1489,12 @@
 
   @media (max-width: 780px) {
     .wiz-stage.two { grid-template-columns: 1fr; }
+    /* the coven needs floor room the phone-sized scene does not otherwise have */
+    .scene.coven { height: clamp(340px, 58vh, 470px); }
+    .coven-wiz { width: 22%; }
+    .cw-name { font-size: 10px; letter-spacing: .5px; }
+    .cw-lives .life { width: 7px; height: 9px; }
+    .cw-score { font-size: 11px; }
     .furni .label { -webkit-line-clamp: 4; }
     .furni-row { padding-left: 16%; gap: 2%; }
     /* Two stacked rooms have to share one screen — a racer who has to scroll to
@@ -1475,7 +1562,7 @@
   <div class="section-label">Pick a game</div>
   <div class="game-grid" id="gameGrid"></div>
 
-  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance</footer>
+  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 3 September 2026</footer>
 </div>
 
 <!-- ===================== GAME VIEW ===================== -->
@@ -1678,7 +1765,8 @@
           </div>
           <div class="wizroom" id="wizRoomPanel" style="margin-top:12px">
             <button class="reset-board-btn" id="wizRoomBtn" style="margin:0">Play from phones</button>
-            <span class="buzzer-blurb" id="wizRoomBlurb">Optional. Opens a room so players tap 1, 2 or 3 on their own phone instead of sharing a keyboard.</span>
+            <span class="buzzer-blurb" id="wizRoomBlurb">Optional. Opens a room so players tap 1, 2 or 3 on their own phone instead of sharing a keyboard. In survival, everyone who joins runs together.</span>
+            <span class="wizroom-note" id="wizRoomNote" hidden></span>
           </div>
           <div class="wizroom" id="wizRoomLive" hidden style="margin-top:12px">
             <div>
@@ -1760,7 +1848,7 @@
     <div class="wiz-panel" id="wizResultBody"></div>
   </div>
 
-  <footer class="hint">Keys &nbsp;&bull;&nbsp; one wizard: 1 2 3 &nbsp;&bull;&nbsp; two wizards: A S D and J K L</footer>
+  <footer class="hint">Keys &nbsp;&bull;&nbsp; one wizard: 1 2 3 &nbsp;&bull;&nbsp; two wizards: A S D and J K L &nbsp;&bull;&nbsp; survival: whoever is not on a phone</footer>
 </div>
 
 <!-- ===================== CLUE MODAL ===================== -->
@@ -2208,10 +2296,10 @@ const EXTRAS = [
   {
     id: "wizards-escape",
     title: "Wizard's Escape",
-    kind: "Arcade · 1–2 wizards",
+    kind: "Arcade · 1–4 wizards",
     arcane: true,
     blurb: "Blast your way out of a haunted castle. Three identical hiding places block every exit — pick the right answer to shatter one and move on. The faster you answer, the stronger the spell.",
-    tags: ["Speed round", "Split-screen race", "Uses every game's questions"]
+    tags: ["Speed round", "Split-screen race", "Survival for up to four", "Uses every game's questions"]
   }
 ];
 
@@ -3528,6 +3616,7 @@ document.addEventListener('keydown', (e) => {
 const WIZ = (function () {
   const ROOM_TIME = 18000;      // ms over which spell power decays to zero
   const SURVIVAL_LIVES = 3;
+  const MAX_COVEN = 4;          // wizards who can share one survival room
   const SURVIVAL_START = 14000; // survival gives less time from the outset...
   const SURVIVAL_MIN = 6000;    // ...tightening to this floor...
   const SURVIVAL_STEP = 400;    // ...by this much per room.
@@ -3616,12 +3705,14 @@ const WIZ = (function () {
     return cleanInitials(el.value) || (mode === 2 ? 'Wizard ' + (i + 1) : 'You');
   }
 
-  function recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped, runVariant) {
+  // `names` overrides the initials boxes — a coven's wizards are named by
+  // whatever they typed on their own phone.
+  function recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped, runVariant, names) {
     const stamp = Date.now();
     const survival = runVariant === 'survival';
     const rows = panes.map((p, i) => ({
       id: stamp + '-' + i,
-      who: nameFor(i),
+      who: names ? String(names[i] || '???').slice(0, 12) : nameFor(i),
       score: p.score,
       rooms: p.rooms,
       // Survival has no target, so there is no "out of" to record.
@@ -3863,8 +3954,14 @@ const WIZ = (function () {
 
   function lbLoad() {
     lbRender([], 'Loading…');
-    fetch(LB_URL + '.json').then(r => r.json()).then(data => {
-      const rows = Object.keys(data || {}).map(k => data[k]).filter(Boolean)
+    fetch(LB_URL + '.json').then(r => {
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    }).then(data => {
+      // A denied read comes back as {error: "..."}, which would otherwise be
+      // paraded on the board as if it were somebody's score.
+      if (!data || data.error) return lbRender([], 'The shared board is not published yet.');
+      const rows = Object.keys(data).map(k => data[k]).filter(r => r && r.who)
         .sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 15);
       if (!rows.length) return lbRender([], 'Nothing posted yet — finish a survival run and put yourself up there.');
       lbRender(rows);
@@ -3964,7 +4061,10 @@ const WIZ = (function () {
       startBtn.disabled = false;
       noteEl.className = 'wiz-note';
       if (variant === 'survival') {
-        noteEl.textContent = `${n} questions available — survival runs until your lives run out, and repeats questions if you get that far.`;
+        const seated = net.code ? seatList().filter(p => p.slot >= 0).length : 0;
+        noteEl.textContent = seated > 1
+          ? `${seated} wizards seated. They all run the same rooms together — three lives each, and a wizard drops out of the line when the third one goes. ${n} questions available.`
+          : `${n} questions available — survival runs until your lives run out, and repeats questions if you get that far.`;
         return;
       }
       const rooms = roomsFor(n);
@@ -4019,15 +4119,16 @@ const WIZ = (function () {
   };
 
   // ---------- scene art ----------
-  function sceneChrome() {
+  function sceneChrome(coven) {
     return `
       <div class="room-prompt"><span class="cat"></span><span class="text"></span><img class="prompt-image" alt="" hidden></div>
       <div class="torch-light l"></div><div class="torch-light r"></div>
       <div class="web l">${webSVG()}</div><div class="web r">${webSVG()}</div>
       <div class="torch l">${torchSVG()}</div><div class="torch r">${torchSVG()}</div>
       <div class="door">${doorSVG()}</div>
-      <div class="wizard">${wizardSVG()}</div>
+      ${coven ? '' : `<div class="wizard">${wizardSVG()}</div>`}
       <div class="furni-row"></div>
+      ${coven ? '<div class="coven-row"></div>' : ''}
       <div class="fx"></div>
       <div class="vignette"></div>`;
   }
@@ -4190,9 +4291,28 @@ const WIZ = (function () {
   // decides what that means. Nothing about the game moves onto the network.
   const NET_DB = 'https://mp-board-study-default-rtdb.firebaseio.com';
   const netUrl = path => NET_DB + path + '.json';
-  const netPut = (path, data) => fetch(netUrl(path), { method: 'PUT', body: JSON.stringify(data) });
-  const netPatch = (path, data) => fetch(netUrl(path), { method: 'PATCH', body: JSON.stringify(data) });
-  const netDel = path => fetch(netUrl(path), { method: 'DELETE' });
+  // fetch() resolves on 401/403 as happily as on 200, so an unchecked write
+  // against a database whose rules refuse it looks exactly like a success. That
+  // is how a room code once appeared on screen for a room that was never
+  // created, leaving every phone to report "no room" for a code it could see.
+  const netCheck = r => { if (!r.ok) throw new Error(String(r.status)); return r; };
+  const netPut = (path, data) => fetch(netUrl(path), { method: 'PUT', body: JSON.stringify(data) }).then(netCheck);
+  const netPatch = (path, data) => fetch(netUrl(path), { method: 'PATCH', body: JSON.stringify(data) }).then(netCheck);
+  const netDel = path => fetch(netUrl(path), { method: 'DELETE' }).then(netCheck);
+
+  const DENIED = 'The database refused that write. Its security rules have not been '
+               + 'published yet — phones cannot join until they are.';
+  function netSay(msg, bad) {
+    roomNoteEl.hidden = !msg;
+    roomNoteEl.textContent = msg || '';
+    roomNoteEl.className = 'wizroom-note' + (bad ? ' bad' : '');
+  }
+  // A mid-game write failing means the phones have quietly stopped hearing the
+  // screen, which is worth saying out loud rather than leaving them tapping.
+  function netTrouble(err) {
+    const denied = String(err && err.message) === '401' || String(err && err.message) === '403';
+    netSay(denied ? DENIED : 'Lost contact with the database — phones may be out of step.', true);
+  }
 
   const roomBtn = document.getElementById('wizRoomBtn');
   const roomPanel = document.getElementById('wizRoomPanel');
@@ -4200,11 +4320,12 @@ const WIZ = (function () {
   const roomCodeEl = document.getElementById('wizRoomCode');
   const roomUrlEl = document.getElementById('wizRoomUrl');
   const roomSeatsEl = document.getElementById('wizRoomSeats');
+  const roomNoteEl = document.getElementById('wizRoomNote');
   const roomCloseEl = document.getElementById('wizRoomClose');
 
   const net = { code: null, stream: null, seats: {}, roundHandled: -1 };
 
-  const seatCapacity = () => (variant === 'survival' ? 4 : mode);
+  const seatCapacity = () => (variant === 'survival' ? MAX_COVEN : mode);
 
   function seatList() {
     return Object.keys(net.seats)
@@ -4222,6 +4343,8 @@ const WIZ = (function () {
       b.textContent = 'Seat ' + (p.slot + 1);
       roomSeatsEl.append(b, ' ' + p.name);
     });
+    // How many are seated changes what survival is about to build.
+    refreshStart();
   }
 
   // Seat a new phone, or turn it away when the game is full.
@@ -4249,13 +4372,17 @@ const WIZ = (function () {
       const seat = net.seats[pid];
       if (!sent || !seat || seat.slot < 0) return;
       if (sent.round !== run.idx) return;
-      const paneIdx = Math.min(seat.slot, run.panes.length - 1);
+      // A coven shares one room, so the seat picks out a wizard rather than a
+      // pane — every one of them is answering off pane 0.
+      const coven = run.variant === 'survival';
+      const paneIdx = coven ? 0 : Math.min(seat.slot, run.panes.length - 1);
+      const actor = coven ? run.wizards.findIndex(w => w.slot === seat.slot) : paneIdx;
       const pane = run.panes[paneIdx];
-      if (!pane) return;
+      if (actor < 0 || !pane) return;
       const entry = pane.buttons[sent.choice];
       if (!entry || entry.btn.disabled) return;
       sent.round = -1;                       // only act on it once
-      pick(paneIdx, entry.optIdx, entry.btn);
+      pick(actor, entry.optIdx, entry.btn);
     });
   }
 
@@ -4264,6 +4391,7 @@ const WIZ = (function () {
     let code = '';
     for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
     roomBtn.disabled = true;
+    netSay('');
     netPut('/rooms/' + code, {
       meta: { created: { '.sv': 'timestamp' }, game: "Wizard's Escape" },
       wiz: { round: { n: -1, open: false }, seats: {} }
@@ -4284,8 +4412,11 @@ const WIZ = (function () {
       };
       net.stream.addEventListener('put', onEvent('put'));
       net.stream.addEventListener('patch', onEvent('patch'));
-    }).catch(() => {
-      roomBtn.textContent = 'Could not open a room';
+    }).catch(err => {
+      roomPanel.hidden = false; roomLive.hidden = true;
+      net.code = null;
+      if (net.stream) { net.stream.close(); net.stream = null; }
+      netTrouble(err);
     }).then(() => { roomBtn.disabled = false; });
   }
 
@@ -4316,23 +4447,26 @@ const WIZ = (function () {
     if (net.stream) { net.stream.close(); net.stream = null; }
     net.code = null; net.seats = {};
     roomPanel.hidden = false; roomLive.hidden = true;
-    netDel('/rooms/' + code);
+    netSay('');
+    netDel('/rooms/' + code).catch(() => { /* the room is going away regardless */ });
   }
 
   // Tell the phones a new room is live, and what each seat can press.
   function netArmRoom() {
     if (!net.code || !run) return;
     netDel('/rooms/' + net.code + '/picks')
-      .then(() => netPatch('/rooms/' + net.code + '/wiz/round', { n: run.idx, open: true }));
+      .then(() => netPatch('/rooms/' + net.code + '/wiz/round', { n: run.idx, open: true }))
+      .catch(netTrouble);
   }
   function netLockRoom() {
     if (!net.code) return;
-    netPatch('/rooms/' + net.code + '/wiz/round', { open: false });
+    netPatch('/rooms/' + net.code + '/wiz/round', { open: false }).catch(netTrouble);
   }
   // Let a phone know how its own pick went.
   function netResult(slot, ok) {
     if (!net.code) return;
-    netPatch('/rooms/' + net.code + '/wiz/result', { ['s' + slot]: (ok ? 'right' : 'wrong') + ':' + Date.now() });
+    netPatch('/rooms/' + net.code + '/wiz/result', { ['s' + slot]: (ok ? 'right' : 'wrong') + ':' + Date.now() })
+      .catch(netTrouble);
   }
 
   roomBtn.addEventListener('click', openNetRoom);
@@ -4377,17 +4511,13 @@ const WIZ = (function () {
       // deep you are and how many lives are left.
       let pips = null, lives = null, depth = null;
       if (run.variant === 'survival') {
+        // Lives and score belong to individual wizards now and ride on their own
+        // cards down in the room, so the HUD carries only what the room shares.
+        nameEl.textContent = run.wizards.length > 1 ? 'The coven' : 'Survival';
         depth = document.createElement('div');
         depth.className = 'depth';
-        depth.textContent = 'Cleared 0';
-        lives = document.createElement('div');
-        lives.className = 'lives';
-        for (let l = 0; l < run.lives; l++) {
-          const life = document.createElement('span');
-          life.className = 'life';
-          lives.appendChild(life);
-        }
-        hud.append(nameEl, depth, lives, score);
+        depth.textContent = 'Room 1';
+        hud.append(nameEl, depth);
       } else {
         pips = document.createElement('div');
         pips.className = 'pips';
@@ -4399,9 +4529,10 @@ const WIZ = (function () {
         hud.append(nameEl, pips, score);
       }
 
+      const coven = run.variant === 'survival';
       const scene = document.createElement('div');
-      scene.className = 'scene';
-      scene.innerHTML = sceneChrome();
+      scene.className = 'scene' + (coven ? ' coven' : '');
+      scene.innerHTML = sceneChrome(coven);
 
       wrapEl.append(hud, scene);
       stageEl.appendChild(wrapEl);
@@ -4419,8 +4550,10 @@ const WIZ = (function () {
         lives: lives,
         depth: depth,
         score: score,
+        coven: scene.querySelector('.coven-row'),
       };
     });
+    if (run.variant === 'survival') buildCoven(run.panes[0]);
   }
 
   function start() {
@@ -4457,23 +4590,31 @@ const WIZ = (function () {
     renderRoom();
   }
 
-  // Survival: one wizard, no exit, three lives. The deck is looped rather than
-  // dealt, so the run ends only when the lives do.
+  // Survival: no exit, three lives each, and however many wizards are seated on
+  // phones when it starts — one if nobody is. The deck is looped rather than
+  // dealt, so the run ends only when the last wizard's lives do.
   function startSurvival(pool) {
     if (pool.length < 1) return;
     mode = 1;
+    const seated = seatList().filter(p => p.slot >= 0).slice(0, MAX_COVEN);
+    const wizards = seated.length
+      ? seated.map(p => makeWizard(p.name, p.slot))
+      : [makeWizard(cleanInitials(nameInput1.value) || 'You', -1)];
     run = {
       variant: 'survival',
       pool: pool,
       questions: pool.slice(),
       total: 0,
-      lives: SURVIVAL_LIVES,
       idx: 0,
       resolved: false,
       roomStart: 0,
       startedAt: Date.now(),
       cats: allCategories().filter(c => selected.has(c.key)).map(c => c.cat.name),
       allCats: allCategories().every(c => selected.has(c.key)),
+      wizards: wizards,
+      // Clicks and the 1/2/3 keys belong to whoever is not on a phone. With a
+      // full coven that is nobody, and the screen stops taking answers at all.
+      localWiz: wizards.findIndex(w => w.slot < 0),
       panes: [{ rooms: 0, score: 0, streak: 0, wrongs: new Set(), buttons: [], el: null }],
     };
     setupEl.hidden = true;
@@ -4512,8 +4653,13 @@ const WIZ = (function () {
 
     run.resolved = false;
     run.roomStart = performance.now();
-    if (run.variant === 'survival' && run.panes[0].el.depth) {
-      run.panes[0].el.depth.textContent = 'Cleared ' + run.panes[0].rooms;
+    if (run.variant === 'survival') {
+      if (run.panes[0].el.depth) run.panes[0].el.depth.textContent = 'Room ' + (run.idx + 1);
+      run.wizards.forEach(w => {
+        if (w.out) return;
+        w.done = false; w.cleared = false; w.wrongs = new Set();
+      });
+      renderCoven();
     }
 
     const catLabel = q.category + (GAMES.length > 1 ? ' — ' + q.game : '');
@@ -4562,7 +4708,9 @@ const WIZ = (function () {
         label.textContent = q.options[optIdx];
 
         btn.append(key, art, label);
-        btn.onclick = () => pick(pi, optIdx, btn);
+        // In survival the three pieces are shared, so a click is an answer from
+        // whoever is playing on this screen rather than from "pane pi".
+        btn.onclick = () => pick(run.variant === 'survival' ? run.localWiz : pi, optIdx, btn);
         pane.el.row.appendChild(btn);
         pane.buttons.push({ btn: btn, optIdx: optIdx });
       });
@@ -4580,7 +4728,7 @@ const WIZ = (function () {
       powerFill.style.transform = `scaleX(${p})`;
       powerNum.textContent = Math.round(p * 100) + '%';
       powerTrack.classList.toggle('hot', run.variant === 'survival' && p < 0.34);
-      if (run.variant === 'survival' && p <= 0) { timeUp(); return; }
+      if (run.variant === 'survival' && p <= 0) { covenEndRoom(true); return; }
       rafId = requestAnimationFrame(tick);
     };
     rafId = requestAnimationFrame(tick);
@@ -4591,14 +4739,6 @@ const WIZ = (function () {
     return Math.max(0, 1 - elapsed / roomTime());
   }
 
-  // ---------- survival: losing a life ----------
-  function spendLife() {
-    run.lives -= 1;
-    const holder = run.panes[0].el.lives;
-    if (holder) [...holder.children].forEach((el, i) => el.classList.toggle('out', i >= run.lives));
-    return run.lives <= 0;
-  }
-
   function revealCorrect(pane) {
     const q = run.questions[run.idx];
     pane.buttons.forEach(b => {
@@ -4607,39 +4747,190 @@ const WIZ = (function () {
     });
   }
 
-  // The room's clock ran out: costs a life, shows the answer, moves on.
-  function timeUp() {
+  // ---------- survival: the coven ----------
+  // Everyone runs the same room at the same time. A wrong pick costs that wizard
+  // a life and nobody else, and they can go again — the tightening clock is the
+  // real limit, not the number of guesses. The room ends once every wizard still
+  // standing has cleared it, or the clock runs out and the stragglers pay for it.
+  // Lose your last life and your wizard drops out of the line while the rest
+  // carry on without you.
+
+  function makeWizard(name, slot) {
+    return {
+      name: String(name || '???').slice(0, 12), slot: slot,
+      score: 0, rooms: 0, streak: 0, lives: SURVIVAL_LIVES,
+      out: false, done: false, cleared: false, wrongs: new Set(), el: null,
+    };
+  }
+
+  const liveWizards = () => run.wizards.filter(w => !w.out);
+
+  function buildCoven(pane) {
+    const row = pane.el.coven;
+    if (!row) return;
+    row.innerHTML = '';
+    run.wizards.forEach(w => {
+      const card = document.createElement('div');
+      card.className = 'coven-wiz';
+
+      const float = document.createElement('div');
+      float.className = 'cw-float';
+
+      const art = document.createElement('div');
+      art.className = 'cw-art';
+      art.innerHTML = wizardSVG();
+
+      const tag = document.createElement('div');
+      tag.className = 'cw-tag';
+      const nm = document.createElement('div');
+      nm.className = 'cw-name';
+      nm.textContent = w.name;
+      const lv = document.createElement('div');
+      lv.className = 'cw-lives';
+      for (let l = 0; l < SURVIVAL_LIVES; l++) {
+        const life = document.createElement('span');
+        life.className = 'life';
+        lv.appendChild(life);
+      }
+      const sc = document.createElement('div');
+      sc.className = 'cw-score';
+      sc.textContent = '0';
+      const meta = document.createElement('div');
+      meta.className = 'cw-meta';
+      meta.append(lv, sc);
+      tag.append(nm, meta);
+
+      card.append(float, art, tag);
+      row.appendChild(card);
+      w.el = { card: card, float: float, lives: lv, score: sc, orb: art.querySelector('.orb') };
+    });
+  }
+
+  function renderCoven() {
+    run.wizards.forEach(w => {
+      if (!w.el) return;
+      w.el.card.classList.toggle('out', w.out);
+      w.el.card.classList.toggle('cleared', w.cleared && !w.out);
+      [...w.el.lives.children].forEach((el, i) => el.classList.toggle('out', i >= w.lives));
+      w.el.score.textContent = w.score;
+    });
+  }
+
+  // Points and misses read off the wizard they happened to, not off the room.
+  function wizFloat(w, text, bad) {
+    if (!w.el) return;
+    const f = w.el.float;
+    f.className = 'cw-float';
+    void f.offsetWidth;            // let the animation start over
+    f.textContent = text;
+    f.className = 'cw-float' + (bad ? ' bad' : '') + ' show';
+  }
+
+  function covenLoseLife(w) {
+    w.lives = Math.max(0, w.lives - 1);
+    w.streak = 0;
+    if (w.lives === 0) {
+      w.out = true;
+      w.done = true;
+      wizFloat(w, 'Out!', true);
+    } else {
+      wizFloat(w, '\u2212 1 life', true);
+    }
+  }
+
+  function covenPick(wIdx, optIdx, btn) {
+    const w = run.wizards[wIdx];
+    if (!w || w.out || w.done || w.wrongs.has(optIdx)) return;
+
+    const pane = run.panes[0];
+    const q = run.questions[run.idx];
+    const solo = run.wizards.length === 1;
+
+    if (q.options[optIdx] === q.correct) {
+      w.done = true;
+      w.cleared = true;
+      const clean = w.wrongs.size === 0;
+      w.streak = clean ? w.streak + 1 : 0;
+      const speed = Math.round(MAX_SPEED_BONUS * power());
+      const gained = BASE_POINTS + speed + (clean ? STREAK_BONUS * Math.max(0, w.streak - 1) : 0);
+      w.score += gained;
+      w.rooms += 1;
+      if (w.slot >= 0) netResult(w.slot, true);
+
+      pane.el.scene.classList.add('casting', 'flash-good');
+      const at = boltFrom(pane, btn, w.el && w.el.orb);
+      setTimeout(() => {
+        shards(pane, at);
+        // With one wizard the room is over the moment they are through, so the
+        // piece can shatter. With four it has to stand until the rest have had
+        // their go at it.
+        if (solo) { btn.classList.add('spent'); pane.el.scene.classList.add('open'); }
+      }, reduceMotion ? 0 : 280);
+      setTimeout(() => pane.el.scene.classList.remove('casting', 'flash-good'), 700);
+      wizFloat(w, '+' + gained + (clean && w.streak > 1 ? '  \u00d7' + w.streak : ''), false);
+    } else {
+      w.wrongs.add(optIdx);
+      if (w.slot >= 0) netResult(w.slot, false);
+      fizzle(pane, btn, w.el && w.el.orb, true);
+      covenLoseLife(w);
+      // Marking the piece dead is only honest when one wizard is playing; with a
+      // coven the others have not tried it yet.
+      if (solo) { btn.classList.add('wrong'); btn.disabled = true; }
+    }
+
+    renderCoven();
+    covenCheck();
+  }
+
+  // Has the room finished with everyone?
+  function covenCheck() {
+    if (!run || run.resolved) return;
+    const live = liveWizards();
+    if (!live.length || live.every(w => w.done)) covenEndRoom(false);
+  }
+
+  function covenEndRoom(timedOut) {
     if (!run || run.resolved) return;
     run.resolved = true;
     cancelAnimationFrame(rafId);
     powerTrack.classList.remove('hot');
     const pane = run.panes[0];
-    pane.streak = 0;
-    const over = spendLife();
+
+    if (timedOut) {
+      liveWizards().forEach(w => {
+        if (w.done) return;
+        w.done = true;
+        covenLoseLife(w);
+      });
+      pane.el.scene.classList.add('flash-bad');
+      setTimeout(() => { if (run) pane.el.scene.classList.remove('flash-bad'); }, 700);
+    }
+
     revealCorrect(pane);
-    pane.el.scene.classList.add('flash-bad');
-    toast(pane, over ? 'Out of lives' : 'Too slow!', true);
-    setTimeout(() => pane.el.scene.classList.remove('flash-bad'), 700);
+    if (run.wizards.some(w => w.cleared)) pane.el.scene.classList.add('open');
+    renderCoven();
+
+    const over = !liveWizards().length;
+    if (over) {
+      pane.el.scene.classList.add('dimmed');
+      const v = document.createElement('div');
+      v.className = 'pane-verdict';
+      v.textContent = run.wizards.length > 1 ? 'The last wizard falls' : 'Out of lives';
+      pane.el.scene.appendChild(v);
+    }
+
     setTimeout(() => {
       if (!run) return;
-      if (over) { endSurvival(); return; }
+      if (over) { finishCoven(); return; }
       run.idx += 1;
       renderRoom();
-    }, RESOLVE_PAUSE);
-  }
-
-  function endSurvival() {
-    const pane = run.panes[0];
-    pane.el.scene.classList.add('dimmed');
-    const v = document.createElement('div');
-    v.className = 'pane-verdict';
-    v.textContent = 'Out of lives';
-    pane.el.scene.appendChild(v);
-    setTimeout(() => { if (run) finish(0, true); }, RESOLVE_PAUSE);
+    }, RESOLVE_PAUSE + (timedOut ? 400 : 0));
   }
 
   function pick(paneIdx, optIdx, btn) {
     if (!run || run.resolved) return;
+    // In survival the index names a wizard, not a pane: they all share one room.
+    if (run.variant === 'survival') return covenPick(paneIdx, optIdx, btn);
     const pane = run.panes[paneIdx];
     if (pane.wrongs.has(optIdx)) return;
 
@@ -4652,14 +4943,6 @@ const WIZ = (function () {
       btn.disabled = true;
       fizzle(pane, btn);
       netResult(paneIdx, false);
-      // Escape mode forgives a miss; survival charges a life for it.
-      if (run.variant === 'survival' && spendLife()) {
-        run.resolved = true;
-        cancelAnimationFrame(rafId);
-        powerTrack.classList.remove('hot');
-        revealCorrect(pane);
-        endSurvival();
-      }
       return;
     }
     resolve(paneIdx, btn);
@@ -4717,9 +5000,13 @@ const WIZ = (function () {
   }
 
   // ---------- effects ----------
-  function boltFrom(pane, targetBtn) {
+  // originEl lets a coven room say which wizard cast this one; without it the
+  // bolt comes from the single wizard standing in the corner.
+  function boltFrom(pane, targetBtn, originEl) {
     const scene = pane.el.scene.getBoundingClientRect();
-    const orb = pane.el.scene.querySelector('.wizard .orb').getBoundingClientRect();
+    const source = originEl || pane.el.scene.querySelector('.wizard .orb');
+    if (!source) return { x: scene.width / 2, y: scene.height / 2 };
+    const orb = source.getBoundingClientRect();
     const t = targetBtn.getBoundingClientRect();
 
     // Effects are positioned inside the room, but these rects are in screen
@@ -4789,9 +5076,9 @@ const WIZ = (function () {
     setTimeout(() => pane.el.scene.classList.remove('casting', 'flash-good'), 700);
   }
 
-  function fizzle(pane, btn) {
+  function fizzle(pane, btn, originEl, quiet) {
     pane.el.scene.classList.add('casting', 'flash-bad');
-    const at = boltFrom(pane, btn);
+    const at = boltFrom(pane, btn, originEl);
     setTimeout(() => {
       if (!reduceMotion) {
         for (let i = 0; i < 5; i++) {
@@ -4804,7 +5091,8 @@ const WIZ = (function () {
           setTimeout(() => p.remove(), 800);
         }
       }
-      toast(pane, 'Fizzle!', true);
+      // A coven says whose spell fizzled on their own card instead.
+      if (!quiet) toast(pane, 'Fizzle!', true);
     }, reduceMotion ? 0 : 280);
     setTimeout(() => pane.el.scene.classList.remove('casting', 'flash-bad'), 700);
   }
@@ -5007,7 +5295,7 @@ const WIZ = (function () {
           box.innerHTML = '';
           const done = document.createElement('div');
           done.className = 'lb-posted';
-          done.textContent = 'Posted as ' + who + '.';
+          done.textContent = 'Posted as ' + who + (/[.!?]$/.test(who) ? '' : '.');
           box.appendChild(done);
           lbLoad();
         }).catch(() => {
@@ -5038,9 +5326,187 @@ const WIZ = (function () {
     resultBody.appendChild(actions);
   }
 
+  // A coven has no single score to report, so the run ends on a standings
+  // table: deepest wins, and score settles a tie on rooms. A solo survival run
+  // goes back through the ordinary result screen it always used.
+  function finishCoven() {
+    if (run.wizards.length === 1) {
+      run.panes[0].score = run.wizards[0].score;
+      run.panes[0].rooms = run.wizards[0].rooms;
+      finish(0, true);
+      return;
+    }
+
+    cancelAnimationFrame(rafId);
+    const seconds = Math.round((Date.now() - run.startedAt) / 1000);
+    const catNames = run.cats;
+    const allCats = run.allCats;
+    const ranked = run.wizards.slice().sort((a, b) => (b.rooms - a.rooms) || (b.score - a.score));
+    const freshIds = recordRun(
+      ranked.map(w => ({ score: w.score, rooms: w.rooms })),
+      catNames, allCats, seconds, -1, false, 'survival',
+      ranked.map(w => w.name));
+    const started = run.wizards.length;
+    run = null;
+
+    playEl.hidden = true;
+    resultEl.hidden = false;
+    view.classList.remove('playing');
+    powerTrack.classList.remove('hot');
+    resultBody.innerHTML = '';
+
+    const champion = ranked[0];
+    const drawn = ranked.filter(w => w.rooms === champion.rooms && w.score === champion.score).length > 1;
+
+    const h = document.createElement('h2');
+    h.className = 'wiz-result-title';
+    h.textContent = champion.rooms === 0 ? 'The castle wins'
+      : drawn ? 'A dead heat in the dark'
+      : champion.name + ' went deepest';
+    resultBody.appendChild(h);
+
+    const sub = document.createElement('p');
+    sub.className = 'sub';
+    sub.style.textAlign = 'center';
+    sub.textContent = champion.rooms === 0
+      ? 'Not one door between the lot of you. The castle is still standing, and so are its bookcases.'
+      : `${started} wizards went in. ${drawn ? 'Two of them got' : champion.name + ' got'} ${champion.rooms} room${champion.rooms === 1 ? '' : 's'} deep before the dark closed in.`;
+    resultBody.appendChild(sub);
+
+    const stats = document.createElement('div');
+    stats.className = 'wiz-stats';
+    const addStat = (k, v) => {
+      const s2 = document.createElement('div');
+      s2.className = 'wiz-stat';
+      const kk = document.createElement('div'); kk.className = 'k'; kk.textContent = k;
+      const vv = document.createElement('div'); vv.className = 'v'; vv.textContent = v;
+      s2.append(kk, vv);
+      stats.appendChild(s2);
+    };
+    addStat('Wizards', started);
+    addStat('Deepest', champion.rooms + ' rooms');
+    addStat('Time', seconds + 's');
+    resultBody.appendChild(stats);
+
+    const list = document.createElement('div');
+    list.className = 'coven-standings';
+    ranked.forEach((w, i) => {
+      const row = document.createElement('div');
+      row.className = 'cs-row' + (i === 0 && w.rooms > 0 ? ' win' : '');
+
+      const rank = document.createElement('div');
+      rank.className = 'cs-rank';
+      rank.textContent = i + 1;
+
+      const who = document.createElement('div');
+      who.className = 'cs-who';
+      who.textContent = w.name;
+      const meta = document.createElement('div');
+      meta.className = 'cs-meta';
+      meta.textContent = w.rooms === 0
+        ? 'never got a door open'
+        : w.rooms + ' room' + (w.rooms === 1 ? '' : 's') + ' cleared';
+      who.appendChild(meta);
+
+      const pts = document.createElement('div');
+      pts.className = 'cs-pts';
+      pts.textContent = w.score;
+
+      const slotEl = document.createElement('div');
+      row.append(rank, who, pts, slotEl);
+      list.appendChild(row);
+
+      // Anyone who cleared a room can put themselves on the shared board, under
+      // whatever name they want to appear as rather than the one they joined on.
+      if (w.rooms <= 0) return;
+      const openBtn = document.createElement('button');
+      openBtn.className = 'reset-board-btn anki-btn';
+      openBtn.style.margin = '0';
+      openBtn.textContent = 'Post';
+      slotEl.appendChild(openBtn);
+
+      openBtn.onclick = () => {
+        openBtn.remove();
+        const box = document.createElement('div');
+        box.className = 'cs-post';
+        const input = document.createElement('input');
+        input.maxLength = 14;
+        input.value = w.name;
+        input.setAttribute('aria-label', 'Name for the shared board');
+        const go = document.createElement('button');
+        go.className = 'reset-board-btn anki-btn';
+        go.style.margin = '0';
+        go.textContent = 'Post to shared board';
+        const say = document.createElement('span');
+        say.className = 'cs-meta';
+        box.append(input, go, say);
+        row.appendChild(box);
+        input.focus();
+
+        go.onclick = () => {
+          const label = (input.value || '').trim().slice(0, 14);
+          if (!label) { say.textContent = 'Put a name in first.'; return; }
+          go.disabled = true; go.textContent = 'Posting…';
+          lbPost({
+            who: label,
+            score: w.score,
+            rooms: w.rooms,
+            cats: (allCats ? 'All categories' : (catNames || []).join(', ')).slice(0, 120),
+            at: Date.now(),
+          }).then(() => {
+            box.innerHTML = '';
+            const done = document.createElement('div');
+            done.className = 'lb-posted';
+            done.textContent = 'Posted as ' + label + (/[.!?]$/.test(label) ? '' : '.');
+            box.appendChild(done);
+            lbLoad();
+          }).catch(() => {
+            go.disabled = false; go.textContent = 'Post to shared board';
+            say.textContent = 'Could not reach the shared board.';
+          });
+        };
+      };
+    });
+    resultBody.appendChild(list);
+
+    const savedAs = document.createElement('div');
+    savedAs.className = 'saved-as';
+    savedAs.textContent = storageOk
+      ? 'All ' + started + ' runs saved on this device · '
+        + (allCats ? 'all categories' : catNames.length + ' categories')
+      : 'This browser is blocking local storage, so these runs were not saved.';
+    resultBody.appendChild(savedAs);
+
+    const board = document.createElement('div');
+    board.style.marginTop = '14px';
+    renderScores(board, 5, freshIds);
+    resultBody.appendChild(board);
+
+    const actions2 = document.createElement('div');
+    actions2.className = 'wiz-actions';
+    const again2 = document.createElement('button');
+    again2.className = 'primary';
+    again2.textContent = 'Run again';
+    again2.onclick = () => { resultEl.hidden = true; start(); };
+    const back2 = document.createElement('button');
+    back2.textContent = 'Change categories';
+    back2.onclick = () => {
+      resultEl.hidden = true;
+      setupEl.hidden = false;
+      renderScores(scoreListEl, 10);
+      refreshStart();
+    };
+    const hub2 = document.createElement('a');
+    hub2.href = '#';
+    hub2.textContent = 'All games';
+    actions2.append(again2, back2, hub2);
+    resultBody.appendChild(actions2);
+  }
+
   // Abandoning is not a result, so nothing is saved.
   function abandon() {
     cancelAnimationFrame(rafId);
+    netLockRoom();          // the phones are still armed for a room that just ended
     run = null;
     playEl.hidden = true;
     resultEl.hidden = true;
@@ -5062,7 +5528,8 @@ const WIZ = (function () {
       if (slot >= 0) {
         e.preventDefault();
         const target = run.panes[pi].buttons[slot];
-        if (target && !target.btn.disabled) pick(pi, target.optIdx, target.btn);
+        const actor = run.variant === 'survival' ? run.localWiz : pi;
+        if (actor >= 0 && target && !target.btn.disabled) pick(actor, target.optIdx, target.btn);
         return;
       }
     }
@@ -5108,8 +5575,9 @@ const WIZ = (function () {
 const PAD = (function () {
   const DB = 'https://mp-board-study-default-rtdb.firebaseio.com';
   const url = path => DB + path + '.json';
-  const put = (path, data) => fetch(url(path), { method: 'PUT', body: JSON.stringify(data) });
-  const del = path => fetch(url(path), { method: 'DELETE' });
+  const ok = r => { if (!r.ok) throw new Error(String(r.status)); return r; };
+  const put = (path, data) => fetch(url(path), { method: 'PUT', body: JSON.stringify(data) }).then(ok);
+  const del = path => fetch(url(path), { method: 'DELETE' }).then(ok);
 
   const view = document.getElementById('padView');
   const joinPane = document.getElementById('padJoinPane');
@@ -5125,12 +5593,15 @@ const PAD = (function () {
   const leaveBtn = document.getElementById('padLeaveBtn');
 
   const NAME_KEY = 'bsg.buzz.name.v1';
-  const me = { code: null, id: null, name: '', slot: -1, stream: null, round: -1, picked: false, lastResult: '' };
+  const me = { code: null, id: null, name: '', slot: -1, stream: null, round: -1, picked: false, lastResult: '', seatTimer: 0 };
 
   function paint(open) {
     buttons.forEach(b => {
-      b.disabled = !open || me.picked;
-      b.classList.toggle('live', open && !me.picked);
+      // A piece this phone has already fizzled on stays dead for the rest of
+      // the room; the other two come back so a miss can be followed up.
+      const dead = b.classList.contains('wrong');
+      b.disabled = dead || !open || me.picked;
+      b.classList.toggle('live', open && !me.picked && !dead);
     });
   }
 
@@ -5154,15 +5625,26 @@ const PAD = (function () {
       me.lastResult = res;
       const ok = res.indexOf('right') === 0;
       const chosen = buttons.find(b => b.classList.contains('chosen'));
-      if (chosen) chosen.classList.add(ok ? 'right' : 'wrong');
+      if (chosen) {
+        chosen.classList.remove('chosen');
+        chosen.classList.add(ok ? 'right' : 'wrong');
+      }
       statusEl.className = 'pad-status ' + (ok ? 'hit' : 'miss');
-      statusEl.textContent = ok ? 'That was it.' : 'Fizzle — wrong one.';
+      if (ok) {
+        statusEl.textContent = 'That was it.';
+        paint(false);
+        return;
+      }
+      // Wrong, but the room is not over — the screen will take another answer.
+      statusEl.textContent = 'Fizzle — try another.';
+      me.picked = false;
+      paint(!!round.open);
       return;
     }
 
     if (me.slot < 0) {
       statusEl.className = 'pad-status';
-      statusEl.textContent = 'That game is full. You are next in line if someone leaves.';
+      statusEl.textContent = 'That game is full — every seat is taken. You are next in line if someone leaves.';
       paint(false);
       return;
     }
@@ -5188,8 +5670,14 @@ const PAD = (function () {
     if (!name) { note.className = 'wiz-note warn'; note.textContent = 'Enter a name so the screen knows who you are.'; return; }
     note.className = 'wiz-note'; note.textContent = 'Taking a seat…';
     joinBtn.disabled = true;
-    fetch(url('/rooms/' + code + '/meta')).then(r => r.json()).then(meta => {
-      if (!meta) throw new Error('no room');
+    // Three different failures used to arrive here as one message. They need
+    // three different things done about them, so they say three things.
+    fetch(url('/rooms/' + code + '/meta')).then(r => {
+      if (r.status === 401 || r.status === 403) throw new Error('denied');
+      if (!r.ok) throw new Error('http');
+      return r.json();
+    }).then(meta => {
+      if (!meta) throw new Error('missing');
       me.code = code; me.name = name;
       me.id = 'w' + Math.random().toString(36).slice(2, 10);
       try { localStorage.setItem(NAME_KEY, name); } catch (e) { /* fine */ }
@@ -5209,9 +5697,23 @@ const PAD = (function () {
       };
       me.stream.addEventListener('put', onEvent('put'));
       me.stream.addEventListener('patch', onEvent('patch'));
-    }).catch(() => {
+      // A seat is handed out by the screen, so silence here means the screen is
+      // not listening — a different problem from the room not existing.
+      clearTimeout(me.seatTimer);
+      me.seatTimer = setTimeout(() => {
+        if (me.code && me.slot < 0 && seatEl.textContent === 'Seating…') {
+          statusEl.className = 'pad-status';
+          statusEl.textContent = 'The screen has not given you a seat. Is the room still open on it?';
+        }
+      }, 7000);
+    }).catch(err => {
+      const why = String(err && err.message);
       note.className = 'wiz-note warn';
-      note.textContent = 'No room ' + code + ' is open.';
+      note.textContent = why === 'denied'
+        ? 'This database is not letting players in — its security rules still need publishing.'
+        : why === 'missing'
+          ? 'No room ' + code + ' is open. Check the code on the screen, and that the screen still shows it.'
+          : 'Could not reach the database. Check the connection and try again.';
     }).then(() => { joinBtn.disabled = false; });
   }
 
@@ -5237,6 +5739,7 @@ const PAD = (function () {
   }
 
   function leave(msg) {
+    clearTimeout(me.seatTimer);
     if (me.stream) { me.stream.close(); me.stream = null; }
     if (me.code && me.id) del('/rooms/' + me.code + '/players/' + me.id);
     me.code = null; me.id = null; me.slot = -1; me.picked = false; me.round = -1;
