@@ -1143,6 +1143,10 @@
   }
   .scene.flash-good .vignette { background: radial-gradient(ellipse 78% 70% at 50% 45%, rgba(124,240,216,.35) 0%, rgba(5,3,15,.82) 100%); transition: background .18s ease; }
   .scene.flash-bad  .vignette { background: radial-gradient(ellipse 78% 70% at 50% 45%, rgba(255,90,90,.28) 0%, rgba(5,3,15,.85) 100%); transition: background .18s ease; }
+  /* The coven's version: visible at the edge of vision, faint enough to read
+     the labels straight through. */
+  .scene.flash-soft-good .vignette { background: radial-gradient(ellipse 78% 70% at 50% 45%, rgba(124,240,216,.15) 0%, rgba(5,3,15,.82) 100%); transition: background .22s ease; }
+  .scene.flash-soft-bad  .vignette { background: radial-gradient(ellipse 78% 70% at 50% 45%, rgba(255,90,90,.13) 0%, rgba(5,3,15,.84) 100%); transition: background .22s ease; }
 
   /* 55.5% keeps the door centred behind the middle piece, since the furniture
      row is offset right to leave the wizard his corner. Sized by height so it
@@ -1218,9 +1222,13 @@
   .scene .wizard { position: absolute; left: 1%; bottom: 3%; height: 34%; z-index: 5; }
   .scene .wizard svg { height: 100%; width: auto; display: block; }
   .staff-arm { transform-origin: 62% 55%; transition: transform .18s ease; }
-  .scene.casting .staff-arm { transform: rotate(-16deg); }
+  /* Scoped to the lone wizard in the corner: without it, every wizard in a
+     coven swings their staff whenever any one of them casts. */
+  .scene.casting .wizard .staff-arm { transform: rotate(-16deg); }
+  .coven-wiz.casting .staff-arm { transform: rotate(-16deg); }
+  .coven-wiz.casting .orb { animation: orbCharge .5s ease-out; }
   .orb { transform-origin: center; }
-  .scene.casting .orb { animation: orbCharge .5s ease-out; }
+  .scene.casting .wizard .orb { animation: orbCharge .5s ease-out; }
   @keyframes orbCharge {
     0% { transform: scale(1); }
     45% { transform: scale(1.9); }
@@ -1273,6 +1281,9 @@
     text-align: center;
     display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
     overflow: hidden;
+    /* A label is only as wide as its piece of furniture, so a long drug name
+       has to be allowed to break rather than run off the side of it. */
+    overflow-wrap: anywhere;
     min-height: 2.4em;
     text-shadow: 0 1px 2px rgba(0,0,0,.8);
   }
@@ -1575,7 +1586,9 @@
   @media (max-width: 520px) {
     /* narrow rooms are width-limited, so a shorter room wastes less space */
     .scene { height: clamp(260px, 44vh, 380px); }
-    .furni .label { font-size: clamp(11px, 3.1vw, 15px); padding: 6px 4px 7px; }
+    /* A phone-width label is barely two words wide, so the longest answers —
+       four-drug lists — need more lines than the desktop room does. */
+    .furni .label { font-size: clamp(11px, 3.1vw, 15px); padding: 6px 4px 7px; -webkit-line-clamp: 6; }
     .room-prompt .text { font-size: clamp(12.5px, 3.4vw, 16px); }
     .scene .wizard { height: 28%; }
     .scene .torch { height: 19%; top: 38%; }
@@ -1585,7 +1598,11 @@
 
   @media (prefers-reduced-motion: reduce) {
     .flame, .torch-light, .furni.spent .art, .shard, .puff, .bolt, .toast,
-    .bat, .moon-glow, .castle-door-light, .escape-walker .bob { animation: none !important; }
+    .bat, .moon-glow, .castle-door-light, .escape-walker .bob,
+    .cw-float, .coven-wiz.casting .orb, .coven-wiz.out .cw-art { animation: none !important; }
+    /* the float still has to be readable, and a fallen wizard still has to look fallen */
+    .cw-float.show { opacity: 1; }
+    .coven-wiz.out .cw-art { opacity: .18; filter: grayscale(1); transform: translateY(20%) rotate(-14deg); }
     .furni.spent .art { opacity: 0; }
     .furni.wrong { animation: none; }
     /* still move the wizard out of the castle, just without the bobbing walk */
@@ -1963,6 +1980,13 @@
  *   tags      optional short chips on the card
  *   subtitle  one line shown under the title while playing
  *   categories[].clues[]  { value, clue, answer } — value ascends per column
+ *
+ * A clue may also carry `short` (a furniture-sized answer label) and `decoys`
+ * (two wrong options) for Wizard's Escape, and `wiz: { clue, short, decoys }`
+ * to override any of those in the speed round only. The override exists because
+ * a good Jeopardy clue can ask for three things at once — the board has room
+ * for a full teaching answer, a piece of furniture does not — so those clues
+ * are narrowed to a single ask here while the board keeps the original.
  * ============================================================= */
 const GAMES = [
   {
@@ -2050,7 +2074,7 @@ const GAMES = [
           { value: 200, clue: "Name the 2 required “anchor” symptoms of MDD — at least 1 must be present to diagnose.", answer: "Depressed mood most of the day nearly daily, and diminished interest or pleasure (anhedonia).", short: "Depressed mood or anhedonia", decoys: ["Fatigue or poor concentration", "Insomnia or appetite change"] },
           { value: 300, clue: "What percentage of body weight change in 1 month is clinically significant for the MDD criterion?", answer: "5% of body weight, gain or loss, in 1 month.", short: "5% of body weight in a month", decoys: ["10% of body weight in a month", "5% of body weight in 6 months"] },
           { value: 400, clue: "MDD has a 72% lifetime comorbidity rate with any mental disorder. What is the most common comorbid disorder, and its rate?", answer: "Anxiety disorders — 59%. (Impulse control disorders 30%, substance use disorders 24%.)", short: "Anxiety disorders (59%)", decoys: ["Impulse control disorders (30%)", "Substance use disorders (24%)"] },
-          { value: 500, clue: "STAR*D: what percentage achieved full remission on the initial medication trial, what percentage of those relapsed by month 15, and what HAM-D17 score defines remission?", answer: "About 30% achieved full remission initially; 25% of those full remitters relapsed by month 15; remission is a HAM-D17 score below 7.", short: "~30%; HAM-D17 under 7", decoys: ["~50%; HAM-D17 under 7", "~30%; HAM-D17 under 12"] }
+          { value: 500, clue: "STAR*D: what percentage achieved full remission on the initial medication trial, what percentage of those relapsed by month 15, and what HAM-D17 score defines remission?", answer: "About 30% achieved full remission initially; 25% of those full remitters relapsed by month 15; remission is a HAM-D17 score below 7.", short: "~30%; HAM-D17 under 7", decoys: ["~50%; HAM-D17 under 7", "~30%; HAM-D17 under 12"], wiz: { clue: "In STAR*D, roughly what percentage of patients achieved full remission on the initial medication trial?", short: "About 30%", decoys: ["About 50%", "About 15%"] } }
         ]
       },
       {
@@ -2058,45 +2082,45 @@ const GAMES = [
         clues: [
           { value: 100, clue: "Which specifier requires mood reactivity plus 2 of: hypersomnia, increased appetite, leaden paralysis, or sensitivity to rejection?", answer: "The atypical features specifier.", short: "Atypical features", decoys: ["Melancholic features", "Seasonal pattern"] },
           { value: 200, clue: "For the melancholic specifier, one of 2 core symptoms must be present. Name both.", answer: "Loss of pleasure in all, or almost all, activities; and lack of reactivity to usually pleasurable stimuli.", short: "Anhedonia plus lack of reactivity", decoys: ["Early waking plus weight loss", "Mood reactivity plus leaden paralysis"] },
-          { value: 300, clue: "For the seasonal pattern specifier, 2 requirements must be met regarding the last 2 years. What are they?", answer: "The pattern has been maintained for the last 2 years, with no non-seasonal episodes in that window; and seasonal episodes substantially outnumber non-seasonal episodes over the lifetime.", short: "2 years, seasonal episodes dominant", decoys: ["1 year, seasonal episodes dominant", "2 years, seasonal and non-seasonal equal"] },
+          { value: 300, clue: "For the seasonal pattern specifier, 2 requirements must be met regarding the last 2 years. What are they?", answer: "The pattern has been maintained for the last 2 years, with no non-seasonal episodes in that window; and seasonal episodes substantially outnumber non-seasonal episodes over the lifetime.", short: "2 years, seasonal episodes dominant", decoys: ["1 year, seasonal episodes dominant", "2 years, seasonal and non-seasonal equal"], wiz: { clue: "For the seasonal pattern specifier, the seasonal pattern must have been maintained, with no non-seasonal episodes, for how long?", short: "The last 2 years", decoys: ["The last year", "The last 6 months"] } },
           { value: 400, clue: "Psychotic features can be mood-congruent or mood-incongruent. Give an example of a mood-congruent psychotic feature.", answer: "Delusions or hallucinations with depressive themes: personal inadequacy, guilt, disease, death, nihilism, or deserved punishment.", short: "Delusions with depressive themes", decoys: ["Delusions of thought insertion", "Persecutory delusions unrelated to mood"] },
-          { value: 500, clue: "Persistent depressive disorder: state the duration criterion for adults versus children, and how many additional symptoms are required.", answer: "Adults: 2 years or more of depressed mood. Children and adolescents: 1 year or more. Plus 2 or more of poor appetite or overeating, insomnia or hypersomnia, low energy, low self-esteem, poor concentration, or hopelessness.", short: "2 years in adults, 1 in children", decoys: ["1 year in adults, 6 months in children", "2 years in both adults and children"] }
+          { value: 500, clue: "Persistent depressive disorder: state the duration criterion for adults versus children, and how many additional symptoms are required.", answer: "Adults: 2 years or more of depressed mood. Children and adolescents: 1 year or more. Plus 2 or more of poor appetite or overeating, insomnia or hypersomnia, low energy, low self-esteem, poor concentration, or hopelessness.", short: "2 years in adults, 1 in children", decoys: ["1 year in adults, 6 months in children", "2 years in both adults and children"], wiz: { clue: "Persistent depressive disorder requires depressed mood for how long in adults?", short: "2 years or more", decoys: ["1 year or more", "6 months or more"] } }
         ]
       },
       {
         name: "Sleep & Course",
         clues: [
-          { value: 100, clue: "In depression, is REM latency increased or decreased, and what does that mean clinically?", answer: "Decreased REM latency — patients enter REM sleep faster than normal. REM density is also increased, with more rapid eye movements per unit time.", short: "Decreased REM latency", decoys: ["Increased REM latency", "Decreased REM density"] },
+          { value: 100, clue: "In depression, is REM latency increased or decreased, and what does that mean clinically?", answer: "Decreased REM latency — patients enter REM sleep faster than normal. REM density is also increased, with more rapid eye movements per unit time.", short: "Decreased REM latency", decoys: ["Increased REM latency", "Decreased REM density"], wiz: { clue: "In depression, what happens to REM latency?", short: "It is decreased", decoys: ["It is increased", "It is unchanged"] } },
           { value: 200, clue: "What percentage of depressed patients experience insomnia, versus hypersomnia?", answer: "Insomnia 88%, hypersomnia 27%. Deep N3 slow-wave sleep is also lost.", short: "Insomnia 88%, hypersomnia 27%", decoys: ["Insomnia 27%, hypersomnia 88%", "Insomnia 60%, hypersomnia 40%"] },
-          { value: 300, clue: "What is the average duration of a single major depressive episode, and what percentage achieve remission at 6 months and at 2 years?", answer: "An average episode runs 3–5 months, by which point about 50% reach remission; 63% by 6 months, and 80% by 2 years.", short: "3–5 months; 63% by 6 months", decoys: ["6–9 months; 63% by 6 months", "3–5 months; 80% by 6 months"] },
-          { value: 400, clue: "At what number of prior depressive episodes is maintenance treatment very strongly recommended, and by how much does maintenance reduce recurrence?", answer: "3 or more episodes, which carries over 80% recurrence risk. Maintenance treatment reduces recurrence by about 50% — “what gets you well, keeps you well.”", short: "3 or more episodes", decoys: ["2 or more episodes", "5 or more episodes"] },
-          { value: 500, clue: "What effect do antidepressants have on REM sleep, and what is the clinical implication of that relationship?", answer: "Antidepressants suppress REM sleep, and REM suppression correlates with treatment response. The relationship is bidirectional: sleep affects depression and depression affects sleep.", short: "They suppress REM sleep", decoys: ["They increase REM sleep", "They have no effect on REM sleep"] }
+          { value: 300, clue: "What is the average duration of a single major depressive episode, and what percentage achieve remission at 6 months and at 2 years?", answer: "An average episode runs 3–5 months, by which point about 50% reach remission; 63% by 6 months, and 80% by 2 years.", short: "3–5 months; 63% by 6 months", decoys: ["6–9 months; 63% by 6 months", "3–5 months; 80% by 6 months"], wiz: { clue: "What is the average duration of a single major depressive episode?", short: "3–5 months", decoys: ["6–9 months", "9–12 months"] } },
+          { value: 400, clue: "At what number of prior depressive episodes is maintenance treatment very strongly recommended, and by how much does maintenance reduce recurrence?", answer: "3 or more episodes, which carries over 80% recurrence risk. Maintenance treatment reduces recurrence by about 50% — “what gets you well, keeps you well.”", short: "3 or more episodes", decoys: ["2 or more episodes", "5 or more episodes"], wiz: { clue: "At what number of prior depressive episodes is maintenance treatment very strongly recommended?", short: "3 or more episodes", decoys: ["2 or more episodes", "5 or more episodes"] } },
+          { value: 500, clue: "What effect do antidepressants have on REM sleep, and what is the clinical implication of that relationship?", answer: "Antidepressants suppress REM sleep, and REM suppression correlates with treatment response. The relationship is bidirectional: sleep affects depression and depression affects sleep.", short: "They suppress REM sleep", decoys: ["They increase REM sleep", "They have no effect on REM sleep"], wiz: { clue: "What effect do antidepressants have on REM sleep?", short: "They suppress REM sleep", decoys: ["They increase REM sleep", "They have no effect on REM sleep"] } }
         ]
       },
       {
         name: "TCAs & MAOIs",
         clues: [
-          { value: 100, clue: "Which TCA is the most serotonergic and used in OCD — and which carries the highest seizure risk?", answer: "Clomipramine — the most serotonergic TCA, used in OCD, and also the one with the highest seizure risk of the class.", short: "Clomipramine", decoys: ["Amitriptyline", "Imipramine"] },
+          { value: 100, clue: "Which TCA is the most serotonergic and used in OCD — and which carries the highest seizure risk?", answer: "Clomipramine — the most serotonergic TCA, used in OCD, and also the one with the highest seizure risk of the class.", short: "Clomipramine", decoys: ["Amitriptyline", "Imipramine"], wiz: { clue: "Which TCA is the most serotonergic, and is the one used in OCD?", short: "Clomipramine", decoys: ["Amitriptyline", "Imipramine"] } },
           { value: 200, clue: "Name any 3 cardiac risks of TCAs.", answer: "Increased heart rate, orthostatic hypotension, quinidine-like QT prolongation, QRS prolongation, heart block where a bundle branch block is present, and increased morbidity in ischemic heart disease. Get an EKG if the patient is over 45.", short: "Orthostasis, QT and QRS prolongation", decoys: ["Bradycardia and QT shortening", "Hypertension and cardiomyopathy"] },
-          { value: 300, clue: "What is the washout period before starting an MAOI after stopping fluoxetine, and why is it different from other antidepressants?", answer: "A 5-week gap, versus 2 weeks for other antidepressants — fluoxetine's half-life is 4–7 days and its active metabolite norfluoxetine runs 7–14 days, giving a very long elimination time.", short: "5 weeks, for norfluoxetine", decoys: ["2 weeks, as for other SSRIs", "10 days, for norfluoxetine"] },
-          { value: 400, clue: "Match each classic MAOI to its trade name: phenelzine, tranylcypromine, isocarboxazid, selegiline.", answer: "Phenelzine is Nardil, tranylcypromine is Parnate, isocarboxazid is Marplan, and selegiline is the Emsam patch. Selegiline is selective for MAO-B and does not require a low-tyramine diet at lower doses.", short: "Nardil, Parnate, Marplan, Emsam", decoys: ["Nardil, Marplan, Parnate, Emsam", "Nardil, Parnate, Emsam, Wellbutrin"] },
-          { value: 500, clue: "Which secondary TCA is most noradrenergic, which tertiary TCA is most anti-histaminergic, and which receptor blockades cause dry mouth and retention, orthostasis, and sedation with weight gain?", answer: "Desipramine is the most noradrenergic secondary TCA; doxepin the most anti-histaminergic tertiary. Dry mouth and retention come from anticholinergic blockade, orthostasis from alpha-1 blockade, and sedation with weight gain from H1 blockade.", short: "Desipramine and doxepin", decoys: ["Nortriptyline and amitriptyline", "Desipramine and imipramine"] }
+          { value: 300, clue: "What is the washout period before starting an MAOI after stopping fluoxetine, and why is it different from other antidepressants?", answer: "A 5-week gap, versus 2 weeks for other antidepressants — fluoxetine's half-life is 4–7 days and its active metabolite norfluoxetine runs 7–14 days, giving a very long elimination time.", short: "5 weeks, for norfluoxetine", decoys: ["2 weeks, as for other SSRIs", "10 days, for norfluoxetine"], wiz: { clue: "What washout period is required before starting an MAOI after stopping fluoxetine?", short: "5 weeks", decoys: ["2 weeks", "10 days"] } },
+          { value: 400, clue: "Match each classic MAOI to its trade name: phenelzine, tranylcypromine, isocarboxazid, selegiline.", answer: "Phenelzine is Nardil, tranylcypromine is Parnate, isocarboxazid is Marplan, and selegiline is the Emsam patch. Selegiline is selective for MAO-B and does not require a low-tyramine diet at lower doses.", short: "Nardil, Parnate, Marplan, Emsam", decoys: ["Nardil, Marplan, Parnate, Emsam", "Nardil, Parnate, Emsam, Wellbutrin"], wiz: { clue: "Which classic MAOI is sold under the trade name Parnate?", short: "Tranylcypromine", decoys: ["Phenelzine", "Isocarboxazid"] } },
+          { value: 500, clue: "Which secondary TCA is most noradrenergic, which tertiary TCA is most anti-histaminergic, and which receptor blockades cause dry mouth and retention, orthostasis, and sedation with weight gain?", answer: "Desipramine is the most noradrenergic secondary TCA; doxepin the most anti-histaminergic tertiary. Dry mouth and retention come from anticholinergic blockade, orthostasis from alpha-1 blockade, and sedation with weight gain from H1 blockade.", short: "Desipramine and doxepin", decoys: ["Nortriptyline and amitriptyline", "Desipramine and imipramine"], wiz: { clue: "Which secondary amine TCA is the most noradrenergic?", short: "Desipramine", decoys: ["Nortriptyline", "Protriptyline"] } }
         ]
       },
       {
         name: "Newer Treatments",
         clues: [
-          { value: 100, clue: "Brexanolone (Zulresso) is FDA-approved for what condition, and what is its mechanism of action?", answer: "Postpartum depression, approved in 2019 for ages 15 and up. It is IV allopregnanolone, a metabolite of progesterone, acting as a GABA-A positive modulator — a GABAergic neurosteroid.", short: "Postpartum depression", decoys: ["Treatment-resistant depression", "Premenstrual dysphoric disorder"] },
-          { value: 200, clue: "Vagus nerve stimulation: how many failed medication trials are required, which nerve is stimulated, and what is the stimulation pattern?", answer: "Failure of at least 4 medication trials; the left vagus nerve is stimulated; the pattern is 30 seconds on and 5 minutes off.", short: "Left vagus, 30 seconds on", decoys: ["Right vagus, 30 seconds on", "Left vagus, 5 minutes on"] },
-          { value: 300, clue: "Mirtazapine is sedating at low doses but activating at high doses. Explain the mechanism behind each.", answer: "At low doses H1 antihistamine blockade dominates, giving sedation. At high doses noradrenergic and dopaminergic release via alpha-2 antagonism outweighs the H1 effect, giving activation. It is also a 5-HT2 and 5-HT3 antagonist, reducing GI and sexual side effects.", short: "H1 blockade at low doses", decoys: ["Alpha-2 antagonism at low doses", "5-HT3 antagonism at low doses"] },
-          { value: 400, clue: "Gepirone (Exxua): when was it FDA-approved, what are its 3 mechanisms of action, and what ECG finding prevents initiation?", answer: "Approved in 2023. It is a 5-HT1A agonist and a 5-HT2A antagonist, with an active metabolite that is an alpha-2 adrenergic antagonist. Do not initiate if the QTc is above 450 msec — correct electrolytes and get an ECG first.", short: "2023; not if QTc over 450", decoys: ["2023; not if QTc over 500", "2019; not if QTc over 450"] },
-          { value: 500, clue: "Auvelity (dextromethorphan/bupropion), FDA 2022: why is bupropion in the combination, and what are dextromethorphan's 2 mechanisms of action?", answer: "Bupropion is a CYP2D6 inhibitor, which slows dextromethorphan's metabolism and extends its half-life from 2–4 hours up to therapeutic levels. Dextromethorphan is an NMDA receptor antagonist, like ketamine, and a sigma-1 receptor agonist.", short: "CYP2D6 inhibition; NMDA and sigma-1", decoys: ["CYP3A4 inhibition; NMDA and sigma-1", "CYP2D6 inhibition; AMPA and mu-opioid"] }
+          { value: 100, clue: "Brexanolone (Zulresso) is FDA-approved for what condition, and what is its mechanism of action?", answer: "Postpartum depression, approved in 2019 for ages 15 and up. It is IV allopregnanolone, a metabolite of progesterone, acting as a GABA-A positive modulator — a GABAergic neurosteroid.", short: "Postpartum depression", decoys: ["Treatment-resistant depression", "Premenstrual dysphoric disorder"], wiz: { clue: "Brexanolone (Zulresso) is FDA-approved for which condition?", short: "Postpartum depression", decoys: ["Treatment-resistant depression", "Premenstrual dysphoric disorder"] } },
+          { value: 200, clue: "Vagus nerve stimulation: how many failed medication trials are required, which nerve is stimulated, and what is the stimulation pattern?", answer: "Failure of at least 4 medication trials; the left vagus nerve is stimulated; the pattern is 30 seconds on and 5 minutes off.", short: "Left vagus, 30 seconds on", decoys: ["Right vagus, 30 seconds on", "Left vagus, 5 minutes on"], wiz: { clue: "Vagus nerve stimulation for depression requires failure of how many prior medication trials?", short: "At least 4", decoys: ["At least 2", "At least 6"] } },
+          { value: 300, clue: "Mirtazapine is sedating at low doses but activating at high doses. Explain the mechanism behind each.", answer: "At low doses H1 antihistamine blockade dominates, giving sedation. At high doses noradrenergic and dopaminergic release via alpha-2 antagonism outweighs the H1 effect, giving activation. It is also a 5-HT2 and 5-HT3 antagonist, reducing GI and sexual side effects.", short: "H1 blockade at low doses", decoys: ["Alpha-2 antagonism at low doses", "5-HT3 antagonism at low doses"], wiz: { clue: "Which receptor action explains why mirtazapine is more sedating at low doses than at high doses?", short: "H1 blockade", decoys: ["Alpha-2 antagonism", "5-HT3 antagonism"] } },
+          { value: 400, clue: "Gepirone (Exxua): when was it FDA-approved, what are its 3 mechanisms of action, and what ECG finding prevents initiation?", answer: "Approved in 2023. It is a 5-HT1A agonist and a 5-HT2A antagonist, with an active metabolite that is an alpha-2 adrenergic antagonist. Do not initiate if the QTc is above 450 msec — correct electrolytes and get an ECG first.", short: "2023; not if QTc over 450", decoys: ["2023; not if QTc over 500", "2019; not if QTc over 450"], wiz: { clue: "Gepirone (Exxua) should not be started if the QTc is above what value?", short: "450 msec", decoys: ["500 msec", "470 msec"] } },
+          { value: 500, clue: "Auvelity (dextromethorphan/bupropion), FDA 2022: why is bupropion in the combination, and what are dextromethorphan's 2 mechanisms of action?", answer: "Bupropion is a CYP2D6 inhibitor, which slows dextromethorphan's metabolism and extends its half-life from 2–4 hours up to therapeutic levels. Dextromethorphan is an NMDA receptor antagonist, like ketamine, and a sigma-1 receptor agonist.", short: "CYP2D6 inhibition; NMDA and sigma-1", decoys: ["CYP3A4 inhibition; NMDA and sigma-1", "CYP2D6 inhibition; AMPA and mu-opioid"], wiz: { clue: "In Auvelity, what does bupropion contribute to the combination?", short: "CYP2D6 inhibition", decoys: ["CYP3A4 inhibition", "NMDA receptor blockade"] } }
         ]
       },
       {
         name: "Final Jeopardy ★",
         clues: [
-          { value: 1000, clue: "In STAR*D, partial remitters and full remitters had very different relapse rates by month 15. State both rates, and the key clinical lesson about the target of treatment.", answer: "Full remitters: 25% relapsed by month 15. Partial remitters: 76% relapsed. The lesson is to treat to full remission rather than partial improvement, to optimise both symptom control and functional recovery — “what gets you well, keeps you well.”", short: "25% versus 76% relapse", decoys: ["25% versus 50% relapse", "40% versus 76% relapse"] }
+          { value: 1000, clue: "In STAR*D, partial remitters and full remitters had very different relapse rates by month 15. State both rates, and the key clinical lesson about the target of treatment.", answer: "Full remitters: 25% relapsed by month 15. Partial remitters: 76% relapsed. The lesson is to treat to full remission rather than partial improvement, to optimise both symptom control and functional recovery — “what gets you well, keeps you well.”", short: "25% versus 76% relapse", decoys: ["25% versus 50% relapse", "40% versus 76% relapse"], wiz: { clue: "In STAR*D, what were the month-15 relapse rates for full remitters versus partial remitters?", short: "25% versus 76%", decoys: ["25% versus 50%", "40% versus 76%"] } }
         ]
       }
     ]
@@ -2126,7 +2150,7 @@ const GAMES = [
           { value: 200, clue: "A lesion to what branch of the posterior circulation causes locked-in syndrome?", answer: "The basilar artery.", short: "Basilar artery", decoys: ["Posterior inferior cerebellar artery", "Anterior spinal artery"] },
           { value: 300, clue: "The first-line agent for treatment of pseudobulbar affect after cortical damage such as stroke is what?", answer: "Nuedexta, dextromethorphan-quinidine. SSRIs and TCAs may also be considered.", short: "Dextromethorphan-quinidine", decoys: ["Amantadine", "Modafinil"] },
           { value: 400, clue: "What clinical syndrome is characterised by ipsilateral hemiataxia and vertigo, loss of pain and temperature over the ipsilateral face and contralateral body, and ipsilateral Horner syndrome?", answer: "Lateral medullary syndrome, also known as Wallenberg syndrome.", short: "Lateral medullary (Wallenberg)", decoys: ["Medial medullary (Dejerine)", "Weber syndrome"] },
-          { value: 500, clue: "What are the four rules in the rule of 4s?", answer: "There are 4 midline structures beginning with M; 4 lateral structures beginning with S; 4 cranial nerves in the medulla, 4 in the pons and 4 above the pons; and the 4 midline motor nuclei are those that divide equally into 12 except 1 and 2, namely 3, 4, 6 and 12.", short: "4 midline M, 4 lateral S", decoys: ["4 midline S, 4 lateral M", "3 midline M, 3 lateral S"] }
+          { value: 500, clue: "What are the four rules in the rule of 4s?", answer: "There are 4 midline structures beginning with M; 4 lateral structures beginning with S; 4 cranial nerves in the medulla, 4 in the pons and 4 above the pons; and the 4 midline motor nuclei are those that divide equally into 12 except 1 and 2, namely 3, 4, 6 and 12.", short: "4 midline M, 4 lateral S", decoys: ["4 midline S, 4 lateral M", "3 midline M, 3 lateral S"], wiz: { clue: "In the brainstem rule of 4s, which letter begins the 4 midline structures and which begins the 4 lateral structures?", short: "M midline, S lateral", decoys: ["S midline, M lateral", "M midline, L lateral"] } }
         ]
       },
       {
@@ -2258,10 +2282,10 @@ const GAMES = [
       {
         name: "TCAs",
         clues: [
-          { value: 100, clue: "This property is the proposed cause of sedation from TCAs and also of their increased risk of arrhythmias.", answer: "Inhibition of voltage-gated sodium channels on the neuronal cell membrane, causing conduction delays, QT prolongation, ventricular tachycardia and torsades de pointes.", short: "Sodium channel blockade", decoys: ["Potassium channel blockade", "Calcium channel blockade"] },
-          { value: 200, clue: "What is the therapeutic plasma range for TCAs?", answer: "50 to 150 ng/mL.", short: "50 to 150 ng/mL", decoys: ["10 to 50 ng/mL", "150 to 300 ng/mL"] },
+          { value: 100, clue: "This property is the proposed cause of sedation from TCAs and also of their increased risk of arrhythmias.", answer: "Inhibition of voltage-gated sodium channels on the neuronal cell membrane, causing conduction delays, QT prolongation, ventricular tachycardia and torsades de pointes.", short: "Sodium channel blockade", decoys: ["Potassium channel blockade", "Calcium channel blockade"], wiz: { clue: "Which property of TCAs is the proposed cause of their conduction delays and increased arrhythmia risk?", short: "Sodium channel blockade", decoys: ["Potassium channel blockade", "Calcium channel blockade"] } },
+          { value: 200, clue: "What is the therapeutic plasma range for TCAs?", answer: "50 to 150 ng/mL.", short: "50 to 150 ng/mL", decoys: ["10 to 50 ng/mL", "150 to 300 ng/mL"], wiz: { clue: "What is the therapeutic plasma range for nortriptyline?", short: "50 to 150 ng/mL", decoys: ["10 to 50 ng/mL", "150 to 300 ng/mL"] } },
           { value: 300, clue: "Which TCA is the most histaminergic?", answer: "Doxepin.", short: "Doxepin", decoys: ["Desipramine", "Nortriptyline"] },
-          { value: 400, clue: "Which TCA performed worse than placebo for the treatment of depression?", answer: "Clomipramine.", short: "Clomipramine", decoys: ["Imipramine", "Amitriptyline"] },
+          { value: 400, clue: "Which TCA performed worse than placebo for the treatment of depression?", answer: "Clomipramine.", short: "Clomipramine", decoys: ["Imipramine", "Amitriptyline"], wiz: { clue: "Which TCA is FDA-approved only for OCD, and is not approved for depression in the United States?", short: "Clomipramine", decoys: ["Imipramine", "Amitriptyline"] } },
           { value: 500, clue: "TCAs may lead to this pattern of heart block in patients with an underlying left bundle branch block.", answer: "A 2:1 AV block.", short: "2:1 AV block", decoys: ["First-degree AV block", "Complete heart block"] }
         ]
       },
@@ -2308,7 +2332,7 @@ const GAMES = [
         clues: [
           { value: 100, clue: "What are the absolute contraindications for ECT?", answer: "There are none. There are several relative contraindications, both CNS and cardiac.", short: "There are none", decoys: ["Raised intracranial pressure", "Recent myocardial infarction"] },
           { value: 200, clue: "Name one of the four TMS variants with proven efficacy.", answer: "Bilateral repetitive TMS, priming TMS, theta burst stimulation, or adjunctive D-cycloserine added to theta burst stimulation.", short: "Theta burst stimulation", decoys: ["Deep brain stimulation", "Transcranial direct current stimulation"] },
-          { value: 300, clue: "Why has methohexital been used for ECT induction, and why is it preferred over propofol?", answer: "It keeps the therapeutic seizure duration stable without heavily suppressing brain activity, unlike sedatives such as propofol, and gives fast unconsciousness with very quick recovery.", short: "It keeps seizure duration stable", decoys: ["It lengthens the seizure", "It gives deeper anaesthesia"] },
+          { value: 300, clue: "Why has methohexital been used for ECT induction, and why is it preferred over propofol?", answer: "It keeps the therapeutic seizure duration stable without heavily suppressing brain activity, unlike sedatives such as propofol, and gives fast unconsciousness with very quick recovery.", short: "It keeps seizure duration stable", decoys: ["It lengthens the seizure", "It gives deeper anaesthesia"], wiz: { clue: "Why is methohexital preferred over propofol for ECT induction?", short: "It keeps seizure duration stable", decoys: ["It lengthens the seizure", "It gives deeper anaesthesia"] } },
           { value: 400, clue: "What is the dosing schedule for induction with esketamine?", answer: "Twice a week for four weeks, which can move to once a week in maintenance.", short: "Twice a week for four weeks", decoys: ["Once a week for eight weeks", "Three times a week for two weeks"] },
           { value: 500, clue: "This TMS treatment protocol involves MRI-guided region selection and multiple sessions over the course of five days.", answer: "SAINT, as compared with the original protocol of 30 or more sessions over 6 to 8 weeks.", short: "SAINT", decoys: ["Standard 10 Hz rTMS", "Deep TMS with an H-coil"] }
         ]
@@ -2317,7 +2341,7 @@ const GAMES = [
         name: "Resisting Treatment",
         clues: [
           { value: 100, clue: "What is the definition of treatment-resistant depression?", answer: "Failure to respond to two or more antidepressant regimens despite adequate dose, duration and adherence. Failed courses of psychotherapy do not count towards TRD.", short: "Two failed adequate trials", decoys: ["One failed adequate trial", "Three failed adequate trials"] },
-          { value: 200, clue: "A failure to respond is defined as a lack of improvement by how much?", answer: "Less than 25% symptom improvement.", short: "Less than 25%", decoys: ["Less than 50%", "Less than 10%"] },
+          { value: 200, clue: "A failure to respond is defined as a lack of improvement by how much?", answer: "Less than 25% symptom improvement.", short: "Less than 25%", decoys: ["Less than 50%", "Less than 10%"], wiz: { clue: "In defining treatment-resistant depression, a failed trial means symptom improvement of less than how much?", short: "Less than 25%", decoys: ["Less than 50%", "Less than 10%"] } },
           { value: 300, clue: "In the VAST-D trial, what was the only augmentation strategy that yielded statistical significance?", answer: "Aripiprazole (Abilify), with a 28.9% remission rate. Bupropion switch and bupropion augmentation were not significant.", short: "Aripiprazole", decoys: ["Bupropion augmentation", "Bupropion switch"] },
           { value: 400, clue: "The elderly may need a trial of at least this duration before being called treatment resistant, because of slowed response rates.", answer: "12 weeks.", short: "12 weeks", decoys: ["6 weeks", "8 weeks"] },
           { value: 500, clue: "FDA approved in 2005 for treatment-resistant depression, this treatment requires failure of at least 4 medication trials.", answer: "The vagus nerve stimulator. It delivers pulses to the left vagus nerve, 30 seconds on and 5 minutes off; the 2022 DOD/VA guidelines recommend against it.", short: "Vagus nerve stimulation", decoys: ["Deep brain stimulation", "Esketamine"] }
@@ -2327,7 +2351,7 @@ const GAMES = [
         name: "Long Term Thinking",
         clues: [
           { value: 100, clue: "There is a strong-for recommendation in the DOD/VA guidelines for continuing medication for this duration in patients who have achieved remission in MDD.", answer: "Six months.", short: "Six months", decoys: ["Three months", "Twelve months"] },
-          { value: 200, clue: "Who requires maintenance or indefinite treatment for depression?", answer: "Patients with 3 episodes of major depression, carrying over 80% risk of recurrence; or 2 episodes plus family history, early onset, severe episodes, or serious suicide risk during episodes.", short: "Three episodes", decoys: ["Two episodes", "Four episodes"] },
+          { value: 200, clue: "Who requires maintenance or indefinite treatment for depression?", answer: "Patients with 3 episodes of major depression, carrying over 80% risk of recurrence; or 2 episodes plus family history, early onset, severe episodes, or serious suicide risk during episodes.", short: "Three episodes", decoys: ["Two episodes", "Four episodes"], wiz: { clue: "How many prior major depressive episodes, on their own, warrant maintenance or indefinite treatment?", short: "3 episodes", decoys: ["2 episodes", "4 episodes"] } },
           { value: 300, clue: "According to STAR*D, what is remission defined as?", answer: "A score of 7 or less on the HAM-D17.", short: "HAM-D17 of 7 or less", decoys: ["HAM-D17 of 12 or less", "HAM-D17 of 3 or less"] },
           { value: 400, clue: "Maintenance treatment reduces the risk of recurrence of major depressive episodes by how much?", answer: "By more than 50%.", short: "More than 50%", decoys: ["More than 25%", "More than 80%"] },
           { value: 500, clue: "A 2023 meta-analysis showed these antidepressants had the best balance of efficacy and tolerability for maintenance treatment in MDD.", answer: "Desvenlafaxine, paroxetine, venlafaxine and vortioxetine.", short: "Desvenlafaxine, paroxetine, venlafaxine, vortioxetine", decoys: ["Fluoxetine, sertraline, citalopram", "Amitriptyline, nortriptyline, doxepin"] }
@@ -2336,8 +2360,8 @@ const GAMES = [
       {
         name: "Warfighter Guidelines",
         clues: [
-          { value: 100, clue: "What are the recommended first-line medications in the DOD/VA guidelines?", answer: "SSRIs, SNRIs, serotonin modulators and stimulators, bupropion and mirtazapine.", short: "SSRI, SNRI, bupropion, mirtazapine", decoys: ["MAOI, TCA, ketamine, nefazodone", "Lithium, lamotrigine, quetiapine"] },
-          { value: 200, clue: "Which medications are recommended against as first line?", answer: "MAOIs, TCAs, ketamine and esketamine, and nefazodone.", short: "MAOI, TCA, ketamine, nefazodone", decoys: ["SSRI, SNRI, bupropion, mirtazapine", "Lithium, buspirone, thyroid hormone"] },
+          { value: 100, clue: "What are the recommended first-line medications in the DOD/VA guidelines?", answer: "SSRIs, SNRIs, serotonin modulators and stimulators, bupropion and mirtazapine.", short: "SSRI, SNRI, bupropion, mirtazapine", decoys: ["MAOI, TCA, ketamine, nefazodone", "Lithium, lamotrigine, quetiapine"], wiz: { clue: "In the 2022 DOD/VA guidelines for major depressive disorder, which medications are recommended as initial, first-line pharmacotherapy?", short: "SSRIs, SNRIs, bupropion, mirtazapine", decoys: ["MAOIs, TCAs, ketamine, nefazodone", "Lithium, lamotrigine, quetiapine"] } },
+          { value: 200, clue: "Which medications are recommended against as first line?", answer: "MAOIs, TCAs, ketamine and esketamine, and nefazodone.", short: "MAOI, TCA, ketamine, nefazodone", decoys: ["SSRI, SNRI, bupropion, mirtazapine", "Lithium, buspirone, thyroid hormone"], wiz: { clue: "In the 2022 DOD/VA guidelines for major depressive disorder, which medications are suggested against as initial, first-line pharmacotherapy?", short: "MAOIs, TCAs, ketamine, esketamine, nefazodone", decoys: ["SSRIs, SNRIs, bupropion, mirtazapine", "Lithium, buspirone, thyroid hormone"] } },
           { value: 300, clue: "What is the DOD/VA strength of recommendation for pharmacogenetic testing to help guide the selection of antidepressants?", answer: "Neither for nor against.", short: "Neither for nor against", decoys: ["Strong against", "Weak for"] },
           { value: 400, clue: "The 2022 DOD/VA guidelines recommend against the use of these supplements for the treatment of MDD.", answer: "Omega-3 and vitamin D.", short: "Omega-3 and vitamin D", decoys: ["St John's wort and SAMe", "Folate and vitamin B12"] },
           { value: 500, clue: "The DOD/VA guidelines have a strong-for recommendation for this treatment as first line in pregnancy and breastfeeding.", answer: "Psychotherapy.", short: "Psychotherapy", decoys: ["Sertraline", "Bright light therapy"] }
@@ -3597,7 +3621,7 @@ function buildDancers() {
     d.style.setProperty('--beat', (0.68 + Math.random() * 0.34).toFixed(2) + 's');
     d.style.setProperty('--offbeat', '-' + (Math.random() * 0.6).toFixed(2) + 's');
     d.style.width = 'clamp(' + (42 + i % 2 * 8) + 'px, ' + (7.5 + (i % 3)) + 'vw, ' + (92 + (i % 2) * 18) + 'px)';
-    d.innerHTML = WIZ.art();
+    d.innerHTML = WIZ.art(i);   // a crowd of five different wizards
     frag.appendChild(d);
   }
   dancersEl.appendChild(frag);
@@ -4252,6 +4276,12 @@ const WIZ = (function () {
   // is absent the Jeopardy answer is used, which is right for one-word answers.
   const labelFor = clueObj =>
     (clueObj && clueObj.short) ? String(clueObj.short).trim() : cleanAnswer(clueObj && clueObj.answer);
+
+  // A clue may carry a `wiz` override — a narrowed prompt with its own short
+  // answer and decoys — used only here. Board clues that ask for three facts at
+  // once cannot be answered by one label on one wardrobe, so those are asked as
+  // a single question in the speed round and left alone on the board.
+  const wizOf = cl => (cl && cl.wiz) ? Object.assign({}, cl, cl.wiz) : cl;
   const norm = s => String(s).toLowerCase().replace(/\s+/g, ' ').trim();
   const shuffle = arr => {
     const a = arr.slice();
@@ -4276,12 +4306,13 @@ const WIZ = (function () {
   function buildPool() {
     const cats = allCategories().filter(c => selected.has(c.key));
     const everyAnswer = [];
-    cats.forEach(c => c.cat.clues.forEach(cl => everyAnswer.push(labelFor(cl))));
+    cats.forEach(c => c.cat.clues.forEach(cl => everyAnswer.push(labelFor(wizOf(cl)))));
 
     const questions = [];
     cats.forEach(c => {
-      const siblings = c.cat.clues.map(labelFor);
-      c.cat.clues.forEach(cl => {
+      const siblings = c.cat.clues.map(cl => labelFor(wizOf(cl)));
+      c.cat.clues.forEach(rawClue => {
+        const cl = wizOf(rawClue);
         const correct = labelFor(cl);
         if (!correct || !String(cl.clue || '').trim()) return;
         // Picture clues stay on the Jeopardy board and out of the speed round
@@ -4544,14 +4575,14 @@ const WIZ = (function () {
   };
 
   // ---------- scene art ----------
-  function sceneChrome(coven) {
+  function sceneChrome(coven, look) {
     return `
       <div class="room-prompt"><span class="cat"></span><span class="text"></span><img class="prompt-image" alt="" hidden></div>
       <div class="torch-light l"></div><div class="torch-light r"></div>
       <div class="web l">${webSVG()}</div><div class="web r">${webSVG()}</div>
       <div class="torch l">${torchSVG()}</div><div class="torch r">${torchSVG()}</div>
       <div class="door">${doorSVG()}</div>
-      ${coven ? '' : `<div class="wizard">${wizardSVG()}</div>`}
+      ${coven ? '' : `<div class="wizard">${wizardSVG(look)}</div>`}
       <div class="furni-row"></div>
       ${coven ? '<div class="coven-row"></div>' : ''}
       <div class="fx"></div>
@@ -4590,22 +4621,108 @@ const WIZ = (function () {
       </g>
     </svg>`;
 
-  const wizardSVG = () => `
+  // Four wizards in one room have to be tellable apart at a glance, so each one
+  // draws from a different look: robe, hat shape, beard and staff all change
+  // together. The rotation cycles, so seat 1 is always the violet wizard and
+  // players keep the same wizard from run to run.
+  const WIZARD_LOOKS = [
+    { robe:'#3b2f7d', lit:'#4a3a99', hat:'#2a2160', trim:'#cfc7ee', skin:'#e8c9a0',
+      orb:'#7cf0d8', staff:'#6b4526', hair:'#efeaff', hatStyle:'point', beard:'long',   charm:'star' },
+    { robe:'#7a2340', lit:'#a13355', hat:'#4d1428', trim:'#ffd9a8', skin:'#8d5524',
+      orb:'#ffc857', staff:'#4a3520', hair:'#2e2018', hatStyle:'wide',  beard:'short',  charm:'moon' },
+    { robe:'#1f5f52', lit:'#2c8570', hat:'#123c34', trim:'#bff3e2', skin:'#c68642',
+      orb:'#9dff6b', staff:'#5c4a2a', hair:'#3a2a18', hatStyle:'hood',  beard:'none',   charm:'none' },
+    { robe:'#26417f', lit:'#3358a6', hat:'#16294f', trim:'#cfe2ff', skin:'#f2d3b3',
+      orb:'#7ec8ff', staff:'#6b5334', hair:'#dce8ff', hatStyle:'bent',  beard:'braid',  charm:'star' },
+    { robe:'#8a4a12', lit:'#b8641c', hat:'#5c3009', trim:'#ffe1b0', skin:'#5c3a21',
+      orb:'#ff8a3c', staff:'#3f2c17', hair:'#d9cbb8', hatStyle:'point', beard:'bushy',  charm:'none' },
+    { robe:'#4a4a63', lit:'#66667f', hat:'#2f2f42', trim:'#e6e6f5', skin:'#ffdbac',
+      orb:'#c9a7ff', staff:'#5a5a44', hair:'#c9c9d8', hatStyle:'wide',  beard:'goatee', charm:'moon' },
+  ];
+
+  // The hat sits high enough to leave a face under it — the original drawing
+  // pulled the brim down over the eyes, which is fine for one wizard in a
+  // corner and useless when four of them have to be told apart. Each hat also
+  // says where its charm sits, so the star or moon never floats off it.
+  function hatSVG(w) {
+    switch (w.hatStyle) {
+      case 'wide': return {
+        behind: '',
+        front: `<path d="M40 6 L26 29 H54 Z" fill="${w.hat}"/>`
+             + `<ellipse cx="40" cy="30" rx="27" ry="5.5" fill="${w.lit}"/>`,
+        charm: [45, 16],
+      };
+      case 'bent': return {
+        behind: '',
+        front: `<path d="M22 29 H58 L46 7 Z" fill="${w.hat}"/>`
+             + `<path d="M46 7 Q62 2 64 11 Q54 15 46 7 Z" fill="${w.lit}"/>`
+             + `<path d="M21 29 H59 L57 34.5 H23 Z" fill="${w.lit}"/>`,
+        charm: [41, 18],
+      };
+      case 'hood': return {
+        // A hood wraps the head, so part of it has to sit behind the face.
+        behind: `<path d="M40 12 Q15 17 15 52 H65 Q65 17 40 12 Z" fill="${w.hat}"/>`,
+        front: `<path d="M40 12 Q21 17 21 40 Q28 25 40 25 Q52 25 59 40 Q59 17 40 12 Z" fill="${w.lit}"/>`,
+        charm: [40, 18],
+      };
+      default: return {
+        behind: '',
+        front: `<path d="M40 1 L19 29 H61 Z" fill="${w.hat}"/>`
+             + `<path d="M19 29 H61 L59 34.5 H21 Z" fill="${w.lit}"/>`,
+        charm: [47, 12],
+      };
+    }
+  }
+
+  // Beards hang from the jaw at y=45, below the eyes, so a face stays readable.
+  function beardSVG(w) {
+    switch (w.beard) {
+      case 'none':   return '';
+      case 'short':  return `<path d="M30 44 Q34 57 40 59 Q46 57 50 44 Q40 51 30 44 Z" fill="${w.hair}"/>`;
+      case 'braid':  return `<path d="M31 44 Q33 74 40 82 Q47 74 49 44 Q40 53 31 44 Z" fill="${w.hair}"/>`
+                          + `<rect x="34.5" y="62" width="11" height="3.6" rx="1.8" fill="${w.trim}"/>`
+                          + `<rect x="35.5" y="72" width="9" height="3.2" rx="1.6" fill="${w.trim}"/>`;
+      case 'bushy':  return `<path d="M28 43 Q26 63 40 67 Q54 63 52 43 Q40 56 28 43 Z" fill="${w.hair}"/>`
+                          + `<circle cx="30.5" cy="49" r="5.4" fill="${w.hair}"/>`
+                          + `<circle cx="49.5" cy="49" r="5.4" fill="${w.hair}"/>`;
+      case 'goatee': return `<path d="M33 45 Q40 49 47 45 Q40 48 33 45 Z" fill="${w.hair}"/>`
+                          + `<path d="M36 50 Q36 61 40 64 Q44 61 44 50 Q40 53.5 36 50 Z" fill="${w.hair}"/>`;
+      default:       return `<path d="M30 44 Q32 73 40 81 Q48 73 50 44 Q40 53 30 44 Z" fill="${w.hair}"/>`;
+    }
+  }
+
+  function charmSVG(w, at) {
+    const [x, y] = at;
+    if (w.charm === 'none') return '';
+    if (w.charm === 'moon') {
+      return `<path d="M${x} ${y - 4} a4.2 4.2 0 1 0 3.6 6.6 A3.4 3.4 0 1 1 ${x} ${y - 4} Z" fill="${w.orb}"/>`;
+    }
+    return `<circle cx="${x}" cy="${y}" r="2.6" fill="${w.orb}"/>`;
+  }
+
+  const wizardSVG = (look) => {
+    const w = WIZARD_LOOKS[((look || 0) % WIZARD_LOOKS.length + WIZARD_LOOKS.length) % WIZARD_LOOKS.length];
+    const hat = hatSVG(w);
+    return `
     <svg viewBox="0 0 80 120" aria-hidden="true">
       <ellipse cx="40" cy="116" rx="26" ry="5" fill="rgba(0,0,0,.5)"/>
-      <path d="M40 44 L18 114 H62 Z" fill="#3b2f7d"/>
-      <path d="M40 44 L28 114 H40 Z" fill="#4a3a99"/>
-      <circle cx="40" cy="38" r="11" fill="#e8c9a0"/>
-      <path d="M40 6 L20 40 H60 Z" fill="#2a2160"/>
-      <path d="M20 40 H60 L58 45 H22 Z" fill="#4a3a99"/>
-      <circle cx="47" cy="14" r="2.4" fill="#7cf0d8"/>
-      <path d="M28 50 Q22 76 30 96" stroke="#cfc7ee" stroke-width="3" fill="none" opacity=".55"/>
+      <path d="M40 44 L18 114 H62 Z" fill="${w.robe}"/>
+      <path d="M40 44 L28 114 H40 Z" fill="${w.lit}"/>
+      ${hat.behind}
+      <circle cx="40" cy="38" r="11" fill="${w.skin}"/>
+      <circle cx="36.2" cy="39" r="1.5" fill="#31241c"/>
+      <circle cx="43.8" cy="39" r="1.5" fill="#31241c"/>
+      ${beardSVG(w)}
+      ${hat.front}
+      ${charmSVG(w, hat.charm)}
+      <path d="M28 50 Q22 76 30 96" stroke="${w.trim}" stroke-width="3" fill="none" opacity=".55"/>
       <g class="staff-arm">
-        <rect x="56" y="34" width="5" height="76" rx="2.5" fill="#6b4526" transform="rotate(9 58 72)"/>
-        <circle class="orb" cx="62" cy="32" r="8" fill="#7cf0d8" opacity=".95"/>
-        <circle class="orb" cx="62" cy="32" r="13" fill="#7cf0d8" opacity=".22"/>
+        <rect x="56" y="34" width="5" height="76" rx="2.5" fill="${w.staff}" transform="rotate(9 58 72)"/>
+        <circle class="orb" cx="62" cy="32" r="8" fill="${w.orb}" opacity=".95"/>
+        <circle class="orb" cx="62" cy="32" r="13" fill="${w.orb}" opacity=".22"/>
       </g>
     </svg>`;
+  };
 
   // All three pieces in a room are the same markup — the only thing telling them
   // apart is the answer on the label, which is the point of the game.
@@ -4968,7 +5085,7 @@ const WIZ = (function () {
       const coven = run.variant === 'survival';
       const scene = document.createElement('div');
       scene.className = 'scene' + (coven ? ' coven' : '');
-      scene.innerHTML = sceneChrome(coven);
+      scene.innerHTML = sceneChrome(coven, i);   // a race gets two different wizards
 
       wrapEl.append(hud, scene);
       stageEl.appendChild(wrapEl);
@@ -5034,8 +5151,8 @@ const WIZ = (function () {
     mode = 1;
     const seated = seatList().filter(p => p.slot >= 0).slice(0, MAX_COVEN);
     const wizards = seated.length
-      ? seated.map(p => makeWizard(p.name, p.slot))
-      : [makeWizard(cleanInitials(nameInput1.value) || 'You', -1)];
+      ? seated.map((p, i) => makeWizard(p.name, p.slot, i))
+      : [makeWizard(cleanInitials(nameInput1.value) || 'You', -1, 0)];
     run = {
       variant: 'survival',
       pool: pool,
@@ -5119,7 +5236,8 @@ const WIZ = (function () {
 
       pane.wrongs = new Set();
       pane.buttons = [];
-      pane.el.scene.classList.remove('open', 'dimmed', 'casting', 'flash-good', 'flash-bad');
+      pane.el.scene.classList.remove('open', 'dimmed', 'casting', 'flash-good', 'flash-bad',
+                                     'flash-soft-good', 'flash-soft-bad');
       pane.el.fx.innerHTML = '';
       const verdict = pane.el.scene.querySelector('.pane-verdict');
       if (verdict) verdict.remove();
@@ -5191,9 +5309,9 @@ const WIZ = (function () {
   // Lose your last life and your wizard drops out of the line while the rest
   // carry on without you.
 
-  function makeWizard(name, slot) {
+  function makeWizard(name, slot, look) {
     return {
-      name: String(name || '???').slice(0, 12), slot: slot,
+      name: String(name || '???').slice(0, 12), slot: slot, look: look,
       score: 0, rooms: 0, streak: 0, lives: SURVIVAL_LIVES,
       out: false, done: false, cleared: false, wrongs: new Set(), el: null,
     };
@@ -5214,7 +5332,7 @@ const WIZ = (function () {
 
       const art = document.createElement('div');
       art.className = 'cw-art';
-      art.innerHTML = wizardSVG();
+      art.innerHTML = wizardSVG(w.look);
 
       const tag = document.createElement('div');
       tag.className = 'cw-tag';
@@ -5262,6 +5380,24 @@ const WIZ = (function () {
     f.className = 'cw-float' + (bad ? ' bad' : '') + ' show';
   }
 
+  // A coven shares one room, so nothing may point at the piece a wizard picked:
+  // a bolt flying to the right bookcase, or splinters bursting off it, hands the
+  // answer to everyone still reading. The room gets a soft wash of colour
+  // instead and the wizard's own staff swings — enough to see that somebody
+  // cast, and who, without saying what at. Kept deliberately dim: it fires while
+  // the others are still reading the labels.
+  function castSoft(pane, w, good) {
+    const wash = good ? 'flash-soft-good' : 'flash-soft-bad';
+    // Two wizards answering in the same instant would otherwise leave both
+    // washes on the room; the most recent one wins.
+    pane.el.scene.classList.remove('flash-soft-good', 'flash-soft-bad');
+    pane.el.scene.classList.add(wash);
+    setTimeout(() => { if (run) pane.el.scene.classList.remove(wash); }, 620);
+    if (!w.el) return;
+    w.el.card.classList.add('casting');
+    setTimeout(() => { if (w.el) w.el.card.classList.remove('casting'); }, 600);
+  }
+
   function covenLoseLife(w) {
     w.lives = Math.max(0, w.lives - 1);
     w.streak = 0;
@@ -5293,25 +5429,35 @@ const WIZ = (function () {
       w.rooms += 1;
       if (w.slot >= 0) netResult(w.slot, true);
 
-      pane.el.scene.classList.add('casting', 'flash-good');
-      const at = boltFrom(pane, btn, w.el && w.el.orb);
-      setTimeout(() => {
-        shards(pane, at);
-        // With one wizard the room is over the moment they are through, so the
-        // piece can shatter. With four it has to stand until the rest have had
-        // their go at it.
-        if (solo) { btn.classList.add('spent'); pane.el.scene.classList.add('open'); }
-      }, reduceMotion ? 0 : 280);
-      setTimeout(() => pane.el.scene.classList.remove('casting', 'flash-good'), 700);
+      // Alone in the castle there is nobody to give the answer away to, so the
+      // spell lands in full: bolt, splinters, and the door swinging open.
+      if (solo) {
+        pane.el.scene.classList.add('casting', 'flash-good');
+        const at = boltFrom(pane, btn, w.el && w.el.orb);
+        setTimeout(() => {
+          shards(pane, at);
+          btn.classList.add('spent');
+          pane.el.scene.classList.add('open');
+        }, reduceMotion ? 0 : 280);
+        setTimeout(() => pane.el.scene.classList.remove('casting', 'flash-good'), 700);
+      } else {
+        castSoft(pane, w, true);
+      }
       wizFloat(w, '+' + gained + (clean && w.streak > 1 ? '  \u00d7' + w.streak : ''), false);
     } else {
       w.wrongs.add(optIdx);
       if (w.slot >= 0) netResult(w.slot, false);
-      fizzle(pane, btn, w.el && w.el.orb, true);
+      // A miss gives just as much away as a hit — it tells everyone else which
+      // piece to rule out. Marking the piece dead is only honest when one wizard
+      // is playing; with a coven the others have not tried it yet.
+      if (solo) {
+        fizzle(pane, btn, w.el && w.el.orb, true);
+        btn.classList.add('wrong');
+        btn.disabled = true;
+      } else {
+        castSoft(pane, w, false);
+      }
       covenLoseLife(w);
-      // Marking the piece dead is only honest when one wizard is playing; with a
-      // coven the others have not tried it yet.
-      if (solo) { btn.classList.add('wrong'); btn.disabled = true; }
     }
 
     renderCoven();
@@ -5614,7 +5760,7 @@ const WIZ = (function () {
       const scene = document.createElement('div');
       scene.className = 'escape-scene';
       scene.innerHTML = castleSVG(mode === 2) +
-        `<div class="escape-walker"><div class="bob">${wizardSVG()}</div></div>` +
+        `<div class="escape-walker"><div class="bob">${wizardSVG(winnerIdx)}</div></div>` +
         `<div class="escape-caption"></div>`;
       scene.querySelector('.escape-caption').textContent = mode === 2
         ? `${displayName(winnerIdx)} walks out into the night. ${displayName(winnerIdx === 0 ? 1 : 0)} is still in there.`
@@ -6001,7 +6147,7 @@ const WIZ = (function () {
     },
     // The Jeopardy celebration borrows the wizard for its dancers, rather than
     // keeping a second copy of the same drawing.
-    art() { return wizardSVG(); }
+    art(i) { return wizardSVG(i || 0); }
   };
 })();
 
