@@ -991,6 +991,18 @@
   }
   .score-row .cats b { color: var(--arcane); font-weight: 700; }
   .score-row .when { font-size: 11px; color: #7b6ea8; text-align: right; white-space: nowrap; }
+  /* The local board lists initials, so 62px is plenty. The shared board takes a
+     free-typed name up to 14 characters, which used to run straight over the
+     score beside it — these rows get a flexible column and an ellipsis. */
+  .score-row.lb-row { grid-template-columns: 26px minmax(0, 1.35fr) minmax(0, 1fr) auto; }
+  .score-row.lb-row .who {
+    letter-spacing: 1px; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .score-row .full-clear {
+    color: var(--arcane); font-weight: 900; letter-spacing: 1.5px;
+    text-transform: uppercase; font-size: 10.5px;
+  }
   .lb-post {
     margin-top: 18px; padding: 14px;
     border: 1px solid var(--violet-deep); border-radius: 12px;
@@ -1019,6 +1031,7 @@
 
   @media (max-width: 560px) {
     .score-row { grid-template-columns: 22px 54px 1fr; }
+    .score-row.lb-row { grid-template-columns: 22px minmax(0, 1.1fr) minmax(0, 1fr); }
     .score-row .when { grid-column: 2 / -1; text-align: left; }
   }
 
@@ -1840,7 +1853,7 @@
           <div class="seg" id="wizMode">
             <button type="button" data-mode="1" aria-pressed="true">One wizard<span class="seg-note">Escape for score</span></button>
             <button type="button" data-mode="2" aria-pressed="false">Two wizards<span class="seg-note">Split screen race</span></button>
-            <button type="button" data-mode="survival" aria-pressed="false">Survival<span class="seg-note">Three lives, no exit</span></button>
+            <button type="button" data-mode="survival" aria-pressed="false">Survival<span class="seg-note">Three lives, clear the deck</span></button>
           </div>
           <div class="wizroom" id="wizRoomPanel" style="margin-top:12px">
             <button class="reset-board-btn" id="wizRoomBtn" style="margin:0">Play from phones</button>
@@ -1902,7 +1915,7 @@
         <h3>Shared survival board</h3>
         <button class="link-btn" id="wizLbRefresh">Refresh</button>
       </div>
-      <p class="sub">Survival runs that players chose to post, from every device.</p>
+      <p class="sub">The ten best survival runs that players chose to post, from every device. A full clear means every room in the deck they picked.</p>
       <div id="wizLbList"></div>
     </div>
 
@@ -4361,6 +4374,7 @@ const WIZ = (function () {
   // Posting is opt-in, and the name is editable at that moment — the initials
   // used during a run are only a default.
   const LB_URL = 'https://mp-board-study-default-rtdb.firebaseio.com/leaderboard/survival';
+  const LB_SHOW = 10;           // rows the shared board displays, best score first
   const lbListEl = document.getElementById('wizLbList');
   const lbRefreshEl = document.getElementById('wizLbRefresh');
 
@@ -4377,11 +4391,12 @@ const WIZ = (function () {
     wrap.className = 'score-list';
     rows.forEach((row, i) => {
       const el = document.createElement('div');
-      el.className = 'score-row';
+      el.className = 'score-row lb-row';
       const rank = document.createElement('div');
       rank.className = 'rank'; rank.textContent = i + 1;
       const who = document.createElement('div');
       who.className = 'who'; who.style.fontSize = '15px'; who.textContent = row.who;
+      who.title = row.who;
       const mid = document.createElement('div');
       mid.className = 'mid';
       const pts = document.createElement('div');
@@ -4389,7 +4404,14 @@ const WIZ = (function () {
       const meta = document.createElement('div');
       meta.className = 'meta';
       const rooms = document.createElement('span');
-      rooms.textContent = row.rooms + ' rooms';
+      // `of` is the size of the deck that run was played on, recorded so a full
+      // clear still reads as one after more games are added to the site.
+      if (row.of && row.rooms >= row.of) {
+        rooms.className = 'full-clear';
+        rooms.textContent = 'Full clear';
+      } else {
+        rooms.textContent = row.rooms + ' rooms';
+      }
       const badge = document.createElement('span');
       badge.className = 'badge survival'; badge.textContent = 'survival';
       meta.append(rooms, badge);
@@ -4418,7 +4440,7 @@ const WIZ = (function () {
       // paraded on the board as if it were somebody's score.
       if (!data || data.error) return lbRender([], 'The shared board is not published yet.');
       const rows = Object.keys(data).map(k => data[k]).filter(r => r && r.who)
-        .sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 15);
+        .sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, LB_SHOW);
       if (!rows.length) return lbRender([], 'Nothing posted yet — finish a survival run and put yourself up there.');
       lbRender(rows);
     }).catch(() => lbRender([], 'Could not reach the shared board.'));
@@ -4519,8 +4541,8 @@ const WIZ = (function () {
       if (variant === 'survival') {
         const seated = net.code ? seatList().filter(p => p.slot >= 0).length : 0;
         noteEl.textContent = seated > 1
-          ? `${seated} wizards seated. They all run the same rooms together — three lives each, and a wizard drops out of the line when the third one goes. ${n} questions available.`
-          : `${n} questions available — survival runs until your lives run out, and repeats questions if you get that far.`;
+          ? `${seated} wizards seated. They all run the same ${n} rooms together — three lives each, and a wizard drops out of the line when the third one goes. Clear all ${n} for a full clear.`
+          : `${n} questions available, asked once each — clear all ${n} without running out of lives and it is a full clear. More categories, higher ceiling.`;
         return;
       }
       const rooms = roomsFor(n);
@@ -5143,9 +5165,11 @@ const WIZ = (function () {
     renderRoom();
   }
 
-  // Survival: no exit, three lives each, and however many wizards are seated on
-  // phones when it starts — one if nobody is. The deck is looped rather than
-  // dealt, so the run ends only when the last wizard's lives do.
+  // Survival: three lives each, and however many wizards are seated on phones
+  // when it starts — one if nobody is. The whole deck is dealt once, so the run
+  // ends when the last wizard's lives do or when the last question is answered.
+  // Reaching the end with lives left is the win; clearing every room is a full
+  // clear, which is the only thing the shared board singles out.
   function startSurvival(pool) {
     if (pool.length < 1) return;
     mode = 1;
@@ -5155,8 +5179,10 @@ const WIZ = (function () {
       : [makeWizard(cleanInitials(nameInput1.value) || 'You', -1, 0)];
     run = {
       variant: 'survival',
-      pool: pool,
       questions: pool.slice(),
+      // The ceiling for this run: more categories selected, more rooms on offer.
+      poolSize: pool.length,
+      cleared: false,
       total: 0,
       idx: 0,
       resolved: false,
@@ -5186,19 +5212,19 @@ const WIZ = (function () {
   }
 
   function renderRoom() {
-    // Belt and braces: if the deck ever empties before anyone reaches the exit,
-    // end on who got furthest instead of rendering an undefined question.
+    // The deck is finite in both variants. Survival used to loop it, which made
+    // a small pool the fastest way to a huge score; now it runs to the last
+    // question, so the ceiling rises with the number of categories picked.
     if (run.idx >= run.questions.length) {
       if (run.variant === 'survival') {
-        // Loop the deck, without repeating the question just asked.
-        const more = shuffle(run.pool);
-        if (more.length > 1 && more[0] === run.questions[run.questions.length - 1]) more.push(more.shift());
-        run.questions = run.questions.concat(more);
-      } else {
-        const best = run.panes.reduce((a, b) => (b.rooms > a.rooms ? b : a), run.panes[0]);
-        finish(run.panes.indexOf(best), true);
+        run.cleared = true;
+        cancelAnimationFrame(rafId);
+        finishCoven();
         return;
       }
+      const best = run.panes.reduce((a, b) => (b.rooms > a.rooms ? b : a), run.panes[0]);
+      finish(run.panes.indexOf(best), true);
+      return;
     }
     const q = run.questions[run.idx];
     const type = FURNITURE[run.idx % FURNITURE.length];
@@ -5207,7 +5233,7 @@ const WIZ = (function () {
     run.resolved = false;
     run.roomStart = performance.now();
     if (run.variant === 'survival') {
-      if (run.panes[0].el.depth) run.panes[0].el.depth.textContent = 'Room ' + (run.idx + 1);
+      if (run.panes[0].el.depth) run.panes[0].el.depth.textContent = 'Room ' + (run.idx + 1) + ' / ' + run.poolSize;
       run.wizards.forEach(w => {
         if (w.out) return;
         w.done = false; w.cleared = false; w.wrongs = new Set();
@@ -5742,6 +5768,11 @@ const WIZ = (function () {
     const rooms = run.total;
     const runVariant = run.variant || 'escape';
     const survival = runVariant === 'survival';
+    // A survival run now has an end: reaching the last question with lives left
+    // is surviving it, and clearing every room on the way is a full clear.
+    const poolSize = run.poolSize || 0;
+    const survived = survival && !!run.cleared;
+    const fullClear = survival && poolSize > 0 && panes[0].rooms >= poolSize;
     const escaped = !ranOut && !survival;
     const tie = ranOut && !survival && mode === 2 && panes[0].rooms === panes[1].rooms;
     const catNames = run.cats;
@@ -5771,7 +5802,10 @@ const WIZ = (function () {
     const h = document.createElement('h2');
     h.className = 'wiz-result-title';
     h.textContent = survival
-      ? (panes[0].rooms === 0 ? 'The castle wins' : `${panes[0].rooms} room${panes[0].rooms === 1 ? '' : 's'} deep`)
+      ? (fullClear ? 'Full clear'
+        : survived ? 'You outlast the castle'
+        : panes[0].rooms === 0 ? 'The castle wins'
+        : `${panes[0].rooms} room${panes[0].rooms === 1 ? '' : 's'} deep`)
       : !escaped
         ? (tie ? 'A draw in the dark' : 'Out of questions')
         : `${displayName(winnerIdx)} escape${displayName(winnerIdx) === 'You' ? '' : 's'}!`;
@@ -5781,9 +5815,13 @@ const WIZ = (function () {
     sub.className = 'sub';
     sub.style.textAlign = 'center';
     if (survival) {
-      sub.textContent = panes[0].rooms === 0
-        ? 'Not a single door. The castle is still standing, and so are its bookcases.'
-        : 'Your last spell fizzled and the dark closed in. The rooms never did stop coming.';
+      sub.textContent = fullClear
+        ? 'Every room in the castle, every door open behind you. There is nothing left in here to ask you.'
+        : survived
+          ? `You reached the last door with lives to spare, ${panes[0].rooms} of ${poolSize} rooms cleared. Take every one of them and it is a full clear.`
+          : panes[0].rooms === 0
+            ? 'Not a single door. The castle is still standing, and so are its bookcases.'
+            : `Your last spell fizzled and the dark closed in, with ${Math.max(0, poolSize - panes[0].rooms)} of the castle's ${poolSize} rooms still shut.`;
     } else if (!escaped) {
       sub.textContent = tie
         ? 'The castle ran out of rooms with both wizards level. Pick more categories for a longer game.'
@@ -5806,7 +5844,7 @@ const WIZ = (function () {
       stats.appendChild(s);
     };
     if (survival) {
-      add('Rooms survived', panes[0].rooms);
+      add('Rooms cleared', panes[0].rooms + ' / ' + poolSize);
       add('Score', panes[0].score);
     } else if (mode === 2) {
       panes.forEach((p, i) => add(displayName(i), `${p.rooms}/${rooms}`));
@@ -5871,6 +5909,7 @@ const WIZ = (function () {
           who: who,
           score: panes[0].score,
           rooms: panes[0].rooms,
+          of: poolSize,
           cats: (allCats ? 'All categories' : (catNames || []).join(', ')).slice(0, 120),
           at: Date.now()
         }).then(() => {
@@ -5923,6 +5962,8 @@ const WIZ = (function () {
     const seconds = Math.round((Date.now() - run.startedAt) / 1000);
     const catNames = run.cats;
     const allCats = run.allCats;
+    const poolSize = run.poolSize || 0;
+    const cleared = !!run.cleared;
     const ranked = run.wizards.slice().sort((a, b) => (b.rooms - a.rooms) || (b.score - a.score));
     const freshIds = recordRun(
       ranked.map(w => ({ score: w.score, rooms: w.rooms })),
@@ -5942,8 +5983,11 @@ const WIZ = (function () {
 
     const h = document.createElement('h2');
     h.className = 'wiz-result-title';
+    const championFull = poolSize > 0 && champion.rooms >= poolSize;
     h.textContent = champion.rooms === 0 ? 'The castle wins'
-      : drawn ? 'A dead heat in the dark'
+      : drawn ? (championFull ? 'A shared full clear' : 'A dead heat in the dark')
+      : championFull ? champion.name + ' takes a full clear'
+      : cleared ? champion.name + ' outlasts the castle'
       : champion.name + ' went deepest';
     resultBody.appendChild(h);
 
@@ -5952,7 +5996,9 @@ const WIZ = (function () {
     sub.style.textAlign = 'center';
     sub.textContent = champion.rooms === 0
       ? 'Not one door between the lot of you. The castle is still standing, and so are its bookcases.'
-      : `${started} wizards went in. ${drawn ? 'Two of them got' : champion.name + ' got'} ${champion.rooms} room${champion.rooms === 1 ? '' : 's'} deep before the dark closed in.`;
+      : cleared
+        ? `${started} wizards went in and the castle ran out of rooms first. ${drawn ? 'Two of them cleared' : champion.name + ' cleared'} ${champion.rooms} of ${poolSize}.`
+        : `${started} wizards went in. ${drawn ? 'Two of them got' : champion.name + ' got'} ${champion.rooms} room${champion.rooms === 1 ? '' : 's'} deep before the dark closed in.`;
     resultBody.appendChild(sub);
 
     const stats = document.createElement('div');
@@ -5966,7 +6012,7 @@ const WIZ = (function () {
       stats.appendChild(s2);
     };
     addStat('Wizards', started);
-    addStat('Deepest', champion.rooms + ' rooms');
+    addStat('Deepest', champion.rooms + ' / ' + poolSize);
     addStat('Time', seconds + 's');
     resultBody.appendChild(stats);
 
@@ -5987,7 +6033,8 @@ const WIZ = (function () {
       meta.className = 'cs-meta';
       meta.textContent = w.rooms === 0
         ? 'never got a door open'
-        : w.rooms + ' room' + (w.rooms === 1 ? '' : 's') + ' cleared';
+        : (poolSize > 0 && w.rooms >= poolSize) ? 'full clear'
+        : w.rooms + ' of ' + poolSize + ' rooms cleared';
       who.appendChild(meta);
 
       const pts = document.createElement('div');
@@ -6033,6 +6080,7 @@ const WIZ = (function () {
             who: label,
             score: w.score,
             rooms: w.rooms,
+            of: poolSize,
             cats: (allCats ? 'All categories' : (catNames || []).join(', ')).slice(0, 120),
             at: Date.now(),
           }).then(() => {
