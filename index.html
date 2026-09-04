@@ -1554,6 +1554,41 @@
   .wiz-actions button:hover, .wiz-actions a:hover { border-color: var(--arcane); color: #fff; }
   .wiz-actions .primary:hover { color: #06231d; filter: brightness(1.1); }
 
+  /* ---- results: the rooms that went wrong ---- */
+  /* The point of the castle is the studying, so every run ends on its own
+     mistakes: the clue, what was picked, and what was actually behind the door. */
+  .wiz-misses { margin-top: 22px; }
+  .wm-title {
+    font: 900 13px Arial, sans-serif; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--violet); text-align: center; margin: 0 0 4px;
+  }
+  .wm-sub { font-size: 12.5px; color: var(--muted-dim); text-align: center; margin: 0 0 14px; }
+  .wm-clean { font-size: 13px; color: var(--arcane); text-align: center; margin: 0; }
+  .wm-group + .wm-group { margin-top: 18px; }
+  .wm-who {
+    font: 700 12px Arial, sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold); border-bottom: 1px solid var(--violet-deep);
+    padding-bottom: 5px; margin-bottom: 10px;
+  }
+  .wm-who span { color: var(--muted-dim); letter-spacing: 0; text-transform: none; font-weight: 400; }
+  .wm-list { display: flex; flex-direction: column; gap: 8px; }
+  /* Red down the spine: at a glance the list reads as the wrong pile, without
+     the whole card having to be alarming to look at. */
+  .wm-item {
+    background: rgba(255,255,255,.03); border: 1px solid #2f2559;
+    border-left: 3px solid #b4425a; border-radius: 10px; padding: 10px 13px;
+  }
+  .wm-cat { font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: #a99ccd; }
+  .wm-q { color: #f0e9ff; font-size: 14px; line-height: 1.45; margin: 5px 0 8px; }
+  .wm-ans { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; }
+  .wm-ans b {
+    font: 700 10.5px Arial, sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #a99ccd; margin-right: 6px;
+  }
+  .wm-said { color: #ff9d9d; }
+  .wm-said.none { color: var(--muted-dim); font-style: italic; }
+  .wm-right { color: var(--arcane); font-weight: 700; }
+
   @media (max-width: 780px) {
     .wiz-stage.two { grid-template-columns: 1fr; }
     /* the coven needs floor room the phone-sized scene does not otherwise have */
@@ -1635,7 +1670,7 @@
   <div class="section-label">Pick a game</div>
   <div class="game-grid" id="gameGrid"></div>
 
-  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 3 September 2026</footer>
+  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 4 September 2026</footer>
 </div>
 
 <!-- ===================== GAME VIEW ===================== -->
@@ -5154,7 +5189,7 @@ const WIZ = (function () {
       panes: [],
     };
     for (let i = 0; i < mode; i++) {
-      run.panes.push({ rooms: 0, score: 0, streak: 0, wrongs: new Set(), buttons: [], el: null });
+      run.panes.push({ rooms: 0, score: 0, streak: 0, wrongs: new Set(), misses: [], buttons: [], el: null });
     }
 
     setupEl.hidden = true;
@@ -5194,7 +5229,7 @@ const WIZ = (function () {
       // Clicks and the 1/2/3 keys belong to whoever is not on a phone. With a
       // full coven that is nobody, and the screen stops taking answers at all.
       localWiz: wizards.findIndex(w => w.slot < 0),
-      panes: [{ rooms: 0, score: 0, streak: 0, wrongs: new Set(), buttons: [], el: null }],
+      panes: [{ rooms: 0, score: 0, streak: 0, wrongs: new Set(), misses: [], buttons: [], el: null }],
     };
     setupEl.hidden = true;
     resultEl.hidden = true;
@@ -5319,6 +5354,31 @@ const WIZ = (function () {
     return Math.max(0, 1 - elapsed / roomTime());
   }
 
+  // Every wrong pick is kept for the result screen, against the room it happened
+  // in: the clue, what was chosen, and what the right label was. Two wrong picks
+  // in one room are one entry with both guesses rather than the clue twice, and
+  // `said` of null records a room the clock closed before an answer landed.
+  // `holder` is a pane in escape, a wizard in survival — they both just need a
+  // `misses` array.
+  function logMiss(holder, said) {
+    const q = run && run.questions[run.idx];
+    if (!q) return;
+    if (!holder.misses) holder.misses = [];
+    let entry = null;
+    for (let i = 0; i < holder.misses.length; i++) {
+      if (holder.misses[i].room === run.idx) { entry = holder.misses[i]; break; }
+    }
+    if (!entry) {
+      entry = {
+        room: run.idx, prompt: q.prompt, category: q.category,
+        game: q.game, correct: q.correct, said: [], timedOut: false,
+      };
+      holder.misses.push(entry);
+    }
+    if (said == null) entry.timedOut = true;
+    else if (entry.said.indexOf(said) < 0) entry.said.push(said);
+  }
+
   function revealCorrect(pane) {
     const q = run.questions[run.idx];
     pane.buttons.forEach(b => {
@@ -5339,7 +5399,7 @@ const WIZ = (function () {
     return {
       name: String(name || '???').slice(0, 12), slot: slot, look: look,
       score: 0, rooms: 0, streak: 0, lives: SURVIVAL_LIVES,
-      out: false, done: false, cleared: false, wrongs: new Set(), el: null,
+      out: false, done: false, cleared: false, wrongs: new Set(), misses: [], el: null,
     };
   }
 
@@ -5472,6 +5532,7 @@ const WIZ = (function () {
       wizFloat(w, '+' + gained + (clean && w.streak > 1 ? '  \u00d7' + w.streak : ''), false);
     } else {
       w.wrongs.add(optIdx);
+      logMiss(w, q.options[optIdx]);
       if (w.slot >= 0) netResult(w.slot, false);
       // A miss gives just as much away as a hit — it tells everyone else which
       // piece to rule out. Marking the piece dead is only honest when one wizard
@@ -5508,6 +5569,7 @@ const WIZ = (function () {
       liveWizards().forEach(w => {
         if (w.done) return;
         w.done = true;
+        logMiss(w, null);
         covenLoseLife(w);
       });
       pane.el.scene.classList.add('flash-bad');
@@ -5547,6 +5609,7 @@ const WIZ = (function () {
 
     if (!isRight) {
       pane.wrongs.add(optIdx);
+      logMiss(pane, q.options[optIdx]);
       btn.classList.add('wrong');
       btn.disabled = true;
       fizzle(pane, btn);
@@ -5761,6 +5824,99 @@ const WIZ = (function () {
     </svg>`;
   }
 
+  // The run's real takeaway, and the one part of the result screen that is the
+  // same in all three game types: every room that went wrong, per wizard. One
+  // wizard gets a plain list; a race or a coven gets a heading each, so nobody
+  // has to work out whose mistakes they are looking at.
+  function missesBlock(groups) {
+    const total = groups.reduce((n, g) => n + g.misses.length, 0);
+    const box = document.createElement('div');
+    box.className = 'wiz-misses';
+
+    const title = document.createElement('h3');
+    title.className = 'wm-title';
+    title.textContent = total ? 'Worth another look' : 'Nothing missed';
+    box.appendChild(title);
+
+    if (!total) {
+      const clean = document.createElement('p');
+      clean.className = 'wm-clean';
+      clean.textContent = groups.length > 1
+        ? 'Not one wrong answer between them.'
+        : 'Every room you answered, you answered right.';
+      box.appendChild(clean);
+      return box;
+    }
+
+    const sub = document.createElement('p');
+    sub.className = 'wm-sub';
+    sub.textContent = total === 1
+      ? 'One question went wrong. Here it is again.'
+      : total + ' questions went wrong. Here they are again.';
+    box.appendChild(sub);
+
+    groups.forEach(g => {
+      // A clean sheet in a race still gets its name, so the absence is legible.
+      if (!g.misses.length && groups.length === 1) return;
+      const group = document.createElement('div');
+      group.className = 'wm-group';
+
+      if (groups.length > 1) {
+        const who = document.createElement('div');
+        who.className = 'wm-who';
+        who.textContent = g.who + ' ';
+        const count = document.createElement('span');
+        count.textContent = g.misses.length
+          ? '\u00b7 ' + g.misses.length + ' missed'
+          : '\u00b7 nothing missed';
+        who.appendChild(count);
+        group.appendChild(who);
+      }
+
+      const list = document.createElement('div');
+      list.className = 'wm-list';
+      g.misses.slice().sort((a, b) => a.room - b.room).forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'wm-item';
+
+        const cat = document.createElement('div');
+        cat.className = 'wm-cat';
+        cat.textContent = m.category + (GAMES.length > 1 && m.game ? ' \u2014 ' + m.game : '');
+
+        const q = document.createElement('div');
+        q.className = 'wm-q';
+        q.textContent = m.prompt;
+
+        const ans = document.createElement('div');
+        ans.className = 'wm-ans';
+
+        const said = document.createElement('span');
+        said.className = 'wm-said' + (m.said.length ? '' : ' none');
+        const sb = document.createElement('b');
+        sb.textContent = groups.length > 1 ? 'Picked' : 'You said';
+        said.appendChild(sb);
+        said.appendChild(document.createTextNode(m.said.length
+          ? m.said.join(', ') + (m.timedOut ? ' \u2014 then the clock ran out' : '')
+          : 'nothing \u2014 the clock ran out'));
+
+        const right = document.createElement('span');
+        right.className = 'wm-right';
+        const rb = document.createElement('b');
+        rb.textContent = 'Answer';
+        right.appendChild(rb);
+        right.appendChild(document.createTextNode(m.correct));
+
+        ans.append(said, right);
+        item.append(cat, q, ans);
+        list.appendChild(item);
+      });
+      group.appendChild(list);
+      box.appendChild(group);
+    });
+
+    return box;
+  }
+
   function finish(winnerIdx, ranOut) {
     cancelAnimationFrame(rafId);
     const seconds = Math.round((Date.now() - run.startedAt) / 1000);
@@ -5777,6 +5933,8 @@ const WIZ = (function () {
     const tie = ranOut && !survival && mode === 2 && panes[0].rooms === panes[1].rooms;
     const catNames = run.cats;
     const allCats = run.allCats;
+    // Read off the run before it is thrown away below.
+    const missGroups = panes.map((p, i) => ({ who: displayName(i), misses: p.misses || [] }));
     const freshIds = recordRun(panes, catNames, allCats, seconds, winnerIdx, escaped, runVariant);
     run = null;
 
@@ -5874,6 +6032,8 @@ const WIZ = (function () {
     }
     resultBody.appendChild(savedAs);
 
+    resultBody.appendChild(missesBlock(missGroups));
+
     const board = document.createElement('div');
     board.style.marginTop = '14px';
     renderScores(board, 5, freshIds);
@@ -5954,6 +6114,7 @@ const WIZ = (function () {
     if (run.wizards.length === 1) {
       run.panes[0].score = run.wizards[0].score;
       run.panes[0].rooms = run.wizards[0].rooms;
+      run.panes[0].misses = run.wizards[0].misses;
       finish(0, true);
       return;
     }
@@ -5965,6 +6126,7 @@ const WIZ = (function () {
     const poolSize = run.poolSize || 0;
     const cleared = !!run.cleared;
     const ranked = run.wizards.slice().sort((a, b) => (b.rooms - a.rooms) || (b.score - a.score));
+    const missGroups = ranked.map(w => ({ who: w.name, misses: w.misses || [] }));
     const freshIds = recordRun(
       ranked.map(w => ({ score: w.score, rooms: w.rooms })),
       catNames, allCats, seconds, -1, false, 'survival',
@@ -6106,6 +6268,8 @@ const WIZ = (function () {
         + (allCats ? 'all categories' : catNames.length + ' categories')
       : 'This browser is blocking local storage, so these runs were not saved.';
     resultBody.appendChild(savedAs);
+
+    resultBody.appendChild(missesBlock(missGroups));
 
     const board = document.createElement('div');
     board.style.marginTop = '14px';
