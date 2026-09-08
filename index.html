@@ -2022,11 +2022,18 @@
  * file, so there is nothing else to upload and no sibling file to keep in
  * sync. Add new games at the END so existing card order stays stable.
  *
- *   id        used as the #hash in the URL; kebab-case, must be unique
- *   kind      small label above the card title
- *   blurb     one or two sentences on the card
- *   tags      optional short chips on the card
- *   subtitle  one line shown under the title while playing
+ *   id          used as the #hash in the URL; kebab-case, must be unique
+ *   kind        small label above the card title
+ *   blurb       one or two sentences on the card
+ *   tags        optional short chips on the card
+ *   subtitle    one line shown under the title while playing
+ *   comingSoon  true parks the game: its card renders unclickable ("Coming
+ *               soon"), the router refuses to open it (GAMES.find(... &&
+ *               !g.comingSoon)), and it is skipped by allCategories(), so it
+ *               contributes nothing to Wizard's Escape either. Write the full
+ *               categories/clues data anyway — a parked game should be fully
+ *               finished and wizard-ready, just switched off — then flip this
+ *               to false (or delete the line) when it's ready to go live.
  *   categories[].clues[]  { value, clue, answer } — value ascends per column
  *
  * A clue may also carry `short` (a furniture-sized answer label) and `decoys`
@@ -2035,6 +2042,27 @@
  * a good Jeopardy clue can ask for three things at once — the board has room
  * for a full teaching answer, a piece of furniture does not — so those clues
  * are narrowed to a single ask here while the board keeps the original.
+ *
+ * Authoring rules for every new clue (write to these from the start; the
+ * `wiz` override above is the fallback for old clues that don't, not a
+ * license to skip this on new ones):
+ *   1. Single ask. One clue asks for one fact. A clue that wants two or three
+ *      things at once ("name the drug AND its mechanism AND its dose") cannot
+ *      become one multiple-choice option — split it or cut it down to the one
+ *      fact that matters most, and put any extra teaching detail in `answer`
+ *      instead, where the board (not the speed round) displays it.
+ *   2. Three options, always. Every clue gets `short` plus exactly two
+ *      `decoys` — don't lean on the sibling-answer or whole-pool fallback in
+ *      buildPool(); those exist for older clues, not as the plan for new ones.
+ *      Decoys should be the same *kind* of thing as the answer (another drug
+ *      in that class, another disease on that differential) so picking the
+ *      right one takes actually knowing the material, not just noticing which
+ *      option doesn't match the category.
+ *   3. Quick to read, not trivial. `clue` is what a player reads mid-race in
+ *      Wizard's Escape, so keep it to roughly one sentence (well under
+ *      30 words is a good target) — save elaboration for `answer`/`short`.
+ *      Short does not mean easy: a tight, specific vignette or fact still
+ *      beats a giveaway phrasing.
  * ============================================================= */
 const GAMES = [
   {
@@ -2422,6 +2450,284 @@ const GAMES = [
           { value: 200, clue: "What is the primary focus of interpersonal therapy for depression?", answer: "Social functioning. In IPT depression has three components — symptom formation, personality contributors and social functioning — and social functioning is IPT's focus.", short: "Social functioning", decoys: ["Automatic thoughts", "Unconscious conflict"] },
           { value: 300, clue: "What therapy modality involves behavioural activation, psychoeducation and problem-solving skills?", answer: "Problem-solving therapy.", short: "Problem-solving therapy", decoys: ["Dialectical behaviour therapy", "Interpersonal therapy"] },
           { value: 400, clue: "What psychodynamic intervention involves bringing to the patient's awareness some aspect of themselves that they are consciously aware of?", answer: "Confrontation.", short: "Confrontation", decoys: ["Interpretation", "Clarification"] }
+        ]
+      }
+    ]
+  },
+  // Both NCD games below are wizard-ready — every clue already carries `short`
+  // and two `decoys` — but comingSoon keeps them off the hub's link and out of
+  // GAMES.filter(g => !g.comingSoon), so they are invisible to Wizard's Escape
+  // too. Flip comingSoon to false (or delete the line) on each to go live.
+  {
+    id: "ncd-jeopardy",
+    title: "NCD Jeopardy: Diagnosis & Management",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "Diagnostic criteria, bedside cognitive tools, the dementia work-up, and the safety and pharmacologic management of neurocognitive disorders.",
+    tags: ["Board review", "5 categories", "25 clues"],
+    subtitle: "Criteria · Assessment Tools · Work-Up · Safety · Agitation & Psychosis",
+    categories: [
+      {
+        name: "Diagnostic Criteria & Domains",
+        clues: [
+          { value: 100, clue: "This term names the cognitive domain covering empathy, socially appropriate behavior, and theory of mind.", answer: "What is social cognition?", short: "Social cognition", decoys: ["Executive function", "Complex attention"] },
+          { value: 200, clue: "This Major NCD severity specifier describes a patient who is fully dependent, past the stage of needing help with feeding, dressing and bathing.", answer: "What is severe?", short: "Severe", decoys: ["Moderate", "Mild"] },
+          { value: 300, clue: "Mild NCD differs from Major NCD mainly because deficits do not interfere with this.", answer: "What is independence in daily activities?", short: "Independence in daily activities", decoys: ["Long-term memory", "Language fluency"] },
+          { value: 400, clue: "Abrupt onset over weeks, frequent \"I don't know\" answers, and improvement once depression resolves describe this classic dementia mimic.", answer: "What is dementia syndrome of depression (pseudodementia)?", short: "Dementia syndrome of depression", decoys: ["Delirium", "Mild cognitive impairment"] },
+          { value: 500, clue: "This aggregated protein, paired with neurofilament and ubiquitin inside neurons, defines NCD with Lewy bodies.", answer: "What is alpha-synuclein?", short: "Alpha-synuclein", decoys: ["Amyloid-beta", "Tau"] }
+        ]
+      },
+      {
+        name: "Cognitive Assessment Tools",
+        clues: [
+          { value: 100, clue: "On the MMSE, serially subtracting 7 from 100 mainly tests this cognitive function.", answer: "What is sustained attention?", short: "Sustained attention", decoys: ["Calculation", "Short-term memory"] },
+          { value: 200, clue: "This bedside screen chains 3-word registration, a clock-drawing task, and 3-word recall.", answer: "What is the Mini-Cog?", short: "The Mini-Cog", decoys: ["The MMSE", "The MoCA"] },
+          { value: 300, clue: "This cognitive screen is more sensitive than the MMSE for mild cognitive impairment and includes a clock-drawing task.", answer: "What is the Montreal Cognitive Assessment (MoCA)?", short: "The MoCA", decoys: ["The MMSE", "The Mini-Cog"] },
+          { value: 400, clue: "This 12-item rating scale scores neuropsychiatric symptoms like delusions, hallucinations, and aberrant motor behavior in dementia.", answer: "What is the Neuropsychiatric Inventory?", short: "The Neuropsychiatric Inventory", decoys: ["The Geriatric Depression Scale", "The PAINAD scale"] },
+          { value: 500, clue: "Covering 11 scales in 90 to 150 minutes, this battery is a comprehensive neuropsychological test for ages 13 and up.", answer: "What is the Luria-Nebraska Neuropsychological Battery?", short: "Luria-Nebraska Battery", decoys: ["The Halstead-Reitan Battery", "The Vineland Adaptive Behavior Scale"] }
+        ]
+      },
+      {
+        name: "Work-Up: Labs, Imaging, EEG, LP",
+        clues: [
+          { value: 100, clue: "This lab, checked in every dementia work-up, screens for hypothyroidism as a reversible cause.", answer: "What is TSH?", short: "TSH", decoys: ["Vitamin B12", "CBC"] },
+          { value: 200, clue: "On SPECT in an HIV patient with a ring-enhancing lesion, this perfusion pattern points to lymphoma rather than toxoplasmosis.", answer: "What is increased perfusion?", short: "Increased perfusion", decoys: ["Decreased perfusion", "No perfusion change"] },
+          { value: 300, clue: "Fast polyphasic waves against a background of slowing on EEG raise suspicion for this rapidly progressive prion disease.", answer: "What is Creutzfeldt-Jakob disease?", short: "Creutzfeldt-Jakob disease", decoys: ["Alzheimer's disease", "Frontotemporal dementia"] },
+          { value: 400, clue: "This CSF protein, alongside the RT-QuIC assay, supports a diagnosis of classic Creutzfeldt-Jakob disease.", answer: "What is the 14-3-3 protein?", short: "14-3-3 protein", decoys: ["Phosphorylated tau", "Amyloid-beta 42"] },
+          { value: 500, clue: "FDA-cleared for adults 50 and up with Alzheimer's symptoms, this blood test reports a ratio of phosphorylated tau 217 to beta-amyloid 1-42.", answer: "What is the plasma pTau217/beta-amyloid ratio test?", short: "Plasma pTau217/beta-amyloid ratio test", decoys: ["Amyloid PET scan", "CSF total tau"] }
+        ]
+      },
+      {
+        name: "Management & Safety",
+        clues: [
+          { value: 100, clue: "This advance-directive document lets a patient with intact capacity name a health care proxy for future decisions.", answer: "What is a durable power of attorney for health care?", short: "Durable power of attorney for health care", decoys: ["A living will", "Guardianship"] },
+          { value: 200, clue: "This term names the pattern of worsening confusion a dementia patient shows specifically in the evening or at night.", answer: "What is sundowning?", short: "Sundowning", decoys: ["Sunrising", "Delirium"] },
+          { value: 300, clue: "At this Clinical Dementia Rating score, clinicians should consider recommending patients stop driving.", answer: "What is CDR 1 (mild dementia)?", short: "CDR 1", decoys: ["CDR 0.5", "CDR 2"] },
+          { value: 400, clue: "This ethical principle justifies giving morphine for comfort in advanced dementia even though it may hasten death.", answer: "What is the principle of double effect?", short: "Principle of double effect", decoys: ["Principle of autonomy", "Principle of nonmaleficence"] },
+          { value: 500, clue: "This drug class, including many antihistamines and antispasmodics, tops the deprescribing list for worsening cognition and delirium risk.", answer: "What are anticholinergics?", short: "Anticholinergics", decoys: ["Beta-blockers", "SSRIs"] }
+        ]
+      },
+      {
+        name: "Agitation & Psychosis",
+        clues: [
+          { value: 100, clue: "All first- and second-generation antipsychotics carry a black-box warning in dementia-related psychosis for this increased risk.", answer: "What is mortality?", short: "Mortality", decoys: ["Tardive dyskinesia", "Diabetes"] },
+          { value: 200, clue: "This NMDA-receptor antagonist is typically added when a dementia patient is already on a cholinesterase inhibitor.", answer: "What is memantine?", short: "Memantine", decoys: ["Donepezil", "Rivastigmine"] },
+          { value: 300, clue: "FDA-approved in 2023 specifically for agitation in Alzheimer's dementia, this drug modulates serotonin-dopamine activity.", answer: "What is brexpiprazole?", short: "Brexpiprazole", decoys: ["Pimavanserin", "Risperidone"] },
+          { value: 400, clue: "FDA-approved in 2026, this combination drug became the first non-antipsychotic approved for Alzheimer's agitation.", answer: "What is dextromethorphan-bupropion?", short: "Dextromethorphan-bupropion", decoys: ["Dextromethorphan-quinidine", "Citalopram"] },
+          { value: 500, clue: "Better known for PTSD nightmares and hypertension, this alpha-1 antagonist showed benefit for agitation in one dementia RCT.", answer: "What is prazosin?", short: "Prazosin", decoys: ["Trazodone", "Propranolol"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "ncd-etiologies-jeopardy",
+    title: "NCD Jeopardy: Etiologies",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "Alzheimer's, Lewy body and vascular disease, frontotemporal dementia, infectious and prion disease, and Huntington's, NPH, TBI and other causes.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "Alzheimer's · Lewy Body/PD · Vascular · Frontotemporal · Infectious/Prion · Other",
+    categories: [
+      {
+        name: "Alzheimer's Disease",
+        clues: [
+          { value: 100, clue: "This is the average number of years from Alzheimer's diagnosis to death.", answer: "What is 10 years?", short: "10 years", decoys: ["3 years", "20 years"] },
+          { value: 200, clue: "This chromosome-21 gene encodes the protein whose aberrant cleavage yields amyloid-beta 42.", answer: "What is the amyloid precursor protein (APP) gene?", short: "APP gene", decoys: ["Presenilin 1 gene", "ApoE gene"] },
+          { value: 300, clue: "This ApoE allele is protective, increasing amyloid-beta 42 clearance and longevity.", answer: "What is ApoE epsilon 2?", short: "ApoE epsilon 2", decoys: ["ApoE epsilon 3", "ApoE epsilon 4"] },
+          { value: 400, clue: "Given by IV infusion or injection, these two anti-amyloid antibodies slow early Alzheimer's decline by about 25 to 30%.", answer: "What are lecanemab and donanemab?", short: "Lecanemab and donanemab", decoys: ["Donepezil and rivastigmine", "Memantine and galantamine"] },
+          { value: 500, clue: "This imaging complication of anti-amyloid antibody therapy includes an edema type and a hemorrhage type.", answer: "What is ARIA (amyloid-related imaging abnormality)?", short: "ARIA", decoys: ["Cerebral amyloid angiopathy", "Diffuse axonal injury"] }
+        ]
+      },
+      {
+        name: "Lewy Body & Parkinson's Disease",
+        clues: [
+          { value: 100, clue: "Under the \"1-year rule,\" Parkinson motor symptoms must precede dementia-level cognitive decline by at least this long.", answer: "What is one year?", short: "One year", decoys: ["Six months", "Two years"] },
+          { value: 200, clue: "Because of extreme neuroleptic sensitivity, this drug class can trigger severe parkinsonian reactions in Lewy body disease.", answer: "What are antipsychotics?", short: "Antipsychotics", decoys: ["Cholinesterase inhibitors", "SSRIs"] },
+          { value: 300, clue: "This FDA-approved drug for Parkinson's disease psychosis works as a 5HT2A inverse agonist with minimal dopamine binding.", answer: "What is pimavanserin?", short: "Pimavanserin", decoys: ["Quetiapine", "Clozapine"] },
+          { value: 400, clue: "Daytime drowsiness, long naps before 7pm, disorganized thinking, and staring spells make up this Lewy body screening tool.", answer: "What is the Mayo Clinic Fluctuations Questionnaire?", short: "Mayo Clinic Fluctuations Questionnaire", decoys: ["The Neuropsychiatric Inventory", "The MoCA"] },
+          { value: 500, clue: "Alongside alpha-synuclein, Lewy bodies are built from neurofilament and this ubiquitous tagging protein.", answer: "What is ubiquitin?", short: "Ubiquitin", decoys: ["Tau", "TDP-43"] }
+        ]
+      },
+      {
+        name: "Vascular NCD",
+        clues: [
+          { value: 100, clue: "A history of this single event raises Vascular NCD risk about 9-fold.", answer: "What is a stroke?", short: "Stroke", decoys: ["Myocardial infarction", "Atrial fibrillation"] },
+          { value: 200, clue: "Caused by a Notch 3 mutation, this rare small-vessel disease starts at age 20 to 40 without hypertension.", answer: "What is CADASIL?", short: "CADASIL", decoys: ["Binswanger's disease", "Multi-infarct dementia"] },
+          { value: 300, clue: "Uncontrolled laughing or crying spells with intact insight describe this prefrontal-circuit syndrome after stroke or in ALS.", answer: "What is pseudobulbar affect?", short: "Pseudobulbar affect", decoys: ["Catastrophic reaction", "Apathy"] },
+          { value: 400, clue: "Slowed thinking, a shuffling gait, and early urinary incontinence describe subcortical vascular dementia; this intervention most likely slows it.", answer: "What is control of hypertension?", short: "Control of hypertension", decoys: ["Dopamine agonists", "A cholinesterase inhibitor"] },
+          { value: 500, clue: "Branded Nuedexta, this combination pill treats pseudobulbar affect.", answer: "What is dextromethorphan/quinidine?", short: "Dextromethorphan/quinidine", decoys: ["Dextromethorphan/bupropion", "Amantadine"] }
+        ]
+      },
+      {
+        name: "Frontotemporal Dementia",
+        clues: [
+          { value: 100, clue: "Marked by hyperorality and hypersexuality, this behavioral-variant FTD syndrome is named for two researchers who studied monkeys.", answer: "What is Klüver-Bucy syndrome?", short: "Klüver-Bucy syndrome", decoys: ["Disinhibition syndrome", "Apathy (abulia) syndrome"] },
+          { value: 200, clue: "In this FTD language variant, speech stays fluent but loses meaning, while grammar is spared.", answer: "What is semantic dementia?", short: "Semantic dementia", decoys: ["Nonfluent aphasia", "Logopenic aphasia"] },
+          { value: 300, clue: "\"Pick bodies\" inside ballooned neurons, with frontal and anterior temporal atrophy, define this named FTLD phenotype.", answer: "What is Pick's disease?", short: "Pick's disease", decoys: ["Corticobasal degeneration", "Progressive supranuclear palsy"] },
+          { value: 400, clue: "This misfolded protein underlies both ALS and the Alzheimer's-mimicking condition called LATE.", answer: "What is TDP-43?", short: "TDP-43", decoys: ["Tau", "Alpha-synuclein"] },
+          { value: 500, clue: "About half of behavioral-variant FTD patients first receive this type of incorrect diagnosis.", answer: "What is a psychiatric diagnosis?", short: "A psychiatric diagnosis", decoys: ["A vascular dementia diagnosis", "An Alzheimer's diagnosis"] }
+        ]
+      },
+      {
+        name: "Infectious & Prion Disease",
+        clues: [
+          { value: 100, clue: "This protozoan parasite causes a multifocal encephalitis in AIDS patients that can mimic CNS lymphoma on imaging.", answer: "What is Toxoplasma gondii?", short: "Toxoplasma gondii", decoys: ["Cryptococcus neoformans", "Cytomegalovirus"] },
+          { value: 200, clue: "Present in over 75% of variant CJD cases but never seen in classic CJD, this MRI finding is a hyperintensity in the thalamus.", answer: "What is the pulvinar sign?", short: "Pulvinar sign", decoys: ["Cortical ribboning", "Caudate atrophy"] },
+          { value: 300, clue: "Acquired from eating tissue infected with bovine spongiform encephalopathy, this prion disease strikes at a strikingly young median age of death.", answer: "What is variant Creutzfeldt-Jakob disease?", short: "Variant CJD", decoys: ["Classic CJD", "Familial CJD"] },
+          { value: 400, clue: "This HIV-related complication is caused by the JC virus, a papovavirus, attacking oligodendrocytes.", answer: "What is progressive multifocal leukoencephalopathy?", short: "Progressive multifocal leukoencephalopathy", decoys: ["Toxoplasmosis", "CNS lymphoma"] },
+          { value: 500, clue: "Recommended for every HIV-positive patient, ideally before starting HAART, this evaluation should repeat every 6 to 24 months.", answer: "What is neurocognitive screening?", short: "Neurocognitive screening", decoys: ["Lumbar puncture", "Brain biopsy"] }
+        ]
+      },
+      {
+        name: "Huntington's, NPH, TBI & Other",
+        clues: [
+          { value: 100, clue: "This vesicular monoamine transporter 2 inhibitor is first-line for chorea in Huntington's disease.", answer: "What is tetrabenazine?", short: "Tetrabenazine", decoys: ["Carbidopa/levodopa", "Ropinirole"] },
+          { value: 200, clue: "This important Huntington's mimic involves copper deposition and is tested for with a slit-lamp exam.", answer: "What is Wilson's disease?", short: "Wilson's disease", decoys: ["Hemochromatosis", "Fahr's disease"] },
+          { value: 300, clue: "Early urinary incontinence, a magnetic gait, and subcortical cognitive slowing describe this reversible condition treated with a shunt.", answer: "What is normal-pressure hydrocephalus?", short: "Normal-pressure hydrocephalus", decoys: ["Subcortical vascular dementia", "Parkinson's disease"] },
+          { value: 400, clue: "Hyperphosphorylated tau from repetitive head trauma is the hallmark finding of this disorder, common in contact-sport athletes.", answer: "What is chronic traumatic encephalopathy (CTE)?", short: "Chronic traumatic encephalopathy", decoys: ["Postconcussive syndrome", "Diffuse axonal injury"] },
+          { value: 500, clue: "Disorientation, facial tremor, a beefy tongue, and leg spasticity with decreased sensation point to this vitamin deficiency.", answer: "What is vitamin B12 deficiency?", short: "Vitamin B12 deficiency", decoys: ["Thiamine deficiency", "Niacin deficiency"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "development-jeopardy",
+    title: "Development Through the Life Cycle",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "Infant milestones, the foundational theorists, attachment and play, puberty and Tanner staging, and the physiology and psychiatry of later life.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "Infancy · Toddler to Preschool · Theorists · Attachment · Puberty · Aging",
+    categories: [
+      {
+        name: "Infancy & Early Milestones",
+        clues: [
+          { value: 100, clue: "This visual capacity is present at birth, while color vision only develops over the first weeks.", answer: "What is black-and-white vision?", short: "Black-and-white vision", decoys: ["Color vision", "The ability to accommodate"] },
+          { value: 200, clue: "A newborn cannot accommodate focus, so vision is fixed at roughly this distance.", answer: "What is 8 to 12 inches?", short: "8 to 12 inches", decoys: ["2 to 4 inches", "18 to 24 inches"] },
+          { value: 300, clue: "Emerging around 8 months, this cognitive milestone brings separation and stranger anxiety with it.", answer: "What is object permanence?", short: "Object permanence", decoys: ["Object constancy", "Joint attention"] },
+          { value: 400, clue: "Very low birth weight, seen in about 2% of live births, is defined as a weight below this.", answer: "What is 1500 grams?", short: "1500 grams", decoys: ["2500 grams", "1000 grams"] },
+          { value: 500, clue: "This complication of very low birth weight is white matter softening from hypoxemic injury.", answer: "What is periventricular leukomalacia?", short: "Periventricular leukomalacia", decoys: ["Intraventricular hemorrhage", "Retinopathy of prematurity"] }
+        ]
+      },
+      {
+        name: "Toddler to Preschool",
+        clues: [
+          { value: 100, clue: "A lack of this specific language skill at 18 months is considered a sign of concern for developmental delay.", answer: "What is use of single words?", short: "Use of single words", decoys: ["Drawing a circle", "Symbolic play"] },
+          { value: 200, clue: "By about 24 months, a child typically has this many words along with 3-word sentences.", answer: "What is 200 words?", short: "200 words", decoys: ["20 words", "500 words"] },
+          { value: 300, clue: "In the shape-drawing progression, this is the shape a child can first copy at about age 4½.", answer: "What is a square?", short: "A square", decoys: ["A triangle", "A circle"] },
+          { value: 400, clue: "Skipping, naming 4 colors, counting 10 pennies, and distinguishing fantasy from reality mark this age.", answer: "What is 5 years old?", short: "5 years old", decoys: ["3 years old", "7 years old"] },
+          { value: 500, clue: "In this stage of play, children are engaged in the same activity side by side but not directly interacting.", answer: "What is parallel play?", short: "Parallel play", decoys: ["Associative play", "Onlooker play"] }
+        ]
+      },
+      {
+        name: "Piaget, Freud & Erikson",
+        clues: [
+          { value: 100, clue: "Spanning ages 2 to 7, this Piagetian stage features magical thinking and reasoning that is not yet logical.", answer: "What is the preoperational stage?", short: "Preoperational stage", decoys: ["Sensorimotor stage", "Concrete operational stage"] },
+          { value: 200, clue: "A toddler calling a horse a “big doggie” illustrates this Piagetian process.", answer: "What is assimilation?", short: "Assimilation", decoys: ["Accommodation", "Equilibration"] },
+          { value: 300, clue: "A candy box that turns out to hold pencils is the setup for this test, which 3-year-olds fail and 5-year-olds pass.", answer: "What is the false belief test?", short: "The false belief test", decoys: ["The Strange Situation", "The mirror self-recognition test"] },
+          { value: 400, clue: "In this Freudian phase, from age 6 to puberty, urges lie dormant and the superego develops.", answer: "What is latency?", short: "Latency", decoys: ["The phallic-Oedipal phase", "The genital phase"] },
+          { value: 500, clue: "Erikson paired this crisis, running from about age 5 to puberty, with the virtue of competence.", answer: "What is industry vs. inferiority?", short: "Industry vs. inferiority", decoys: ["Initiative vs. guilt", "Identity vs. role confusion"] }
+        ]
+      },
+      {
+        name: "Attachment & Aspects of Development",
+        clues: [
+          { value: 100, clue: "In this Mahler substage, from 16 to 24 months, the child turns tentative and wants mother kept in sight.", answer: "What is rapprochement?", short: "Rapprochement", decoys: ["Practicing", "Differentiation"] },
+          { value: 200, clue: "In the Strange Situation, this attachment style shows little visible response at either departure or reunion.", answer: "What is avoidant attachment?", short: "Avoidant attachment", decoys: ["Ambivalent attachment", "Secure attachment"] },
+          { value: 300, clue: "Freezing or rocking stereotypies on the mother's return, with no coherent coping strategy, mark this attachment style.", answer: "What is disorganized attachment?", short: "Disorganized attachment", decoys: ["Avoidant attachment", "Ambivalent attachment"] },
+          { value: 400, clue: "Children in this age range typically believe death is reversible and need concrete explanations of it.", answer: "What is 3 to 6 years?", short: "3 to 6 years", decoys: ["6 to 12 years", "0 to 3 years"] },
+          { value: 500, clue: "AAP guidelines discourage all media use except video chatting below this age.", answer: "What is 18 months?", short: "18 months", decoys: ["2 years", "6 months"] }
+        ]
+      },
+      {
+        name: "Puberty & Emerging Adulthood",
+        clues: [
+          { value: 100, clue: "Pulses of this hypothalamic hormone are what trigger pubertal maturation.", answer: "What is gonadotropin-releasing hormone?", short: "Gonadotropin-releasing hormone", decoys: ["Luteinizing hormone", "Estrogen"] },
+          { value: 200, clue: "This activation of the adrenal glands brings increased sweating, body odor, acne, and skin oiliness.", answer: "What is adrenarche?", short: "Adrenarche", decoys: ["Menarche", "Spermarche"] },
+          { value: 300, clue: "In males, spermarche and darker, curlier pubic hair mark this Tanner stage.", answer: "What is Tanner stage III?", short: "Tanner stage III", decoys: ["Tanner stage II", "Tanner stage V"] },
+          { value: 400, clue: "In females, 90% of menarche occurs at this Tanner stage.", answer: "What is Tanner stage IV?", short: "Tanner stage IV", decoys: ["Tanner stage III", "Tanner stage V"] },
+          { value: 500, clue: "Spanning ages 18 to 25, this stage is when unprotected sex, alcohol use, and risky driving peak.", answer: "What is emerging adulthood?", short: "Emerging adulthood", decoys: ["Late adolescence", "Young adulthood"] }
+        ]
+      },
+      {
+        name: "Aging, Menopause & Late Life",
+        clues: [
+          { value: 100, clue: "This is the median age of menopause, within a usual range of 45 to 55.", answer: "What is 51 years?", short: "51 years", decoys: ["45 years", "58 years"] },
+          { value: 200, clue: "Hot flashes, night sweats, “foggy brain,” and insomnia during the perimenopausal period make up this syndrome.", answer: "What is climacteric syndrome?", short: "Climacteric syndrome", decoys: ["Premature menopause", "Postmenopausal syndrome"] },
+          { value: 300, clue: "In normal cognitive aging, this type of intelligence holds steady while fluid reasoning declines.", answer: "What is crystallized intelligence?", short: "Crystallized intelligence", decoys: ["Fluid intelligence", "Working memory"] },
+          { value: 400, clue: "Psychotropics act briefly after a first dose but linger at steady state in the elderly, mostly because of this change.", answer: "What are higher fat stores?", short: "Higher fat stores", decoys: ["Slower excretion", "Greater absorption"] },
+          { value: 500, clue: "In grief therapy, warning a patient against this normal expression is the contraindicated move.", answer: "What is anger?", short: "Expressions of anger", decoys: ["Expressions of guilt", "Talking about the deceased"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "sexuality-dissociation-jeopardy",
+    title: "Sexuality, Gender & Dissociation",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "The sexual dysfunctions and their treatments, paraphilic and pedophilic disorders, gender dysphoria criteria and care, and the dissociative disorders.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "Sexual Dysfunction · Treatment · Paraphilias · Pedophilic Disorder · Gender Dysphoria · Dissociation",
+    categories: [
+      {
+        name: "Sexual Dysfunctions: Diagnosis",
+        clues: [
+          { value: 100, clue: "A sexual dysfunction diagnosis requires significant distress plus symptoms lasting at least this long.", answer: "What is 6 months?", short: "6 months", decoys: ["1 month", "12 months"] },
+          { value: 200, clue: "This onset specifier applies when a sexual dysfunction begins after a period of normal sexual function.", answer: "What is acquired type?", short: "Acquired type", decoys: ["Lifelong type", "Situational type"] },
+          { value: 300, clue: "Premature ejaculation is defined as ejaculation within this long after vaginal penetration.", answer: "What is 1 minute?", short: "1 minute", decoys: ["3 minutes", "30 seconds"] },
+          { value: 400, clue: "Spasm of the outer third of the vagina that prevents intercourse now falls under this DSM-5 diagnosis.", answer: "What is genito-pelvic pain/penetration disorder?", short: "Genito-pelvic pain/penetration disorder", decoys: ["Female orgasmic disorder", "Female sexual interest/arousal disorder"] },
+          { value: 500, clue: "Distinguished from delayed ejaculation, semen flows backward into the bladder in this complication of TURP or diabetic neuropathy.", answer: "What is retrograde ejaculation?", short: "Retrograde ejaculation", decoys: ["Anejaculation", "Priapism"] }
+        ]
+      },
+      {
+        name: "Sexual Dysfunctions: Treatment",
+        clues: [
+          { value: 100, clue: "These step-by-step talking and touching exercises run about 40 minutes and initially avoid genital contact.", answer: "What is sensate focus therapy?", short: "Sensate focus therapy", decoys: ["The squeeze method", "Pelvic floor relaxation"] },
+          { value: 200, clue: "This 5-HT1A agonist and 5-HT2A antagonist is FDA-approved for hypoactive sexual desire disorder in premenopausal women.", answer: "What is flibanserin (Addyi)?", short: "Flibanserin (Addyi)", decoys: ["Bremelanotide (Vyleesi)", "Sildenafil (Viagra)"] },
+          { value: 300, clue: "On the antidepressant sexual side effect profile, this SSRI carries the highest relative risk.", answer: "What is paroxetine?", short: "Paroxetine", decoys: ["Sertraline", "Fluoxetine"] },
+          { value: 400, clue: "In this behavioral treatment for premature ejaculation, the shaft is squeezed below the glans as ejaculation nears.", answer: "What is the squeeze method?", short: "The squeeze method", decoys: ["The stop-start method", "Sensate focus therapy"] },
+          { value: 500, clue: "PDE-5 inhibitors work by preventing the degradation of this second messenger.", answer: "What is cGMP?", short: "cGMP", decoys: ["cAMP", "Acetylcholine"] }
+        ]
+      },
+      {
+        name: "Paraphilic Disorders",
+        clues: [
+          { value: 100, clue: "Sexual arousal from touching or rubbing against a non-consenting person defines this disorder.", answer: "What is frotteuristic disorder?", short: "Frotteuristic disorder", decoys: ["Voyeuristic disorder", "Exhibitionistic disorder"] },
+          { value: 200, clue: "Requiring the individual be at least 18, this disorder involves arousal from observing an unsuspecting person who is naked or disrobing.", answer: "What is voyeuristic disorder?", short: "Voyeuristic disorder", decoys: ["Exhibitionistic disorder", "Fetishistic disorder"] },
+          { value: 300, clue: "This transvestic disorder specifier applies when arousal comes from thoughts or images of oneself as female.", answer: "What is with autogynephilia?", short: "With autogynephilia", decoys: ["With fetishism", "In a controlled environment"] },
+          { value: 400, clue: "This specifier requires 5 years without acting on urges or experiencing distress, all in an uncontrolled environment.", answer: "What is in full remission?", short: "In full remission", decoys: ["In a controlled environment", "In partial remission"] },
+          { value: 500, clue: "Sexual masochism disorder shows roughly this male-to-female ratio, the lowest among the paraphilic disorders.", answer: "What is 20 to 1?", short: "20 to 1", decoys: ["2 to 1", "100 to 1"] }
+        ]
+      },
+      {
+        name: "Pedophilic Disorder",
+        clues: [
+          { value: 100, clue: "Beyond being at least 16, the individual must be at least this much older than the child for the diagnosis.", answer: "What is 5 years?", short: "5 years", decoys: ["2 years", "10 years"] },
+          { value: 200, clue: "Only about this share of pedophilic perpetrators are the exclusive type, attracted solely to children.", answer: "What is 7%?", short: "7%", decoys: ["50%", "93%"] },
+          { value: 300, clue: "Among prognostic features, this pattern of acts is the one that predicts a better outcome.", answer: "What is a low frequency of acts?", short: "Low frequency of acts", decoys: ["High frequency of acts", "Early age of onset"] },
+          { value: 400, clue: "This progesterone analog is used to lower serum testosterone and reduce paraphilic sex drive.", answer: "What is medroxyprogesterone?", short: "Medroxyprogesterone", decoys: ["Naltrexone", "Fluoxetine"] },
+          { value: 500, clue: "This LHRH agonist first stimulates, then chronically suppresses LH and FSH release, lowering testosterone.", answer: "What is leuprolide?", short: "Leuprolide", decoys: ["Medroxyprogesterone", "Spironolactone"] }
+        ]
+      },
+      {
+        name: "Gender Dysphoria",
+        clues: [
+          { value: 100, clue: "In children, the diagnosis requires this many of eight symptoms, with a strong desire to be another gender mandatory.", answer: "What is 6?", short: "6 of 8", decoys: ["2 of 8", "4 of 8"] },
+          { value: 200, clue: "In feminizing hormone therapy, this diuretic blocks androgen receptors and decreases testosterone production.", answer: "What is spironolactone?", short: "Spironolactone", decoys: ["Estrogen", "Leuprolide"] },
+          { value: 300, clue: "Congenital adrenal hyperplasia and androgen insensitivity syndrome are examples of this gender dysphoria specifier.", answer: "What is with a disorder of sex development?", short: "With a disorder of sex development", decoys: ["Posttransition", "With fetishism"] },
+          { value: 400, clue: "Fully reversible pubertal blockade with a GnRH agonist is started at about this Tanner stage.", answer: "What is Tanner 2 to 3?", short: "Tanner 2 to 3", decoys: ["Tanner 4 to 5", "Tanner 1"] },
+          { value: 500, clue: "A 2022 FDA warning linked GnRH agonists to this condition, also called idiopathic intracranial hypertension.", answer: "What is pseudotumor cerebri?", short: "Pseudotumor cerebri", decoys: ["Osteoporosis", "Venous thromboembolism"] }
+        ]
+      },
+      {
+        name: "Dissociative Disorders",
+        clues: [
+          { value: 100, clue: "This 28-item self-report screen measures dissociative experiences but cannot by itself establish a diagnosis.", answer: "What is the Dissociative Experiences Scale?", short: "Dissociative Experiences Scale", decoys: ["The Dissociation Questionnaire (DIS-Q)", "The Tellegen Absorption Scale"] },
+          { value: 200, clue: "Amnesia covering all events in a set period, often the hours or days around a trauma, is this type.", answer: "What is localized amnesia?", short: "Localized amnesia", decoys: ["Selective amnesia", "Systematized amnesia"] },
+          { value: 300, clue: "Feeling detached from oneself like an automaton, with reality testing fully intact, points to this disorder.", answer: "What is depersonalization/derealization disorder?", short: "Depersonalization/derealization disorder", decoys: ["Dissociative amnesia", "Dissociative identity disorder"] },
+          { value: 400, clue: "A sodium amytal interview raises a patient's confidence in recovered memories but notably fails to do this.", answer: "What is increase the accuracy of memory?", short: "Increase memory accuracy", decoys: ["Alter consciousness", "Mimic dissociative pathology"] },
+          { value: 500, clue: "This is the average number of distinct identities reported in dissociative identity disorder.", answer: "What is 10?", short: "10 identities", decoys: ["2 identities", "30 identities"] }
         ]
       }
     ]

@@ -14,7 +14,18 @@ one opens its board.
 | Depression Jeopardy! | Jeopardy, 5 × 5 + Final | MDD criteria, specifiers, sleep architecture & course, TCAs & MAOIs, newer treatments |
 | ABPN Neuro Jeopardy | Jeopardy, 6 × 5 | Epilepsy, stroke localisation, headache, neuropathy, cognitive impairment, CNS infection |
 | ABPN Neuro: Double Jeopardy | Jeopardy, 4 × 5 + Final | Movement disorders, neuroimaging, functional neuroanatomy, psychiatric genetics |
-| Wizard's Escape | Speed round, 1–2 players | Any categories you pick — it reuses the Jeopardy questions |
+| Depression Pharmacology Jeopardy | Jeopardy, 6 × 5 | Receptors, CYP interactions, TCAs, sexual side effects, cautions, alternative agents |
+| Depression Treatment Jeopardy | Jeopardy, 5 × 5 | ECT/TMS/esketamine, treatment resistance, maintenance, DOD/VA guidelines, psychotherapies |
+| NCD Jeopardy: Diagnosis & Management | Jeopardy, 5 × 5 · *coming soon* | Diagnostic criteria and domains, cognitive assessment tools, the dementia work-up, safety and driving, agitation and psychosis |
+| NCD Jeopardy: Etiologies | Jeopardy, 6 × 5 · *coming soon* | Alzheimer's, Lewy body and Parkinson's, vascular, frontotemporal, infectious and prion, Huntington's/NPH/TBI |
+| Development Through the Life Cycle | Jeopardy, 6 × 5 · *coming soon* | Infant milestones, toddler to preschool, Piaget/Freud/Erikson, attachment and play, puberty, aging and menopause |
+| Sexuality, Gender & Dissociation | Jeopardy, 6 × 5 · *coming soon* | Sexual dysfunctions and their treatment, paraphilic and pedophilic disorders, gender dysphoria, dissociative disorders |
+| Wizard's Escape | Speed round, 1–4 players | Any categories you pick — it reuses the Jeopardy questions |
+
+The four *coming soon* boards are finished and wizard-ready — every clue carries
+its `short` label and two hand-written `decoys` — but each is parked with
+`comingSoon: true`, so no card is clickable and none of their categories reach
+Wizard's Escape yet. Deleting that one line on a game switches it fully on.
 
 **Wizard's Escape** is a haunted-castle escape: each room's exit is blocked by
 three identical pieces of furniture, each labelled with a candidate answer, and
@@ -30,6 +41,44 @@ are `1 2 3` solo, `A S D` and `J K L` for two players.
 A two-wizard race needs more questions than a solo run — only one wizard clears
 a room per question — so with a small category selection the castle shrinks to a
 size the question pool can actually finish.
+
+**Survival** is the third mode, and it changes the rules: three lives, and no
+exit. There is no fixed castle — rooms keep coming, and the deck loops once you
+have seen everything you selected. A wrong answer costs a life instead of costing
+nothing, and so does letting the clock run out; the clock itself starts at 14
+seconds and tightens by 0.4 seconds a room down to a floor of 6. The score is
+filed under how many rooms you cleared.
+
+Survival takes **up to four wizards at once**, and they all share one room. Open a
+phone room before starting and everyone seated joins the same run: one question
+across the top, one set of three pieces at full size, and a line of wizards along
+the floor beneath them with their own lives and score. A wrong pick costs that
+wizard a life and nobody else, and they can go again — the clock is the real
+limit. The room ends once every wizard still standing has cleared it, or the clock
+runs out and the stragglers pay for it. Lose your third life and your wizard
+slumps and fades out of the line while the rest carry on. When the last one falls
+the run ends on a standings table: deepest wins, and score settles a tie.
+
+The alternative — four separate rooms side by side — would have shrunk the
+question and twelve furniture labels into unreadability on any screen small
+enough to sit round. One shared room keeps everything full size no matter how
+many are playing.
+
+Sharing a room does mean nothing on screen may point at the piece somebody
+picked. A bolt flying to the right bookcase, or splinters bursting off it, would
+hand the answer to everyone still reading — and a miss gives as much away, since
+it rules a piece out. So in a coven the spell is a soft wash of colour over the
+room, green or red, plus the caster's own staff swinging on their card. It is
+deliberately dim: it fires while the others are still reading. Playing survival
+alone, there is nobody to give anything away to, so the full bolt-and-splinters
+spell lands as it always did.
+
+Each wizard is drawn from a rotation of six looks — robe, hat shape, beard and
+staff all change together — so four of them in one room are tellable apart at a
+glance. Seat 1 is always the violet wizard, seat 2 the crimson one, and so on,
+which means players keep the same wizard from run to run. A two-wizard race gets
+two different ones, and the Jeopardy celebration's dancers are five different
+wizards rather than one copied five times.
 
 **Scores are saved on the device that played them.** Enter your initials before
 starting (they're remembered for next time and label the panes during a race)
@@ -93,13 +142,112 @@ By hand: open `index.html`, find the `GAMES` array (it sits between the
 double-quoted, and let `value` ascend down each column. Categories may have
 different numbers of clues; short columns show as blank tiles.
 
+Write every new clue to three rules (they're spelled out in full in the
+`GAME REGISTRY` comment above the array):
+
+1. **Single ask.** One clue, one fact. A clue wanting two or three things at
+   once can't become one multiple-choice option — trim it to the fact that
+   matters and put the extra teaching detail in `answer`, which only the board
+   shows.
+2. **Three options, always.** Give every clue a `short` plus exactly two
+   `decoys`, of the same *kind* as the answer. The sibling-answer fallback
+   described above exists for older clues, not as the plan for new ones.
+3. **Quick to read, not trivial.** `clue` is what a player reads mid-race in
+   Wizard's Escape, so keep it to about one sentence, well under 30 words.
+
+Strings go in as plain text, not HTML — the page renders them with
+`textContent`, so an `&amp;` shows up on the board literally.
+
 Games that aren't Jeopardy boards (like Wizard's Escape) go in the `EXTRAS`
 array instead, and also need their own view markup and a branch in `route()`.
+
+To park a game without losing it, add `comingSoon: true` to its entry. Its card
+greys out and stops being a link, a direct `#hash` to it lands on the hub
+instead, and its categories drop out of Wizard's Escape — while all of its clues
+stay in the file. Deleting that one line brings it straight back.
 
 Everything below the arrays is the shared engine code, so a fix there applies to
 every game at once. Don't split styling or a game out into a separate file — the site
 is deliberately one file, and a sibling file would look editable while having no
 effect on the page.
+
+## Phone buzzers
+
+Under every board there's **Open buzzer room**. It shows a 4-letter code and a
+join link; players open the site on their phones, enter the code and a name, and
+get one big buzzer. Opening a clue arms every phone, the first press wins, and
+the clue card lists who buzzed in order with the gap behind the leader. Revealing
+the answer or closing the clue locks them again.
+
+A **host console** runs alongside it: the room panel shows a second link
+(`#host-<code>`) that opens a phone-sized view of whichever clue is live —
+with the answer — while the room still sees only the question. The answer never
+travels over the network: the room stores just the clue's coordinates, and the
+console looks the text up in its own copy of the page.
+
+**Wizard's Escape uses the same rooms.** "Play from phones" on its setup screen
+opens one; players join at the same kind of link and get three big numbered
+buttons. The answers stay on the big screen and never travel over the network —
+a phone only ever says "seat 2 chose the third one" — which keeps everyone
+looking up at the shared game. It works for all three modes: a solo run, a
+two-wizard race with both rooms on the screen, and survival for up to four.
+Whoever is not on a phone keeps the keyboard; with every seat taken the screen
+stops accepting answers of its own.
+
+### Getting people into a room
+
+Every room panel shows a **QR code** beside the code, and the join link is set
+large enough to read across a desk. **Show join screen** fills the whole screen
+with a big QR, the code at projector size and the link underneath — click
+anywhere or press Escape to dismiss it. It updates live, so the host can leave
+it up and watch names appear as people join.
+
+The QR is generated in the page itself (byte mode, error correction level M),
+because a QR library would mean loading something from a CDN and the site has to
+stay one file.
+
+One nicety: opening `index.html` straight off the disk, or serving it on
+localhost, produces an address no phone can reach — so in that case the QR and
+the join link point at the published site instead. The room lives in the shared
+database, so a phone joining through the published copy lands in the same room.
+
+**Buzzers on / off** switches the whole thing off mid-game — the board then plays
+exactly as it did before, scoring by team buttons as usual. With no room open,
+nothing about the game changes at all.
+
+Rooms are held in a Firebase Realtime Database (project `mp-board-study`), talked
+to over its REST API and server-sent events so the page needs no library and
+stays one file. A room holds only names, timestamps and which clue is live, and
+**Close room** deletes it. The database URL is the `DB` constant in the buzzer
+section of `index.html`.
+
+### The database rules have to be published
+
+None of this works until the Realtime Database's rules allow it, and a database
+with unpublished rules refuses every write. `firebase-rules.json` in this folder
+is what to paste — **Realtime Database → Rules** in the Firebase console, then
+**Publish**. It is for the console only; it is not part of the site and does not
+belong in the repo.
+
+If they are missing you now find out immediately: opening a room says the
+database refused the write instead of showing a code for a room that was never
+created, and phones say the rules still need publishing instead of "no room".
+
+## Anki export
+
+Every board has a **Download Anki deck (.apkg)** button under it. The file is a
+real Anki package — a zip around a SQLite collection — built in the browser
+with no library, so the page stays one self-contained file. Open it and Anki
+imports the deck directly; no import dialog, no field mapping.
+
+Each clue becomes one Basic note (clue on the front, the full answer on the
+back), filed in a deck named `Board Study Games::<game>` and tagged
+`board-study-games` plus `bsg::<game>::<category>`, so you can study one
+category on its own. Picture clues carry their image in as a real media file.
+
+Note ids, deck ids and note guids are derived from the content rather than the
+clock, so re-exporting after editing a clue and importing again **updates** the
+existing notes instead of creating a second copy.
 
 ## Editing questions
 
@@ -127,10 +275,21 @@ the project inside it.
 
 ## Playing
 
-Click a tile to show the clue, then **Reveal Answer** (or press Space). A tile is
+Click a tile to show the clue, then **Reveal Answer** (or press Space). A clock
+starts the moment a tile is opened but stays hidden for the first 30 seconds, so
+a team gets half a minute to think before it appears in the corner and counts up.
+It freezes when the answer is revealed, leaving the elapsed time on screen while
+you award points, and resets for the next clue.
+
+When the last tile on a board is used up, the winning team is announced over
+falling streamers with a line of dancing wizards along the bottom, for about
+eight seconds — click anywhere or press Esc to dismiss it early. Ties and draws
+are named properly, and resetting the board arms it again. A tile is
 only used up once its answer has been revealed, so opening one by mistake and
 pressing Esc leaves it on the board. Each clue scores once; the pick highlights
-and **Undo** reverses it. Team names are editable, and teams can be added or
+and **Undo** steps back through them. Several teams can be scored on one clue —
+each can go down once, one after another, the way it happens when two teams buzz
+and miss — but a correct answer closes the clue. Team names are editable, and teams can be added or
 removed mid-game. Stepping back to the hub and returning keeps a game in
 progress — scores and used tiles survive until the page is reloaded.
 
