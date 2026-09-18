@@ -2499,7 +2499,7 @@
         <h3>Longest runs</h3>
         <button type="button" class="rl-board-refresh" id="rlBoardRefresh">Refresh</button>
       </div>
-      <p class="rl-board-sub">The ten longest survival runs players chose to post, from every device &mdash; ranked by rounds survived, then by points banked.</p>
+      <p class="rl-board-sub">The ten longest survival runs players chose to post, from every device &mdash; ranked by rounds survived, then by total points.</p>
       <div class="rl-lb-list" id="rlBoardList"></div>
     </div>
 
@@ -9101,7 +9101,8 @@ const RLAB = (function () {
      survived, and there are no rooms or categories to record. Posting is opt-in
      and the name is typed at that moment — nothing leaves this browser until
      the button is pressed. Rank is rounds first, because that is what the mode
-     actually asks of you; points banked only separate runs of equal length. */
+     actually asks of you; total points — every round played, the fatal one
+     included — only separate runs of equal length. */
   const LB_URL = 'https://mp-board-study-default-rtdb.firebaseio.com/leaderboard/receptor';
   const LB_SHOW = 10;
 
@@ -9885,12 +9886,15 @@ const RLAB = (function () {
     // Only survival has a shared board; the gauntlet keeps its best on the device.
     if (mode === 'survival') {
       sumBoardEl.hidden = false;
-      const lived = runResults.filter(r => !r.failed);
+      // The round that ended the run counts toward the total too — those
+      // points were earned before the brew turned, and leaving them out made a
+      // run look worse than it was played. `rounds` still counts only the
+      // rounds actually survived, which is what the board ranks on.
       const ended = runResults.filter(r => r.failed).slice(-1)[0];
       renderPostBox(cleared > 0 ? {
         rounds: cleared,
-        score: lived.reduce((a, r) => a + r.score, 0),
-        best: lived.reduce((a, r) => Math.max(a, r.score), 0),
+        score: total,
+        best: runResults.reduce((a, r) => Math.max(a, r.score), 0),
         secs: Math.round(elapsed / 1000),
         last: ended ? ended.name.slice(0, 40) : ''
       } : null);
