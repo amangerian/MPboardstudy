@@ -23,19 +23,22 @@ one opens its board.
 | Antipsychotic Jeopardy | Jeopardy, 7 × 5 | FGAs, SGAs and newer agents, clozapine, long-acting injectables, movement side effects, phases of care, name-the-drug receptor binding profiles (picture clues) |
 | Antipsychotic Pharmacology | Connect Four, 5 × 5 or 7 × 6 | Receptor mechanisms, FGA potency, LAIs, CYP interactions, EPS management, clozapine monitoring (15 of the 25 questions also appear in Wizard's Escape) |
 | Wizard's Escape | Speed round, 1–4 players | Any categories you pick — it reuses the Jeopardy questions |
-| Receptor Lab: Antipsychotics | Drag & drop, solo | 19 antipsychotics — which receptors each one binds, whether it antagonises / partially activates / inverts / activates them, and how tightly |
+| Receptor Lab: Antipsychotics | Click & drop, solo | 19 antipsychotics — which receptors each one binds, whether it antagonises / partially activates / activates / inverts them, and how tightly |
 
 The four *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
 `comingSoon: true`, so no card is clickable and none of their categories reach
 Wizard's Escape yet. Deleting that one line on a game switches it fully on.
 
-**Receptor Lab** is the odd one out — no clues, no teams, no buzzer. You get an
-empty cell and a drug name, and you drag receptors out of the tray into the
-membrane: which ones this drug actually binds, what it does at each (antagonist,
-partial agonist, inverse agonist, agonist, or reuptake block for SERT/NET), and
-how tightly, sized in four bands. Lock in and the real Ki values come up beside
-your answer with a note on what each receptor buys you clinically.
+**Receptor Lab** is the odd one out — no clues, no teams, no buzzer, and its own
+cauldron-lit palette instead of the navy and gold. You get an empty cell and a
+drug name, and you click receptors out of the tray into the membrane: which ones
+this drug actually binds, what it does at each (antagonist in red, partial
+agonist in blue, agonist in green, inverse agonist in purple, or a reuptake block
+for SERT/NET), and how tightly, sized in four bands. One click drops a receptor
+in; dragging works too. Lock in and your cauldron is set beside the real one —
+the true profile carries each receptor's Ki right under its label — with a
+receptor-by-receptor table below.
 
 A perfect round is 1000 points, split across the drug's *core* receptors: half
 for knowing it binds at all, a quarter for the action, a quarter for the strength
@@ -55,11 +58,14 @@ teaching point, not the decimal. Where the literature legitimately splits —
 "5-HT2A antagonist" versus "inverse agonist" on a constitutively active receptor
 — both answers score full marks.
 
-Two modes: free play (pick any drug, best score per drug kept in `localStorage`)
-and a gauntlet of five random drugs back to back against the clock. The
-second-messenger / G-protein layer is deliberately not built yet, but every
-receptor already carries its transduction pathway in `RL_TRANSDUCTION`, so that
-round can be added without re-deriving anything.
+Three modes. **Gauntlet** is the default: five random drugs back to back against
+the clock, with five jars on the shelf that fill in as you go. **Survival** deals
+drugs with no end — score above 800 and you brew on, hit 800 or less and the run
+is over. **Free play** picks any single drug at your own pace, keeping a best
+score per drug in `localStorage`. The second-messenger / G-protein layer is
+deliberately not built yet, but every receptor already carries its transduction
+pathway in `RL_TRANSDUCTION`, so that round can be added without re-deriving
+anything.
 
 **Wizard's Escape** is a haunted-castle escape: each room's exit is blocked by
 three identical pieces of furniture, each labelled with a candidate answer, and

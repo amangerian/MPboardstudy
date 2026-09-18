@@ -1837,32 +1837,115 @@
     .c4-disc.drop, .c4-cell.target, .c4-cell.win .c4-disc, .c4-cell.win .c4-disc.drop { animation: none; }
   }
   /* ===================== RECEPTOR LAB ===================== */
-  /* A drag-the-receptor board. The cell is a ring; receptors sit in the
-     membrane, sized by binding strength and coloured by what the drug does
-     to them. Everything is pointer-event based so a finger and a mouse take
-     exactly the same path through the code. */
+  /* The lab keeps to itself: every token below is scoped to #rlabView, so the
+     cauldron palette never leaks into the Jeopardy boards. Cold iron, bog
+     green, candlelight and a brew that will not sit still. */
 
-  #rlabView { max-width: 1240px; }
+  #rlabView {
+    max-width: 1240px;
+    --rl-bg-1: #10211a;
+    --rl-bg-2: #040907;
+    --rl-iron: #2a2219;
+    --rl-iron-lit: #4a3d2e;
+    --rl-rim: #8a7657;      /* lit pewter edge on the outside of the pot */
+    --rl-rim-in: #4f6d59;   /* inner edge, greened by whatever is in it */
+    --rl-panel: rgba(12, 26, 20, .72);
+    --rl-line: #2c4034;
+    --rl-line-lit: #46654f;
+    --rl-brew: #0c2418;
+    --rl-glow: #3ddc84;
+    --rl-glow-dim: #1d7a4b;
+    --rl-candle: #ffc24a;
+    --rl-purple: #b06cff;
+    --rl-text: #e9e4d2;
+    --rl-muted: #8fa693;
+    --rl-muted-dim: #62795f;
+    color: var(--rl-text);
+  }
+  /* The lab paints its own sky over the site's navy. Done on <body> rather
+     than a pseudo-element so it covers the page whatever the scroll height;
+     the class comes off again when you leave the lab. */
+  html.rlab-active, html.rlab-active body {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 72%, rgba(61,220,132,.13), transparent 70%),
+      radial-gradient(ellipse at 50% 20%, #10211a 0%, #040907 78%);
+    background-attachment: fixed;
+  }
+
+  #rlabView .back-link { color: var(--rl-muted-dim); }
+  #rlabView .back-link:hover { color: var(--rl-candle); }
+  #rlabView .titlebar h1 {
+    color: var(--rl-glow);
+    text-shadow: 0 0 22px rgba(61,220,132,.45), 0 3px 0 #04140c;
+  }
+  #rlabView .titlebar p { color: var(--rl-muted); }
+  #rlabView footer.hint { color: var(--rl-muted-dim); }
+  #rlabView .section-label { color: var(--rl-muted-dim); }
+
+  .rl-topbar { display: flex; gap: 14px; align-items: center; padding: 4px 0 0; flex-wrap: wrap; }
+
+  /* ---- buttons ---- */
+  #rlabView .reset-board-btn {
+    border-color: var(--rl-line-lit); color: var(--rl-muted);
+    background: rgba(8,18,13,.5);
+  }
+  #rlabView .reset-board-btn:hover { border-color: var(--rl-candle); color: var(--rl-candle); }
+  #rlabView .rl-primary { border-color: var(--rl-glow); color: var(--rl-glow); }
+  #rlabView .rl-primary:hover {
+    border-color: var(--rl-glow); color: #04140c; background: var(--rl-glow);
+  }
 
   .rl-modes {
     display: flex; gap: 10px; justify-content: center;
     margin: 22px 0 4px; flex-wrap: wrap;
   }
   .rl-modes button {
-    background: rgba(6,10,77,.6); border: 2px solid #4a52ff; color: var(--muted);
+    background: rgba(8,18,13,.55); border: 2px solid var(--rl-line-lit); color: var(--rl-muted);
     border-radius: 10px; padding: 10px 20px; cursor: pointer;
     font-family: Arial, sans-serif; font-size: 12.5px; font-weight: 700;
     letter-spacing: 1.5px; text-transform: uppercase;
   }
-  .rl-modes button:hover { border-color: var(--gold); color: var(--gold); }
+  .rl-modes button:hover { border-color: var(--rl-candle); color: var(--rl-candle); }
   .rl-modes button[aria-pressed="true"] {
-    background: linear-gradient(160deg, var(--tile-blue-light), var(--tile-blue));
-    border-color: var(--gold); color: var(--white);
+    background: linear-gradient(160deg, #1b3a2a, #0d2018);
+    border-color: var(--rl-glow); color: var(--rl-glow);
+    box-shadow: 0 0 18px rgba(61,220,132,.2);
   }
   .rl-mode-note {
-    text-align: center; color: var(--muted-dim); font-size: 12.5px;
-    margin: 12px auto 0; max-width: 680px; line-height: 1.55;
+    text-align: center; color: var(--rl-muted); font-size: 12.5px;
+    margin: 14px auto 0; max-width: 700px; line-height: 1.6;
   }
+
+  /* ---- the five jars ---- */
+  .rl-slots {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    margin: 20px auto 0;
+  }
+  .rl-slot {
+    width: 108px; min-height: 92px; border-radius: 10px;
+    border: 2px dashed var(--rl-line-lit);
+    background: rgba(8,18,13,.45);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8px 6px; text-align: center;
+  }
+  .rl-slot .q {
+    font-family: Georgia, serif; font-size: 34px; font-weight: 900;
+    color: var(--rl-muted-dim);
+  }
+  .rl-slot.done {
+    border-style: solid; border-color: var(--rl-glow-dim);
+    background: linear-gradient(160deg, rgba(27,58,42,.8), rgba(8,18,13,.6));
+  }
+  .rl-slot.done .q { display: none; }
+  .rl-slot .nm {
+    font-size: 11px; color: var(--rl-text); font-weight: 700; line-height: 1.3;
+  }
+  .rl-slot .sc {
+    font-family: Georgia, serif; font-size: 18px; color: var(--rl-candle); margin-top: 5px;
+  }
+  .rl-slot.live { border-color: var(--rl-candle); border-style: solid; }
+  .rl-slot.live .q { color: var(--rl-candle); }
+  .rl-slot.fail .sc { color: #ff6b5e; }
 
   /* ---- drug picker ---- */
   .rl-pick-grid {
@@ -1871,294 +1954,347 @@
   }
   .rl-pick {
     text-align: left; cursor: pointer;
-    background: linear-gradient(160deg, var(--tile-blue-light), var(--tile-blue) 60%, var(--board-navy));
-    border: 2px solid #4a52ff; border-radius: 11px; padding: 13px 14px;
+    background: linear-gradient(160deg, #1a3227, #0c1b14 65%, #08130e);
+    border: 2px solid var(--rl-line); border-radius: 11px; padding: 13px 14px;
     color: inherit; font-family: inherit;
-    transition: transform .12s ease, border-color .15s ease;
+    transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
   }
-  .rl-pick:hover { transform: translateY(-3px); border-color: var(--gold); }
+  .rl-pick:hover {
+    transform: translateY(-3px); border-color: var(--rl-glow);
+    box-shadow: 0 0 20px rgba(61,220,132,.16);
+  }
   .rl-pick .rl-pick-name {
     font-family: Georgia, serif; font-weight: 900; font-size: 16.5px;
-    color: var(--gold); line-height: 1.2;
+    color: var(--rl-candle); line-height: 1.2;
   }
-  .rl-pick .rl-pick-brand { font-size: 12px; color: #dfe2ff; margin-top: 3px; }
+  .rl-pick .rl-pick-brand { font-size: 12px; color: var(--rl-text); margin-top: 3px; }
   .rl-pick .rl-pick-cls {
-    font-size: 10.5px; color: var(--muted-dim); margin-top: 7px;
+    font-size: 10.5px; color: var(--rl-muted-dim); margin-top: 7px;
     letter-spacing: .6px; text-transform: uppercase; line-height: 1.35;
   }
   .rl-pick .rl-pick-best {
     margin-top: 9px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
-    color: var(--correct);
+    color: var(--rl-glow);
   }
   .rl-gen-label {
     grid-column: 1 / -1; margin: 16px 0 -4px;
-    color: var(--muted-dim); font-size: 11px; font-weight: 700;
+    color: var(--rl-muted-dim); font-size: 11px; font-weight: 700;
     letter-spacing: 3px; text-transform: uppercase;
   }
-  .rl-gen-label:first-child { margin-top: 4px; }
 
   /* ---- play head ---- */
-  .rl-head {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: 14px; flex-wrap: wrap; margin-top: 10px;
-  }
-  .rl-head-main h2 {
-    font-family: Georgia, serif; font-weight: 900; font-style: italic;
-    font-size: clamp(26px, 4.4vw, 40px); margin: 0; color: var(--gold);
-    text-shadow: 0 3px 0 var(--text-shadow-c);
-  }
-  .rl-head-main .rl-head-sub {
-    color: var(--muted); font-size: 12.5px; margin-top: 4px; letter-spacing: 1px;
-  }
-  .rl-head-meta { display: flex; gap: 10px; align-items: center; }
+  .rl-head-meta { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
   .rl-chip {
-    background: rgba(6,10,77,.65); border: 1px solid #4a52ff; border-radius: 8px;
-    padding: 7px 13px; text-align: center; min-width: 78px;
+    background: rgba(8,18,13,.6); border: 1px solid var(--rl-line-lit); border-radius: 8px;
+    padding: 7px 13px; text-align: center; min-width: 82px;
   }
   .rl-chip .k {
     display: block; font-size: 9.5px; letter-spacing: 1.6px;
-    text-transform: uppercase; color: var(--muted-dim);
+    text-transform: uppercase; color: var(--rl-muted-dim);
   }
   .rl-chip .v {
     display: block; font-size: 19px; font-weight: 700;
-    font-family: Georgia, serif; color: var(--gold);
+    font-family: Georgia, serif; color: var(--rl-glow);
+  }
+  .rl-chip.warn .v { color: var(--rl-candle); }
+
+  /* ---- the drug name, sitting over the cauldron ---- */
+  .rl-drug-plate { text-align: center; margin: 18px 0 10px; }
+  .rl-drug-name {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 900; font-style: italic;
+    font-size: clamp(30px, 5.2vw, 48px); line-height: 1.05;
+    color: var(--rl-candle);
+    text-shadow: 0 0 26px rgba(255,194,74,.5), 0 0 60px rgba(255,194,74,.22), 0 3px 0 #2a1a04;
+  }
+  .rl-drug-sub {
+    margin-top: 6px; color: var(--rl-muted); font-size: 12.5px; letter-spacing: 1.4px;
   }
 
-  /* ---- stage: tray + cell ---- */
+  /* ---- stage ---- */
   .rl-stage {
     display: grid; grid-template-columns: 250px 1fr; gap: 20px;
-    margin-top: 18px; align-items: start;
+    margin-top: 6px; align-items: start;
   }
   .rl-tray {
-    background: rgba(6,10,77,.5); border: 1px solid #343b96; border-radius: 12px;
+    background: var(--rl-panel); border: 1px solid var(--rl-line); border-radius: 12px;
     padding: 12px 12px 14px;
   }
   .rl-tray-title {
     font-size: 10.5px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--muted-dim); margin-bottom: 2px;
+    text-transform: uppercase; color: var(--rl-muted-dim); margin-bottom: 2px;
   }
+  .rl-tray-note { font-size: 11.5px; color: var(--rl-muted-dim); line-height: 1.5; margin-top: 4px; }
   .rl-fam { margin-top: 12px; }
   .rl-fam-name {
     font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase;
-    color: var(--muted-dim); margin-bottom: 5px;
+    color: var(--rl-muted-dim); margin-bottom: 5px;
   }
   .rl-fam-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .rl-chip-r {
-    border-radius: 999px; padding: 6px 12px; cursor: grab;
-    font-size: 13px; font-weight: 700; font-family: Arial, sans-serif;
-    border: 2px solid; background: rgba(6,10,77,.75);
+    border-radius: 999px; padding: 7px 13px; cursor: pointer;
+    font-size: 13.5px; font-weight: 700; font-family: Arial, sans-serif;
+    border: 2px solid; background: rgba(8,18,13,.8);
     user-select: none; -webkit-user-select: none; touch-action: none;
-    transition: transform .1s ease, box-shadow .1s ease;
+    transition: transform .1s ease, box-shadow .1s ease, opacity .15s ease;
   }
-  .rl-chip-r:hover { transform: translateY(-2px); }
-  .rl-chip-r.armed { box-shadow: 0 0 0 3px var(--gold); }
-  .rl-chip-r.used { opacity: .3; cursor: default; pointer-events: none; }
+  .rl-chip-r:hover { transform: translateY(-2px); box-shadow: 0 0 14px rgba(61,220,132,.25); }
+  .rl-chip-r.used { opacity: .25; cursor: default; pointer-events: none; }
   .rl-chip-r.ghost {
     position: fixed; z-index: 999; pointer-events: none;
     transform: translate(-50%, -50%) scale(1.15); opacity: .92;
   }
 
-  /* family colours */
-  .fam-dopamine    { border-color: #e8b33c; color: #ffd982; }
+  /* family colours — the tray only. Once in the brew a receptor is coloured
+     by what the drug DOES to it, not by which family it came from. */
+  .fam-dopamine    { border-color: #d9a441; color: #ffd982; }
   .fam-serotonin   { border-color: #9b6cf0; color: #d9c4ff; }
   .fam-histamine   { border-color: #2fa8a8; color: #9ef0f0; }
-  .fam-muscarinic  { border-color: #3fa564; color: #a4efc2; }
+  .fam-muscarinic  { border-color: #46a86a; color: #a4efc2; }
   .fam-adrenergic  { border-color: #d4566f; color: #ffb6c3; }
-  .fam-transporter { border-color: #3d8ad6; color: #a9d6ff; }
+  .fam-transporter { border-color: #4a8fd6; color: #a9d6ff; }
 
-  /* ---- the cell ---- */
+  /* ---- the cauldron ---- */
   .rl-cellwrap { display: flex; flex-direction: column; align-items: center; }
   .rl-cell {
-    position: relative; width: min(100%, 460px); aspect-ratio: 1;
+    position: relative; width: min(100%, 470px); aspect-ratio: 1;
     border-radius: 50%;
-    border: 14px solid #2b3282;
-    background: radial-gradient(circle at 50% 45%, #141a6e 0%, #0b1150 70%);
-    box-shadow: inset 0 0 40px rgba(0,0,0,.55), 0 8px 24px rgba(0,0,0,.4);
+    border: 16px solid var(--rl-iron);
+    background:
+      radial-gradient(circle at 50% 62%, rgba(61,220,132,.16) 0%, transparent 58%),
+      radial-gradient(circle at 50% 45%, #123024 0%, var(--rl-brew) 55%, #061410 100%);
+    /* The rim needs two edges to read as forged iron against a dark room: a
+       pewter highlight on the outside, and an inner edge catching the brew. */
+    box-shadow:
+      0 0 0 2px var(--rl-rim),
+      inset 0 0 0 2px var(--rl-rim-in),
+      inset 0 0 60px rgba(0,0,0,.75),
+      inset 0 0 22px rgba(61,220,132,.14),
+      0 0 34px rgba(61,220,132,.13),
+      0 10px 26px rgba(0,0,0,.55);
     transition: border-color .15s ease, box-shadow .15s ease;
   }
   .rl-cell.hot {
-    border-color: var(--gold);
-    box-shadow: inset 0 0 40px rgba(0,0,0,.55), 0 0 0 6px rgba(255,204,77,.2);
+    border-color: var(--rl-iron-lit);
+    box-shadow:
+      0 0 0 2px var(--rl-candle),
+      inset 0 0 0 2px var(--rl-glow),
+      inset 0 0 60px rgba(0,0,0,.75),
+      inset 0 0 30px rgba(61,220,132,.3),
+      0 0 0 7px rgba(255,194,74,.2),
+      0 0 46px rgba(61,220,132,.3);
   }
+  /* Bubbles. Purely decorative, and they stop dead for reduced motion. */
+  .rl-bubble {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle at 35% 30%, rgba(160,255,200,.5), rgba(61,220,132,.12) 70%);
+    animation: rlRise linear infinite;
+  }
+  @keyframes rlRise {
+    0%   { transform: translateY(14%) scale(.5); opacity: 0; }
+    18%  { opacity: .85; }
+    100% { transform: translateY(-62%) scale(1.15); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rl-bubble { animation: none; opacity: .35; }
+  }
+
   .rl-cell-label {
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
-    color: var(--muted-dim); font-size: 12.5px; line-height: 1.6;
-    pointer-events: none; padding: 0 22%;
-  }
-  .rl-cell-label strong {
-    display: block; font-family: Georgia, serif; font-size: 15px;
-    color: #8f96e8; margin-bottom: 6px;
+    color: var(--rl-muted-dim); font-size: 12.5px; line-height: 1.65;
+    pointer-events: none; padding: 0 20%;
   }
   .rl-cell.has-any .rl-cell-label { display: none; }
 
-  /* a receptor sitting in the membrane */
+  /* a receptor in the rim */
   .rl-rec {
     position: absolute; border-radius: 50%; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-family: Arial, sans-serif; color: #04081f;
-    border: 3px solid rgba(255,255,255,.35);
+    border: 3px solid rgba(255,255,255,.3);
     transform: translate(-50%, -50%);
-    transition: box-shadow .12s ease, width .12s ease, height .12s ease, font-size .12s ease;
-    box-shadow: 0 3px 10px rgba(0,0,0,.5);
+    transition: box-shadow .12s ease, width .12s ease, height .12s ease;
+    box-shadow: 0 3px 12px rgba(0,0,0,.6);
   }
-  .rl-rec.sel { box-shadow: 0 0 0 4px var(--gold), 0 3px 10px rgba(0,0,0,.5); }
-  .rl-rec .rl-rec-lab { pointer-events: none; white-space: nowrap; }
+  .rl-rec.sel { box-shadow: 0 0 0 4px var(--rl-candle), 0 3px 12px rgba(0,0,0,.6); }
+  .rl-rec.judge-ok   { border-color: #6dffa8; }
+  .rl-rec.judge-part { border-color: var(--rl-candle); }
+  .rl-rec.judge-bad  { border-color: #ff6b5e; }
 
-  /* action colours — same legend as the receptor heat-map:
-     blue antagonist, amber partial agonist, purple inverse agonist */
-  .act-antagonist { background: #4a86ff; }
-  .act-partial    { background: #ffb93d; }
-  .act-inverse    { background: #b06cff; }
-  .act-agonist    { background: #2fd07a; }
-  .act-reuptake   { background: #37d5d5; }
+  .rl-rec-tag {
+    position: absolute; transform: translate(-50%, -50%);
+    font-weight: 700; font-family: Arial, sans-serif; color: var(--rl-text);
+    white-space: nowrap; pointer-events: auto; cursor: pointer; text-align: center;
+    text-shadow: 0 1px 4px #02100a, 0 0 8px #02100a, 0 0 14px #02100a;
+    line-height: 1.25;
+  }
+  .rl-rec-tag.sel { color: var(--rl-candle); }
+  .rl-rec-tag .ki {
+    display: block; font-family: Georgia, serif; font-weight: 400;
+    color: var(--rl-candle); letter-spacing: .3px;
+  }
+
+  /* action colours, as asked: red blocks, blue half-turns it on,
+     green turns it on, purple drives it below baseline */
+  .act-antagonist { background: #e04a3f; }
+  .act-partial    { background: #3b82f6; }
+  .act-agonist    { background: #35c46a; }
+  .act-inverse    { background: #a855f7; }
+  .act-reuptake   { background: #14b8a6; }
 
   .rl-legend {
     display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
-    margin-top: 14px; font-size: 11px; color: var(--muted-dim);
+    margin-top: 16px; font-size: 11.5px; color: var(--rl-muted);
   }
   .rl-legend span { display: flex; align-items: center; gap: 5px; }
   .rl-legend i {
-    width: 11px; height: 11px; border-radius: 50%; display: inline-block;
-    border: 1px solid rgba(255,255,255,.3);
+    width: 12px; height: 12px; border-radius: 50%; display: inline-block;
+    border: 1px solid rgba(255,255,255,.28);
   }
 
-  /* ---- editor for the selected receptor ---- */
+  /* ---- editor ---- */
   .rl-editor {
-    margin-top: 16px; background: rgba(6,10,77,.55);
-    border: 1px solid #343b96; border-radius: 12px; padding: 14px 16px;
+    margin-top: 16px; background: var(--rl-panel);
+    border: 1px solid var(--rl-line); border-radius: 12px; padding: 14px 16px;
   }
-  .rl-editor.empty { color: var(--muted-dim); font-size: 12.5px; text-align: center; }
+  .rl-editor.empty { color: var(--rl-muted-dim); font-size: 12.5px; text-align: center; }
   .rl-ed-head {
     display: flex; align-items: center; justify-content: space-between;
     gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
   }
-  .rl-ed-name { font-family: Georgia, serif; font-size: 18px; color: var(--gold); font-weight: 900; }
-  .rl-ed-name small { font-family: Arial, sans-serif; font-size: 11.5px; color: var(--muted-dim); margin-left: 8px; letter-spacing: 1px; }
+  .rl-ed-name { font-family: Georgia, serif; font-size: 18px; color: var(--rl-glow); font-weight: 900; }
+  .rl-ed-name small { font-family: Arial, sans-serif; font-size: 11.5px; color: var(--rl-muted-dim); margin-left: 8px; letter-spacing: 1px; }
   .rl-ed-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
   .rl-ed-row > .rl-ed-lab {
     font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase;
-    color: var(--muted-dim); width: 74px; flex: none;
+    color: var(--rl-muted-dim); width: 74px; flex: none;
   }
   .rl-opt {
-    background: rgba(6,10,77,.7); border: 2px solid #4a52ff; color: var(--muted);
+    background: rgba(8,18,13,.75); border: 2px solid var(--rl-line-lit); color: var(--rl-muted);
     border-radius: 8px; padding: 7px 12px; cursor: pointer;
     font-family: Arial, sans-serif; font-size: 12px; font-weight: 700;
   }
-  .rl-opt:hover { border-color: var(--gold); color: var(--gold); }
-  .rl-opt[aria-pressed="true"] { border-color: var(--gold); color: #04081f; }
-  .rl-opt[aria-pressed="true"].o-antagonist { background: #4a86ff; }
-  .rl-opt[aria-pressed="true"].o-partial    { background: #ffb93d; }
-  .rl-opt[aria-pressed="true"].o-inverse    { background: #b06cff; }
-  .rl-opt[aria-pressed="true"].o-agonist    { background: #2fd07a; }
-  .rl-opt[aria-pressed="true"].o-reuptake   { background: #37d5d5; }
+  .rl-opt:hover { border-color: var(--rl-candle); color: var(--rl-candle); }
+  .rl-opt[aria-pressed="true"] { border-color: rgba(255,255,255,.55); color: #08130e; }
+  .rl-opt[aria-pressed="true"].o-antagonist { background: #e04a3f; }
+  .rl-opt[aria-pressed="true"].o-partial    { background: #3b82f6; color: #fff; }
+  .rl-opt[aria-pressed="true"].o-agonist    { background: #35c46a; }
+  .rl-opt[aria-pressed="true"].o-inverse    { background: #a855f7; color: #fff; }
+  .rl-opt[aria-pressed="true"].o-reuptake   { background: #14b8a6; }
   .rl-opt-size {
     display: flex; align-items: center; gap: 8px;
-    background: rgba(6,10,77,.7); border: 2px solid #4a52ff; color: var(--muted);
+    background: rgba(8,18,13,.75); border: 2px solid var(--rl-line-lit); color: var(--rl-muted);
     border-radius: 8px; padding: 6px 12px 6px 9px; cursor: pointer;
     font-family: Arial, sans-serif; font-size: 11.5px; font-weight: 700;
   }
-  .rl-opt-size:hover { border-color: var(--gold); color: var(--gold); }
-  .rl-opt-size[aria-pressed="true"] { border-color: var(--gold); color: var(--white); background: var(--tile-blue); }
-  .rl-opt-size i {
-    border-radius: 50%; background: #7f88e8; display: inline-block; flex: none;
-    border: 1px solid rgba(255,255,255,.3);
+  .rl-opt-size:hover { border-color: var(--rl-candle); color: var(--rl-candle); }
+  .rl-opt-size[aria-pressed="true"] {
+    border-color: var(--rl-glow); color: var(--rl-text); background: rgba(27,58,42,.85);
   }
-  .rl-opt-size b { font-weight: 700; }
-  .rl-opt-size em { font-style: normal; color: var(--muted-dim); font-weight: 400; }
+  .rl-opt-size i {
+    border-radius: 50%; background: var(--rl-muted); display: inline-block; flex: none;
+    border: 1px solid rgba(255,255,255,.28);
+  }
+  .rl-opt-size em { font-style: normal; color: var(--rl-muted-dim); font-weight: 400; }
   .rl-ed-remove {
-    background: transparent; border: 1px solid #6a3050; color: #e58fa6;
+    background: transparent; border: 1px solid #6a3038; color: #ff9d92;
     border-radius: 8px; padding: 6px 12px; cursor: pointer;
     font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
   }
-  .rl-ed-remove:hover { border-color: var(--wrong); color: #ffc0cc; }
+  .rl-ed-remove:hover { border-color: #ff6b5e; color: #ffc9c2; }
 
-  /* ---- results ---- */
-  .rl-score-hero {
-    text-align: center; margin: 6px 0 18px;
-  }
+  /* ---- results: your brew beside the true one ---- */
+  .rl-score-hero { text-align: center; margin: 4px 0 16px; }
   .rl-score-hero .rl-big {
     font-family: Georgia, serif; font-weight: 900; font-style: italic;
-    font-size: clamp(46px, 10vw, 84px); color: var(--gold); line-height: 1;
-    text-shadow: 0 4px 0 var(--text-shadow-c);
+    font-size: clamp(46px, 10vw, 84px); color: var(--rl-candle); line-height: 1;
+    text-shadow: 0 0 30px rgba(255,194,74,.45), 0 4px 0 #2a1a04;
   }
-  .rl-score-hero .rl-of { color: var(--muted-dim); font-size: 14px; letter-spacing: 2px; }
-  .rl-score-hero .rl-verdict { color: var(--muted); font-size: 14px; margin-top: 8px; }
+  .rl-score-hero.dead .rl-big { color: #ff6b5e; text-shadow: 0 0 30px rgba(255,107,94,.45), 0 4px 0 #2a0806; }
+  .rl-score-hero .rl-of { color: var(--rl-muted-dim); font-size: 14px; letter-spacing: 2px; }
+  .rl-score-hero .rl-verdict { color: var(--rl-muted); font-size: 14px; margin-top: 8px; }
+
+  .rl-compare {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 26px;
+    margin-top: 6px; align-items: start;
+  }
+  .rl-compare-col { display: flex; flex-direction: column; align-items: center; }
+  .rl-compare-head {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .rl-compare-head.mine { color: var(--rl-muted); }
+  .rl-compare-head.truth { color: var(--rl-glow); }
+  .rl-compare .rl-cell { width: min(100%, 360px); border-width: 13px; }
+  .rl-compare-foot {
+    margin-top: 12px; font-size: 11.5px; color: var(--rl-muted-dim);
+    text-align: center; line-height: 1.5; max-width: 340px;
+  }
 
   .rl-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
   .rl-table th {
-    text-align: left; padding: 8px 9px; color: var(--muted-dim);
+    text-align: left; padding: 8px 9px; color: var(--rl-muted-dim);
     font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase;
-    border-bottom: 1px solid #343b96; font-weight: 700;
+    border-bottom: 1px solid var(--rl-line); font-weight: 700;
   }
-  .rl-table td { padding: 9px; border-bottom: 1px solid rgba(52,59,150,.45); vertical-align: top; }
-  .rl-table tr.miss td { background: rgba(212,59,59,.08); }
-  .rl-table tr.falsepos td { background: rgba(212,59,59,.14); }
-  .rl-table tr.bonusrow td { background: rgba(31,174,90,.07); }
-  .rl-rname { font-weight: 700; color: var(--white); white-space: nowrap; }
-  .rl-ki { font-family: Georgia, serif; color: var(--gold); white-space: nowrap; font-size: 14px; }
-  .rl-ki small { font-family: Arial, sans-serif; color: var(--muted-dim); font-size: 10.5px; display: block; letter-spacing: .5px; }
+  .rl-table td { padding: 9px; border-bottom: 1px solid rgba(44,64,52,.6); vertical-align: top; }
+  .rl-table tr.miss td { background: rgba(224,74,63,.09); }
+  .rl-table tr.falsepos td { background: rgba(224,74,63,.16); }
+  .rl-table tr.bonusrow td { background: rgba(61,220,132,.07); }
+  .rl-rname { font-weight: 700; color: var(--rl-text); white-space: nowrap; }
+  .rl-ki { font-family: Georgia, serif; color: var(--rl-candle); white-space: nowrap; font-size: 14px; }
+  .rl-ki small { font-family: Arial, sans-serif; color: var(--rl-muted-dim); font-size: 10.5px; display: block; letter-spacing: .5px; }
   .rl-pill {
     display: inline-block; border-radius: 999px; padding: 2px 9px;
-    font-size: 11px; font-weight: 700; color: #04081f; white-space: nowrap;
+    font-size: 11px; font-weight: 700; color: #08130e; white-space: nowrap;
   }
-  .rl-note { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .rl-pill.act-partial, .rl-pill.act-inverse { color: #fff; }
+  .rl-note { color: var(--rl-muted); font-size: 12px; line-height: 1.5; }
   .rl-mark { font-weight: 700; white-space: nowrap; }
-  .rl-mark.ok { color: var(--correct); }
-  .rl-mark.part { color: var(--gold); }
-  .rl-mark.bad { color: var(--wrong); }
+  .rl-mark.ok { color: var(--rl-glow); }
+  .rl-mark.part { color: var(--rl-candle); }
+  .rl-mark.bad { color: #ff6b5e; }
 
   .rl-pearl {
-    margin-top: 20px; background: rgba(6,10,77,.55);
-    border: 1px solid #343b96; border-left: 4px solid var(--gold);
+    margin-top: 20px; background: var(--rl-panel);
+    border: 1px solid var(--rl-line); border-left: 4px solid var(--rl-candle);
     border-radius: 10px; padding: 14px 16px;
-    font-size: 13.5px; line-height: 1.65; color: #dfe2ff;
+    font-size: 13.5px; line-height: 1.65; color: var(--rl-text);
   }
   .rl-pearl b {
-    display: block; color: var(--gold); font-size: 10.5px; letter-spacing: 2px;
+    display: block; color: var(--rl-candle); font-size: 10.5px; letter-spacing: 2px;
     text-transform: uppercase; margin-bottom: 7px;
   }
-  .rl-src {
-    margin-top: 10px; font-size: 11px; color: var(--muted-dim); line-height: 1.5;
-  }
+  .rl-src { margin-top: 10px; font-size: 11px; color: var(--rl-muted-dim); line-height: 1.5; }
   .rl-sect {
-    margin-top: 20px; color: var(--muted-dim); font-size: 10.5px;
+    margin-top: 22px; color: var(--rl-muted-dim); font-size: 10.5px;
     font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
   }
 
-  /* gauntlet scoreboard */
   .rl-run-list { margin-top: 10px; }
   .rl-run-row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 9px 12px; border-bottom: 1px solid rgba(52,59,150,.45);
+    padding: 9px 12px; border-bottom: 1px solid rgba(44,64,52,.6);
   }
-  .rl-run-row .n { color: var(--white); font-weight: 700; }
-  .rl-run-row .s { font-family: Georgia, serif; font-size: 17px; color: var(--gold); }
+  .rl-run-row .n { color: var(--rl-text); font-weight: 700; }
+  .rl-run-row .s { font-family: Georgia, serif; font-size: 17px; color: var(--rl-candle); }
+  .rl-run-row.fail .s { color: #ff6b5e; }
 
+  @media (max-width: 900px) {
+    .rl-compare { grid-template-columns: 1fr; gap: 30px; }
+  }
   @media (max-width: 860px) {
     .rl-stage { grid-template-columns: 1fr; }
     .rl-tray { order: 2; }
     .rl-cellwrap { order: 1; }
-    .rl-fam-chips { gap: 7px; }
-    .rl-head { justify-content: center; text-align: center; }
-    .rl-head-main { width: 100%; }
     .rl-ed-row > .rl-ed-lab { width: 100%; }
   }
   @media (max-width: 520px) {
-    .rl-cell { border-width: 11px; }
+    .rl-cell { border-width: 12px; }
     .rl-table { font-size: 12px; }
     .rl-table td, .rl-table th { padding: 7px 5px; }
     .rl-note { font-size: 11.5px; }
+    .rl-slot { width: 88px; min-height: 80px; }
   }
-
-  /* Receptor label, parked just inside the ring where there is always room. */
-  .rl-rec-tag {
-    position: absolute; transform: translate(-50%, -50%);
-    font-weight: 700; font-family: Arial, sans-serif; color: #cfd3ff;
-    white-space: nowrap; pointer-events: auto; cursor: pointer;
-    text-shadow: 0 1px 3px #05082e, 0 0 6px #05082e;
-  }
-  .rl-rec-tag.sel { color: var(--gold); }
 
 </style>
 </head>
@@ -2254,20 +2390,30 @@
 
 <!-- ===================== RECEPTOR LAB ===================== -->
 <div class="wrap" id="rlabView" hidden>
-  <div class="topbar"><a class="back-link" href="#">&larr; All games</a></div>
+  <div class="rl-topbar">
+    <a class="back-link" href="#">&larr; All games</a>
+    <a class="back-link" id="rlHomeLink" href="#receptor-lab" hidden>&larr; Receptor Lab</a>
+  </div>
 
   <!-- menu -->
   <div id="rlMenu">
     <div class="titlebar">
       <h1>Receptor Lab</h1>
-      <p>Antipsychotics &middot; build the binding profile</p>
+      <p>Antipsychotics &middot; brew the binding profile</p>
     </div>
 
     <div class="rl-modes" role="group" aria-label="Mode">
-      <button type="button" id="rlModeFree" aria-pressed="true">Free play</button>
-      <button type="button" id="rlModeGauntlet" aria-pressed="false">Gauntlet</button>
+      <button type="button" id="rlModeGauntlet" aria-pressed="true">Gauntlet</button>
+      <button type="button" id="rlModeSurvival" aria-pressed="false">Survival</button>
+      <button type="button" id="rlModeFree" aria-pressed="false">Free play</button>
     </div>
     <p class="rl-mode-note" id="rlModeNote"></p>
+
+    <div class="rl-slots" id="rlMenuSlots"></div>
+
+    <div id="rlStartRow" class="board-actions">
+      <button class="reset-board-btn rl-primary" id="rlStartBtn">Start</button>
+    </div>
 
     <div class="rl-pick-grid" id="rlPickGrid"></div>
 
@@ -2276,35 +2422,33 @@
 
   <!-- play -->
   <div id="rlPlay" hidden>
-    <div class="rl-head">
-      <div class="rl-head-main">
-        <h2 id="rlDrugName"></h2>
-        <div class="rl-head-sub" id="rlDrugSub"></div>
-      </div>
-      <div class="rl-head-meta" id="rlHeadMeta"></div>
+    <div class="rl-head-meta" id="rlHeadMeta"></div>
+    <div class="rl-slots" id="rlPlaySlots"></div>
+
+    <div class="rl-drug-plate">
+      <div class="rl-drug-name" id="rlDrugName"></div>
+      <div class="rl-drug-sub" id="rlDrugSub"></div>
     </div>
 
     <div class="rl-stage">
       <div class="rl-tray" id="rlTray">
         <div class="rl-tray-title">Receptor tray</div>
-        <div style="font-size:11.5px;color:var(--muted-dim);line-height:1.5;margin-top:4px">
-          Drag onto the cell &mdash; or tap one, then tap the cell.
-        </div>
+        <div class="rl-tray-note">Click one to drop it in the cauldron &mdash; or drag it there.</div>
         <div id="rlTrayFams"></div>
       </div>
 
       <div class="rl-cellwrap">
         <div class="rl-cell" id="rlCell">
           <div class="rl-cell-label">
-            <strong id="rlCellDrug"></strong>
-            Drop the receptors this drug acts on into the membrane, then set what it does at each one and how strongly.
+            Drop in every receptor this drug acts on, then set what it does at
+            each one and how tightly it binds.
           </div>
         </div>
         <div class="rl-legend">
           <span><i class="act-antagonist"></i>Antagonist</span>
           <span><i class="act-partial"></i>Partial agonist</span>
-          <span><i class="act-inverse"></i>Inverse agonist</span>
           <span><i class="act-agonist"></i>Agonist</span>
+          <span><i class="act-inverse"></i>Inverse agonist</span>
           <span><i class="act-reuptake"></i>Reuptake block</span>
           <span>&mdash; bigger circle = tighter binding</span>
         </div>
@@ -2314,8 +2458,8 @@
     <div class="rl-editor empty" id="rlEditor"></div>
 
     <div class="board-actions">
-      <button class="reset-board-btn" id="rlCheckBtn" style="border-color:var(--gold);color:var(--gold)">Lock in answer</button>
-      <button class="reset-board-btn" id="rlClearBtn">Clear cell</button>
+      <button class="reset-board-btn rl-primary" id="rlCheckBtn">Lock in answer</button>
+      <button class="reset-board-btn" id="rlClearBtn">Empty the cauldron</button>
       <button class="reset-board-btn" id="rlQuitBtn">Leave round</button>
     </div>
 
@@ -2324,21 +2468,31 @@
 
   <!-- results -->
   <div id="rlResult" hidden>
-    <div class="topbar" style="height:4px"></div>
-    <div class="rl-head">
-      <div class="rl-head-main">
-        <h2 id="rlResName"></h2>
-        <div class="rl-head-sub" id="rlResSub"></div>
-      </div>
+    <div class="rl-drug-plate">
+      <div class="rl-drug-name" id="rlResName"></div>
+      <div class="rl-drug-sub" id="rlResSub"></div>
     </div>
 
-    <div class="rl-score-hero">
+    <div class="rl-score-hero" id="rlScoreHero">
       <div class="rl-big" id="rlResScore">0</div>
-      <div class="rl-of">out of 1000</div>
+      <div class="rl-of" id="rlResOf">out of 1000</div>
       <div class="rl-verdict" id="rlResVerdict"></div>
     </div>
 
-    <div class="rl-sect">What it actually binds</div>
+    <div class="rl-compare">
+      <div class="rl-compare-col">
+        <div class="rl-compare-head mine">What you brewed</div>
+        <div class="rl-cell" id="rlCellYours"></div>
+        <div class="rl-compare-foot" id="rlYoursFoot"></div>
+      </div>
+      <div class="rl-compare-col">
+        <div class="rl-compare-head truth">What it actually binds</div>
+        <div class="rl-cell" id="rlCellTruth"></div>
+        <div class="rl-compare-foot" id="rlTruthFoot"></div>
+      </div>
+    </div>
+
+    <div class="rl-sect">Receptor by receptor</div>
     <div style="overflow-x:auto">
       <table class="rl-table" id="rlResTable"></table>
     </div>
@@ -2347,27 +2501,28 @@
     <div class="rl-src" id="rlResSrc"></div>
 
     <div class="board-actions">
-      <button class="reset-board-btn" id="rlNextBtn" style="border-color:var(--gold);color:var(--gold)">Next</button>
+      <button class="reset-board-btn rl-primary" id="rlNextBtn">Next</button>
       <button class="reset-board-btn" id="rlRetryBtn">Try this one again</button>
-      <button class="reset-board-btn" id="rlMenuBtn">Back to the drug list</button>
+      <button class="reset-board-btn" id="rlMenuBtn">Back to the Receptor Lab</button>
     </div>
   </div>
 
-  <!-- gauntlet summary -->
+  <!-- run summary -->
   <div id="rlSummary" hidden>
     <div class="titlebar">
-      <h1>Gauntlet complete</h1>
+      <h1 id="rlSumTitle">Gauntlet complete</h1>
       <p id="rlSumSub"></p>
     </div>
-    <div class="rl-score-hero">
+    <div class="rl-score-hero" id="rlSumHero">
       <div class="rl-big" id="rlSumScore">0</div>
       <div class="rl-of" id="rlSumOf">out of 5000</div>
       <div class="rl-verdict" id="rlSumVerdict"></div>
     </div>
+    <div class="rl-slots" id="rlSumSlots"></div>
     <div class="rl-run-list" id="rlSumList"></div>
     <div class="board-actions">
-      <button class="reset-board-btn" id="rlSumAgainBtn" style="border-color:var(--gold);color:var(--gold)">Run it again</button>
-      <button class="reset-board-btn" id="rlSumMenuBtn">Back to the drug list</button>
+      <button class="reset-board-btn rl-primary" id="rlSumAgainBtn">Run it again</button>
+      <button class="reset-board-btn" id="rlSumMenuBtn">Back to the Receptor Lab</button>
     </div>
   </div>
 </div>
@@ -3547,8 +3702,8 @@ const EXTRAS = [
     id: "receptor-lab",
     title: "Receptor Lab: Antipsychotics",
     kind: "Drag & drop \u00b7 solo",
-    blurb: "You get a blank cell and a drug name. Drag in every receptor it acts on, say whether it blocks, partially activates or inverts each one, and size the circle to the binding strength. Lock in and the real Ki values land beside your answer.",
-    tags: ["Psychopharm", "19 medications", "1000 points a round", "Free play + gauntlet"]
+    blurb: "A drug name over an empty cauldron. Click in every receptor it acts on, say whether it blocks, partially activates, activates or inverts each one, and size the circle to the binding strength. Lock in and your brew is set beside the real one, Ki values and all.",
+    tags: ["Psychopharm", "19 medications", "1000 points a round", "Gauntlet \u00b7 Survival \u00b7 Free play"]
   }
 ];
 
@@ -8147,8 +8302,8 @@ const RL_RECEPTORS = [
 const RL_ACTIONS = [
   { id: 'antagonist', label: 'Antagonist',      short: 'Antag',   blurb: 'Blocks the receptor' },
   { id: 'partial',    label: 'Partial agonist', short: 'Partial', blurb: 'Submaximal activation — stabiliser' },
-  { id: 'inverse',    label: 'Inverse agonist', short: 'Inverse', blurb: 'Drives below baseline tone' },
   { id: 'agonist',    label: 'Agonist',         short: 'Agonist', blurb: 'Fully activates the receptor' },
+  { id: 'inverse',    label: 'Inverse agonist', short: 'Inverse', blurb: 'Drives below baseline tone' },
   { id: 'reuptake',   label: 'Reuptake block',  short: 'Reuptake',blurb: 'Transporter inhibition', transporterOnly: true },
 ];
 
@@ -8536,10 +8691,11 @@ const RL_DRUGS = [
 /* =====================================================================
  * RECEPTOR LAB
  * =====================================================================
- * Drag a receptor out of the tray and into the cell membrane, say what the
- * drug does there (antagonist / partial agonist / inverse agonist / agonist
- * / reuptake block) and how hard it binds. Lock in, and the real Ki values
- * come up beside your answer.
+ * Click a receptor and it drops into the cauldron. Say what the drug does
+ * there (antagonist / partial agonist / agonist / inverse agonist, or a
+ * reuptake block for SERT and NET) and how tightly it binds, sized in four
+ * bands. Lock in and your brew is set beside the real one, with the Ki
+ * values written against the true profile.
  *
  * A perfect round is 1000 points, split across the drug's CORE receptors:
  * half for knowing it binds at all, a quarter for the action, a quarter for
@@ -8548,9 +8704,9 @@ const RL_DRUGS = [
  * drug genuinely does not touch costs 40% of a core receptor — knowing what
  * risperidone does NOT hit is half the point of the exercise.
  *
- * Everything runs on pointer events, so a finger and a mouse take the same
- * path. Tapping a chip arms it; tapping the cell then drops it, which is the
- * whole interaction on a phone.
+ * Three modes: a five-drug gauntlet against the clock (the default), an
+ * endless survival run where anything at or below 800 ends it, and free
+ * play on any single drug.
  * ===================================================================== */
 const RLAB = (function () {
   const view      = document.getElementById('rlabView');
@@ -8558,10 +8714,17 @@ const RLAB = (function () {
   const playEl    = document.getElementById('rlPlay');
   const resultEl  = document.getElementById('rlResult');
   const summaryEl = document.getElementById('rlSummary');
+  const homeLink  = document.getElementById('rlHomeLink');
 
   const pickGrid  = document.getElementById('rlPickGrid');
+  const menuSlots = document.getElementById('rlMenuSlots');
+  const playSlots = document.getElementById('rlPlaySlots');
+  const sumSlots  = document.getElementById('rlSumSlots');
+  const startRow  = document.getElementById('rlStartRow');
+  const startBtn  = document.getElementById('rlStartBtn');
   const modeFree  = document.getElementById('rlModeFree');
   const modeGaunt = document.getElementById('rlModeGauntlet');
+  const modeSurv  = document.getElementById('rlModeSurvival');
   const modeNote  = document.getElementById('rlModeNote');
 
   const nameEl    = document.getElementById('rlDrugName');
@@ -8569,14 +8732,19 @@ const RLAB = (function () {
   const metaEl    = document.getElementById('rlHeadMeta');
   const trayFams  = document.getElementById('rlTrayFams');
   const cellEl    = document.getElementById('rlCell');
-  const cellDrug  = document.getElementById('rlCellDrug');
   const editorEl  = document.getElementById('rlEditor');
   const playHint  = document.getElementById('rlPlayHint');
 
   const resName   = document.getElementById('rlResName');
   const resSub    = document.getElementById('rlResSub');
+  const scoreHero = document.getElementById('rlScoreHero');
   const resScore  = document.getElementById('rlResScore');
+  const resOf     = document.getElementById('rlResOf');
   const resVerdict= document.getElementById('rlResVerdict');
+  const cellYours = document.getElementById('rlCellYours');
+  const cellTruth = document.getElementById('rlCellTruth');
+  const yoursFoot = document.getElementById('rlYoursFoot');
+  const truthFoot = document.getElementById('rlTruthFoot');
   const resTable  = document.getElementById('rlResTable');
   const resPearl  = document.getElementById('rlResPearl');
   const resSrc    = document.getElementById('rlResSrc');
@@ -8584,15 +8752,25 @@ const RLAB = (function () {
   const retryBtn  = document.getElementById('rlRetryBtn');
   const menuBtn   = document.getElementById('rlMenuBtn');
 
+  const sumTitle  = document.getElementById('rlSumTitle');
   const sumSub    = document.getElementById('rlSumSub');
+  const sumHero   = document.getElementById('rlSumHero');
   const sumScore  = document.getElementById('rlSumScore');
   const sumOf     = document.getElementById('rlSumOf');
   const sumVerdict= document.getElementById('rlSumVerdict');
   const sumList   = document.getElementById('rlSumList');
 
   const GAUNTLET_N = 5;
+  const SURVIVE_AT = 800;          // strictly above this to live another round
   const BEST_KEY = 'rlab.best.v1';
   const RUN_KEY  = 'rlab.gauntlet.v1';
+  const SURV_KEY = 'rlab.survival.v1';
+
+  /* Circle diameters per strength band, and the tag type size. Both are
+     scaled by the cauldron's width so a phone gets the same proportions. */
+  const SIZE = { 1: 28, 2: 42, 3: 58, 4: 78 };
+  const TAG_PX = 16;
+
   const FAM_ORDER = ['dopamine', 'serotonin', 'histamine', 'muscarinic', 'adrenergic', 'transporter'];
   const FAM_NAME = {
     dopamine: 'Dopamine', serotonin: 'Serotonin', histamine: 'Histamine',
@@ -8622,15 +8800,17 @@ const RLAB = (function () {
     try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* no store, no problem */ }
   }
 
-  let mode = 'free';
-  let queue = [];        // drug ids for this run
+  let mode = 'gauntlet';
+  let queue = [];
   let qIdx = 0;
   let drug = null;
-  let placed = {};       // recId -> { act, tier }
+  let placed = {};
   let selected = null;
   let runResults = [];
   let runStart = 0;
   let tick = null;
+  let lastRes = null;
+  let died = false;
 
   const shuffle = arr => {
     const a = arr.slice();
@@ -8701,17 +8881,6 @@ const RLAB = (function () {
     return { score: Math.max(0, Math.min(1000, Math.round(total))), rows, fps, per };
   }
 
-  /* The round verdict points at the answer table; the gauntlet summary has
-     no table under it, so it gets its own wording. */
-  function runVerdict(avg) {
-    if (avg >= 950) return 'Textbook, the whole way through.';
-    if (avg >= 850) return 'Strong run \u2014 a few bands off.';
-    if (avg >= 700) return 'Solid. The profiles are mostly there.';
-    if (avg >= 500) return 'The outlines are right; the strengths need work.';
-    if (avg >= 250) return 'Some of it landed. Worth another run.';
-    return 'Rough run \u2014 try these in free play first.';
-  }
-
   function verdictFor(score) {
     if (score >= 950) return 'Textbook. That is the profile.';
     if (score >= 850) return 'Strong — a band or an action off somewhere.';
@@ -8720,20 +8889,144 @@ const RLAB = (function () {
     if (score >= 250) return 'Some of it landed. Read the table and run it again.';
     return 'Rough one — the table below is the whole answer.';
   }
+  function runVerdict(avg) {
+    if (avg >= 950) return 'Textbook, the whole way through.';
+    if (avg >= 850) return 'Strong run — a few bands off.';
+    if (avg >= 700) return 'Solid. The profiles are mostly there.';
+    if (avg >= 500) return 'The outlines are right; the strengths need work.';
+    if (avg >= 250) return 'Some of it landed. Worth another run.';
+    return 'Rough run — try these in free play first.';
+  }
+
+  /* ---------------- cauldron painting ----------------
+   * One routine draws every cauldron on the site: the live one you build in,
+   * and the two frozen ones on the answer screen. `items` is what sits in the
+   * rim; the options decide whether it reacts to clicks and whether each
+   * receptor carries its Ki underneath. */
+  function paintCell(el, items, opts) {
+    opts = opts || {};
+    el.querySelectorAll('.rl-rec, .rl-rec-tag').forEach(n => n.remove());
+    el.classList.toggle('has-any', items.length > 0);
+
+    const w = el.clientWidth || 380;
+    const scale = Math.max(0.75, Math.min(1, w / 440));
+    const R = w / 2;
+
+    items.forEach((it, i) => {
+      const ang = (-Math.PI / 2) + (i * 2 * Math.PI / items.length);
+      const size = Math.round(SIZE[it.tier] * scale);
+      const cx = R + R * Math.cos(ang);
+      const cy = R + R * Math.sin(ang);
+
+      const el2 = document.createElement('div');
+      el2.className = 'rl-rec act-' + it.act
+        + (opts.selected === it.rid ? ' sel' : '')
+        + (it.judge ? ' judge-' + it.judge : '');
+      el2.style.width = size + 'px';
+      el2.style.height = size + 'px';
+      el2.style.left = cx + 'px';
+      el2.style.top = cy + 'px';
+      el2.title = recById[it.rid].full + ' — ' + actById[it.act].label;
+
+      const tag = document.createElement('div');
+      tag.className = 'rl-rec-tag' + (opts.selected === it.rid ? ' sel' : '');
+      tag.style.fontSize = Math.round(TAG_PX * scale) + 'px';
+      const nm = document.createElement('span');
+      nm.textContent = recById[it.rid].label;
+      tag.appendChild(nm);
+      if (it.ki != null) {
+        const k = document.createElement('span');
+        k.className = 'ki';
+        k.style.fontSize = Math.round(TAG_PX * scale * 0.78) + 'px';
+        k.textContent = fmtKi(it.ki) + ' nM';
+        tag.appendChild(k);
+      }
+
+      if (opts.interactive) {
+        el2.onclick = e => { e.stopPropagation(); selectRec(it.rid); };
+        tag.onclick = e => { e.stopPropagation(); selectRec(it.rid); };
+      } else {
+        el2.style.cursor = 'default';
+        tag.style.cursor = 'default';
+        tag.style.pointerEvents = 'none';
+      }
+
+      el.append(el2, tag);
+
+      /* The label goes just inside the rim, where there is always room. It
+         has to clear the circle along the radius, and at 3 and 9 o'clock it
+         is the label's own width that collides — so measure, then place. */
+      const halfW = tag.offsetWidth / 2;
+      const halfH = tag.offsetHeight / 2;
+      const clearance = (size / 2) + 8 * scale
+        + Math.abs(Math.cos(ang)) * halfW + Math.abs(Math.sin(ang)) * halfH;
+      const inner = Math.max(0, R - clearance);
+      tag.style.left = (R + inner * Math.cos(ang)) + 'px';
+      tag.style.top = (R + inner * Math.sin(ang)) + 'px';
+    });
+  }
+
+  /* A slow boil. Decorative only, and seeded once per cauldron. */
+  function addBubbles(el, n) {
+    if (el.querySelector('.rl-bubble')) return;
+    for (let i = 0; i < n; i++) {
+      const b = document.createElement('div');
+      b.className = 'rl-bubble';
+      const d = 5 + Math.random() * 13;
+      b.style.width = d + 'px';
+      b.style.height = d + 'px';
+      b.style.left = (16 + Math.random() * 68) + '%';
+      b.style.bottom = (8 + Math.random() * 26) + '%';
+      b.style.animationDuration = (3.6 + Math.random() * 3.6) + 's';
+      b.style.animationDelay = (Math.random() * 5) + 's';
+      el.appendChild(b);
+    }
+  }
+
+  const placedItems = () => Object.keys(placed).map(rid => ({
+    rid: rid, act: placed[rid].act, tier: placed[rid].tier,
+  }));
+
+  function renderCell() {
+    paintCell(cellEl, placedItems(), { interactive: true, selected: selected });
+  }
 
   /* ---------------- menu ---------------- */
   function renderMenu() {
     modeFree.setAttribute('aria-pressed', String(mode === 'free'));
     modeGaunt.setAttribute('aria-pressed', String(mode === 'gauntlet'));
+    modeSurv.setAttribute('aria-pressed', String(mode === 'survival'));
 
-    const best = load(BEST_KEY);
     const run = load(RUN_KEY);
+    const surv = load(SURV_KEY);
 
-    if (mode === 'free') {
-      modeNote.textContent = 'Pick any medication and build its profile. 1000 points a round, '
-        + 'and your best for each drug is kept on this device.';
-      pickGrid.hidden = false;
-      pickGrid.innerHTML = '';
+    menuSlots.innerHTML = '';
+    pickGrid.innerHTML = '';
+    pickGrid.hidden = mode !== 'free';
+    startRow.hidden = mode === 'free';
+    menuSlots.hidden = mode === 'free';
+
+    if (mode === 'gauntlet') {
+      modeNote.textContent = GAUNTLET_N + ' medications dealt at random, back to back, with the clock running. '
+        + '1000 points a round, ' + (GAUNTLET_N * 1000) + ' for a clean sweep — the clock is recorded, not scored.'
+        + (run.best != null ? ' Your best: ' + run.best + ' in ' + fmtTime(run.bestTime || 0) + '.' : '');
+      for (let i = 0; i < GAUNTLET_N; i++) menuSlots.appendChild(slotEl(null));
+      startBtn.textContent = 'Start the gauntlet';
+
+    } else if (mode === 'survival') {
+      modeNote.textContent = 'One drug after another with no end. Score above ' + SURVIVE_AT
+        + ' and you brew on; hit ' + SURVIVE_AT + ' or less and the run is over.'
+        + (surv.best ? ' Longest run so far: ' + surv.best + (surv.best === 1 ? ' round.' : ' rounds.') : '');
+      for (let i = 0; i < 4; i++) menuSlots.appendChild(slotEl(null));
+      const inf = slotEl(null);
+      inf.querySelector('.q').textContent = '∞';
+      menuSlots.appendChild(inf);
+      startBtn.textContent = 'Start surviving';
+
+    } else {
+      modeNote.textContent = 'Pick any medication and build its profile at your own pace. '
+        + '1000 points a round, and your best for each drug is kept on this device.';
+      const best = load(BEST_KEY);
       let lastGen = null;
       RL_DRUGS.forEach(d => {
         if (d.gen !== lastGen) {
@@ -8762,26 +9055,36 @@ const RLAB = (function () {
         btn.onclick = () => startFree(d.id);
         pickGrid.appendChild(btn);
       });
-    } else {
-      const bestLine = run.best != null
-        ? ' Your best so far: ' + run.best + ' / ' + (GAUNTLET_N * 1000) + ' in ' + fmtTime(run.bestTime || 0) + '.'
-        : '';
-      modeNote.innerHTML = GAUNTLET_N + ' medications dealt at random, back to back, with the clock running. '
-        + 'Scoring is the same 1000 a round — the clock is recorded, not scored.' + bestLine;
-      pickGrid.hidden = true;
-      const go = document.createElement('button');
-      go.type = 'button';
-      go.className = 'reset-board-btn';
-      go.style.cssText = 'border-color:var(--gold);color:var(--gold);margin:22px auto 0';
-      go.textContent = 'Start the gauntlet';
-      go.onclick = startGauntlet;
-      pickGrid.hidden = false;
-      pickGrid.innerHTML = '';
-      pickGrid.style.display = 'block';
-      pickGrid.appendChild(go);
-      return;
     }
-    pickGrid.style.display = '';
+  }
+
+  /* A jar on the shelf: a question mark until that round is behind you. */
+  function slotEl(res, live) {
+    const d = document.createElement('div');
+    d.className = 'rl-slot' + (res ? ' done' : '') + (live ? ' live' : '')
+      + (res && res.failed ? ' fail' : '');
+    const q = document.createElement('div');
+    q.className = 'q';
+    q.textContent = '?';
+    d.appendChild(q);
+    if (res) {
+      const n = document.createElement('div');
+      n.className = 'nm'; n.textContent = res.name;
+      const s = document.createElement('div');
+      s.className = 'sc'; s.textContent = res.score;
+      d.append(n, s);
+    }
+    return d;
+  }
+
+  function renderSlots(el, total) {
+    el.innerHTML = '';
+    el.hidden = mode === 'free';
+    if (mode === 'free') return;
+    const n = total != null ? total : Math.max(runResults.length + 1, GAUNTLET_N);
+    for (let i = 0; i < n; i++) {
+      el.appendChild(slotEl(runResults[i] || null, i === runResults.length && !died));
+    }
   }
 
   function show(which) {
@@ -8789,6 +9092,7 @@ const RLAB = (function () {
     playEl.hidden    = which !== 'play';
     resultEl.hidden  = which !== 'result';
     summaryEl.hidden = which !== 'summary';
+    homeLink.hidden  = which === 'menu';
     window.scrollTo(0, 0);
   }
 
@@ -8798,15 +9102,17 @@ const RLAB = (function () {
     queue = [id];
     qIdx = 0;
     runResults = [];
+    died = false;
     stopClock();
     openDrug(id);
   }
 
-  function startGauntlet() {
-    mode = 'gauntlet';
-    queue = shuffle(RL_DRUGS.map(d => d.id)).slice(0, GAUNTLET_N);
+  function startRun() {
+    queue = shuffle(RL_DRUGS.map(d => d.id));
+    if (mode === 'gauntlet') queue = queue.slice(0, GAUNTLET_N);
     qIdx = 0;
     runResults = [];
+    died = false;
     runStart = Date.now();
     startClock();
     openDrug(queue[0]);
@@ -8826,21 +9132,22 @@ const RLAB = (function () {
     selected = null;
     nameEl.textContent = drug.name;
     subEl.textContent = drug.brand + ' · ' + drug.cls;
-    cellDrug.textContent = drug.name;
     playHint.textContent = 'Every receptor in the tray is fair game — some of them this drug does not touch, '
-      + 'and placing one of those costs you.';
+      + 'and dropping one of those in costs you.';
+    addBubbles(cellEl, 9);
     renderTray();
     renderCell();
     renderEditor();
     renderMeta();
+    renderSlots(playSlots, mode === 'gauntlet' ? GAUNTLET_N : null);
     show('play');
   }
 
   function renderMeta() {
     metaEl.innerHTML = '';
-    const chip = (k, v) => {
+    const chip = (k, v, warn) => {
       const d = document.createElement('div');
-      d.className = 'rl-chip';
+      d.className = 'rl-chip' + (warn ? ' warn' : '');
       d.innerHTML = '<span class="k"></span><span class="v"></span>';
       d.querySelector('.k').textContent = k;
       d.querySelector('.v').textContent = v;
@@ -8849,6 +9156,10 @@ const RLAB = (function () {
     if (mode === 'gauntlet') {
       metaEl.appendChild(chip('Drug', (qIdx + 1) + ' / ' + queue.length));
       metaEl.appendChild(chip('Total', runResults.reduce((a, r) => a + r.score, 0)));
+      metaEl.appendChild(chip('Time', fmtTime(Date.now() - runStart)));
+    } else if (mode === 'survival') {
+      metaEl.appendChild(chip('Round', qIdx + 1));
+      metaEl.appendChild(chip('Survive', 'over ' + SURVIVE_AT, true));
       metaEl.appendChild(chip('Time', fmtTime(Date.now() - runStart)));
     } else {
       const best = load(BEST_KEY)[drug.id];
@@ -8880,59 +9191,6 @@ const RLAB = (function () {
       });
       wrap.append(h, row);
       trayFams.appendChild(wrap);
-    });
-  }
-
-  /* ---------------- the cell ---------------- */
-  function renderCell() {
-    cellEl.querySelectorAll('.rl-rec, .rl-rec-tag').forEach(n => n.remove());
-    const ids = Object.keys(placed);
-    cellEl.classList.toggle('has-any', ids.length > 0);
-    if (!ids.length) return;
-
-    const w = cellEl.clientWidth || 420;
-    const scale = Math.max(0.62, Math.min(1, w / 440));
-    const SIZE = { 1: 30, 2: 40, 3: 52, 4: 64 };
-    const R = w / 2;                       // centres sit on the membrane ring
-
-    ids.forEach((rid, i) => {
-      const p = placed[rid];
-      const ang = (-Math.PI / 2) + (i * 2 * Math.PI / ids.length);
-      const size = Math.round(SIZE[p.tier] * scale);
-      const cx = R + R * Math.cos(ang);
-      const cy = R + R * Math.sin(ang);
-
-      const el = document.createElement('div');
-      el.className = 'rl-rec act-' + p.act + (selected === rid ? ' sel' : '');
-      el.style.width = size + 'px';
-      el.style.height = size + 'px';
-      el.style.left = cx + 'px';
-      el.style.top = cy + 'px';
-      el.title = recById[rid].full + ' — ' + actById[p.act].label;
-      el.dataset.rec = rid;
-      el.onclick = e => { e.stopPropagation(); selectRec(rid); };
-
-      /* Label sits just inside the ring, where there is always room, so it
-         stays legible whatever size the circle is and never spills off a
-         narrow screen. It has to clear the circle along the radius, and the
-         label's own width is what does the colliding at the 3 and 9 o'clock
-         positions — so measure it first, then place it. */
-      const tag = document.createElement('div');
-      tag.className = 'rl-rec-tag' + (selected === rid ? ' sel' : '');
-      tag.textContent = recById[rid].label;
-      tag.style.fontSize = Math.round(12 * scale) + 'px';
-      tag.dataset.rec = rid;
-      tag.onclick = e => { e.stopPropagation(); selectRec(rid); };
-
-      cellEl.append(el, tag);
-
-      const halfW = tag.offsetWidth / 2;
-      const halfH = tag.offsetHeight / 2;
-      const clearance = (size / 2) + 7 * scale
-        + Math.abs(Math.cos(ang)) * halfW + Math.abs(Math.sin(ang)) * halfH;
-      const inner = Math.max(0, R - clearance);
-      tag.style.left = (R + inner * Math.cos(ang)) + 'px';
-      tag.style.top = (R + inner * Math.sin(ang)) + 'px';
     });
   }
 
@@ -8970,8 +9228,8 @@ const RLAB = (function () {
     if (!selected || !placed[selected]) {
       editorEl.className = 'rl-editor empty';
       editorEl.textContent = Object.keys(placed).length
-        ? 'Tap a receptor on the cell to set what the drug does there and how strongly it binds.'
-        : 'Nothing placed yet. Drag a receptor from the tray onto the membrane.';
+        ? 'Click a receptor in the cauldron to set what the drug does there and how tightly it binds.'
+        : 'Nothing in the cauldron yet. Click a receptor in the tray to drop it in.';
       return;
     }
     editorEl.className = 'rl-editor';
@@ -8989,7 +9247,7 @@ const RLAB = (function () {
     const rm = document.createElement('button');
     rm.type = 'button';
     rm.className = 'rl-ed-remove';
-    rm.textContent = 'Take it off';
+    rm.textContent = 'Fish it out';
     rm.onclick = () => unplace(rid);
     head.append(nm, rm);
 
@@ -9019,7 +9277,7 @@ const RLAB = (function () {
     sizeLab.className = 'rl-ed-lab';
     sizeLab.textContent = 'Strength';
     sizeRow.appendChild(sizeLab);
-    const DOT = { 4: 20, 3: 16, 2: 12, 1: 9 };
+    const DOT = { 4: 22, 3: 17, 2: 12, 1: 8 };
     RL_TIERS.forEach(t => {
       const b = document.createElement('button');
       b.type = 'button';
@@ -9040,16 +9298,11 @@ const RLAB = (function () {
     editorEl.append(head, actRow, sizeRow);
   }
 
-  /* ---------------- drag & drop ---------------- */
-  let drag = null;   // { rid, ghost, moved, x0, y0 }
-  let armed = null;  // tapped chip waiting for a tap on the cell
-
-  function setArmed(rid) {
-    armed = rid;
-    trayFams.querySelectorAll('.rl-chip-r').forEach(c => {
-      c.classList.toggle('armed', c.dataset.rec === rid);
-    });
-  }
+  /* ---------------- click to drop, drag if you prefer ----------------
+   * A plain click drops the receptor straight into the cauldron. Dragging
+   * still works for anyone who reaches for it, and both paths run through
+   * the same pointer events so a finger behaves like a mouse. */
+  let drag = null;
 
   function overCell(x, y) {
     const r = cellEl.getBoundingClientRect();
@@ -9062,7 +9315,6 @@ const RLAB = (function () {
     e.preventDefault();
     drag = { rid: chip.dataset.rec, ghost: null, moved: false, x0: e.clientX, y0: e.clientY };
     try { chip.setPointerCapture(e.pointerId); } catch (err) { /* older browsers */ }
-    chip._capturedId = e.pointerId;
   });
 
   trayFams.addEventListener('pointermove', e => {
@@ -9072,6 +9324,7 @@ const RLAB = (function () {
     drag.moved = true;
     if (!drag.ghost) {
       const src = trayFams.querySelector('.rl-chip-r[data-rec="' + drag.rid + '"]');
+      if (!src) return;
       const g = src.cloneNode(true);
       g.classList.add('ghost');
       document.body.appendChild(g);
@@ -9082,20 +9335,17 @@ const RLAB = (function () {
     cellEl.classList.toggle('hot', overCell(e.clientX, e.clientY));
   });
 
-  function endDrag(e) {
+  trayFams.addEventListener('pointerup', e => {
     if (!drag) return;
     const d = drag;
     drag = null;
     if (d.ghost) d.ghost.remove();
     cellEl.classList.remove('hot');
-    if (d.moved) {
-      if (overCell(e.clientX, e.clientY)) place(d.rid);
-      setArmed(null);
-    } else {
-      setArmed(armed === d.rid ? null : d.rid);
-    }
-  }
-  trayFams.addEventListener('pointerup', endDrag);
+    /* Dragged onto the cauldron, or simply clicked: either way it goes in.
+       A drag that lands somewhere else is a change of mind, so drop it. */
+    if (!d.moved || overCell(e.clientX, e.clientY)) place(d.rid);
+  });
+
   trayFams.addEventListener('pointercancel', () => {
     if (drag && drag.ghost) drag.ghost.remove();
     drag = null;
@@ -9103,26 +9353,38 @@ const RLAB = (function () {
   });
 
   cellEl.addEventListener('click', () => {
-    if (armed) { place(armed); setArmed(null); }
-    else { selected = null; renderCell(); renderEditor(); }
+    selected = null;
+    renderCell();
+    renderEditor();
   });
 
-  /* The ring is sized in percentages but the receptors are positioned in
-     pixels, so a resize has to re-lay them out. */
+  /* The rim is sized in percentages but its contents are placed in pixels,
+     so a resize has to lay them out again. */
   if (window.ResizeObserver) {
-    new ResizeObserver(() => { if (!playEl.hidden) renderCell(); }).observe(cellEl);
+    const ro = new ResizeObserver(() => {
+      if (!playEl.hidden) renderCell();
+      else if (!resultEl.hidden && lastRes) paintResultCells(lastRes);
+    });
+    ro.observe(cellEl);
+    ro.observe(cellTruth);
   } else {
-    window.addEventListener('resize', () => { if (!playEl.hidden) renderCell(); });
+    window.addEventListener('resize', () => {
+      if (!playEl.hidden) renderCell();
+      else if (!resultEl.hidden && lastRes) paintResultCells(lastRes);
+    });
   }
 
   /* ---------------- results ---------------- */
   function lockIn() {
     if (!Object.keys(placed).length) {
-      playHint.textContent = 'Put at least one receptor in the membrane before locking in.';
+      playHint.textContent = 'Put at least one receptor in the cauldron before locking in.';
       return;
     }
     const res = scoreRound(drug, placed);
-    runResults.push({ id: drug.id, name: drug.name, score: res.score });
+    lastRes = res;
+    const failed = mode === 'survival' && res.score <= SURVIVE_AT;
+    runResults.push({ id: drug.id, name: drug.name, score: res.score, failed: failed });
+    if (failed) died = true;
 
     if (mode === 'free') {
       const best = load(BEST_KEY);
@@ -9143,11 +9405,50 @@ const RLAB = (function () {
     return s;
   }
 
+  /* Your cauldron on the left, the real one on the right with the Ki values
+     written against each receptor. Only core receptors go in the true rim —
+     the full list, bonus receptors included, is in the table underneath. */
+  function paintResultCells(res) {
+    const mine = Object.keys(placed).map(rid => {
+      const spec = drug.b.find(x => x.r === rid);
+      let judge = 'bad';
+      if (spec) {
+        const row = res.rows.find(r => r.spec.r === rid);
+        judge = (row && row.actOk && (row.tierOk || row.tierNear)) ? 'ok' : 'part';
+        if (row && row.actOk && row.tierOk) judge = 'ok';
+      }
+      return { rid: rid, act: placed[rid].act, tier: placed[rid].tier, judge: judge };
+    });
+    paintCell(cellYours, mine, {});
+
+    const truth = drug.b.filter(x => x.core)
+      .slice()
+      .sort((a, b) => a.ki - b.ki)
+      .map(spec => ({ rid: spec.r, act: spec.act, tier: rlTierOf(spec.ki), ki: spec.ki }));
+    paintCell(cellTruth, truth, {});
+
+    const bonusN = drug.b.length - truth.length;
+    yoursFoot.textContent = mine.length + (mine.length === 1 ? ' receptor placed.' : ' receptors placed.')
+      + ' Green rim = right, amber = right receptor but wrong action or band, red = it does not bind there.';
+    truthFoot.textContent = truth.length + ' core receptors'
+      + (bonusN > 0 ? ', plus ' + bonusN + ' lower-yield ones in the table below.' : '.');
+  }
+
   function renderResult(res) {
     resName.textContent = drug.name;
     resSub.textContent = drug.brand + ' · ' + drug.cls;
     resScore.textContent = res.score;
-    resVerdict.textContent = verdictFor(res.score);
+    resOf.textContent = 'out of 1000';
+
+    const failed = mode === 'survival' && res.score <= SURVIVE_AT;
+    scoreHero.classList.toggle('dead', failed);
+    resVerdict.textContent = failed
+      ? 'Below ' + SURVIVE_AT + '. The brew turned — that ends the run.'
+      : (mode === 'survival' ? 'Above ' + SURVIVE_AT + '. You live to brew again.' : verdictFor(res.score));
+
+    addBubbles(cellYours, 6);
+    addBubbles(cellTruth, 6);
+    paintResultCells(res);
 
     resTable.innerHTML = '';
     const thead = document.createElement('thead');
@@ -9165,7 +9466,7 @@ const RLAB = (function () {
       tdR.textContent = recById[r.spec.r].label;
       if (r.kind === 'bonus') {
         const s = document.createElement('small');
-        s.style.cssText = 'display:block;color:var(--muted-dim);font-weight:400;letter-spacing:.5px';
+        s.style.cssText = 'display:block;color:var(--rl-muted-dim);font-weight:400;letter-spacing:.5px';
         s.textContent = 'bonus';
         tdR.appendChild(s);
       }
@@ -9181,7 +9482,7 @@ const RLAB = (function () {
       tdA.appendChild(pill(r.spec.act));
       if (r.spec.alt && r.spec.alt.length) {
         const s = document.createElement('small');
-        s.style.cssText = 'display:block;color:var(--muted-dim);margin-top:4px;font-size:10.5px';
+        s.style.cssText = 'display:block;color:var(--rl-muted-dim);margin-top:4px;font-size:10.5px';
         s.textContent = 'or ' + r.spec.alt.map(a => actById[a].short.toLowerCase()).join(' / ');
         tdA.appendChild(s);
       }
@@ -9203,7 +9504,7 @@ const RLAB = (function () {
         line.innerHTML = aMark + ' &nbsp; ' + sMark;
         tdY.appendChild(line);
         const pts = document.createElement('div');
-        pts.style.cssText = 'margin-top:4px;font-size:11px;color:var(--muted-dim)';
+        pts.style.cssText = 'margin-top:4px;font-size:11px;color:var(--rl-muted-dim)';
         pts.textContent = '+' + Math.round(r.pts) + ' pts';
         tdY.appendChild(pts);
       }
@@ -9228,7 +9529,7 @@ const RLAB = (function () {
       tdK.querySelector('span').textContent = fmtKi(f.ki) + ' nM';
       tdK.querySelector('small').textContent = 'negligible';
       const tdA = document.createElement('td');
-      tdA.innerHTML = '<span style="color:var(--muted-dim);font-size:12px">no meaningful binding</span>';
+      tdA.innerHTML = '<span style="color:var(--rl-muted-dim);font-size:12px">no meaningful binding</span>';
       const tdY = document.createElement('td');
       tdY.appendChild(pill(f.got.act));
       const pts = document.createElement('div');
@@ -9244,14 +9545,13 @@ const RLAB = (function () {
 
     resTable.appendChild(tb);
 
-    /* The negatives the player got right by leaving them alone. */
     const untouched = Object.keys(drug.neg || {}).filter(r => !placed[r]);
     if (untouched.length) {
       const tr = document.createElement('tr');
       const td = document.createElement('td');
       td.colSpan = 5;
-      td.style.cssText = 'color:var(--correct);font-size:12px;padding-top:12px';
-      td.textContent = 'Correctly left off: ' + untouched.map(r => recById[r].label).join(', ')
+      td.style.cssText = 'color:var(--rl-glow);font-size:12px;padding-top:12px';
+      td.textContent = 'Correctly left out: ' + untouched.map(r => recById[r].label).join(', ')
         + ' — all negligible (Ki ≥ 1000 nM) for ' + drug.name + '.';
       tr.appendChild(td);
       tb.appendChild(tr);
@@ -9264,32 +9564,53 @@ const RLAB = (function () {
     resSrc.textContent = 'Ki source: ' + drug.src
       + ' Binding constants vary with tissue, species and radioligand — treat the band as the point, not the decimal.';
 
-    const more = mode === 'gauntlet' && qIdx < queue.length - 1;
-    nextBtn.hidden = mode !== 'gauntlet';
+    const isRun = mode === 'gauntlet' || mode === 'survival';
+    const more = isRun && !died && (mode === 'survival' || qIdx < queue.length - 1);
+    nextBtn.hidden = !isRun;
     nextBtn.textContent = more ? 'Next drug →' : 'See the run';
-    retryBtn.hidden = mode === 'gauntlet';
-    menuBtn.hidden = mode === 'gauntlet';
+    retryBtn.hidden = isRun;
+    menuBtn.hidden = isRun;
   }
 
-  /* ---------------- gauntlet summary ---------------- */
+  /* ---------------- run summary ---------------- */
   function renderSummary() {
     stopClock();
     const total = runResults.reduce((a, r) => a + r.score, 0);
     const elapsed = Date.now() - runStart;
-    const max = queue.length * 1000;
-    sumSub.textContent = queue.length + ' medications in ' + fmtTime(elapsed);
-    sumScore.textContent = total;
-    sumOf.textContent = 'out of ' + max;
-    sumVerdict.textContent = runVerdict(Math.round(total / queue.length));
+    const cleared = runResults.filter(r => !r.failed).length;
 
-    const run = load(RUN_KEY);
-    const isBest = run.best == null || total > run.best;
-    if (isBest) save(RUN_KEY, { best: total, bestTime: elapsed });
+    if (mode === 'survival') {
+      const surv = load(SURV_KEY);
+      const isBest = !surv.best || cleared > surv.best;
+      if (isBest && cleared > 0) save(SURV_KEY, { best: cleared, bestTime: elapsed });
+      sumTitle.textContent = cleared > 0 ? 'The run ends' : 'The brew turned';
+      sumSub.textContent = cleared + (cleared === 1 ? ' round survived' : ' rounds survived')
+        + ' in ' + fmtTime(elapsed);
+      sumHero.classList.add('dead');
+      sumScore.textContent = cleared;
+      sumOf.textContent = cleared === 1 ? 'round survived' : 'rounds survived';
+      sumVerdict.textContent = cleared === 0
+        ? 'Nothing cleared ' + SURVIVE_AT + ' — free play is the place to start.'
+        : (isBest ? 'A new longest run.' : 'Best so far: ' + (surv.best || cleared) + '.');
+    } else {
+      const run = load(RUN_KEY);
+      const isBest = run.best == null || total > run.best;
+      if (isBest) save(RUN_KEY, { best: total, bestTime: elapsed });
+      sumTitle.textContent = 'Gauntlet complete';
+      sumSub.textContent = runResults.length + ' medications in ' + fmtTime(elapsed);
+      sumHero.classList.remove('dead');
+      sumScore.textContent = total;
+      sumOf.textContent = 'out of ' + (runResults.length * 1000);
+      sumVerdict.textContent = runVerdict(Math.round(total / Math.max(1, runResults.length)))
+        + (isBest && run.best != null ? ' A new personal best.' : '');
+    }
+
+    renderSlots(sumSlots, runResults.length);
 
     sumList.innerHTML = '';
     runResults.forEach(r => {
       const row = document.createElement('div');
-      row.className = 'rl-run-row';
+      row.className = 'rl-run-row' + (r.failed ? ' fail' : '');
       const n = document.createElement('span');
       n.className = 'n'; n.textContent = r.name;
       const s = document.createElement('span');
@@ -9297,18 +9618,21 @@ const RLAB = (function () {
       row.append(n, s);
       sumList.appendChild(row);
     });
-    if (isBest && run.best != null) {
-      const b = document.createElement('div');
-      b.style.cssText = 'text-align:center;color:var(--gold);font-size:12.5px;margin-top:14px;letter-spacing:1px';
-      b.textContent = 'New personal best.';
-      sumList.appendChild(b);
-    }
     show('summary');
   }
 
   /* ---------------- wiring ---------------- */
-  modeFree.onclick = () => { mode = 'free'; renderMenu(); };
+  modeFree.onclick  = () => { mode = 'free'; renderMenu(); };
   modeGaunt.onclick = () => { mode = 'gauntlet'; renderMenu(); };
+  modeSurv.onclick  = () => { mode = 'survival'; renderMenu(); };
+  startBtn.onclick  = startRun;
+
+  homeLink.onclick = e => {
+    e.preventDefault();
+    stopClock();
+    renderMenu();
+    show('menu');
+  };
 
   document.getElementById('rlCheckBtn').onclick = lockIn;
   document.getElementById('rlClearBtn').onclick = () => {
@@ -9320,22 +9644,31 @@ const RLAB = (function () {
   };
 
   nextBtn.onclick = () => {
+    if (died) { renderSummary(); return; }
+    if (mode === 'survival') {
+      qIdx++;
+      if (qIdx >= queue.length) queue = queue.concat(shuffle(RL_DRUGS.map(d => d.id)));
+      openDrug(queue[qIdx]);
+      return;
+    }
     if (qIdx < queue.length - 1) { qIdx++; openDrug(queue[qIdx]); }
     else renderSummary();
   };
   retryBtn.onclick = () => openDrug(drug.id);
   menuBtn.onclick = () => { renderMenu(); show('menu'); };
-  document.getElementById('rlSumAgainBtn').onclick = startGauntlet;
-  document.getElementById('rlSumMenuBtn').onclick = () => { mode = 'free'; renderMenu(); show('menu'); };
+  document.getElementById('rlSumAgainBtn').onclick = startRun;
+  document.getElementById('rlSumMenuBtn').onclick = () => { renderMenu(); show('menu'); };
 
   return {
     open() {
       view.hidden = false;
+      document.documentElement.classList.add('rlab-active');
       renderMenu();
       show('menu');
     },
     close() {
       view.hidden = true;
+      document.documentElement.classList.remove('rlab-active');
       stopClock();
       drug = null;
     },
