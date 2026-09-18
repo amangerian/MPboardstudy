@@ -2279,6 +2279,82 @@
   .rl-run-row .s { font-family: Georgia, serif; font-size: 17px; color: var(--rl-candle); }
   .rl-run-row.fail .s { color: #ff6b5e; }
 
+  /* ---- survival: the shared board ---- */
+  .rl-board { margin-top: 24px; }
+  .rl-board-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  }
+  .rl-board-head h3 {
+    margin: 0; font: 900 15px Georgia, serif;
+    letter-spacing: 1px; color: var(--rl-candle);
+  }
+  .rl-board-refresh {
+    background: none; border: none; padding: 0; cursor: pointer;
+    font-family: inherit; font-size: 12px; color: var(--rl-muted-dim);
+    text-decoration: underline;
+  }
+  .rl-board-refresh:hover { color: var(--rl-candle); }
+  .rl-board-sub { font-size: 12px; color: var(--rl-muted-dim); margin: 4px 0 10px; }
+  .rl-lb-list { display: flex; flex-direction: column; gap: 7px; }
+  .rl-lb-row {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1.3fr) minmax(0, 1fr) auto;
+    align-items: center; gap: 10px;
+    background: var(--rl-panel);
+    border: 1px solid var(--rl-line);
+    border-radius: 9px; padding: 8px 12px;
+  }
+  /* The row this device just posted, so it can be found in a list of ten. */
+  .rl-lb-row.fresh {
+    border-color: var(--rl-glow);
+    background: rgba(61,220,132,.12);
+    box-shadow: 0 0 14px rgba(61,220,132,.18);
+  }
+  .rl-lb-row .rank { font: 900 13px Georgia, serif; color: var(--rl-muted-dim); text-align: center; }
+  .rl-lb-row .who {
+    font: 900 17px Georgia, serif; letter-spacing: 1px; color: var(--rl-candle);
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .rl-lb-row .mid { min-width: 0; }
+  .rl-lb-row .pts { font: 900 17px Georgia, serif; color: var(--rl-text); }
+  .rl-lb-row .meta {
+    font-size: 11px; color: var(--rl-muted); margin-top: 2px;
+    display: flex; flex-wrap: wrap; gap: 3px 9px; align-items: center;
+  }
+  .rl-lb-row .when {
+    font-size: 11px; color: var(--rl-muted-dim); text-align: right; white-space: nowrap;
+  }
+  .rl-lb-empty {
+    border: 2px dashed var(--rl-line); border-radius: 10px; padding: 18px;
+    text-align: center; color: var(--rl-muted-dim); font-size: 13px;
+  }
+  .rl-post {
+    margin-top: 18px; padding: 14px;
+    border: 1px solid var(--rl-line-lit); border-radius: 12px;
+    background: var(--rl-panel);
+  }
+  .rl-post-row {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    align-items: center; justify-content: center;
+  }
+  .rl-post input {
+    background: rgba(4,9,7,.7); border: 1px solid var(--rl-line-lit);
+    border-radius: 8px; color: var(--rl-candle);
+    font-family: Georgia, serif; font-size: 18px; font-weight: 700;
+    text-align: center; padding: 8px 10px; width: 190px; letter-spacing: 1px;
+  }
+  .rl-post input:focus { outline: none; border-color: var(--rl-glow); }
+  .rl-post button { margin: 0; }
+  .rl-post-hint {
+    font-size: 11.5px; color: var(--rl-muted-dim); text-align: center; margin-top: 8px;
+  }
+  .rl-posted { text-align: center; color: var(--rl-glow); font-size: 13px; }
+
+  @media (max-width: 560px) {
+    .rl-lb-row { grid-template-columns: 22px minmax(0, 1.1fr) minmax(0, 1fr); }
+    .rl-lb-row .when { grid-column: 2 / -1; text-align: left; }
+  }
+
   @media (max-width: 900px) {
     .rl-compare { grid-template-columns: 1fr; gap: 30px; }
   }
@@ -2415,6 +2491,15 @@
       <button class="reset-board-btn rl-primary" id="rlStartBtn">Start</button>
     </div>
 
+    <div class="rl-board" id="rlBoard" hidden>
+      <div class="rl-board-head">
+        <h3>Longest runs</h3>
+        <button type="button" class="rl-board-refresh" id="rlBoardRefresh">Refresh</button>
+      </div>
+      <p class="rl-board-sub">The ten longest survival runs players chose to post, from every device &mdash; ranked by rounds survived, then by points banked.</p>
+      <div class="rl-lb-list" id="rlBoardList"></div>
+    </div>
+
     <div class="rl-pick-grid" id="rlPickGrid"></div>
 
     <footer class="hint">Ki values are assay-dependent &mdash; every drug lists its source on the answer screen &nbsp;&bull;&nbsp; educational use only</footer>
@@ -2520,6 +2605,14 @@
     </div>
     <div class="rl-slots" id="rlSumSlots"></div>
     <div class="rl-run-list" id="rlSumList"></div>
+    <div id="rlSumPost"></div>
+    <div class="rl-board" id="rlSumBoard" hidden>
+      <div class="rl-board-head">
+        <h3>Longest runs</h3>
+        <button type="button" class="rl-board-refresh" id="rlSumBoardRefresh">Refresh</button>
+      </div>
+      <div class="rl-lb-list" id="rlSumBoardList"></div>
+    </div>
     <div class="board-actions">
       <button class="reset-board-btn rl-primary" id="rlSumAgainBtn">Run it again</button>
       <button class="reset-board-btn" id="rlSumMenuBtn">Back to the Receptor Lab</button>
@@ -8760,11 +8853,20 @@ const RLAB = (function () {
   const sumVerdict= document.getElementById('rlSumVerdict');
   const sumList   = document.getElementById('rlSumList');
 
+  const boardEl      = document.getElementById('rlBoard');
+  const boardList    = document.getElementById('rlBoardList');
+  const boardRefresh = document.getElementById('rlBoardRefresh');
+  const sumBoardEl   = document.getElementById('rlSumBoard');
+  const sumBoardList = document.getElementById('rlSumBoardList');
+  const sumBoardRef  = document.getElementById('rlSumBoardRefresh');
+  const sumPostEl    = document.getElementById('rlSumPost');
+
   const GAUNTLET_N = 5;
   const SURVIVE_AT = 800;          // strictly above this to live another round
   const BEST_KEY = 'rlab.best.v1';
   const RUN_KEY  = 'rlab.gauntlet.v1';
   const SURV_KEY = 'rlab.survival.v1';
+  const NAME_KEY = 'rlab.name.v1';   // the name last posted under, prefilled next time
 
   /* Circle diameters per strength band, and the tag type size. Both are
      scaled by the cauldron's width so a phone gets the same proportions. */
@@ -8991,6 +9093,161 @@ const RLAB = (function () {
     paintCell(cellEl, placedItems(), { interactive: true, selected: selected });
   }
 
+  /* ---------------- shared survival board ---------------- */
+  /* Its own node, not the wizard's: a survival run here is measured in rounds
+     survived, and there are no rooms or categories to record. Posting is opt-in
+     and the name is typed at that moment — nothing leaves this browser until
+     the button is pressed. Rank is rounds first, because that is what the mode
+     actually asks of you; points banked only separate runs of equal length. */
+  const LB_URL = 'https://mp-board-study-default-rtdb.firebaseio.com/leaderboard/receptor';
+  const LB_SHOW = 10;
+
+  let lbLoaded = false;   // the menu fetches once, then only on Refresh or a post
+  let lbFresh = null;     // id of the row this device just posted
+
+  function lbRow(row, i) {
+    const el = document.createElement('div');
+    el.className = 'rl-lb-row' + (row.id && row.id === lbFresh ? ' fresh' : '');
+    const rank = document.createElement('div');
+    rank.className = 'rank'; rank.textContent = i + 1;
+    const who = document.createElement('div');
+    who.className = 'who'; who.textContent = row.who; who.title = row.who;
+    const mid = document.createElement('div');
+    mid.className = 'mid';
+    const pts = document.createElement('div');
+    pts.className = 'pts';
+    pts.textContent = row.rounds + (row.rounds === 1 ? ' round' : ' rounds');
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const banked = document.createElement('span');
+    banked.textContent = (row.score || 0) + ' pts';
+    meta.appendChild(banked);
+    if (row.best) {
+      const b = document.createElement('span');
+      b.textContent = 'best ' + row.best;
+      meta.appendChild(b);
+    }
+    if (row.last) {
+      const l = document.createElement('span');
+      l.textContent = 'ended on ' + row.last;
+      meta.appendChild(l);
+    }
+    mid.append(pts, meta);
+    const when = document.createElement('div');
+    when.className = 'when';
+    when.textContent = new Date(row.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    el.append(rank, who, mid, when);
+    return el;
+  }
+
+  /* Both copies of the board — the menu's and the summary's — show the same
+     rows, so they are painted together from one fetch. */
+  function lbRender(rows, note) {
+    [boardList, sumBoardList].forEach(list => {
+      list.innerHTML = '';
+      if (note) {
+        const n = document.createElement('div');
+        n.className = 'rl-lb-empty';
+        n.textContent = note;
+        list.appendChild(n);
+        return;
+      }
+      rows.forEach((row, i) => list.appendChild(lbRow(row, i)));
+    });
+  }
+
+  function lbLoad() {
+    lbLoaded = true;
+    lbRender([], 'Loading\u2026');
+    fetch(LB_URL + '.json').then(r => {
+      // Until this node's rules are published the read is refused outright.
+      // That is a board waiting to be switched on, not a network problem.
+      if (r.status === 401 || r.status === 403) return { denied: true };
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    }).then(data => {
+      // A denied read can also arrive as {error: "..."}, which would otherwise
+      // be sorted and displayed as though it were somebody's run.
+      if (!data || data.denied || data.error) return lbRender([], 'The shared board is not published yet.');
+      const rows = Object.keys(data).map(k => {
+        const row = data[k];
+        if (row) row.id = k;
+        return row;
+      }).filter(row => row && row.who).sort((a, b) =>
+        (b.rounds || 0) - (a.rounds || 0) || (b.score || 0) - (a.score || 0)
+      ).slice(0, LB_SHOW);
+      if (!rows.length) return lbRender([], 'Nothing posted yet \u2014 survive a run and put yourself up there.');
+      lbRender(rows);
+    }).catch(() => lbRender([], 'Could not reach the shared board.'));
+  }
+
+  function lbPost(entry) {
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    return fetch(LB_URL + '/' + id + '.json', { method: 'PUT', body: JSON.stringify(entry) })
+      .then(r => {
+        if (!r.ok) throw new Error(r.status);
+        lbFresh = id;
+        return r;
+      });
+  }
+
+  boardRefresh.addEventListener('click', lbLoad);
+  sumBoardRef.addEventListener('click', lbLoad);
+
+  /* Offered on the summary after a survival run that cleared at least one
+     round. `stats` null means there is nothing worth posting. */
+  function renderPostBox(stats) {
+    sumPostEl.innerHTML = '';
+    if (!stats) return;
+
+    const box = document.createElement('div');
+    box.className = 'rl-post';
+    const row = document.createElement('div');
+    row.className = 'rl-post-row';
+    const input = document.createElement('input');
+    input.maxLength = 14;
+    input.value = load(NAME_KEY).who || '';
+    input.placeholder = 'Your name';
+    input.setAttribute('aria-label', 'Name for the shared board');
+    const postBtn = document.createElement('button');
+    postBtn.className = 'reset-board-btn rl-primary';
+    postBtn.textContent = 'Post to shared board';
+    row.append(input, postBtn);
+    const hint = document.createElement('div');
+    hint.className = 'rl-post-hint';
+    hint.textContent = 'Optional. Posts your name, the rounds you survived and your points where anyone on the site can see them.';
+    box.append(row, hint);
+    sumPostEl.appendChild(box);
+
+    postBtn.onclick = () => {
+      const who = (input.value || '').trim().slice(0, 14);
+      if (!who) { hint.textContent = 'Put a name in first.'; return; }
+      postBtn.disabled = true; postBtn.textContent = 'Posting\u2026';
+      save(NAME_KEY, { who: who });
+      lbPost({
+        who: who,
+        rounds: stats.rounds,
+        score: stats.score,
+        best: stats.best,
+        secs: stats.secs,
+        last: stats.last,
+        at: Date.now()
+      }).then(() => {
+        box.innerHTML = '';
+        const done = document.createElement('div');
+        done.className = 'rl-posted';
+        done.textContent = 'Posted as ' + who + (/[.!?]$/.test(who) ? '' : '.');
+        box.appendChild(done);
+        lbLoad();
+      }).catch(err => {
+        postBtn.disabled = false; postBtn.textContent = 'Post to shared board';
+        hint.textContent = String(err && err.message) === '401'
+          ? 'The shared board is not published yet \u2014 this run is still saved on your device.'
+          : 'Could not reach the shared board \u2014 try again in a moment.';
+      });
+    };
+  }
+
   /* ---------------- menu ---------------- */
   function renderMenu() {
     modeFree.setAttribute('aria-pressed', String(mode === 'free'));
@@ -9005,6 +9262,7 @@ const RLAB = (function () {
     pickGrid.hidden = mode !== 'free';
     startRow.hidden = mode === 'free';
     menuSlots.hidden = mode === 'free';
+    boardEl.hidden = mode !== 'survival';
 
     if (mode === 'gauntlet') {
       modeNote.textContent = GAUNTLET_N + ' medications dealt at random, back to back, with the clock running. '
@@ -9022,6 +9280,7 @@ const RLAB = (function () {
       inf.querySelector('.q').textContent = '∞';
       menuSlots.appendChild(inf);
       startBtn.textContent = 'Start surviving';
+      if (!lbLoaded) lbLoad();
 
     } else {
       modeNote.textContent = 'Pick any medication and build its profile at your own pace. '
@@ -9603,6 +9862,24 @@ const RLAB = (function () {
       sumOf.textContent = 'out of ' + (runResults.length * 1000);
       sumVerdict.textContent = runVerdict(Math.round(total / Math.max(1, runResults.length)))
         + (isBest && run.best != null ? ' A new personal best.' : '');
+    }
+
+    // Only survival has a shared board; the gauntlet keeps its best on the device.
+    if (mode === 'survival') {
+      sumBoardEl.hidden = false;
+      const lived = runResults.filter(r => !r.failed);
+      const ended = runResults.filter(r => r.failed).slice(-1)[0];
+      renderPostBox(cleared > 0 ? {
+        rounds: cleared,
+        score: lived.reduce((a, r) => a + r.score, 0),
+        best: lived.reduce((a, r) => Math.max(a, r.score), 0),
+        secs: Math.round(elapsed / 1000),
+        last: ended ? ended.name.slice(0, 40) : ''
+      } : null);
+      lbLoad();
+    } else {
+      sumBoardEl.hidden = true;
+      sumPostEl.innerHTML = '';
     }
 
     renderSlots(sumSlots, runResults.length);

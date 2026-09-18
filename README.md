@@ -67,6 +67,16 @@ deliberately not built yet, but every receptor already carries its transduction
 pathway in `RL_TRANSDUCTION`, so that round can be added without re-deriving
 anything.
 
+Survival has a **shared board**, listed on the mode's menu and again under the
+run summary: the ten longest runs anyone chose to post, from every device.
+Posting is opt-in and happens only at the end of a run — you type the name you
+want to appear under, and nothing leaves the browser until you press the button.
+Runs are ranked by rounds survived first, since that is what the mode asks of
+you; points banked (the surviving rounds only, not the one that ended it) break
+ties between runs of the same length. It is a sibling of Wizard's Escape's board
+but its own database node, `leaderboard/receptor`, because a run here is counted
+in rounds rather than rooms and categories.
+
 **Wizard's Escape** is a haunted-castle escape: each room's exit is blocked by
 three identical pieces of furniture, each labelled with a candidate answer, and
 the question is written across the top of the room. Pick the right one and the
@@ -280,7 +290,10 @@ None of this works until the Realtime Database's rules allow it, and a database
 with unpublished rules refuses every write. `firebase-rules.json` in this folder
 is what to paste — **Realtime Database → Rules** in the Firebase console, then
 **Publish**. It is for the console only; it is not part of the site and does not
-belong in the repo.
+belong in the repo. The same applies after the file changes: the Receptor Lab's
+`leaderboard/receptor` node was added to it later than the rest, so a database
+still running the older rules refuses to show or accept those runs, and the
+board says it is not published yet.
 
 If they are missing you now find out immediately: opening a room says the
 database refused the write instead of showing a code for a room that was never
