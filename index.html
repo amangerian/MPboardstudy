@@ -2033,7 +2033,7 @@
   .rl-fam-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .rl-chip-r {
     border-radius: 999px; padding: 7px 13px; cursor: pointer;
-    font-size: 13.5px; font-weight: 700; font-family: Arial, sans-serif;
+    font-size: 15px; font-weight: 700; font-family: Arial, sans-serif;
     border: 2px solid; background: rgba(8,18,13,.8);
     user-select: none; -webkit-user-select: none; touch-action: none;
     transition: transform .1s ease, box-shadow .1s ease, opacity .15s ease;
@@ -2230,7 +2230,7 @@
     text-align: center; line-height: 1.5; max-width: 340px;
   }
 
-  .rl-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  .rl-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14.5px; }
   .rl-table th {
     text-align: left; padding: 8px 9px; color: var(--rl-muted-dim);
     font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase;
@@ -2241,8 +2241,8 @@
   .rl-table tr.falsepos td { background: rgba(224,74,63,.16); }
   .rl-table tr.bonusrow td { background: rgba(61,220,132,.07); }
   .rl-rname { font-weight: 700; color: var(--rl-text); white-space: nowrap; }
-  .rl-ki { font-family: Georgia, serif; color: var(--rl-candle); white-space: nowrap; font-size: 14px; }
-  .rl-ki small { font-family: Arial, sans-serif; color: var(--rl-muted-dim); font-size: 10.5px; display: block; letter-spacing: .5px; }
+  .rl-ki { font-family: Georgia, serif; color: var(--rl-candle); white-space: nowrap; font-size: 15.5px; }
+  .rl-ki small { font-family: Arial, sans-serif; color: var(--rl-muted-dim); font-size: 11.5px; display: block; letter-spacing: .5px; }
   .rl-pill {
     display: inline-block; border-radius: 999px; padding: 2px 9px;
     font-size: 11px; font-weight: 700; color: #08130e; white-space: nowrap;
@@ -2366,7 +2366,7 @@
   }
   @media (max-width: 520px) {
     .rl-cell { border-width: 12px; }
-    .rl-table { font-size: 12px; }
+    .rl-table { font-size: 13.5px; }
     .rl-table td, .rl-table th { padding: 7px 5px; }
     .rl-note { font-size: 11.5px; }
     .rl-slot { width: 88px; min-height: 80px; }
@@ -8871,7 +8871,7 @@ const RLAB = (function () {
   /* Circle diameters per strength band, and the tag type size. Both are
      scaled by the cauldron's width so a phone gets the same proportions. */
   const SIZE = { 1: 28, 2: 42, 3: 58, 4: 78 };
-  const TAG_PX = 16;
+  const TAG_PX = 20;
 
   const FAM_ORDER = ['dopamine', 'serotonin', 'histamine', 'muscarinic', 'adrenergic', 'transporter'];
   const FAM_NAME = {
@@ -9011,7 +9011,7 @@ const RLAB = (function () {
     el.classList.toggle('has-any', items.length > 0);
 
     const w = el.clientWidth || 380;
-    const scale = Math.max(0.75, Math.min(1, w / 440));
+    const scale = Math.max(0.85, Math.min(1, w / 440));
     const R = w / 2;
 
     items.forEach((it, i) => {
