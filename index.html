@@ -2353,6 +2353,163 @@
     text-align: center; color: var(--rl-muted-dim); font-size: 12.5px;
   }
 
+
+  /* ---- guided brewing ----
+     The paragraph is on screen from the first second, but every receptor and
+     every action word in it is a hole. You answer your way into the prose. */
+  /* Paragraph and question stack down the left; the cauldron sits alongside
+     and stays put while you scroll the question. On a phone it drops between
+     them, so what you read and what you answer are never a screen apart. */
+  .rl-guide-stage {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+    gap: 22px 26px; align-items: start; margin-top: 18px;
+  }
+  .rl-guide-stage > .rl-para { grid-column: 1; grid-row: 1; }
+  .rl-guide-stage > .rl-ask  { grid-column: 1; grid-row: 2; }
+  .rl-guide-side {
+    grid-column: 2; grid-row: 1 / span 2;
+    position: sticky; top: 14px;
+  }
+  .rl-para {
+    background: var(--rl-panel); border: 1px solid var(--rl-line);
+    border-radius: 14px; padding: 18px 20px 20px;
+  }
+  .rl-para-head {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--rl-muted-dim); margin-bottom: 12px;
+  }
+  .rl-para-body {
+    font-family: Georgia, serif; font-size: 16px; line-height: 2.05;
+    color: var(--rl-muted);
+  }
+  .rl-para-body .lead { color: var(--rl-text); }
+  .rl-sent { transition: color .2s ease; }
+  .rl-sent.ahead { color: var(--rl-muted-dim); }
+  .rl-sent.now {
+    color: var(--rl-text);
+    box-shadow: -10px 0 0 -8px var(--rl-candle);
+  }
+  .rl-sent.closing { display: block; margin-top: 14px; color: var(--rl-muted); }
+
+  .rl-blank {
+    display: inline-block; min-width: 76px; text-align: center;
+    padding: 0 6px; margin: 0 1px;
+    border-bottom: 2px dotted var(--rl-muted-dim);
+    color: transparent; font-weight: 700;
+  }
+  .rl-blank.live {
+    border-bottom-color: var(--rl-candle);
+    background: rgba(255,194,74,.08);
+  }
+  .rl-blank.filled {
+    min-width: 0; border-bottom-style: solid; padding: 0 3px;
+  }
+  .rl-blank.filled.first { color: var(--rl-glow); border-bottom-color: var(--rl-glow-dim); }
+  .rl-blank.filled.corrected { color: var(--rl-candle); border-bottom-color: rgba(255,194,74,.5); }
+
+  /* the question card */
+  .rl-ask {
+    background: var(--rl-panel); border: 2px solid var(--rl-line-lit);
+    border-radius: 14px; padding: 18px 20px;
+  }
+  .rl-ask-step {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--rl-muted-dim);
+  }
+  .rl-ask-q {
+    font-family: Georgia, serif; font-size: 18.5px; line-height: 1.5;
+    color: var(--rl-text); margin-top: 7px;
+  }
+  .rl-ask-opts { margin-top: 14px; }
+  .rl-ask-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rl-ask .rl-fam { margin-top: 10px; }
+
+  .rl-chip-r.right {
+    border-color: var(--rl-glow); background: rgba(61,220,132,.2); color: #d8ffe8;
+    box-shadow: 0 0 18px rgba(61,220,132,.35);
+  }
+  .rl-chip-r.wrong {
+    border-color: #ff6b5e; background: rgba(255,107,94,.16); color: #ffd3ce;
+    text-decoration: line-through;
+  }
+  .rl-chip-r.reveal {
+    border-color: var(--rl-candle); background: rgba(255,194,74,.16); color: #ffe9bd;
+    box-shadow: 0 0 20px rgba(255,194,74,.4);
+    animation: rlPulse 1.1s ease-in-out 2;
+  }
+  @keyframes rlPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,194,74,.4); }
+    50%      { box-shadow: 0 0 30px rgba(255,194,74,.85); }
+  }
+  .rl-chip-r.locked { pointer-events: none; }
+  .rl-chip-r.dim { opacity: .3; }
+  .rl-opt.right  { border-color: var(--rl-glow); }
+  .rl-opt.wrong  { border-color: #ff6b5e; text-decoration: line-through; }
+  .rl-opt.reveal { border-color: var(--rl-candle); box-shadow: 0 0 18px rgba(255,194,74,.4); }
+  .rl-opt-size.right  { border-color: var(--rl-glow); }
+  .rl-opt-size.wrong  { border-color: #ff6b5e; text-decoration: line-through; }
+  .rl-opt-size.reveal { border-color: var(--rl-candle); box-shadow: 0 0 18px rgba(255,194,74,.4); }
+
+  .rl-fb {
+    margin-top: 16px; border-radius: 11px; padding: 14px 16px;
+    font-size: 13.5px; line-height: 1.65; color: var(--rl-muted);
+    border-left: 4px solid var(--rl-line-lit); background: rgba(8,18,13,.55);
+  }
+  .rl-fb.ok   { border-left-color: var(--rl-glow); }
+  .rl-fb.miss { border-left-color: var(--rl-candle); }
+  .rl-fb b { display: block; margin-bottom: 5px; font-size: 14.5px; }
+  .rl-fb.ok b   { color: var(--rl-glow); }
+  .rl-fb.miss b { color: var(--rl-candle); }
+
+  .rl-guide-side { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .rl-guide-side .rl-cell { width: min(100%, 360px); }
+  .rl-rec.act-pending {
+    background: repeating-linear-gradient(45deg, #2b3a32, #2b3a32 5px, #1d2a24 5px, #1d2a24 10px);
+    border-color: var(--rl-muted-dim); border-style: dashed;
+  }
+  .rl-guide-tally {
+    font-size: 12px; color: var(--rl-muted-dim); letter-spacing: 1px; text-align: center;
+  }
+
+  .rl-guide-done {
+    margin-top: 20px; text-align: center;
+  }
+  .rl-guide-score {
+    font: 900 44px Georgia, serif; color: var(--rl-glow);
+    text-shadow: 0 0 30px rgba(61,220,132,.35);
+  }
+  .rl-guide-score.part { color: var(--rl-candle); text-shadow: 0 0 30px rgba(255,194,74,.3); }
+  .rl-guide-of { font-size: 13px; color: var(--rl-muted-dim); letter-spacing: 2px; }
+
+  .rl-lineup {
+    grid-column: 1 / -1;
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px;
+  }
+  .rl-lineup-item {
+    border: 2px dashed var(--rl-line); border-radius: 10px; padding: 9px 14px;
+    font-family: Georgia, serif; font-size: 14px; color: var(--rl-muted-dim);
+  }
+  .rl-lineup-item.done {
+    border-style: solid; border-color: var(--rl-glow-dim); color: var(--rl-glow);
+  }
+  .rl-lineup-item small {
+    display: block; font-family: Arial, sans-serif; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--rl-muted-dim);
+  }
+
+  @media (max-width: 900px) {
+    .rl-guide-stage { grid-template-columns: 1fr; }
+    .rl-guide-stage > .rl-para { grid-column: 1; grid-row: 1; }
+    .rl-guide-side  { grid-column: 1; grid-row: 2; position: static; }
+    .rl-guide-stage > .rl-ask { grid-column: 1; grid-row: 3; }
+  }
+  @media (max-width: 520px) {
+    .rl-para-body { font-size: 15px; line-height: 2.1; }
+    .rl-ask-q { font-size: 16.5px; }
+    .rl-guide-side .rl-cell { width: min(100%, 260px); border-width: 11px; }
+    .rl-guide-side .rl-rec-tag { font-size: 15px; }
+  }
+
   @media (max-width: 560px) {
     .rl-lb-row { grid-template-columns: 22px minmax(0, 1.1fr) minmax(0, 1fr); }
     .rl-lb-row .when { grid-column: 2 / -1; text-align: left; }
@@ -2485,6 +2642,7 @@
       <button type="button" id="rlModeGauntlet" aria-pressed="true">Gauntlet</button>
       <button type="button" id="rlModeSurvival" aria-pressed="false">Survival</button>
       <button type="button" id="rlModeFree" aria-pressed="false">Free play</button>
+      <button type="button" id="rlModeGuided" aria-pressed="false">Guided brewing</button>
     </div>
     <p class="rl-mode-note" id="rlModeNote"></p>
 
@@ -2593,6 +2751,55 @@
       <button class="reset-board-btn" id="rlRetryBtn">Try this one again</button>
       <button class="reset-board-btn" id="rlMenuBtn">Back to the Receptor Lab</button>
     </div>
+  </div>
+
+  <!-- guided brewing -->
+  <div id="rlGuide" hidden>
+    <div class="rl-drug-plate">
+      <div class="rl-drug-name" id="rlGdName"></div>
+      <div class="rl-drug-sub" id="rlGdSub"></div>
+    </div>
+    <div class="rl-head-meta" id="rlGdMeta"></div>
+
+    <div class="rl-guide-stage">
+      <div class="rl-para">
+        <div class="rl-para-head" id="rlGdParaHead">What you are about to work out</div>
+        <div class="rl-para-body" id="rlGdPara"></div>
+      </div>
+
+      <div class="rl-guide-side">
+        <div class="rl-cell" id="rlGdCell">
+          <div class="rl-cell-label">Everything you get right drops in here.</div>
+        </div>
+        <div class="rl-legend">
+          <span><i class="act-antagonist"></i>Antagonist</span>
+          <span><i class="act-partial"></i>Partial agonist</span>
+          <span><i class="act-agonist"></i>Agonist</span>
+          <span><i class="act-inverse"></i>Inverse agonist</span>
+          <span><i class="act-reuptake"></i>Reuptake block</span>
+        </div>
+        <div class="rl-guide-tally" id="rlGdTally"></div>
+      </div>
+
+      <div class="rl-ask" id="rlGdAsk"></div>
+    </div>
+
+    <div id="rlGdDone" hidden>
+      <div class="rl-guide-done">
+        <div class="rl-guide-score" id="rlGdScore"></div>
+        <div class="rl-guide-of" id="rlGdOf"></div>
+      </div>
+      <div class="rl-pearl" id="rlGdPearl"></div>
+      <div class="rl-src" id="rlGdSrc"></div>
+    </div>
+
+    <div class="board-actions" id="rlGdActions">
+      <button class="reset-board-btn rl-primary" id="rlGdNextBtn" hidden>Next</button>
+      <button class="reset-board-btn" id="rlGdRetryBtn" hidden>Walk it again</button>
+      <button class="reset-board-btn" id="rlGdQuitBtn">Leave the walkthrough</button>
+    </div>
+
+    <footer class="hint" id="rlGdHint">One receptor at a time &mdash; a wrong answer costs you nothing but the explanation.</footer>
   </div>
 
   <!-- run summary -->
@@ -3798,8 +4005,8 @@ const EXTRAS = [
     id: "receptor-lab",
     title: "Receptor Lab: Antipsychotics",
     kind: "Drag & drop \u00b7 solo",
-    blurb: "A drug name over an empty cauldron. Click in every receptor it acts on, say whether it blocks, partially activates, activates or inverts each one, and size the circle to the binding strength. Lock in and your brew is set beside the real one, Ki values and all.",
-    tags: ["Psychopharm", "19 medications", "1000 points a round", "Gauntlet \u00b7 Survival \u00b7 Free play"]
+    blurb: "A drug name over an empty cauldron. Click in every receptor it acts on, say whether it blocks, partially activates, activates or inverts each one, and size the circle to the binding strength. Lock in and your brew is set beside the real one, Ki values and all. Or start in guided brewing, where the teaching paragraph goes up first with the receptors cut out of it and you answer your way back into it.",
+    tags: ["Psychopharm", "19 medications", "Guided walkthroughs", "Gauntlet \u00b7 Survival \u00b7 Free play"]
   }
 ];
 
@@ -8785,6 +8992,354 @@ const RL_DRUGS = [
 ];
 
 /* =====================================================================
+ * GUIDED BREWING — teaching data
+ * =====================================================================
+ * The other three modes ask you to produce a binding profile and then
+ * explain it afterwards. This one runs the other way: the summary
+ * paragraph is on screen from the first second, with every receptor and
+ * every action word cut out of it, and you answer your way back into the
+ * prose one hole at a time.
+ *
+ * RL_EFFECT is the shared lexicon, keyed 'RECEPTOR|action'. Each entry
+ * carries the clinical effect as a question, why that receptor is the
+ * answer, why the action is what it is, and the sentence it writes into
+ * the paragraph. {r} is the receptor blank, {a} the action blank, {k} the
+ * strength blank. An `echo` is a second pass at the SAME receptor from the
+ * other end — the side effect that falls out of the effect you just
+ * explained — which is the single most important habit this mode is
+ * trying to build.
+ *
+ * RL_GUIDE holds per-drug overrides: the opening line, the order, which
+ * receptor carries the Ki question, and any place where the generic
+ * lexicon entry would be wrong for that particular drug (quetiapine's D2
+ * being the obvious one — the generic "and this is where the EPS comes
+ * from" is precisely backwards for a drug that barely holds D2 at all).
+ * Anything not overridden falls through to the lexicon, so every one of
+ * the 19 medications can be walked through, not just the tutorial three.
+ * ===================================================================== */
+
+const RL_ACT_WORD = {
+  antagonist: 'antagonism',
+  partial: 'partial agonism',
+  agonist: 'agonism',
+  inverse: 'inverse agonism',
+  reuptake: 'reuptake blockade',
+};
+
+const RL_EFFECT = {
+
+  /* ---- dopamine ---- */
+  'D2|antagonist': {
+    ask: 'Start with what the drug is actually for. To pull down the hallucinations and the delusions, which receptor has to be acted on?',
+    why: 'Psychosis tracks with too much dopamine signalling in the mesolimbic pathway, and D2 is where that signal lands. Every dopaminergic antipsychotic ever marketed converges on this one receptor — response begins around 65% D2 occupancy, which is the single number worth carrying around.',
+    actWhy: 'Too much dopamine signalling means the receptor has to be turned down, and a straight block is the most direct way to do it. Note what that buys and what it costs: the blockade cannot tell one dopamine pathway from another.',
+    line: 'The antipsychotic effect comes from {r} {a}.',
+    echo: {
+      ask: 'Now the other half of that same bargain — the stiffness, the tremor, the restlessness, and the prolactin rise. Which receptor is behind those?',
+      why: 'The same receptor, in different places. The drug cannot separate the mesolimbic pathway from the nigrostriatal one (rigidity, tremor, akathisia, and eventually tardive dyskinesia) or the tuberoinfundibular one (prolactin, and with it galactorrhoea, amenorrhoea and sexual dysfunction). How much you actually see depends on how tightly the drug holds D2 and on what else it blocks — muscarinic and 5-HT2A blockade both push back.',
+      line: 'The same {r} blockade in the nigrostriatal and tuberoinfundibular pathways is what produces the EPS and the prolactin rise.',
+    },
+  },
+  'D2|partial': {
+    ask: 'This one treats psychosis without simply switching dopamine off. Which receptor is it still working through?',
+    why: 'D2 — the target did not change. Only what the drug does once it gets there.',
+    actWhy: 'A partial agonist has very high affinity but submaximal intrinsic activity, so it out-competes dopamine in both directions at once: where dopamine is running high it acts as a brake, and where dopamine is low it supplies enough tone to keep the pathway running. That is why prolactin does not rise and why EPS stays low.',
+    line: 'Its antipsychotic effect comes from {r} {a}.',
+    echo: {
+      ask: 'And the side effect this class is actually known for — the pacing, the inability to sit still. Which receptor?',
+      why: 'D2 again. Partial agonism is not the same as no agonism: the residual dopaminergic drive at striatal D2 is the accepted explanation for akathisia. It is why the characteristic complaint with these agents is restlessness rather than rigidity or tremor.',
+      line: 'The residual drive at {r} is where the akathisia comes from.',
+    },
+  },
+  'D3|partial': {
+    ask: 'Now past the positive symptoms — the flat affect, the lack of drive, the anhedonia. Which dopamine receptor is thought to carry that?',
+    why: 'D3. It sits in the limbic striatum and is the receptor most tied to motivation and reward. The difficulty in a living brain is that endogenous dopamine binds D3 very tightly, so a drug has to be genuinely D3-preferring to occupy it at all.',
+    actWhy: 'Partial agonism again — enough affinity to displace dopamine, not so much intrinsic activity that the system is shut down.',
+    line: 'The negative-symptom and motivation argument rests on {r} {a}.',
+  },
+  'D3|antagonist': {
+    ask: 'Which dopamine receptor, closely related to D2 and concentrated in the limbic striatum, does this drug also bind tightly?',
+    why: 'D3. Almost every D2 blocker hits D3 as well. The clinical consequence is genuinely unsettled, because endogenous dopamine out-competes most drugs at D3 in vivo — affinity on a bench assay does not mean occupancy in a patient.',
+    line: 'It also carries {r} {a}, of uncertain clinical weight.',
+  },
+  'D4|antagonist': {
+    ask: 'Which dopamine receptor subtype, dense in cortex, was once thought to be clozapine’s secret?',
+    why: 'D4. It was the great hope of the 1990s — clozapine’s D4 affinity looked like the explanation for its unique efficacy, selective D4 antagonists were built on the strength of it, and they failed outright in trials. A standing reminder that a binding affinity is a hypothesis, not a mechanism.',
+    line: 'It binds {r} too — {a} whose promise never survived the trials.',
+  },
+  'D1|antagonist': {
+    ask: 'Which dopamine receptor, the Gs-coupled one concentrated in prefrontal cortex, does this drug also occupy?',
+    why: 'D1. Prefrontal D1 tone matters for working memory, and the cortical D1:D2 balance is a live question in cognition — but no marketed agent has yet turned D1 binding into a demonstrated cognitive benefit.',
+    line: 'It adds {r} {a}.',
+  },
+
+  /* ---- serotonin ---- */
+  '5HT1A|partial': {
+    ask: 'Now the part that lifts mood and takes the edge off anxiety — and quietly buys back some of the restlessness. Which receptor?',
+    why: '5-HT1A. Partial agonism here is anxiolytic and antidepressant in its own right (it is buspirone’s entire mechanism), and it increases dopamine release in prefrontal cortex and striatum, which offsets akathisia and may help negative symptoms. The agents with the strongest 5-HT1A action are reliably the ones with the least akathisia.',
+    actWhy: 'Partial agonism. A full agonist would flatten the autoreceptor feedback loop; a partial agonist nudges it.',
+    line: 'Mood, anxiety and some protection against akathisia come from {r} {a}.',
+  },
+  '5HT2A|antagonist': {
+    ask: 'Which receptor, held more tightly than D2, is what separates an "atypical" from an old-school antipsychotic?',
+    why: '5-HT2A. Cortical 5-HT2A drives inhibitory tone onto dopamine neurons, so blocking it disinhibits nigrostriatal dopamine release — and that dopamine then competes with the drug at striatal D2. A high 5-HT2A:D2 affinity ratio is the classical definition of atypicality, and what it buys is lower EPS. It also deepens slow-wave sleep.',
+    actWhy: 'Blockade. Much of the literature calls these inverse agonists instead, since 5-HT2A has real constitutive activity — both words are defensible, and both are accepted here.',
+    line: 'Its atypical character comes from {r} {a}, held more tightly than D₂.',
+  },
+  /* Chosen automatically when the drug binds 5-HT2A no more tightly than D2 —
+     which is exactly the line between the first generation and the second. */
+  '5HT2A|antagonist-weak': {
+    ask: 'This one blocks a serotonin receptor too, but not tightly enough to change its character. Which receptor — the one whose blockade is what makes an "atypical" atypical?',
+    why: '5-HT2A. Blocking it disinhibits nigrostriatal dopamine release, and that dopamine then competes with the drug at striatal D2, which softens the motor side effects — but only if 5-HT2A is held more tightly than D2. Here it is not, and that ratio is precisely the line between a first-generation agent and an atypical.',
+    actWhy: 'Blockade. Much of the literature calls these inverse agonists instead, since 5-HT2A has real constitutive activity — both words are accepted here.',
+    line: 'It carries {r} {a} as well, but no tighter than D₂ — which is why it is not an atypical.',
+  },
+  /* Chosen when the drug is a D2 PARTIAL agonist: the ratio that defines an
+     atypical was written for the second generation and does not classify these. */
+  '5HT2A|antagonist-third': {
+    ask: 'Which serotonin receptor does it block on top of that dopamine partial agonism?',
+    why: '5-HT2A. Blocking it disinhibits nigrostriatal dopamine, which is worth having alongside a D2 partial agonist — but in this class it is a supporting player. The 5-HT2A:D2 ratio that defines "atypicality" was written for the second generation; these agents are classified by what they do at D2, not by that ratio.',
+    actWhy: 'Blockade. Much of the literature writes inverse agonist instead, and both are accepted here.',
+    line: 'It adds {r} {a} on top of that, supporting the dopamine effect rather than defining the drug.',
+  },
+  '5HT2A|inverse': {
+    ask: 'Which serotonin receptor, held far more tightly than D2, is what makes this drug atypical?',
+    why: '5-HT2A. Cortical 5-HT2A over-activity is enough on its own to produce hallucinations — it is how the classical psychedelics work — and turning it down disinhibits nigrostriatal dopamine, which then competes with the drug at striatal D2 and softens the motor side effects. A high 5-HT2A:D2 ratio is the classical definition of atypicality.',
+    actWhy: 'Inverse agonism rather than simple blockade. 5-HT2A signals at some level with no serotonin bound at all; an inverse agonist drives it below that baseline, where an antagonist would only hold the door shut. Plenty of sources still write "antagonist", and that is accepted.',
+    line: 'Its atypical character comes from {r} {a}, held far more tightly than D₂.',
+  },
+  '5HT2C|antagonist': {
+    ask: 'Appetite. Which serotonin receptor, when it is blocked, takes the brakes off eating?',
+    why: '5-HT2C. Hypothalamic 5-HT2C tone suppresses appetite — stimulating it was the whole idea behind lorcaserin. Block it instead and appetite is released. Paired with H1 blockade it is the engine of antipsychotic weight gain, and unlike the sedation, the weight does not show tolerance.',
+    line: 'Appetite is released by {r} {a}.',
+  },
+  '5HT2C|inverse': {
+    ask: 'Appetite again. Which serotonin receptor sets the brake on eating?',
+    why: '5-HT2C. Hypothalamic 5-HT2C tone suppresses appetite — stimulating it was the whole idea behind lorcaserin. Take that tone away and appetite is released, which together with H1 blockade is the engine of antipsychotic weight gain. Be careful with the sign here: an inverse agonist is not automatically weight-sparing. What separates the metabolically quiet agents from the expensive ones is how weakly they hold this receptor, and what else they are doing at H1 and M3.',
+    actWhy: 'Inverse agonism rather than plain blockade: 5-HT2C carries real constitutive activity, and these agents drive it below baseline. Many sources write "antagonist"; accepted here.',
+    line: 'It carries {r} {a} as well.',
+  },
+  '5HT6|antagonist': {
+    ask: 'Which serotonin receptor, found almost only in brain and studied for years as a cognition target, does this drug also bind?',
+    why: '5-HT6. Blocking it raises cortical acetylcholine and glutamate and looked procognitive for a long time, until a run of Alzheimer trials failed. It has also been linked to weight gain.',
+    line: 'It adds {r} {a}.',
+  },
+  '5HT7|antagonist': {
+    ask: 'Which serotonin receptor, tied to circadian rhythm and to mood, does this drug block?',
+    why: '5-HT7. It is dense in the suprachiasmatic nucleus and hippocampus; blocking it is antidepressant-like in animal models and shifts circadian phase. It is the pharmacological argument behind the antidepressant claims of the agents that hit it hard.',
+    line: 'The mood and circadian argument rests on {r} {a}.',
+  },
+
+  /* ---- histamine ---- */
+  'H1|antagonist': {
+    ask: 'Sedation — and, over months, weight. Which receptor?',
+    why: 'H1. Central histamine is the wakefulness signal; blocking it is what makes diphenhydramine a sleep aid, and it does exactly the same here. Tolerance develops to the drowsiness over a few weeks. Tolerance to the weight gain does not.',
+    line: 'Sedation, and much of the weight gain, come from {r} {a}.',
+  },
+
+  /* ---- muscarinic ---- */
+  'M1|antagonist': {
+    ask: 'Dry mouth, constipation, blurred vision, urinary retention — and in an older patient, confusion. Which receptor?',
+    why: 'M1, with M3 doing the peripheral work. This is the anticholinergic burden, and in the elderly it is the part that causes real harm: delirium and a measurable cognitive cost. There is a payoff, though — striatal muscarinic blockade opposes the D2 blockade, which is precisely why the drugs with heavy muscarinic affinity cause so much less EPS.',
+    line: 'The dry mouth, constipation and blurred vision come from {r} {a} — which is also what keeps the EPS low.',
+  },
+  'M1|agonist': {
+    ask: 'This drug is trying to improve cognition rather than blunt it. Which muscarinic receptor is it turning on?',
+    why: 'M1, on cortical interneurons, where it potentiates NMDA currents — the pro-cognitive half of the muscarinic strategy. Note that it is the exact opposite of what every older antipsychotic does at this receptor.',
+    actWhy: 'Agonism — a full turn-on, not a block. Which is also why the peripheral cholinergic effects had to be engineered around rather than tolerated.',
+    line: 'The pro-cognitive half is {r} {a}.',
+  },
+  'M3|antagonist': {
+    ask: 'Past the dry mouth: which muscarinic receptor, sitting on the pancreatic beta cell, links this drug to impaired insulin release?',
+    why: 'M3. Beta-cell M3 receptors are part of normal glucose-stimulated insulin secretion, and blocking them blunts that response — a route to diabetes risk that runs independently of the weight gain. M3 blockade is also the peripheral half of the anticholinergic picture.',
+    line: 'It also blocks {r}, which blunts insulin release independently of the weight.',
+  },
+  'M4|agonist': {
+    ask: 'This one treats psychosis with no dopamine-receptor binding whatsoever. Which receptor is it working through?',
+    why: 'M4, on striatal cholinergic interneurons. Activating it damps dopamine release upstream, so the dopamine signal comes down without a single dopamine receptor ever being occupied — no EPS, no prolactin rise, because nothing is blocking D2.',
+    actWhy: 'Agonism. The drug turns this receptor on, and the dopaminergic effect is indirect — one synapse upstream of everything the rest of the class does.',
+    line: 'The antipsychotic effect comes from {r} {a}, one synapse upstream of dopamine.',
+  },
+
+  /* ---- adrenergic ---- */
+  'A1|antagonist': {
+    ask: 'The patient stands up and goes grey — dizziness, a drop in pressure, sometimes a fall. Which receptor?',
+    why: 'α1. Vascular α1 tone is what holds blood pressure up when you stand; block it and you get orthostatic hypotension, dizziness and reflex tachycardia. It is the reason these drugs are titrated slowly, and it contributes to the sedation as well.',
+    line: 'The orthostasis and the dizziness come from {r} {a}.',
+  },
+  'A2|antagonist': {
+    ask: 'Which adrenergic receptor — an autoreceptor that normally applies the brake to noradrenaline release — does this drug block?',
+    why: 'α2. It is a presynaptic brake, so blocking it raises noradrenaline release (and cortical dopamine with it). That is mirtazapine’s antidepressant argument, imported here, and it may contribute to the mood and negative-symptom claims of the agents that bind it hard.',
+    line: 'It adds {r} {a}, which lifts noradrenaline release.',
+  },
+
+  /* ---- transporters ---- */
+  'SERT|reuptake': {
+    ask: 'Which target — not a receptor at all — gives this drug a genuinely antidepressant mechanism?',
+    why: 'The serotonin transporter. Blocking reuptake raises synaptic serotonin, exactly as an SSRI does.',
+    actWhy: 'Reuptake blockade, and it is the only option: a transporter is a pump, not a G-protein-coupled receptor. There is no such thing as a SERT agonist — the pump is either running or inhibited.',
+    line: 'Its antidepressant claim rests on {r} {a}.',
+  },
+  'NET|reuptake': {
+    ask: 'Which transporter does this drug, or its active metabolite, inhibit — giving it a noradrenergic antidepressant mechanism?',
+    why: 'The noradrenaline transporter. Inhibiting it raises synaptic noradrenaline, and in prefrontal cortex, where there is very little dopamine transporter, NET clears dopamine as well — so NET blockade raises prefrontal dopamine too.',
+    actWhy: 'Reuptake blockade — a transporter can only ever be inhibited.',
+    line: 'It also carries {r} {a}.',
+  },
+};
+
+/* What a meaningful "does not bind" is worth saying out loud. Used to write
+ * the closing line for any drug without a hand-written one. */
+const RL_NEG_TAKE = {
+  D2:      'no D2 affinity at all, so no EPS and no prolactin rise',
+  M1:      'no muscarinic affinity, so no anticholinergic load — and nothing to buffer the D2 blockade',
+  H1:      'no H₁, so little sedation and little weight gain',
+  '5HT2C': 'no 5-HT₂c, one less push towards weight gain',
+  A1:      'no α₁, so little orthostasis',
+  M3:      'no M₃, so no anticholinergic effect on insulin release',
+  SERT:    'no serotonin reuptake inhibition',
+  NET:     'no noradrenaline reuptake inhibition',
+  '5HT1A': 'no 5-HT1A',
+  '5HT2A': 'no 5-HT2A',
+  A2:      'no α2',
+  D1:      'no D1',
+  D3:      'no D3',
+  D4:      'no D4',
+  '5HT6':  'no 5-HT6',
+  M4:      'no M4',
+};
+/* Only the absences that actually teach something reach the closing line.
+ * "No SERT" is true of nearly every antipsychotic and teaches nobody anything. */
+const RL_NEG_ORDER = ['D2', 'M1', 'H1', '5HT2C', 'A1'];
+
+/* The three the tutorial deals, in order: a near-pure D2 blocker, then the
+ * one whose whole story is the affinity ladder, then the partial agonist. */
+const RL_TUTORIAL = ['haloperidol', 'quetiapine', 'aripiprazole'];
+
+const RL_GUIDE = {
+
+  haloperidol: {
+    lead: 'Haloperidol · Haldol — a high-potency butyrophenone, and about as close to a pure dopamine blocker as clinical practice gets.',
+    ki: 'D2',
+    kiAsk: 'How tightly does haloperidol hold D₂? A lower Ki means a tighter grip.',
+    kiWhy: 'Reported anywhere from 0.7 to 1.4 nM, so "very high" and "high" are both defensible — and either way it is an order of magnitude tighter than anything else haloperidol touches. That one fact is the drug. With nothing else competing, D2 blockade is essentially all you get, for better and for worse.',
+    kiLine: 'It holds it at {k} affinity — far tighter than anything else in its profile.',
+    closing: 'And there is almost no H₁ and no muscarinic activity at all, so nothing buffers that D2 blockade: little sedation, little weight gain — and EPS and prolactin at the top of the class.',
+  },
+
+  quetiapine: {
+    lead: 'Quetiapine · Seroquel — the clearest dose-dependent drug in psychiatry, and the order of its affinities is the whole explanation.',
+    order: ['D2', 'H1', 'A1', '5HT2A', '5HT1A'],
+    ki: 'H1',
+    kiAsk: 'How tightly does quetiapine hold H₁ — its single tightest target?',
+    kiWhy: 'H1 at about 30 nM is the tightest thing quetiapine binds — tighter than α1 (94 nM), tighter than 5-HT2A (148 nM) and roughly ten times tighter than D2 (329 nM). Read that ladder from the top and the dosing falls straight out of it: at 25–100 mg quetiapine is essentially an antihistamine, α1 and 5-HT2A come in through the middle of the range, and only at 400–800 mg is there enough D2 occupancy to be antipsychotic.',
+    kiLine: 'H₁ is its tightest target at {k} affinity — tighter than α₁, tighter than 5-HT₂ₐ and roughly ten times tighter than D₂, which is the whole dose ladder in one line.',
+    steps: {
+      D2: {
+        why: 'D2, the same as every other dopaminergic antipsychotic. What is different is how loosely quetiapine holds it — Ki around 329 nM, the "low" band — and how quickly it falls off again. That is why 400–800 mg a day is needed before the drug is antipsychotic at all.',
+        echo: {
+          ask: 'Quetiapine has the lowest EPS and prolactin risk of the SGAs. Which receptor explains that — by how little it is held?',
+          why: 'D2 again, and this is the point worth taking away: loose, fast-dissociating D2 binding means striatal occupancy never stays high enough for long enough to produce EPS, and pituitary occupancy never rises enough to push prolactin up. The same weak grip that forces the dose so high is what makes the drug so easy on the motor system.',
+          line: 'The loose, fast-off grip on {r} is exactly why EPS and prolactin barely appear.',
+        },
+      },
+      '5HT2A': {
+        line: 'It holds {r} with {a} more tightly than D₂ — technically the atypical ratio, though both affinities are low.',
+      },
+    },
+    closing: 'And the metabolite carries its own profile: norquetiapine adds noradrenaline reuptake inhibition on top of the 5-HT₁ₐ partial agonism, which is why quetiapine has a real place in bipolar depression.',
+  },
+
+  aripiprazole: {
+    lead: 'Aripiprazole · Abilify — the dopamine stabiliser, and the first agent to treat psychosis without simply switching dopamine off.',
+    ki: 'D2',
+    kiAsk: 'How tightly does aripiprazole hold D₂?',
+    kiWhy: 'Ki 0.34 nM — very high, and tighter than dopamine’s own affinity for its receptor. That is what makes partial agonism work at all: the drug wins the competition wherever it goes, and only then decides how much signal to let through. A weak partial agonist would just be a weak drug.',
+    kiLine: 'It binds there with {k} affinity — tighter than dopamine itself, which is what lets partial agonism work at all.',
+    steps: {
+      '5HT2C': {
+        why: '5-HT2C — and here the direction of the action genuinely matters. Aripiprazole is an inverse agonist rather than an antagonist at this receptor, and it carries only moderate H1 affinity on top of that. The combination is why it does not drive appetite the way olanzapine and clozapine do.',
+        line: 'At {r} it is {a} rather than plain blockade — mildly appetite-suppressing rather than the usual weight-gain signal.',
+      },
+    },
+    closing: 'Almost no muscarinic binding, a half-life near 75 hours, an LAI form and a licence as an adjunct in depression — but akathisia is the side effect you will actually be called about.',
+  },
+
+  chlorpromazine: {
+    closing: 'The low-potency profile in a single drug: strong H₁, M₁ and α₁ blockade means sedation, anticholinergic load and orthostasis dominate the picture while EPS stays comparatively mild — the mirror image of haloperidol.',
+  },
+
+  thioridazine: {
+    closing: 'Its muscarinic affinity is the strongest of the FGAs, which is exactly why its EPS rate is the lowest — but dose-dependent QTc prolongation and irreversible pigmentary retinopathy above 800 mg/day are what took it off most markets.',
+  },
+
+  olanzapine: {
+    closing: 'Read H₁, 5-HT₂c and M₃ together and the metabolic reputation stops being a mystery: appetite up, satiety signalling down, insulin secretion blunted. Tolerance develops to the sedation. It does not develop to the weight.',
+  },
+
+  cariprazine: {
+    steps: {
+      '5HT2C': {
+        line: 'It reaches {r} with {a}, but only weakly — part of why it stays weight-neutral.',
+      },
+    },
+  },
+
+  /* The generic D2-antagonist echo ("and this is where the EPS comes from")
+   * is wrong for clozapine for the same reason it is wrong for quetiapine. */
+  clozapine: {
+    lead: 'Clozapine · Clozaril — the most effective antipsychotic there is, and the one whose receptor profile explains both halves of that sentence.',
+    steps: {
+      D2: {
+        why: 'D2, but only just. Clozapine’s D2 affinity is low and it dissociates fast, so striatal occupancy rarely passes 60% at clinical doses — well under the threshold where EPS begins. It remains the only agent with proven efficacy in treatment-resistant schizophrenia, and nobody can say with certainty which part of this profile is responsible.',
+        echo: {
+          ask: 'Clozapine causes virtually no EPS, does not raise prolactin, and is the one agent usable in tardive dyskinesia. Which receptor — and how it is held — accounts for that?',
+          why: 'D2 again. Low affinity plus fast dissociation means occupancy never sits high enough to produce EPS, and the heavy muscarinic and 5-HT2A blockade pushes back on top of it. The price of this profile is paid elsewhere: agranulocytosis, myocarditis, seizures, ileus and the worst metabolic burden in the class.',
+          line: 'Loose, fast-off binding at {r} is why there is essentially no EPS and no prolactin rise.',
+        },
+      },
+      '5HT2C': {
+        line: 'It adds {r} {a} — which, stacked on very strong H₁ blockade, does nothing to hold back the worst weight gain in the class.',
+      },
+    },
+    closing: 'Read the whole profile at once and both halves of clozapine are there: the loose D2 grip and the heavy 5-HT₂ₐ and muscarinic blockade buy unmatched efficacy with almost no EPS, and the very strong H₁, 5-HT₂c and muscarinic load is paid back as sedation, weight gain, constipation and hypersalivation — on top of the agranulocytosis, myocarditis and seizure risk that force the monitoring.',
+  },
+
+  lumateperone: {
+    lead: 'Lumateperone · Caplyta — built to do different things at the same receptor depending on where in the neuron it sits.',
+    steps: {
+      D2: {
+        why: 'D2 — but not in a single mode. Lumateperone is a presynaptic partial agonist and a postsynaptic antagonist at the same receptor, and it reaches only about 40% striatal occupancy at 42 mg. That is well under the EPS threshold, which is why it is so quiet in the motor system.',
+        echo: null,
+      },
+      '5HT2A': {
+        line: 'Its character comes from {r} {a} held roughly 60× more tightly than D₂ — the largest such ratio of any marketed agent.',
+      },
+    },
+  },
+
+  pimavanserin: {
+    lead: 'Pimavanserin · Nuplazid — the proof that you do not need a dopamine receptor to treat psychosis.',
+    steps: {
+      '5HT2A': {
+        ask: 'This drug treats psychosis without touching a dopamine receptor at all. Which serotonin receptor is doing the work?',
+        why: '5-HT2A. Cortical 5-HT2A over-activity is enough on its own to produce visual hallucinations — it is how the classical psychedelics work. Turn that receptor down and the hallucinations recede with the dopamine system left entirely alone, which is exactly what you want in Parkinson’s disease psychosis.',
+        line: 'The entire mechanism is {r} {a}.',
+      },
+      '5HT2C': {
+        line: 'It reaches {r} with {a} too, though reported selectivity for 5-HT₂ₐ over it ranges from about 5× to 40× depending on the assay.',
+      },
+    },
+    closing: 'And the negative profile is the entire point: no measurable affinity at any dopaminergic, muscarinic, histaminergic or adrenergic site, which is why it is the agent approved for Parkinson’s disease psychosis. It still carries the class black-box for mortality in elderly patients with dementia-related psychosis, and it prolongs QTc.',
+  },
+
+  xanomeline: {
+    lead: 'Xanomeline–Trospium · Cobenfy — the first genuinely non-dopaminergic antipsychotic, approved in September 2024.',
+    closing: 'And the second ingredient is pure pharmacokinetics: trospium is a quaternary muscarinic ANTAGONIST that does not cross the blood–brain barrier, in the tablet for no reason other than to block xanomeline’s peripheral cholinergic effects — the nausea, vomiting, sweating and salivation — while leaving the central agonism untouched.',
+  },
+};
+
+/* =====================================================================
  * RECEPTOR LAB
  * =====================================================================
  * Click a receptor and it drops into the cauldron. Say what the drug does
@@ -8821,6 +9376,7 @@ const RLAB = (function () {
   const modeFree  = document.getElementById('rlModeFree');
   const modeGaunt = document.getElementById('rlModeGauntlet');
   const modeSurv  = document.getElementById('rlModeSurvival');
+  const modeGuide = document.getElementById('rlModeGuided');
   const modeNote  = document.getElementById('rlModeNote');
 
   const nameEl    = document.getElementById('rlDrugName');
@@ -9031,7 +9587,10 @@ const RLAB = (function () {
       el2.style.height = size + 'px';
       el2.style.left = cx + 'px';
       el2.style.top = cy + 'px';
-      el2.title = recById[it.rid].full + ' — ' + actById[it.act].label;
+      /* guided brewing drops a receptor in before you have said what the drug
+         does there, so `act` can legitimately be 'pending' and have no entry. */
+      el2.title = recById[it.rid].full + ' — '
+        + (actById[it.act] ? actById[it.act].label : 'action not yet named');
 
       const tag = document.createElement('div');
       tag.className = 'rl-rec-tag' + (opts.selected === it.rid ? ' sel' : '');
@@ -9272,15 +9831,16 @@ const RLAB = (function () {
     modeFree.setAttribute('aria-pressed', String(mode === 'free'));
     modeGaunt.setAttribute('aria-pressed', String(mode === 'gauntlet'));
     modeSurv.setAttribute('aria-pressed', String(mode === 'survival'));
+    modeGuide.setAttribute('aria-pressed', String(mode === 'guided'));
 
     const run = load(RUN_KEY);
     const surv = load(SURV_KEY);
 
     menuSlots.innerHTML = '';
     pickGrid.innerHTML = '';
-    pickGrid.hidden = mode !== 'free';
+    pickGrid.hidden = mode !== 'free' && mode !== 'guided';
     startRow.hidden = mode === 'free';
-    menuSlots.hidden = mode === 'free';
+    menuSlots.hidden = mode === 'free' || mode === 'guided';
     boardEl.hidden = mode !== 'survival';
 
     if (mode === 'gauntlet') {
@@ -9302,8 +9862,38 @@ const RLAB = (function () {
       if (!lbLoaded) lbLoad();
 
     } else {
-      modeNote.textContent = 'Pick any medication and build its profile at your own pace. '
-        + '1000 points a round, and your best for each drug is kept on this device.';
+      const guided = mode === 'guided';
+      const gstore = load(GUIDE_KEY);
+
+      if (guided) {
+        modeNote.textContent = 'The summary paragraph goes up FIRST \u2014 with every receptor and every action word cut out of it. '
+          + 'You answer your way back into the prose one clinical effect at a time: what the drug is for, then what that same '
+          + 'binding costs you. Nothing is scored; a wrong answer just buys you the explanation.';
+        startBtn.textContent = 'Start the tutorial \u2014 Haldol, Seroquel, Abilify';
+
+        const line = document.createElement('div');
+        line.className = 'rl-lineup';
+        RL_TUTORIAL.forEach((id, i) => {
+          const dd = drugById[id];
+          const it = document.createElement('div');
+          it.className = 'rl-lineup-item' + (gstore[id] && gstore[id].done ? ' done' : '');
+          const s = document.createElement('small');
+          s.textContent = 'Tutorial ' + (i + 1);
+          it.appendChild(s);
+          it.appendChild(document.createTextNode(dd.brand));
+          line.appendChild(it);
+        });
+        pickGrid.appendChild(line);
+
+        const lab = document.createElement('div');
+        lab.className = 'rl-gen-label';
+        lab.textContent = 'Or walk through any medication';
+        pickGrid.appendChild(lab);
+      } else {
+        modeNote.textContent = 'Pick any medication and build its profile at your own pace. '
+          + '1000 points a round, and your best for each drug is kept on this device.';
+      }
+
       const best = load(BEST_KEY);
       let lastGen = null;
       RL_DRUGS.forEach(d => {
@@ -9324,13 +9914,16 @@ const RLAB = (function () {
         const c = document.createElement('div');
         c.className = 'rl-pick-cls'; c.textContent = d.cls;
         btn.append(n, b, c);
-        if (best[d.id] != null) {
+        const badge = guided
+          ? (gstore[d.id] && gstore[d.id].done ? 'Walked \u00b7 ' + gstore[d.id].best + '% first try' : null)
+          : (best[d.id] != null ? 'Best ' + best[d.id] + ' / 1000' : null);
+        if (badge) {
           const s = document.createElement('div');
           s.className = 'rl-pick-best';
-          s.textContent = 'Best ' + best[d.id] + ' / 1000';
+          s.textContent = badge;
           btn.appendChild(s);
         }
-        btn.onclick = () => startFree(d.id);
+        btn.onclick = () => (guided ? startGuideOne(d.id) : startFree(d.id));
         pickGrid.appendChild(btn);
       });
     }
@@ -9368,6 +9961,7 @@ const RLAB = (function () {
   function show(which) {
     menuEl.hidden    = which !== 'menu';
     playEl.hidden    = which !== 'play';
+    guideEl.hidden   = which !== 'guide';
     resultEl.hidden  = which !== 'result';
     summaryEl.hidden = which !== 'summary';
     homeLink.hidden  = which === 'menu';
@@ -9920,11 +10514,537 @@ const RLAB = (function () {
     show('summary');
   }
 
+  /* ---------------- guided brewing ----------------
+   * The paragraph is the spine. Every step owns one sentence of it, and a
+   * sentence is a template with holes: {r} for the receptor, {a} for what
+   * the drug does there, {k} for how tightly it binds. Answer, and the word
+   * is written into the hole — green if you had it first time, candle if it
+   * had to be handed to you. Nothing you get wrong is ever written down.
+   *
+   * A step is one of three kinds:
+   *   rec   identify the receptor, then say what the drug does at it
+   *   ki    one per drug: how tightly is the headline receptor held
+   *   echo  the same receptor again, from the side-effect end
+   */
+  const guideEl  = document.getElementById('rlGuide');
+  const gdName   = document.getElementById('rlGdName');
+  const gdSub    = document.getElementById('rlGdSub');
+  const gdMeta   = document.getElementById('rlGdMeta');
+  const gdParaHd = document.getElementById('rlGdParaHead');
+  const gdPara   = document.getElementById('rlGdPara');
+  const gdAsk    = document.getElementById('rlGdAsk');
+  const gdCell   = document.getElementById('rlGdCell');
+  const gdTally  = document.getElementById('rlGdTally');
+  const gdDone   = document.getElementById('rlGdDone');
+  const gdScore  = document.getElementById('rlGdScore');
+  const gdOf     = document.getElementById('rlGdOf');
+  const gdPearl  = document.getElementById('rlGdPearl');
+  const gdSrc    = document.getElementById('rlGdSrc');
+  const gdNext   = document.getElementById('rlGdNextBtn');
+  const gdRetry  = document.getElementById('rlGdRetryBtn');
+
+  const GUIDE_KEY = 'rlab.guided.v1';
+
+  let gQueue = [];      // drug ids still to walk, tutorial or a single pick
+  let gIdx = 0;
+  let gTut = false;     // true only for the three-drug tutorial run
+  let gPlan = null;     // { lead, steps, closing }
+  let gStep = 0;
+  let gPhase = 'rec';   // rec | act | ki | echo | done
+  let gFill = [];       // per step: { r, a, k } each 'first' | 'corrected'
+  let gPlaced = {};     // what has made it into the cauldron so far
+  let gKiRec = null;    // held at a neutral size until its band is answered
+  let gFirst = 0, gAsked = 0;
+
+  const tierPhrase = t => (RL_TIERS.find(x => x.t === t) || { name: '' }).name.toLowerCase();
+
+  /* Build the walkthrough for one drug: the lexicon, bent by whatever that
+     drug's entry in RL_GUIDE overrides. */
+  function buildGuide(d) {
+    const g = RL_GUIDE[d.id] || {};
+    const byR = {};
+    d.b.forEach(x => { byR[x.r] = x; });
+    const cores = d.b.filter(x => x.core);
+    const anchor = g.anchor
+      || (byR.D2 && byR.D2.core ? 'D2'
+        : byR.M4 && byR.M4.core ? 'M4'
+        : (byR['5HT2A'] && byR['5HT2A'].core ? '5HT2A' : (cores[0] || d.b[0]).r));
+    const order = g.order || [anchor].concat(cores.map(x => x.r).filter(r => r !== anchor));
+    const kiRec = ('ki' in g) ? g.ki : anchor;
+    const ov = g.steps || {};
+    const steps = [];
+
+    order.forEach(rid => {
+      const bind = byR[rid];
+      if (!bind) return;
+      /* 5-HT2A is read against D2 rather than in isolation: the same blockade
+         means something different depending on which of the two is held harder. */
+      let key = rid + '|' + bind.act;
+      if (rid === '5HT2A' && bind.act === 'antagonist' && byR.D2) {
+        /* The 5-HT2A:D2 ratio only means "atypical" against a D2 ANTAGONIST.
+           Held no tighter than D2, the drug is first-generation; against a D2
+           partial agonist that ratio is not what classifies the drug at all. */
+        if (byR.D2.act === 'partial') key += '-third';
+        else if (bind.ki >= byR.D2.ki) key += '-weak';
+      }
+      const base = RL_EFFECT[key] || RL_EFFECT[rid + '|' + bind.act] || {};
+      const o = ov[rid] || {};
+      const lab = (recById[rid] || {}).label || rid;
+      const trans = isTransporter(rid);
+      steps.push({
+        kind: 'rec', r: rid, bind: bind, note: bind.note,
+        ask: o.ask || base.ask || 'Which receptor does this drug act on next?',
+        why: o.why || base.why || bind.note,
+        actNote: bind.note,
+        actAsk: o.actAsk || base.actAsk || (trans
+          ? 'And what can a drug actually do at ' + lab + '?'
+          : 'And at ' + lab + ' — does it block the receptor, partly turn it on, or fully turn it on?'),
+        actWhy: o.actWhy || base.actWhy || bind.note,
+        line: o.line || base.line || 'It also carries {r} {a}.',
+      });
+      if (rid === kiRec) {
+        steps.push({
+          kind: 'ki', r: rid, bind: bind,
+          ask: g.kiAsk || ('How tightly does it hold ' + lab + '? A lower Ki means a tighter grip.'),
+          why: g.kiWhy || ('Ki ' + fmtKi(bind.ki) + ' nM. ' + (bind.note || '')),
+          line: g.kiLine || 'Its affinity there is {k}.',
+        });
+      }
+      const e = ('echo' in o) ? o.echo : base.echo;
+      if (e) steps.push({ kind: 'echo', r: rid, bind: bind, ask: e.ask, why: e.why, line: e.line });
+    });
+
+    let closing = g.closing;
+    if (closing === undefined) {
+      const negs = RL_NEG_ORDER.filter(r => d.neg && d.neg[r] != null && RL_NEG_TAKE[r]).slice(0, 3);
+      closing = negs.length
+        ? 'Worth as much as any of that is what it does not touch: ' + negs.map(r => RL_NEG_TAKE[r]).join('; ') + '.'
+        : '';
+    }
+    return {
+      lead: g.lead || (d.name + ' · ' + d.brand + '. ' + d.cls + '.'),
+      steps: steps,
+      closing: closing,
+    };
+  }
+
+  /* ---- the paragraph ---- */
+  function blankEl(key, i, text) {
+    const s = document.createElement('span');
+    const got = gFill[i] && gFill[i][key];
+    if (got) {
+      s.className = 'rl-blank filled ' + got;
+      s.textContent = text;
+    } else {
+      s.className = 'rl-blank';
+      s.textContent = ' ';
+      const st = gPlan.steps[i];
+      const liveKey = gPhase === 'act' ? 'a' : (st && st.kind === 'ki' ? 'k' : 'r');
+      if (i === gStep && gPhase !== 'done' && key === liveKey) s.className += ' live';
+    }
+    return s;
+  }
+
+  function renderGuidePara() {
+    gdPara.innerHTML = '';
+    const lead = document.createElement('span');
+    lead.className = 'lead';
+    lead.textContent = gPlan.lead + ' ';
+    gdPara.appendChild(lead);
+
+    gPlan.steps.forEach((st, i) => {
+      const span = document.createElement('span');
+      span.className = 'rl-sent'
+        + (gPhase !== 'done' && i === gStep ? ' now' : '')
+        + (i > gStep && gPhase !== 'done' ? ' ahead' : '');
+      (st.line || '').split(/(\{[rak]\})/).forEach(tok => {
+        if (tok === '{r}') span.appendChild(blankEl('r', i, recById[st.r].label));
+        else if (tok === '{a}') span.appendChild(blankEl('a', i, RL_ACT_WORD[st.bind.act]));
+        else if (tok === '{k}') span.appendChild(blankEl('k', i, tierPhrase(rlTierOf(st.bind.ki))));
+        else if (tok) span.appendChild(document.createTextNode(tok));
+      });
+      span.appendChild(document.createTextNode(' '));
+      gdPara.appendChild(span);
+    });
+
+    if (gPhase === 'done' && gPlan.closing) {
+      const c = document.createElement('span');
+      c.className = 'rl-sent closing';
+      c.textContent = gPlan.closing;
+      gdPara.appendChild(c);
+    }
+    gdParaHd.textContent = gPhase === 'done'
+      ? 'What you just worked out'
+      : 'What you are about to work out';
+  }
+
+  /* ---- the cauldron ---- */
+  function renderGuideCell(highlight) {
+    const items = Object.keys(gPlaced).map(rid => ({
+      rid: rid, act: gPlaced[rid].act, tier: gPlaced[rid].tier, judge: gPlaced[rid].judge,
+    }));
+    paintCell(gdCell, items, { selected: highlight || null });
+    const n = items.length;
+    gdTally.textContent = n
+      ? n + (n === 1 ? ' receptor' : ' receptors') + ' in the cauldron'
+      : 'Nothing in it yet.';
+  }
+
+  /* ---- the question ---- */
+  function gdChip(rid, cls) {
+    const rec = recById[rid];
+    const c = document.createElement('div');
+    c.className = 'rl-chip-r fam-' + rec.family + (cls ? ' ' + cls : '');
+    c.textContent = rec.label;
+    c.title = rec.full;
+    c.dataset.rec = rid;
+    return c;
+  }
+
+  function askShell(step, label) {
+    gdAsk.innerHTML = '';
+    const head = document.createElement('div');
+    head.className = 'rl-ask-step';
+    head.textContent = label;
+    const q = document.createElement('div');
+    q.className = 'rl-ask-q';
+    q.textContent = step;
+    const opts = document.createElement('div');
+    opts.className = 'rl-ask-opts';
+    gdAsk.append(head, q, opts);
+    return opts;
+  }
+
+  function renderGuideAsk() {
+    const st = gPlan.steps[gStep];
+    const nStep = gStep + 1, nAll = gPlan.steps.length;
+
+    if (gPhase === 'rec' || gPhase === 'echo') {
+      const opts = askShell(st.ask, 'Step ' + nStep + ' of ' + nAll
+        + (st.kind === 'echo' ? ' · the same receptor, from the other end' : ''));
+      FAM_ORDER.forEach(fam => {
+        const members = RL_RECEPTORS.filter(r => r.family === fam);
+        if (!members.length) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'rl-fam';
+        const h = document.createElement('div');
+        h.className = 'rl-fam-name';
+        h.textContent = FAM_NAME[fam];
+        const row = document.createElement('div');
+        row.className = 'rl-ask-row';
+        members.forEach(r => row.appendChild(gdChip(r.id)));
+        wrap.append(h, row);
+        opts.appendChild(wrap);
+      });
+      opts.querySelectorAll('.rl-chip-r').forEach(c => {
+        c.onclick = () => answerRec(c.dataset.rec);
+      });
+
+    } else if (gPhase === 'act') {
+      const opts = askShell(st.actAsk, 'Step ' + nStep + ' of ' + nAll + ' · what it does there');
+      const row = document.createElement('div');
+      row.className = 'rl-ask-row';
+      const trans = isTransporter(st.r);
+      RL_ACTIONS.forEach(a => {
+        if ((a.transporterOnly === true) !== trans) return;
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'rl-opt o-' + a.id;
+        b.textContent = a.label;
+        b.title = a.blurb;
+        b.dataset.act = a.id;
+        b.onclick = () => answerAct(a.id);
+        row.appendChild(b);
+      });
+      opts.appendChild(row);
+
+    } else if (gPhase === 'ki') {
+      const opts = askShell(st.ask, 'Step ' + nStep + ' of ' + nAll + ' · how tightly');
+      const row = document.createElement('div');
+      row.className = 'rl-ask-row';
+      const DOT = { 4: 22, 3: 17, 2: 12, 1: 8 };
+      RL_TIERS.forEach(t => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'rl-opt-size';
+        b.dataset.tier = String(t.t);
+        const i = document.createElement('i');
+        i.style.width = DOT[t.t] + 'px';
+        i.style.height = DOT[t.t] + 'px';
+        const txt = document.createElement('span');
+        txt.innerHTML = '<b></b> <em></em>';
+        txt.querySelector('b').textContent = t.name;
+        txt.querySelector('em').textContent = t.band;
+        b.append(i, txt);
+        b.onclick = () => answerKi(t.t);
+        row.appendChild(b);
+      });
+      opts.appendChild(row);
+    }
+    renderGuideMeta();
+  }
+
+  function renderGuideMeta() {
+    gdMeta.innerHTML = '';
+    const chip = (k, v, warn) => {
+      const d = document.createElement('div');
+      d.className = 'rl-chip' + (warn ? ' warn' : '');
+      d.innerHTML = '<span class="k"></span><span class="v"></span>';
+      d.querySelector('.k').textContent = k;
+      d.querySelector('.v').textContent = v;
+      return d;
+    };
+    if (gTut) gdMeta.appendChild(chip('Medication', (gIdx + 1) + ' / ' + gQueue.length));
+    gdMeta.appendChild(chip('Step', Math.min(gStep + 1, gPlan.steps.length) + ' / ' + gPlan.steps.length));
+    gdMeta.appendChild(chip('First try', gFirst + ' / ' + gAsked, gAsked > 0 && gFirst < gAsked));
+  }
+
+  /* ---- answering ----
+   * One attempt per question. Right, and it is affirmed and written into the
+   * paragraph; wrong, and what you picked is struck out, the true answer is
+   * lit up in the tray and in the cauldron, and the reason is spelled out.
+   * The wrong receptor never enters the cauldron. */
+  function lockOpts(sel) {
+    gdAsk.querySelectorAll(sel).forEach(n => {
+      n.classList.add('locked');
+      n.onclick = null;
+      n.disabled = true;
+      n.style.pointerEvents = 'none';
+    });
+  }
+
+  function feedback(ok, title, body, tail, note) {
+    const fb = document.createElement('div');
+    fb.className = 'rl-fb ' + (ok ? 'ok' : 'miss');
+    const b = document.createElement('b');
+    b.textContent = title;
+    const p = document.createElement('div');
+    p.textContent = body || '';
+    fb.append(b, p);
+    /* The lexicon explains the receptor in general; the drug's own note says
+       what is peculiar about it HERE. Both are worth reading, when they differ. */
+    if (note && note !== body) {
+      const n = document.createElement('div');
+      n.style.marginTop = '8px';
+      n.style.color = 'var(--rl-text)';
+      n.textContent = 'For this one: ' + note;
+      fb.appendChild(n);
+    }
+    if (tail) {
+      const t = document.createElement('div');
+      t.style.marginTop = '8px';
+      t.style.color = 'var(--rl-muted-dim)';
+      t.textContent = tail;
+      fb.appendChild(t);
+    }
+    gdAsk.appendChild(fb);
+
+    const go = document.createElement('div');
+    go.className = 'board-actions';
+    go.style.marginTop = '14px';
+    const btn = document.createElement('button');
+    btn.className = 'reset-board-btn rl-primary';
+    btn.textContent = lastQuestion() ? 'See the whole thing' : 'Continue';
+    btn.onclick = advance;
+    go.appendChild(btn);
+    gdAsk.appendChild(go);
+    btn.focus({ preventScroll: true });
+    fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function lastQuestion() {
+    return gStep === gPlan.steps.length - 1 && gPhase !== 'rec';
+  }
+
+  function answerRec(rid) {
+    const st = gPlan.steps[gStep];
+    const ok = rid === st.r;
+    gAsked++; if (ok) gFirst++;
+    gFill[gStep] = gFill[gStep] || {};
+    gFill[gStep].r = ok ? 'first' : 'corrected';
+
+    gdAsk.querySelector('[data-rec="' + rid + '"]').classList.add(ok ? 'right' : 'wrong');
+    if (!ok) {
+      const truth = gdAsk.querySelector('[data-rec="' + st.r + '"]');
+      if (truth) truth.classList.add('reveal');
+    }
+    lockOpts('.rl-chip-r');
+
+    if (st.kind === 'rec') {
+      gPlaced[st.r] = {
+        act: 'pending',
+        tier: (st.r === gKiRec) ? 2 : rlTierOf(st.bind.ki),
+        judge: ok ? 'ok' : 'part',
+      };
+    }
+    renderGuidePara();
+    renderGuideCell(st.r);
+
+    const nm = recById[st.r].full;
+    feedback(ok,
+      ok ? 'Correct — ' + nm : 'Not this time — it is ' + nm,
+      st.why,
+      ok ? null : 'Nothing you picked goes in the cauldron. ' + recById[st.r].label + ' is lit up in the tray and dropped in for you.',
+      st.kind === 'rec' ? st.note : null);
+  }
+
+  function answerAct(actId) {
+    const st = gPlan.steps[gStep];
+    const bind = st.bind;
+    const accepted = [bind.act].concat(bind.alt || []);
+    const ok = accepted.indexOf(actId) !== -1;
+    gAsked++; if (ok) gFirst++;
+    gFill[gStep].a = ok ? 'first' : 'corrected';
+
+    const picked = gdAsk.querySelector('[data-act="' + actId + '"]');
+    if (picked) picked.classList.add(ok ? 'right' : 'wrong');
+    if (!ok) {
+      const truth = gdAsk.querySelector('[data-act="' + bind.act + '"]');
+      if (truth) truth.classList.add('reveal');
+    }
+    lockOpts('.rl-opt');
+
+    gPlaced[st.r].act = bind.act;
+    if (!ok) gPlaced[st.r].judge = 'part';
+    renderGuidePara();
+    renderGuideCell(st.r);
+
+    const word = actById[bind.act].label;
+    const alt = (bind.alt || []).length
+      ? 'Either answer is accepted here — the literature uses both ' + word.toLowerCase()
+        + ' and ' + (bind.alt || []).map(a => actById[a].label.toLowerCase()).join(' / ') + ' for this one.'
+      : null;
+    feedback(ok,
+      ok ? 'Correct — ' + word : 'It is ' + word + ' here',
+      st.actWhy,
+      alt,
+      st.actNote);
+  }
+
+  function answerKi(tier) {
+    const st = gPlan.steps[gStep];
+    const truth = rlTierOf(st.bind.ki);
+    const accepted = [truth].concat(st.bind.tierAlt || []);
+    const ok = accepted.indexOf(tier) !== -1;
+    gAsked++; if (ok) gFirst++;
+    gFill[gStep] = gFill[gStep] || {};
+    gFill[gStep].k = ok ? 'first' : 'corrected';
+
+    const picked = gdAsk.querySelector('[data-tier="' + tier + '"]');
+    if (picked) picked.classList.add(ok ? 'right' : 'wrong');
+    if (!ok) {
+      const t = gdAsk.querySelector('[data-tier="' + truth + '"]');
+      if (t) t.classList.add('reveal');
+    }
+    lockOpts('.rl-opt-size');
+
+    if (gPlaced[st.r]) gPlaced[st.r].tier = truth;
+    gKiRec = null;
+    renderGuidePara();
+    renderGuideCell(st.r);
+
+    feedback(ok,
+      ok ? 'Correct — ' + tierPhrase(truth) + ', Ki ' + fmtKi(st.bind.ki) + ' nM'
+         : 'It is ' + tierPhrase(truth) + ' — Ki ' + fmtKi(st.bind.ki) + ' nM',
+      st.why,
+      'Watch the circle in the cauldron resize — that is the band you were being asked for.');
+  }
+
+  /* ---- moving on ---- */
+  function advance() {
+    if (gPhase === 'rec') { gPhase = 'act'; renderGuideAsk(); renderGuidePara(); return; }
+    gStep++;
+    if (gStep >= gPlan.steps.length) { finishGuide(); return; }
+    gPhase = gPlan.steps[gStep].kind === 'ki' ? 'ki'
+           : gPlan.steps[gStep].kind === 'echo' ? 'echo' : 'rec';
+    renderGuideAsk();
+    renderGuidePara();
+    renderGuideCell();
+    gdAsk.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function finishGuide() {
+    gPhase = 'done';
+    const d = drug;
+    renderGuidePara();
+    renderGuideCell();
+    renderGuideMeta();
+    gdAsk.innerHTML = '';
+    gdAsk.hidden = true;
+
+    const pct = gAsked ? Math.round(100 * gFirst / gAsked) : 0;
+    gdScore.textContent = gFirst + ' / ' + gAsked;
+    gdScore.className = 'rl-guide-score' + (pct >= 80 ? '' : ' part');
+    gdOf.textContent = 'answered first try · ' + pct + '%';
+    gdPearl.innerHTML = '';
+    const pb = document.createElement('b');
+    pb.textContent = 'The short version';
+    const pt = document.createElement('div');
+    pt.textContent = d.pearl;
+    gdPearl.append(pb, pt);
+    gdSrc.textContent = 'Ki source: ' + d.src;
+    gdDone.hidden = false;
+
+    const store = load(GUIDE_KEY);
+    const prev = store[d.id] || {};
+    store[d.id] = { done: true, best: Math.max(prev.best || 0, pct) };
+    save(GUIDE_KEY, store);
+
+    gdRetry.hidden = false;
+    gdNext.hidden = !(gTut && gIdx < gQueue.length - 1);
+    gdNext.textContent = 'Next medication';
+    window.scrollTo(0, 0);
+  }
+
+  /* ---- opening a walkthrough ---- */
+  function openGuide(id) {
+    drug = drugById[id];
+    gPlan = buildGuide(drug);
+    gStep = 0;
+    gPhase = gPlan.steps[0].kind === 'ki' ? 'ki' : 'rec';
+    gFill = [];
+    gPlaced = {};
+    gFirst = 0; gAsked = 0;
+    const kiStep = gPlan.steps.find(s => s.kind === 'ki');
+    gKiRec = kiStep ? kiStep.r : null;
+
+    gdName.textContent = drug.name;
+    gdSub.textContent = drug.brand + ' · ' + drug.cls;
+    gdDone.hidden = true;
+    gdAsk.hidden = false;
+    gdNext.hidden = true;
+    gdRetry.hidden = true;
+    show('guide');
+    addBubbles(gdCell, 9);
+    renderGuidePara();
+    renderGuideCell();
+    renderGuideAsk();
+  }
+
+  function startTutorial() {
+    gTut = true;
+    gQueue = RL_TUTORIAL.slice();
+    gIdx = 0;
+    openGuide(gQueue[0]);
+  }
+
+  function startGuideOne(id) {
+    gTut = false;
+    gQueue = [id];
+    gIdx = 0;
+    openGuide(id);
+  }
+
   /* ---------------- wiring ---------------- */
   modeFree.onclick  = () => { mode = 'free'; renderMenu(); };
   modeGaunt.onclick = () => { mode = 'gauntlet'; renderMenu(); };
   modeSurv.onclick  = () => { mode = 'survival'; renderMenu(); };
-  startBtn.onclick  = startRun;
+  modeGuide.onclick = () => { mode = 'guided'; renderMenu(); };
+  startBtn.onclick  = () => { if (mode === 'guided') startTutorial(); else startRun(); };
+
+  gdNext.onclick  = () => { gIdx++; openGuide(gQueue[gIdx]); };
+  gdRetry.onclick = () => openGuide(drug.id);
+  document.getElementById('rlGdQuitBtn').onclick = () => { renderMenu(); show('menu'); };
 
   homeLink.onclick = e => {
     e.preventDefault();
