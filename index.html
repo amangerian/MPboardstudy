@@ -9104,6 +9104,7 @@ const RLAB = (function () {
 
   let lbLoaded = false;   // the menu fetches once, then only on Refresh or a post
   let lbFresh = null;     // id of the row this device just posted
+  const LB_DENIED = {};   // sentinel: a refused read, distinct from an empty one
 
   function lbRow(row, i) {
     const el = document.createElement('div');
@@ -9162,14 +9163,19 @@ const RLAB = (function () {
     fetch(LB_URL + '.json').then(r => {
       // Until this node's rules are published the read is refused outright.
       // That is a board waiting to be switched on, not a network problem.
-      if (r.status === 401 || r.status === 403) return { denied: true };
+      if (r.status === 401 || r.status === 403) return LB_DENIED;
       if (!r.ok) throw new Error(String(r.status));
       return r.json();
     }).then(data => {
-      // A denied read can also arrive as {error: "..."}, which would otherwise
-      // be sorted and displayed as though it were somebody's run.
-      if (!data || data.denied || data.error) return lbRender([], 'The shared board is not published yet.');
-      const rows = Object.keys(data).map(k => {
+      // A denied read can also arrive as 200 with {error: "..."}, which would
+      // otherwise be sorted and displayed as though it were somebody's run.
+      if (data === LB_DENIED || (data && data.error)) {
+        return lbRender([], 'The shared board is not published yet.');
+      }
+      // An empty node reads back as null. That is a published board nobody has
+      // posted to yet — emphatically not a board that is switched off, which
+      // is what it used to be told it was.
+      const rows = Object.keys(data || {}).map(k => {
         const row = data[k];
         if (row) row.id = k;
         return row;
