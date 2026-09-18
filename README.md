@@ -20,12 +20,46 @@ one opens its board.
 | NCD Jeopardy: Etiologies | Jeopardy, 6 × 5 · *coming soon* | Alzheimer's, Lewy body and Parkinson's, vascular, frontotemporal, infectious and prion, Huntington's/NPH/TBI |
 | Development Through the Life Cycle | Jeopardy, 6 × 5 · *coming soon* | Infant milestones, toddler to preschool, Piaget/Freud/Erikson, attachment and play, puberty, aging and menopause |
 | Sexuality, Gender & Dissociation | Jeopardy, 6 × 5 · *coming soon* | Sexual dysfunctions and their treatment, paraphilic and pedophilic disorders, gender dysphoria, dissociative disorders |
+| Antipsychotic Jeopardy | Jeopardy, 7 × 5 | FGAs, SGAs and newer agents, clozapine, long-acting injectables, movement side effects, phases of care, name-the-drug receptor binding profiles (picture clues) |
+| Antipsychotic Pharmacology | Connect Four, 5 × 5 or 7 × 6 | Receptor mechanisms, FGA potency, LAIs, CYP interactions, EPS management, clozapine monitoring (15 of the 25 questions also appear in Wizard's Escape) |
 | Wizard's Escape | Speed round, 1–4 players | Any categories you pick — it reuses the Jeopardy questions |
+| Receptor Lab: Antipsychotics | Drag & drop, solo | 19 antipsychotics — which receptors each one binds, whether it antagonises / partially activates / inverts / activates them, and how tightly |
 
 The four *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
 `comingSoon: true`, so no card is clickable and none of their categories reach
 Wizard's Escape yet. Deleting that one line on a game switches it fully on.
+
+**Receptor Lab** is the odd one out — no clues, no teams, no buzzer. You get an
+empty cell and a drug name, and you drag receptors out of the tray into the
+membrane: which ones this drug actually binds, what it does at each (antagonist,
+partial agonist, inverse agonist, agonist, or reuptake block for SERT/NET), and
+how tightly, sized in four bands. Lock in and the real Ki values come up beside
+your answer with a note on what each receptor buys you clinically.
+
+A perfect round is 1000 points, split across the drug's *core* receptors: half
+for knowing it binds at all, a quarter for the action, a quarter for the strength
+band (half credit one band out). *Bonus* receptors are real but lower-yield —
+they pay 40% of a core one and cost nothing if missed. Receptors the drug
+genuinely does not touch cost you 40% of a core receptor if you place one, which
+is the point: knowing risperidone has no muscarinic affinity, or that
+pimavanserin has no dopamine affinity at all, is half the exercise. Anything
+genuinely arguable is left unscored either way.
+
+The four strength bands are the log-decade scheme from Siafis et al,
+*Curr Neuropharmacol* 2018;16(8):1210-23 — very high (Ki < 1 nM), high (1–10),
+moderate (10–100), low (100–1000), with Ki ≥ 1000 nM counted as no meaningful
+binding. Every drug carries its own Ki citation on the answer screen, because
+binding constants move with tissue, species and radioligand; the band is the
+teaching point, not the decimal. Where the literature legitimately splits —
+"5-HT2A antagonist" versus "inverse agonist" on a constitutively active receptor
+— both answers score full marks.
+
+Two modes: free play (pick any drug, best score per drug kept in `localStorage`)
+and a gauntlet of five random drugs back to back against the clock. The
+second-messenger / G-protein layer is deliberately not built yet, but every
+receptor already carries its transduction pathway in `RL_TRANSDUCTION`, so that
+round can be added without re-deriving anything.
 
 **Wizard's Escape** is a haunted-castle escape: each room's exit is blocked by
 three identical pieces of furniture, each labelled with a candidate answer, and
@@ -98,6 +132,19 @@ there — `short`, a compact label for when the real answer is a paragraph, and
 only works where a category is a homogeneous list; where it mixes question types
 (a duration, a symptom list, a drug name) the options must be written by hand or
 the right answer is the only one that even fits the question.
+
+**Connect Four** is for two teams, red and yellow. On your turn pick a column; the
+disc would land in the lowest open spot, and you have to answer a question to
+keep it there. The other team gets to say a steal answer before the reveal, so
+one reveal settles who (if anyone) takes the spot, and then play passes on. Four
+in a row in any direction wins. The board is 5 × 5 by default, one spot per
+question, with a 7 × 6 classic option; missed questions return under the pile,
+so neither size ever runs out. The host can take back a wrong column before
+revealing and undo any move, and team names and the win tally carry over from
+game to game. Its questions sit in `GAMES` with `format: "connect-four"`, so the
+Anki export works as it does for the boards. Questions too long to read in a
+speed-round room (`wiz: false`, like full receptor mechanisms) stay out of
+Wizard's Escape.
 
 ## One file
 

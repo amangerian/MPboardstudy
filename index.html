@@ -1836,6 +1836,330 @@
   @media (prefers-reduced-motion: reduce) {
     .c4-disc.drop, .c4-cell.target, .c4-cell.win .c4-disc, .c4-cell.win .c4-disc.drop { animation: none; }
   }
+  /* ===================== RECEPTOR LAB ===================== */
+  /* A drag-the-receptor board. The cell is a ring; receptors sit in the
+     membrane, sized by binding strength and coloured by what the drug does
+     to them. Everything is pointer-event based so a finger and a mouse take
+     exactly the same path through the code. */
+
+  #rlabView { max-width: 1240px; }
+
+  .rl-modes {
+    display: flex; gap: 10px; justify-content: center;
+    margin: 22px 0 4px; flex-wrap: wrap;
+  }
+  .rl-modes button {
+    background: rgba(6,10,77,.6); border: 2px solid #4a52ff; color: var(--muted);
+    border-radius: 10px; padding: 10px 20px; cursor: pointer;
+    font-family: Arial, sans-serif; font-size: 12.5px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .rl-modes button:hover { border-color: var(--gold); color: var(--gold); }
+  .rl-modes button[aria-pressed="true"] {
+    background: linear-gradient(160deg, var(--tile-blue-light), var(--tile-blue));
+    border-color: var(--gold); color: var(--white);
+  }
+  .rl-mode-note {
+    text-align: center; color: var(--muted-dim); font-size: 12.5px;
+    margin: 12px auto 0; max-width: 680px; line-height: 1.55;
+  }
+
+  /* ---- drug picker ---- */
+  .rl-pick-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px; margin-top: 18px;
+  }
+  .rl-pick {
+    text-align: left; cursor: pointer;
+    background: linear-gradient(160deg, var(--tile-blue-light), var(--tile-blue) 60%, var(--board-navy));
+    border: 2px solid #4a52ff; border-radius: 11px; padding: 13px 14px;
+    color: inherit; font-family: inherit;
+    transition: transform .12s ease, border-color .15s ease;
+  }
+  .rl-pick:hover { transform: translateY(-3px); border-color: var(--gold); }
+  .rl-pick .rl-pick-name {
+    font-family: Georgia, serif; font-weight: 900; font-size: 16.5px;
+    color: var(--gold); line-height: 1.2;
+  }
+  .rl-pick .rl-pick-brand { font-size: 12px; color: #dfe2ff; margin-top: 3px; }
+  .rl-pick .rl-pick-cls {
+    font-size: 10.5px; color: var(--muted-dim); margin-top: 7px;
+    letter-spacing: .6px; text-transform: uppercase; line-height: 1.35;
+  }
+  .rl-pick .rl-pick-best {
+    margin-top: 9px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    color: var(--correct);
+  }
+  .rl-gen-label {
+    grid-column: 1 / -1; margin: 16px 0 -4px;
+    color: var(--muted-dim); font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+  }
+  .rl-gen-label:first-child { margin-top: 4px; }
+
+  /* ---- play head ---- */
+  .rl-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap; margin-top: 10px;
+  }
+  .rl-head-main h2 {
+    font-family: Georgia, serif; font-weight: 900; font-style: italic;
+    font-size: clamp(26px, 4.4vw, 40px); margin: 0; color: var(--gold);
+    text-shadow: 0 3px 0 var(--text-shadow-c);
+  }
+  .rl-head-main .rl-head-sub {
+    color: var(--muted); font-size: 12.5px; margin-top: 4px; letter-spacing: 1px;
+  }
+  .rl-head-meta { display: flex; gap: 10px; align-items: center; }
+  .rl-chip {
+    background: rgba(6,10,77,.65); border: 1px solid #4a52ff; border-radius: 8px;
+    padding: 7px 13px; text-align: center; min-width: 78px;
+  }
+  .rl-chip .k {
+    display: block; font-size: 9.5px; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--muted-dim);
+  }
+  .rl-chip .v {
+    display: block; font-size: 19px; font-weight: 700;
+    font-family: Georgia, serif; color: var(--gold);
+  }
+
+  /* ---- stage: tray + cell ---- */
+  .rl-stage {
+    display: grid; grid-template-columns: 250px 1fr; gap: 20px;
+    margin-top: 18px; align-items: start;
+  }
+  .rl-tray {
+    background: rgba(6,10,77,.5); border: 1px solid #343b96; border-radius: 12px;
+    padding: 12px 12px 14px;
+  }
+  .rl-tray-title {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted-dim); margin-bottom: 2px;
+  }
+  .rl-fam { margin-top: 12px; }
+  .rl-fam-name {
+    font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--muted-dim); margin-bottom: 5px;
+  }
+  .rl-fam-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rl-chip-r {
+    border-radius: 999px; padding: 6px 12px; cursor: grab;
+    font-size: 13px; font-weight: 700; font-family: Arial, sans-serif;
+    border: 2px solid; background: rgba(6,10,77,.75);
+    user-select: none; -webkit-user-select: none; touch-action: none;
+    transition: transform .1s ease, box-shadow .1s ease;
+  }
+  .rl-chip-r:hover { transform: translateY(-2px); }
+  .rl-chip-r.armed { box-shadow: 0 0 0 3px var(--gold); }
+  .rl-chip-r.used { opacity: .3; cursor: default; pointer-events: none; }
+  .rl-chip-r.ghost {
+    position: fixed; z-index: 999; pointer-events: none;
+    transform: translate(-50%, -50%) scale(1.15); opacity: .92;
+  }
+
+  /* family colours */
+  .fam-dopamine    { border-color: #e8b33c; color: #ffd982; }
+  .fam-serotonin   { border-color: #9b6cf0; color: #d9c4ff; }
+  .fam-histamine   { border-color: #2fa8a8; color: #9ef0f0; }
+  .fam-muscarinic  { border-color: #3fa564; color: #a4efc2; }
+  .fam-adrenergic  { border-color: #d4566f; color: #ffb6c3; }
+  .fam-transporter { border-color: #3d8ad6; color: #a9d6ff; }
+
+  /* ---- the cell ---- */
+  .rl-cellwrap { display: flex; flex-direction: column; align-items: center; }
+  .rl-cell {
+    position: relative; width: min(100%, 460px); aspect-ratio: 1;
+    border-radius: 50%;
+    border: 14px solid #2b3282;
+    background: radial-gradient(circle at 50% 45%, #141a6e 0%, #0b1150 70%);
+    box-shadow: inset 0 0 40px rgba(0,0,0,.55), 0 8px 24px rgba(0,0,0,.4);
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .rl-cell.hot {
+    border-color: var(--gold);
+    box-shadow: inset 0 0 40px rgba(0,0,0,.55), 0 0 0 6px rgba(255,204,77,.2);
+  }
+  .rl-cell-label {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    color: var(--muted-dim); font-size: 12.5px; line-height: 1.6;
+    pointer-events: none; padding: 0 22%;
+  }
+  .rl-cell-label strong {
+    display: block; font-family: Georgia, serif; font-size: 15px;
+    color: #8f96e8; margin-bottom: 6px;
+  }
+  .rl-cell.has-any .rl-cell-label { display: none; }
+
+  /* a receptor sitting in the membrane */
+  .rl-rec {
+    position: absolute; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-family: Arial, sans-serif; color: #04081f;
+    border: 3px solid rgba(255,255,255,.35);
+    transform: translate(-50%, -50%);
+    transition: box-shadow .12s ease, width .12s ease, height .12s ease, font-size .12s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,.5);
+  }
+  .rl-rec.sel { box-shadow: 0 0 0 4px var(--gold), 0 3px 10px rgba(0,0,0,.5); }
+  .rl-rec .rl-rec-lab { pointer-events: none; white-space: nowrap; }
+
+  /* action colours — same legend as the receptor heat-map:
+     blue antagonist, amber partial agonist, purple inverse agonist */
+  .act-antagonist { background: #4a86ff; }
+  .act-partial    { background: #ffb93d; }
+  .act-inverse    { background: #b06cff; }
+  .act-agonist    { background: #2fd07a; }
+  .act-reuptake   { background: #37d5d5; }
+
+  .rl-legend {
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    margin-top: 14px; font-size: 11px; color: var(--muted-dim);
+  }
+  .rl-legend span { display: flex; align-items: center; gap: 5px; }
+  .rl-legend i {
+    width: 11px; height: 11px; border-radius: 50%; display: inline-block;
+    border: 1px solid rgba(255,255,255,.3);
+  }
+
+  /* ---- editor for the selected receptor ---- */
+  .rl-editor {
+    margin-top: 16px; background: rgba(6,10,77,.55);
+    border: 1px solid #343b96; border-radius: 12px; padding: 14px 16px;
+  }
+  .rl-editor.empty { color: var(--muted-dim); font-size: 12.5px; text-align: center; }
+  .rl-ed-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
+  }
+  .rl-ed-name { font-family: Georgia, serif; font-size: 18px; color: var(--gold); font-weight: 900; }
+  .rl-ed-name small { font-family: Arial, sans-serif; font-size: 11.5px; color: var(--muted-dim); margin-left: 8px; letter-spacing: 1px; }
+  .rl-ed-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .rl-ed-row > .rl-ed-lab {
+    font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase;
+    color: var(--muted-dim); width: 74px; flex: none;
+  }
+  .rl-opt {
+    background: rgba(6,10,77,.7); border: 2px solid #4a52ff; color: var(--muted);
+    border-radius: 8px; padding: 7px 12px; cursor: pointer;
+    font-family: Arial, sans-serif; font-size: 12px; font-weight: 700;
+  }
+  .rl-opt:hover { border-color: var(--gold); color: var(--gold); }
+  .rl-opt[aria-pressed="true"] { border-color: var(--gold); color: #04081f; }
+  .rl-opt[aria-pressed="true"].o-antagonist { background: #4a86ff; }
+  .rl-opt[aria-pressed="true"].o-partial    { background: #ffb93d; }
+  .rl-opt[aria-pressed="true"].o-inverse    { background: #b06cff; }
+  .rl-opt[aria-pressed="true"].o-agonist    { background: #2fd07a; }
+  .rl-opt[aria-pressed="true"].o-reuptake   { background: #37d5d5; }
+  .rl-opt-size {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(6,10,77,.7); border: 2px solid #4a52ff; color: var(--muted);
+    border-radius: 8px; padding: 6px 12px 6px 9px; cursor: pointer;
+    font-family: Arial, sans-serif; font-size: 11.5px; font-weight: 700;
+  }
+  .rl-opt-size:hover { border-color: var(--gold); color: var(--gold); }
+  .rl-opt-size[aria-pressed="true"] { border-color: var(--gold); color: var(--white); background: var(--tile-blue); }
+  .rl-opt-size i {
+    border-radius: 50%; background: #7f88e8; display: inline-block; flex: none;
+    border: 1px solid rgba(255,255,255,.3);
+  }
+  .rl-opt-size b { font-weight: 700; }
+  .rl-opt-size em { font-style: normal; color: var(--muted-dim); font-weight: 400; }
+  .rl-ed-remove {
+    background: transparent; border: 1px solid #6a3050; color: #e58fa6;
+    border-radius: 8px; padding: 6px 12px; cursor: pointer;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .rl-ed-remove:hover { border-color: var(--wrong); color: #ffc0cc; }
+
+  /* ---- results ---- */
+  .rl-score-hero {
+    text-align: center; margin: 6px 0 18px;
+  }
+  .rl-score-hero .rl-big {
+    font-family: Georgia, serif; font-weight: 900; font-style: italic;
+    font-size: clamp(46px, 10vw, 84px); color: var(--gold); line-height: 1;
+    text-shadow: 0 4px 0 var(--text-shadow-c);
+  }
+  .rl-score-hero .rl-of { color: var(--muted-dim); font-size: 14px; letter-spacing: 2px; }
+  .rl-score-hero .rl-verdict { color: var(--muted); font-size: 14px; margin-top: 8px; }
+
+  .rl-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  .rl-table th {
+    text-align: left; padding: 8px 9px; color: var(--muted-dim);
+    font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase;
+    border-bottom: 1px solid #343b96; font-weight: 700;
+  }
+  .rl-table td { padding: 9px; border-bottom: 1px solid rgba(52,59,150,.45); vertical-align: top; }
+  .rl-table tr.miss td { background: rgba(212,59,59,.08); }
+  .rl-table tr.falsepos td { background: rgba(212,59,59,.14); }
+  .rl-table tr.bonusrow td { background: rgba(31,174,90,.07); }
+  .rl-rname { font-weight: 700; color: var(--white); white-space: nowrap; }
+  .rl-ki { font-family: Georgia, serif; color: var(--gold); white-space: nowrap; font-size: 14px; }
+  .rl-ki small { font-family: Arial, sans-serif; color: var(--muted-dim); font-size: 10.5px; display: block; letter-spacing: .5px; }
+  .rl-pill {
+    display: inline-block; border-radius: 999px; padding: 2px 9px;
+    font-size: 11px; font-weight: 700; color: #04081f; white-space: nowrap;
+  }
+  .rl-note { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .rl-mark { font-weight: 700; white-space: nowrap; }
+  .rl-mark.ok { color: var(--correct); }
+  .rl-mark.part { color: var(--gold); }
+  .rl-mark.bad { color: var(--wrong); }
+
+  .rl-pearl {
+    margin-top: 20px; background: rgba(6,10,77,.55);
+    border: 1px solid #343b96; border-left: 4px solid var(--gold);
+    border-radius: 10px; padding: 14px 16px;
+    font-size: 13.5px; line-height: 1.65; color: #dfe2ff;
+  }
+  .rl-pearl b {
+    display: block; color: var(--gold); font-size: 10.5px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 7px;
+  }
+  .rl-src {
+    margin-top: 10px; font-size: 11px; color: var(--muted-dim); line-height: 1.5;
+  }
+  .rl-sect {
+    margin-top: 20px; color: var(--muted-dim); font-size: 10.5px;
+    font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+  }
+
+  /* gauntlet scoreboard */
+  .rl-run-list { margin-top: 10px; }
+  .rl-run-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 9px 12px; border-bottom: 1px solid rgba(52,59,150,.45);
+  }
+  .rl-run-row .n { color: var(--white); font-weight: 700; }
+  .rl-run-row .s { font-family: Georgia, serif; font-size: 17px; color: var(--gold); }
+
+  @media (max-width: 860px) {
+    .rl-stage { grid-template-columns: 1fr; }
+    .rl-tray { order: 2; }
+    .rl-cellwrap { order: 1; }
+    .rl-fam-chips { gap: 7px; }
+    .rl-head { justify-content: center; text-align: center; }
+    .rl-head-main { width: 100%; }
+    .rl-ed-row > .rl-ed-lab { width: 100%; }
+  }
+  @media (max-width: 520px) {
+    .rl-cell { border-width: 11px; }
+    .rl-table { font-size: 12px; }
+    .rl-table td, .rl-table th { padding: 7px 5px; }
+    .rl-note { font-size: 11.5px; }
+  }
+
+  /* Receptor label, parked just inside the ring where there is always room. */
+  .rl-rec-tag {
+    position: absolute; transform: translate(-50%, -50%);
+    font-weight: 700; font-family: Arial, sans-serif; color: #cfd3ff;
+    white-space: nowrap; pointer-events: auto; cursor: pointer;
+    text-shadow: 0 1px 3px #05082e, 0 0 6px #05082e;
+  }
+  .rl-rec-tag.sel { color: var(--gold); }
+
 </style>
 </head>
 <body>
@@ -1850,7 +2174,7 @@
   <div class="section-label">Pick a game</div>
   <div class="game-grid" id="gameGrid"></div>
 
-  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 16 September 2026</footer>
+  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 18 September 2026</footer>
 </div>
 
 <!-- ===================== GAME VIEW ===================== -->
@@ -1926,6 +2250,126 @@
   </div>
 
   <footer class="hint" id="c4Hint">Click a column to drop a disc</footer>
+</div>
+
+<!-- ===================== RECEPTOR LAB ===================== -->
+<div class="wrap" id="rlabView" hidden>
+  <div class="topbar"><a class="back-link" href="#">&larr; All games</a></div>
+
+  <!-- menu -->
+  <div id="rlMenu">
+    <div class="titlebar">
+      <h1>Receptor Lab</h1>
+      <p>Antipsychotics &middot; build the binding profile</p>
+    </div>
+
+    <div class="rl-modes" role="group" aria-label="Mode">
+      <button type="button" id="rlModeFree" aria-pressed="true">Free play</button>
+      <button type="button" id="rlModeGauntlet" aria-pressed="false">Gauntlet</button>
+    </div>
+    <p class="rl-mode-note" id="rlModeNote"></p>
+
+    <div class="rl-pick-grid" id="rlPickGrid"></div>
+
+    <footer class="hint">Ki values are assay-dependent &mdash; every drug lists its source on the answer screen &nbsp;&bull;&nbsp; educational use only</footer>
+  </div>
+
+  <!-- play -->
+  <div id="rlPlay" hidden>
+    <div class="rl-head">
+      <div class="rl-head-main">
+        <h2 id="rlDrugName"></h2>
+        <div class="rl-head-sub" id="rlDrugSub"></div>
+      </div>
+      <div class="rl-head-meta" id="rlHeadMeta"></div>
+    </div>
+
+    <div class="rl-stage">
+      <div class="rl-tray" id="rlTray">
+        <div class="rl-tray-title">Receptor tray</div>
+        <div style="font-size:11.5px;color:var(--muted-dim);line-height:1.5;margin-top:4px">
+          Drag onto the cell &mdash; or tap one, then tap the cell.
+        </div>
+        <div id="rlTrayFams"></div>
+      </div>
+
+      <div class="rl-cellwrap">
+        <div class="rl-cell" id="rlCell">
+          <div class="rl-cell-label">
+            <strong id="rlCellDrug"></strong>
+            Drop the receptors this drug acts on into the membrane, then set what it does at each one and how strongly.
+          </div>
+        </div>
+        <div class="rl-legend">
+          <span><i class="act-antagonist"></i>Antagonist</span>
+          <span><i class="act-partial"></i>Partial agonist</span>
+          <span><i class="act-inverse"></i>Inverse agonist</span>
+          <span><i class="act-agonist"></i>Agonist</span>
+          <span><i class="act-reuptake"></i>Reuptake block</span>
+          <span>&mdash; bigger circle = tighter binding</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rl-editor empty" id="rlEditor"></div>
+
+    <div class="board-actions">
+      <button class="reset-board-btn" id="rlCheckBtn" style="border-color:var(--gold);color:var(--gold)">Lock in answer</button>
+      <button class="reset-board-btn" id="rlClearBtn">Clear cell</button>
+      <button class="reset-board-btn" id="rlQuitBtn">Leave round</button>
+    </div>
+
+    <footer class="hint" id="rlPlayHint"></footer>
+  </div>
+
+  <!-- results -->
+  <div id="rlResult" hidden>
+    <div class="topbar" style="height:4px"></div>
+    <div class="rl-head">
+      <div class="rl-head-main">
+        <h2 id="rlResName"></h2>
+        <div class="rl-head-sub" id="rlResSub"></div>
+      </div>
+    </div>
+
+    <div class="rl-score-hero">
+      <div class="rl-big" id="rlResScore">0</div>
+      <div class="rl-of">out of 1000</div>
+      <div class="rl-verdict" id="rlResVerdict"></div>
+    </div>
+
+    <div class="rl-sect">What it actually binds</div>
+    <div style="overflow-x:auto">
+      <table class="rl-table" id="rlResTable"></table>
+    </div>
+
+    <div class="rl-pearl" id="rlResPearl"></div>
+    <div class="rl-src" id="rlResSrc"></div>
+
+    <div class="board-actions">
+      <button class="reset-board-btn" id="rlNextBtn" style="border-color:var(--gold);color:var(--gold)">Next</button>
+      <button class="reset-board-btn" id="rlRetryBtn">Try this one again</button>
+      <button class="reset-board-btn" id="rlMenuBtn">Back to the drug list</button>
+    </div>
+  </div>
+
+  <!-- gauntlet summary -->
+  <div id="rlSummary" hidden>
+    <div class="titlebar">
+      <h1>Gauntlet complete</h1>
+      <p id="rlSumSub"></p>
+    </div>
+    <div class="rl-score-hero">
+      <div class="rl-big" id="rlSumScore">0</div>
+      <div class="rl-of" id="rlSumOf">out of 5000</div>
+      <div class="rl-verdict" id="rlSumVerdict"></div>
+    </div>
+    <div class="rl-run-list" id="rlSumList"></div>
+    <div class="board-actions">
+      <button class="reset-board-btn" id="rlSumAgainBtn" style="border-color:var(--gold);color:var(--gold)">Run it again</button>
+      <button class="reset-board-btn" id="rlSumMenuBtn">Back to the drug list</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===================== WIZARD PHONE (player controller) ===================== -->
@@ -3098,6 +3542,13 @@ const EXTRAS = [
     arcane: true,
     blurb: "Blast your way out of a haunted castle. Three identical hiding places block every exit — pick the right answer to shatter one and move on. The faster you answer, the stronger the spell.",
     tags: ["Speed round", "Split-screen race", "Survival for up to four", "Uses every game's questions"]
+  },
+  {
+    id: "receptor-lab",
+    title: "Receptor Lab: Antipsychotics",
+    kind: "Drag & drop \u00b7 solo",
+    blurb: "You get a blank cell and a drug name. Drag in every receptor it acts on, say whether it blocks, partially activates or inverts each one, and size the circle to the binding strength. Lock in and the real Ki values land beside your answer.",
+    tags: ["Psychopharm", "19 medications", "1000 points a round", "Free play + gauntlet"]
   }
 ];
 
@@ -7638,9 +8089,1263 @@ const C4 = (function () {
   };
 })();
 
+/* =====================================================================
+ * RECEPTOR LAB — data
+ * =====================================================================
+ * Ki values are in nM. Lower Ki = tighter binding = stronger effect.
+ *
+ * STRENGTH TIERS follow the log-decade bands published in Siafis S et al,
+ * "Antipsychotic Drugs: From Receptor-binding Profiles to Metabolic Side
+ * Effects", Curr Neuropharmacol 2018;16(8):1210-1223 — the same ++++ / +++ /
+ * ++ / + scheme, so the sizes a player drags map onto a citable standard:
+ *
+ *      4  very high   Ki < 1 nM
+ *      3  high        Ki 1 - 10 nM
+ *      2  moderate    Ki 10 - 100 nM
+ *      1  low         Ki 100 - 1000 nM
+ *         negligible  Ki >= 1000 nM  — not placed on the cell at all
+ *
+ * Tier is DERIVED from ki (see tierOf) so the two can never drift apart.
+ *
+ * Per drug, every receptor falls into one of four buckets:
+ *   core       expected; carries the score. Missing one costs you.
+ *   bonus      genuinely bound but lower-yield. Credit if placed, no cost
+ *              if missed, never counted as a false positive.
+ *   negligible the drug really does NOT hit this (Ki >= ~1000 nM) and that
+ *              fact is itself worth knowing — placing it costs points.
+ *   unlisted   everything else: real but arguable. Scores nothing either
+ *              way, so nobody is punished for a defensible answer.
+ *
+ * `alt` lists actions ALSO accepted at full credit, for the genuinely
+ * contested calls — most "5-HT2A antagonists" are inverse agonists on a
+ * constitutively active receptor, and the literature uses both words.
+ * `tierAlt` does the same for assay-dependent Ki values.
+ * ===================================================================== */
+
+const RL_RECEPTORS = [
+  { id: 'D1',    label: 'D₁',      family: 'dopamine',    full: 'Dopamine D1' },
+  { id: 'D2',    label: 'D₂',      family: 'dopamine',    full: 'Dopamine D2' },
+  { id: 'D3',    label: 'D₃',      family: 'dopamine',    full: 'Dopamine D3' },
+  { id: 'D4',    label: 'D₄',      family: 'dopamine',    full: 'Dopamine D4' },
+  { id: '5HT1A', label: '5-HT₁ₐ',  family: 'serotonin',   full: 'Serotonin 5-HT1A' },
+  { id: '5HT2A', label: '5-HT₂ₐ',  family: 'serotonin',   full: 'Serotonin 5-HT2A' },
+  { id: '5HT2C', label: '5-HT₂c',  family: 'serotonin',   full: 'Serotonin 5-HT2C' },
+  { id: '5HT6',  label: '5-HT₆',   family: 'serotonin',   full: 'Serotonin 5-HT6' },
+  { id: '5HT7',  label: '5-HT₇',   family: 'serotonin',   full: 'Serotonin 5-HT7' },
+  { id: 'H1',    label: 'H₁',      family: 'histamine',   full: 'Histamine H1' },
+  { id: 'M1',    label: 'M₁',      family: 'muscarinic',  full: 'Muscarinic M1' },
+  { id: 'M3',    label: 'M₃',      family: 'muscarinic',  full: 'Muscarinic M3' },
+  { id: 'M4',    label: 'M₄',      family: 'muscarinic',  full: 'Muscarinic M4' },
+  { id: 'A1',    label: 'α₁',      family: 'adrenergic',  full: 'Alpha-1 adrenergic' },
+  { id: 'A2',    label: 'α₂',      family: 'adrenergic',  full: 'Alpha-2 adrenergic' },
+  { id: 'SERT',  label: 'SERT',    family: 'transporter', full: 'Serotonin transporter' },
+  { id: 'NET',   label: 'NET',     family: 'transporter', full: 'Noradrenaline transporter' },
+];
+
+/* Actions a player can assign. `reuptake` is offered only for SERT/NET —
+ * a transporter is not a receptor and cannot have an agonist. */
+const RL_ACTIONS = [
+  { id: 'antagonist', label: 'Antagonist',      short: 'Antag',   blurb: 'Blocks the receptor' },
+  { id: 'partial',    label: 'Partial agonist', short: 'Partial', blurb: 'Submaximal activation — stabiliser' },
+  { id: 'inverse',    label: 'Inverse agonist', short: 'Inverse', blurb: 'Drives below baseline tone' },
+  { id: 'agonist',    label: 'Agonist',         short: 'Agonist', blurb: 'Fully activates the receptor' },
+  { id: 'reuptake',   label: 'Reuptake block',  short: 'Reuptake',blurb: 'Transporter inhibition', transporterOnly: true },
+];
+
+const RL_TIERS = [
+  { t: 4, name: 'Very high', band: 'Ki < 1 nM',       plus: '++++' },
+  { t: 3, name: 'High',      band: 'Ki 1 – 10 nM',    plus: '+++'  },
+  { t: 2, name: 'Moderate',  band: 'Ki 10 – 100 nM',  plus: '++'   },
+  { t: 1, name: 'Low',       band: 'Ki 100 – 1000 nM',plus: '+'    },
+];
+
+function rlTierOf(ki) {
+  if (ki < 1) return 4;
+  if (ki < 10) return 3;
+  if (ki < 100) return 2;
+  return 1;
+}
+
+/* What each receptor does downstream. Not scored and not shown in play —
+ * parked here so the second-messenger round can be switched on later
+ * without re-deriving any of it. */
+const RL_TRANSDUCTION = {
+  D1: 'Gs → ↑ adenylyl cyclase → ↑ cAMP → PKA',
+  D2: 'Gi/o → ↓ adenylyl cyclase → ↓ cAMP; also β-arrestin-2 / GSK-3β',
+  D3: 'Gi/o → ↓ cAMP',
+  D4: 'Gi/o → ↓ cAMP',
+  '5HT1A': 'Gi/o → ↓ cAMP; opens GIRK K⁺ channels → hyperpolarisation',
+  '5HT2A': 'Gq/11 → PLCβ → IP₃ + DAG → ↑ Ca²⁺ and PKC',
+  '5HT2C': 'Gq/11 → PLCβ → IP₃ + DAG → ↑ Ca²⁺ and PKC',
+  '5HT6': 'Gs → ↑ cAMP',
+  '5HT7': 'Gs → ↑ cAMP',
+  H1: 'Gq/11 → PLCβ → IP₃ + DAG',
+  M1: 'Gq/11 → PLCβ → IP₃ + DAG',
+  M3: 'Gq/11 → PLCβ → IP₃ + DAG',
+  M4: 'Gi/o → ↓ cAMP',
+  A1: 'Gq/11 → PLCβ → IP₃ + DAG',
+  A2: 'Gi/o → ↓ cAMP',
+  SERT: 'Na⁺/Cl⁻-dependent transporter — no G protein',
+  NET: 'Na⁺/Cl⁻-dependent transporter — no G protein',
+};
+
+/* ---------------------------------------------------------------------
+ * The drugs. `b` = bound receptors, `neg` = the meaningful "does not bind".
+ * Anything absent from both is unlisted and scores nothing either way.
+ * ------------------------------------------------------------------- */
+const RL_DRUGS = [
+
+  /* ================= FIRST GENERATION ================= */
+  {
+    id: 'haloperidol', name: 'Haloperidol', brand: 'Haldol',
+    cls: 'FGA — butyrophenone, high potency', gen: 'fga',
+    b: [
+      { r: 'D2',  ki: 1.4,  tierAlt: [4], act: 'antagonist', core: true, note: 'Reported from 0.7 to 1.4 nM, so very high and high both count. Near-pure D2 blockade — the reason EPS and prolactin are the headline risks.' },
+      { r: '5HT2A', ki: 120, act: 'antagonist', core: true, note: 'Weak, and far below the 5-HT2A:D2 ratio that defines an atypical.' },
+      { r: 'A1',  ki: 12,   act: 'antagonist', core: true, note: 'Modest — some orthostasis, much less than the low-potency phenothiazines.' },
+      { r: 'D1',  ki: 45,   act: 'antagonist', note: 'Moderate D1 blockade.' },
+      { r: 'D3',  ki: 2.5,  act: 'antagonist', note: 'High affinity, clinical role unclear.' },
+      { r: 'D4',  ki: 3.0,  act: 'antagonist', note: 'High affinity at D4.' },
+      { r: '5HT7', ki: 377, act: 'antagonist', note: 'Low affinity.' },
+    ],
+    neg: {
+      H1: 1800, M1: 10000, M3: 10000, M4: 10000,
+      '5HT1A': 3600, '5HT2C': 4700, '5HT6': 3666, A2: 1130, SERT: 10000, NET: 10000,
+    },
+    pearl: 'The cleanest D2 blocker in wide use. With almost no H1 or M1 activity there is nothing to buffer the striatal D2 blockade, so haloperidol sits at the top for EPS and hyperprolactinaemia and at the bottom for sedation, weight gain and anticholinergic burden. Available as a decanoate LAI.',
+    src: 'PDSP Ki database (median human values); Richelson & Souder, Life Sci 2000.',
+  },
+  {
+    id: 'fluphenazine', name: 'Fluphenazine', brand: 'Prolixin',
+    cls: 'FGA — piperazine phenothiazine, high potency', gen: 'fga',
+    b: [
+      { r: 'D2',  ki: 0.9, act: 'antagonist', core: true, note: 'Sub-nanomolar — one of the most potent D2 blockers available.' },
+      { r: '5HT2A', ki: 7.4, act: 'antagonist', core: true, note: 'Higher than haloperidol’s, but the D2 affinity still dominates.' },
+      { r: 'A1',  ki: 6.4, act: 'antagonist', core: true, note: 'Orthostasis, though less than chlorpromazine.' },
+      { r: 'H1',  ki: 7.3, act: 'antagonist', core: true, note: 'Real affinity — but the mg doses used are tiny, so little sedation in practice.' },
+      { r: 'D1',  ki: 15,  act: 'antagonist', note: 'Moderate.' },
+      { r: 'D3',  ki: 1.4, act: 'antagonist', note: 'High affinity.' },
+    ],
+    neg: { M1: 1100, M3: 2000, M4: 2000, '5HT1A': 2600, SERT: 10000, NET: 10000 },
+    pearl: 'A high-potency phenothiazine: like haloperidol it has essentially no muscarinic activity, so EPS and prolactin elevation are prominent. A useful lesson in affinity versus dose — its H1 Ki looks sedating on paper, but fluphenazine is dosed in single-digit milligrams, so little H1 is actually occupied. Decanoate LAI.',
+    src: 'PDSP Ki database (median human values).',
+  },
+  {
+    id: 'chlorpromazine', name: 'Chlorpromazine', brand: 'Thorazine',
+    cls: 'FGA — aliphatic phenothiazine, low potency', gen: 'fga',
+    b: [
+      { r: 'D2',  ki: 3,   act: 'antagonist', core: true, note: 'High affinity, but it needs hundreds of mg — hence "low potency".' },
+      { r: '5HT2A', ki: 3.2, act: 'antagonist', core: true, note: 'Comparable to its D2 affinity.' },
+      { r: 'H1',  ki: 4,   act: 'antagonist', core: true, note: 'Strong — sedation and weight gain.' },
+      { r: 'M1',  ki: 47,  act: 'antagonist', core: true, note: 'Dry mouth, constipation, blurred vision; also buffers EPS.' },
+      { r: 'A1',  ki: 2.6, act: 'antagonist', core: true, note: 'The strongest α1 block of the FGAs — marked orthostasis.' },
+      { r: 'D1',  ki: 76,  act: 'antagonist', note: 'Moderate.' },
+      { r: 'D3',  ki: 4.6, act: 'antagonist', note: 'High affinity.' },
+      { r: 'D4',  ki: 35,  act: 'antagonist', note: 'Moderate.' },
+      { r: '5HT2C', ki: 26, act: 'antagonist', note: 'Contributes to appetite and weight gain.' },
+      { r: '5HT6', ki: 21, act: 'antagonist', note: 'Moderate.' },
+      { r: 'M3',  ki: 47,  act: 'antagonist', note: 'Peripheral antimuscarinic effects.' },
+      { r: 'A2',  ki: 184, act: 'antagonist', note: 'Low affinity.' },
+    ],
+    neg: { '5HT1A': 3115, SERT: 10000, NET: 10000 },
+    pearl: 'The original antipsychotic (1950s) and a genuinely promiscuous one — the low-potency profile in a single drug: strong H1, M1 and α1 blockade means sedation, anticholinergic load and orthostasis dominate, while EPS is comparatively mild. Also the classic cause of photosensitivity and blue-grey skin discolouration.',
+    src: 'PDSP Ki database (median human values); Siafis et al, Curr Neuropharmacol 2018.',
+  },
+  {
+    id: 'thioridazine', name: 'Thioridazine', brand: 'Mellaril',
+    cls: 'FGA — piperidine phenothiazine, low potency', gen: 'fga',
+    b: [
+      { r: 'D2',  ki: 10,   tierAlt: [3], act: 'antagonist', core: true, note: 'Sits right on the 10 nM line \u2014 high and moderate both count.' },
+      { r: '5HT2A', ki: 27.7, act: 'antagonist', core: true, note: 'Moderate.' },
+      { r: 'H1',  ki: 13,   act: 'antagonist', core: true, note: 'Sedating.' },
+      { r: 'M1',  ki: 9,    act: 'antagonist', core: true, note: 'The most anticholinergic FGA — which is why its EPS rate is the lowest.' },
+      { r: 'A1',  ki: 3,    act: 'antagonist', core: true, note: 'Strong — orthostasis, and priapism risk.' },
+      { r: 'D3',  ki: 5,    act: 'antagonist', note: 'High affinity.' },
+      { r: '5HT2C', ki: 53, act: 'antagonist', note: 'Moderate.' },
+      { r: 'A2',  ki: 40,   act: 'antagonist', note: 'Moderate.' },
+    ],
+    neg: { '5HT1A': 2500, SERT: 10000, NET: 10000 },
+    pearl: 'Heavily anticholinergic, so EPS is the lowest of the FGAs — but it carries a black-box warning for dose-dependent QTc prolongation and torsades (the strongest hERG block of the class) and is the classic cause of irreversible pigmentary retinopathy above 800 mg/day. Withdrawn from many markets.',
+    src: 'PDSP Ki database (median human values).',
+  },
+
+  /* ================= SECOND GENERATION ================= */
+  {
+    id: 'clozapine', name: 'Clozapine', brand: 'Clozaril',
+    cls: 'SGA — dibenzodiazepine', gen: 'sga',
+    b: [
+      { r: 'D2',  ki: 160, act: 'antagonist', core: true, note: 'Strikingly LOW affinity — clozapine occupies only ~40–60% of D2 at clinical doses, yet is the most effective agent there is.' },
+      { r: 'D4',  ki: 24,  act: 'antagonist', core: true, note: 'Higher affinity at D4 than at D2 — the classic "D4 >> D2" teaching point.' },
+      { r: '5HT2A', ki: 5.4, act: 'inverse', alt: ['antagonist'], core: true, note: 'Roughly 30× its D2 affinity — the defining atypical ratio.' },
+      { r: '5HT2C', ki: 9.4, act: 'inverse', alt: ['antagonist'], core: true, note: 'Major driver of appetite and weight gain.' },
+      { r: 'H1',  ki: 1.1, act: 'antagonist', core: true, note: 'Very strong — sedation and weight gain.' },
+      { r: 'M1',  ki: 6.2, act: 'antagonist', core: true, note: 'Strong central and peripheral antimuscarinic effect: constipation (can be fatal — ileus), urinary retention, tachycardia.' },
+      { r: 'A1',  ki: 1.6, act: 'antagonist', core: true, note: 'Strong — orthostasis, especially during titration.' },
+      { r: '5HT7', ki: 6.3, act: 'antagonist', note: 'High affinity.' },
+      { r: '5HT1A', ki: 140, act: 'partial', note: 'Low-affinity partial agonism — possible anxiolytic contribution.' },
+      { r: 'M4',  ki: 15,  act: 'partial', note: 'Partial agonism here, plus norclozapine’s M4 agonism, explains the hypersalivation paradox.' },
+      { r: 'A2',  ki: 90,  act: 'antagonist', note: 'Moderate.' },
+      { r: 'D1',  ki: 85,  act: 'antagonist', note: 'Moderate.' },
+      { r: 'D3',  ki: 240, act: 'antagonist', note: 'Low affinity.' },
+    ],
+    neg: { SERT: 10000, NET: 10000 },
+    pearl: 'The paradox drug: the weakest D2 binding of any antipsychotic and the only one proven superior in treatment-resistant schizophrenia, plus the only one that reduces suicidality. Its receptor sprawl explains the monitoring burden — agranulocytosis (ANC), myocarditis, seizures, ileus, and hypersalivation despite heavy M1 blockade, because norclozapine is an M4 agonist. Target clozapine:norclozapine ratio 1.3–2; smoking induces CYP1A2 and drops levels.',
+    src: 'PDSP Ki database; Siafis et al, Curr Neuropharmacol 2018.',
+  },
+  {
+    id: 'olanzapine', name: 'Olanzapine', brand: 'Zyprexa',
+    cls: 'SGA — thienobenzodiazepine', gen: 'sga',
+    b: [
+      { r: 'D2',  ki: 11,  act: 'antagonist', core: true, note: 'Moderate.' },
+      { r: '5HT2A', ki: 4, act: 'antagonist', alt: ['inverse'], core: true, note: 'Well above its D2 affinity.' },
+      { r: '5HT2C', ki: 11, act: 'antagonist', alt: ['inverse'], core: true, note: 'With H1, the engine of olanzapine’s weight gain.' },
+      { r: 'H1',  ki: 7,   act: 'antagonist', core: true, note: 'Strong — sedation, and weight gain that does NOT show tolerance.' },
+      { r: 'M1',  ki: 73,  act: 'antagonist', core: true, note: 'Moderate anticholinergic load.' },
+      { r: 'A1',  ki: 19,  act: 'antagonist', core: true, note: 'Moderate — orthostasis.' },
+      { r: 'D1',  ki: 31,  act: 'antagonist', note: 'Moderate.' },
+      { r: 'D3',  ki: 49,  act: 'antagonist', note: 'Moderate.' },
+      { r: 'D4',  ki: 27,  act: 'antagonist', note: 'Moderate.' },
+      { r: '5HT6', ki: 10, act: 'antagonist', note: 'High affinity; linked to weight gain.' },
+      { r: 'M3',  ki: 13,  act: 'antagonist', note: 'Implicated in impaired insulin secretion and diabetes risk.' },
+      { r: '5HT7', ki: 105, act: 'antagonist', note: 'Low affinity.' },
+    ],
+    neg: { '5HT1A': 2720, SERT: 10000, NET: 10000 },
+    pearl: 'Second only to clozapine for efficacy — and second only to clozapine for metabolic harm. The H1 + 5-HT2C + M3 combination is the mechanism: appetite up, satiety signalling down, insulin secretion blunted. Tolerance develops to the sedation but not to the weight gain. Also available as an LAI (with a post-injection delirium/sedation syndrome REMS).',
+    src: 'Bymaster et al, Neuropsychopharmacology 1996;14:87-96; PDSP Ki database; Siafis et al, Curr Neuropharmacol 2018.',
+  },
+  {
+    id: 'risperidone', name: 'Risperidone', brand: 'Risperdal',
+    cls: 'SGA — benzisoxazole', gen: 'sga',
+    b: [
+      { r: 'D2',  ki: 4,   act: 'antagonist', core: true, note: 'High affinity — and it is dose-dependent: above ~6 mg risperidone behaves like an FGA.' },
+      { r: '5HT2A', ki: 0.5, act: 'antagonist', alt: ['inverse'], core: true, note: 'Very high — roughly 8× its D2 affinity.' },
+      { r: 'A1',  ki: 0.7, act: 'antagonist', core: true, note: 'Very high — orthostasis on titration.' },
+      { r: 'A2',  ki: 8,   act: 'antagonist', core: true, note: 'High affinity.' },
+      { r: 'H1',  ki: 20,  act: 'antagonist', core: true, note: 'Moderate — some sedation and weight gain.' },
+      { r: 'D3',  ki: 9.6, act: 'antagonist', note: 'High affinity.' },
+      { r: 'D4',  ki: 7,   act: 'antagonist', note: 'High affinity.' },
+      { r: '5HT2C', ki: 26, act: 'antagonist', note: 'Moderate.' },
+      { r: '5HT7', ki: 6.6, act: 'antagonist', note: 'High affinity.' },
+    ],
+    neg: { M1: 10000, M3: 10000, M4: 10000, SERT: 10000, NET: 10000 },
+    pearl: 'Essentially zero muscarinic affinity — so nothing buffers the D2 blockade. That single fact predicts risperidone’s two signature problems: dose-dependent EPS, and the highest prolactin elevation of any SGA (it crosses back out of the pituitary poorly). Bupropion, a strong 2D6 inhibitor, pushes levels up.',
+    src: 'Leysen et al, J Pharmacol Exp Ther 1994;272:658-66; PDSP Ki database.',
+  },
+  {
+    id: 'paliperidone', name: 'Paliperidone', brand: 'Invega',
+    cls: 'SGA — 9-hydroxy-risperidone', gen: 'sga',
+    b: [
+      { r: 'D2',  ki: 2.2, act: 'antagonist', core: true, note: 'High affinity, like its parent.' },
+      { r: '5HT2A', ki: 1.0, act: 'antagonist', alt: ['inverse'], core: true, note: 'Very high.' },
+      { r: 'A1',  ki: 4,   act: 'antagonist', core: true, note: 'High affinity.' },
+      { r: 'A2',  ki: 17,  act: 'antagonist', core: true, note: 'Moderate.' },
+      { r: 'H1',  ki: 32,  act: 'antagonist', core: true, note: 'Moderate.' },
+      { r: 'D3',  ki: 6,   act: 'antagonist', note: 'High affinity.' },
+      { r: '5HT7', ki: 2.7, act: 'antagonist', note: 'High affinity.' },
+    ],
+    neg: { M1: 10000, M3: 10000, M4: 10000, SERT: 10000, NET: 10000 },
+    pearl: 'Risperidone’s active metabolite, so the receptor profile and the prolactin problem come with it. The difference is pharmacokinetic: paliperidone is renally cleared rather than 2D6-metabolised, which makes it one of the two preferred agents in hepatic impairment (with amisulpride) and free of most CYP interactions. OROS oral form plus 1-, 3- and 6-monthly LAIs.',
+    src: 'Schotte et al, Psychopharmacology 1996;124:57-73; PDSP Ki database.',
+  },
+  {
+    id: 'quetiapine', name: 'Quetiapine', brand: 'Seroquel',
+    cls: 'SGA — dibenzothiazepine', gen: 'sga',
+    b: [
+      { r: 'D2',  ki: 329, act: 'antagonist', core: true, note: 'LOW affinity, and it dissociates fast — the reason EPS and prolactin are near-absent.' },
+      { r: '5HT2A', ki: 148, act: 'antagonist', alt: ['inverse'], core: true, note: 'Low in absolute terms, but still well above D2.' },
+      { r: 'H1',  ki: 30,  act: 'antagonist', core: true, note: 'Its HIGHEST-affinity target. At 25–100 mg quetiapine is essentially an antihistamine.' },
+      { r: 'A1',  ki: 94,  act: 'antagonist', core: true, note: 'Moderate — orthostasis.' },
+      { r: '5HT1A', ki: 717, act: 'partial', core: true, note: 'Partial agonism, largely via norquetiapine — part of the antidepressant effect.' },
+      { r: 'A2',  ki: 271, act: 'antagonist', note: 'Low affinity.' },
+      { r: 'NET', ki: 35,  act: 'reuptake', note: 'Norquetiapine is a genuine NET inhibitor — the other half of the bipolar-depression effect.' },
+      { r: 'M1',  ki: 120, act: 'antagonist', note: 'Low; norquetiapine is more anticholinergic than the parent.' },
+      { r: '5HT7', ki: 307, act: 'antagonist', note: 'Low affinity.' },
+    ],
+    neg: { D1: 1268, SERT: 10000 },
+    pearl: 'The clearest dose-dependent drug in psychiatry, and the receptor order explains it: H1 first (sedation at 25–100 mg), then α1 and 5-HT2A, and only at 400–800 mg is there enough D2 occupancy to be antipsychotic. Its metabolite norquetiapine adds NET inhibition and 5-HT1A partial agonism, which is why quetiapine works in bipolar depression. Lowest EPS and prolactin risk of the SGAs.',
+    src: 'PDSP Ki database (D1 1268 nM); norquetiapine NET from Jensen et al, Neuropsychopharmacology 2008;33:2303-12.',
+  },
+  {
+    id: 'ziprasidone', name: 'Ziprasidone', brand: 'Geodon',
+    cls: 'SGA — benzisothiazolyl piperazine', gen: 'sga',
+    b: [
+      { r: 'D2',  ki: 5,   act: 'antagonist', core: true, note: 'High affinity.' },
+      { r: '5HT2A', ki: 0.4, act: 'antagonist', alt: ['inverse'], core: true, note: 'Very high — one of the largest 5-HT2A:D2 ratios of any antipsychotic.' },
+      { r: '5HT2C', ki: 1.3, act: 'antagonist', alt: ['inverse'], core: true, note: 'High affinity, yet ziprasidone is weight-neutral — a reminder that 5-HT2C is not the whole metabolic story.' },
+      { r: '5HT1A', ki: 3.4, act: 'partial', core: true, note: 'Partial agonism — anxiolytic and antidepressant contribution.' },
+      { r: 'A1',  ki: 10,  act: 'antagonist', core: true, note: 'Moderate.' },
+      { r: 'H1',  ki: 50,  act: 'antagonist', core: true, note: 'Moderate — mild sedation, little weight gain.' },
+      { r: 'D3',  ki: 7.2, act: 'antagonist', note: 'High affinity.' },
+      { r: '5HT7', ki: 9.3, act: 'antagonist', note: 'High affinity.' },
+      { r: 'SERT', ki: 53, act: 'reuptake', note: 'Weak serotonin reuptake inhibition.' },
+      { r: 'NET', ki: 48,  act: 'reuptake', note: 'Weak noradrenaline reuptake inhibition.' },
+    ],
+    neg: { M1: 10000, M3: 10000, M4: 10000 },
+    pearl: 'Weight- and metabolically neutral, which makes it attractive — but two practical catches. It needs a ≥500 kcal meal, which roughly doubles absorption, and it carries the most QTc prolongation of the commonly used SGAs, so get a baseline ECG and check electrolytes. Also has 5-HT1D antagonism and weak SERT/NET reuptake block. CYP3A4 substrate — erythromycin raises levels.',
+    src: 'Seeger et al, J Pharmacol Exp Ther 1995;275:101-13; PDSP Ki database (5-HT1D Ki 2 nM).',
+  },
+  {
+    id: 'iloperidone', name: 'Iloperidone', brand: 'Fanapt',
+    cls: 'SGA — benzisoxazole piperidinyl', gen: 'sga',
+    b: [
+      { r: 'A1',  ki: 0.36, act: 'antagonist', core: true, note: 'The HIGHEST α1 affinity of any antipsychotic — higher than its own D2 affinity.' },
+      { r: 'D2',  ki: 6.3, act: 'antagonist', core: true, note: 'High affinity.' },
+      { r: '5HT2A', ki: 5.6, act: 'antagonist', alt: ['inverse'], core: true, note: 'High affinity.' },
+      { r: '5HT7', ki: 22, act: 'antagonist', core: true, note: 'Moderate.' },
+      { r: 'D3',  ki: 7.1, act: 'antagonist', note: 'High affinity.' },
+      { r: 'A2',  ki: 4.7, act: 'antagonist', note: 'High affinity.' },
+      { r: 'H1',  ki: 437, act: 'antagonist', note: 'Low affinity.' },
+    ],
+    neg: { M1: 4000, M3: 4000, M4: 4000, SERT: 10000, NET: 10000 },
+    pearl: 'Defined by one number: α1 affinity higher than its D2 affinity. That forces a slow titration over roughly a week, and it produces the most orthostatic hypotension and the highest priapism risk of the class. Low EPS and low prolactin in exchange. Moderate QTc prolongation; a 2D6 and 3A4 substrate.',
+    src: 'Kalkman et al, Psychopharmacology 2003;168:104-9; PDSP Ki database.',
+  },
+  {
+    id: 'asenapine', name: 'Asenapine', brand: 'Saphris',
+    cls: 'SGA — dibenzo-oxepino pyrrole', gen: 'sga',
+    b: [
+      { r: '5HT2C', ki: 0.03, act: 'antagonist', alt: ['inverse'], core: true, note: 'Its single highest-affinity target.' },
+      { r: '5HT2A', ki: 0.06, act: 'antagonist', alt: ['inverse'], core: true, note: 'Very high — a huge 5-HT2A:D2 ratio.' },
+      { r: '5HT7', ki: 0.13, act: 'antagonist', core: true, note: 'Very high.' },
+      { r: 'D3',  ki: 0.42, act: 'antagonist', core: true, note: 'Very high — above its D2 affinity.' },
+      { r: 'H1',  ki: 1.0, act: 'antagonist', core: true, note: 'High — sedation.' },
+      { r: 'A1',  ki: 1.2, act: 'antagonist', core: true, note: 'High.' },
+      { r: 'D2',  ki: 1.4, act: 'antagonist', core: true, note: 'High affinity — but it is outranked by five serotonin and dopamine targets.' },
+      { r: '5HT1A', ki: 2.5, act: 'partial', note: 'Partial agonism.' },
+      { r: '5HT6', ki: 0.25, act: 'antagonist', note: 'Very high affinity.' },
+      { r: 'A2',  ki: 1.2, act: 'antagonist', note: 'High affinity.' },
+    ],
+    neg: { M1: 8128, M3: 8128, M4: 8128, SERT: 10000, NET: 10000 },
+    pearl: 'The broadest high-affinity profile of any antipsychotic — sub-nanomolar at five targets — and yet essentially no muscarinic binding at all (M1 Ki 8128 nM). Sublingual only: oral bioavailability is under 2%, so nothing to eat or drink for 10 minutes, and oral hypoesthesia is common. Watch for the pKi-vs-Ki mix-up in the literature here; these are the converted Ki values.',
+    src: 'Shahid et al, J Psychopharmacol 2009 (pKi converted to Ki); conversion confirmed in Bras J Psychiatry 2021;43:673.',
+  },
+  {
+    id: 'lurasidone', name: 'Lurasidone', brand: 'Latuda',
+    cls: 'SGA — benzisothiazol piperazine', gen: 'sga',
+    b: [
+      { r: '5HT2A', ki: 0.47, act: 'antagonist', alt: ['inverse'], core: true, note: 'Very high.' },
+      { r: '5HT7', ki: 0.49, act: 'antagonist', core: true, note: 'The strongest 5-HT7 blockade of any antipsychotic — pro-cognitive and antidepressant.' },
+      { r: 'D2',  ki: 0.99, act: 'antagonist', core: true, note: 'Very high affinity.' },
+      { r: '5HT1A', ki: 6.38, act: 'partial', core: true, note: 'Partial agonism — anxiolytic, and reduces akathisia.' },
+      { r: 'A2',  ki: 10.8, act: 'antagonist', core: true, note: 'Moderate (α2C).' },
+      { r: 'A1',  ki: 47, act: 'antagonist', core: true, note: 'Moderate.' },
+    ],
+    neg: { H1: 1000, M1: 1000, M3: 1000, M4: 1000, '5HT2C': 1000, SERT: 10000, NET: 10000 },
+    pearl: 'The cleanest metabolic profile of the SGAs, and the receptor table says why: no meaningful H1, M1 or 5-HT2C binding at all. So no sedation, no anticholinergic effects, weight-neutral — at the cost of more akathisia. Its 5-HT7 and 5-HT1A actions give it the bipolar-depression indication. Must be taken with at least 350 kcal or absorption halves; 3A4 substrate.',
+    src: 'Ishibashi et al, J Pharmacol Exp Ther 2010;334:171-81.',
+  },
+  {
+    id: 'lumateperone', name: 'Lumateperone', brand: 'Caplyta',
+    cls: 'SGA — tosylate, novel mechanism', gen: 'sga',
+    b: [
+      { r: '5HT2A', ki: 0.54, act: 'antagonist', alt: ['inverse'], core: true, note: 'Very high — roughly 60× its D2 affinity, the largest ratio of any marketed agent.' },
+      { r: 'D2',  ki: 32,  act: 'partial', alt: ['antagonist'], core: true, note: 'Unusual: presynaptic partial agonist and postsynaptic antagonist at the same receptor. Only ~40% occupancy at 42 mg.' },
+      { r: 'SERT', ki: 33, act: 'reuptake', core: true, note: 'Genuine serotonin reuptake inhibition — part of the antidepressant effect.' },
+      { r: 'D1',  ki: 41,  act: 'antagonist', core: true, note: 'Moderate; linked to indirect NMDA/glutamate modulation.' },
+    ],
+    neg: { H1: 1000, M1: 1000, M3: 1000, M4: 1000, '5HT2C': 1000, NET: 10000 },
+    pearl: 'Three mechanisms in one molecule: 5-HT2A blockade, phase-dependent D2 modulation (presynaptic partial agonist, postsynaptic antagonist) and SERT inhibition, plus D1-mediated glutamate effects. Very low D2 occupancy means minimal EPS and no prolactin rise, and it is weight- and metabolically neutral. Approved for schizophrenia and for bipolar I/II depression. 3A4 substrate.',
+    src: 'Snyder et al, Psychopharmacology 2015;232:605-21; Vanover et al, J Pharmacol Exp Ther 2006;317:910-8.',
+  },
+
+  /* ================= THIRD GENERATION — D2 PARTIAL AGONISTS ================= */
+  {
+    id: 'aripiprazole', name: 'Aripiprazole', brand: 'Abilify',
+    cls: 'Third generation — D2 partial agonist', gen: 'tga',
+    b: [
+      { r: 'D2',  ki: 0.34, act: 'partial', core: true, note: 'Very high affinity AND partial agonism — a functional antagonist where dopamine is high, an agonist where it is low.' },
+      { r: 'D3',  ki: 0.8, act: 'partial', core: true, note: 'Very high affinity partial agonism.' },
+      { r: '5HT1A', ki: 1.7, act: 'partial', core: true, note: 'Partial agonism — anxiolytic, and offsets akathisia.' },
+      { r: '5HT2A', ki: 3.4, act: 'antagonist', alt: ['inverse'], core: true, note: 'High affinity.' },
+      { r: '5HT2C', ki: 15, act: 'inverse', alt: ['antagonist'], core: true, note: 'Inverse agonism here — slightly appetite-suppressing rather than the usual weight-gain signal.' },
+      { r: 'H1',  ki: 61, act: 'antagonist', core: true, note: 'Moderate — mild sedation.' },
+      { r: 'A1',  ki: 57, act: 'antagonist', note: 'Moderate.' },
+      { r: '5HT7', ki: 39, act: 'antagonist', note: 'Moderate.' },
+      { r: 'D4',  ki: 44, act: 'partial', note: 'Moderate.' },
+    ],
+    neg: { M1: 6800, M3: 6800, M4: 6800, NET: 10000 },
+    pearl: 'The dopamine stabiliser. Because it is a partial agonist with very high D2 affinity it out-competes dopamine both ways — damping mesolimbic overactivity while preserving tuberoinfundibular tone, so prolactin does not rise and may fall. Low EPS and low metabolic burden; akathisia is the characteristic side effect. Half-life ~75 h; also an LAI. Adjunct in MDD.',
+    src: 'Shapiro et al, Neuropsychopharmacology 2003;28:1400-11.',
+  },
+  {
+    id: 'brexpiprazole', name: 'Brexpiprazole', brand: 'Rexulti',
+    cls: 'Third generation — D2 partial agonist', gen: 'tga',
+    b: [
+      { r: '5HT1A', ki: 0.12, act: 'partial', core: true, note: 'Its highest-affinity target — stronger 5-HT1A action than aripiprazole, hence less akathisia.' },
+      { r: 'A1',  ki: 0.17, act: 'antagonist', core: true, note: 'Very high affinity (α1B).' },
+      { r: 'D2',  ki: 0.3, act: 'partial', core: true, note: 'Very high affinity with LOWER intrinsic activity than aripiprazole — less activating.' },
+      { r: '5HT2A', ki: 0.47, act: 'antagonist', alt: ['inverse'], core: true, note: 'Very high affinity.' },
+      { r: 'A2',  ki: 0.59, act: 'antagonist', core: true, note: 'Very high affinity (α2C).' },
+      { r: 'D3',  ki: 1.1, act: 'partial', core: true, note: 'High affinity partial agonism.' },
+      { r: 'H1',  ki: 19, act: 'antagonist', core: true, note: 'Moderate — more sedation than aripiprazole.' },
+      { r: '5HT7', ki: 3.7, act: 'antagonist', note: 'High affinity.' },
+    ],
+    neg: { M1: 6700, M3: 6700, M4: 6700 },
+    pearl: 'Aripiprazole’s successor, tuned rather than redesigned: lower D2 intrinsic activity plus stronger 5-HT1A and α1B/α2C binding. The practical trade is less akathisia and less activation, but more sedation and somewhat more weight gain. Adjunct in MDD, and the first agent approved for agitation in Alzheimer’s dementia — which still carries the class black-box for mortality.',
+    src: 'Maeda et al, J Pharmacol Exp Ther 2014;350:589-604.',
+  },
+  {
+    id: 'cariprazine', name: 'Cariprazine', brand: 'Vraylar',
+    cls: 'Third generation — D3-preferring partial agonist', gen: 'tga',
+    b: [
+      { r: 'D3',  ki: 0.085, act: 'partial', core: true, note: 'Roughly 10× its D2 affinity — the only agent that meaningfully occupies D3 in a living brain, where dopamine normally out-competes drugs.' },
+      { r: 'D2',  ki: 0.49, act: 'partial', core: true, note: 'Very high affinity partial agonism (D2L 0.49 / D2S 0.69 nM).' },
+      { r: '5HT1A', ki: 2.6, act: 'partial', core: true, note: 'Partial agonism.' },
+      { r: '5HT2A', ki: 18.8, act: 'antagonist', alt: ['inverse'], core: true, note: 'Moderate — weaker than most SGAs.' },
+      { r: 'H1',  ki: 23.2, act: 'antagonist', core: true, note: 'Moderate.' },
+      { r: '5HT2C', ki: 134, act: 'inverse', alt: ['antagonist'], core: true, note: 'Low affinity — part of why cariprazine is weight-neutral.' },
+      { r: 'A1',  ki: 155, act: 'antagonist', note: 'Low affinity (α1A).' },
+    ],
+    neg: { M1: 10000, M3: 10000, M4: 10000, SERT: 10000, NET: 10000 },
+    pearl: 'The D3 drug. A ~10-fold D3-over-D2 preference is enough to occupy D3 in vivo, which is where the negative-symptom, motivation and anhedonia benefit is thought to come from. The catch is kinetics: the didesmethyl metabolite has a 1–3 week half-life, so both onset and offset are slow, and steady state takes weeks. Akathisia is dose-limiting. Weight- and metabolically neutral; approved as an MDD adjunct.',
+    src: 'Kiss et al, J Pharmacol Exp Ther 2010;333:328-40.',
+  },
+
+  /* ================= NON-DOPAMINERGIC / NEWEST ================= */
+  {
+    id: 'pimavanserin', name: 'Pimavanserin', brand: 'Nuplazid',
+    cls: 'Selective 5-HT2A inverse agonist — no D2 activity', gen: 'new',
+    b: [
+      { r: '5HT2A', ki: 0.087, act: 'inverse', alt: ['antagonist'], core: true, note: 'Sub-nanomolar inverse agonism — the entire mechanism of the drug.' },
+      { r: '5HT2C', ki: 0.44, act: 'inverse', alt: ['antagonist'], core: true, note: 'Real but weaker; reported 5-HT2A selectivity ranges from ~5× to ~40× depending on the assay.' },
+    ],
+    neg: {
+      D1: 10000, D2: 10000, D3: 10000, D4: 10000,
+      H1: 10000, M1: 10000, M3: 10000, M4: 10000, A1: 10000, A2: 10000, SERT: 10000, NET: 10000,
+    },
+    pearl: 'The proof that you do not need a dopamine receptor to treat psychosis: pimavanserin has no appreciable affinity at ANY dopaminergic, muscarinic, histaminergic or adrenergic site. That is exactly why it is the agent approved for Parkinson’s disease psychosis — it will not worsen motor symptoms. Still carries the class black-box for increased mortality in elderly patients with dementia-related psychosis, and prolongs QTc.',
+    src: 'Vanover et al, J Pharmacol Exp Ther 2006;317:910-8; Tocris/PDSP binding data.',
+  },
+  {
+    id: 'xanomeline', name: 'Xanomeline–Trospium', brand: 'Cobenfy',
+    cls: 'M1/M4 muscarinic agonist — no D2 activity', gen: 'new',
+    b: [
+      { r: 'M4',  ki: 20, tierAlt: [3], act: 'agonist', core: true, note: 'M4 agonism on striatal cholinergic interneurons indirectly damps mesolimbic dopamine — antipsychotic effect without touching D2.' },
+      { r: 'M1',  ki: 79, tierAlt: [3], act: 'agonist', core: true, note: 'M1 agonism on cortical interneurons potentiates NMDA currents — the pro-cognitive half.' },
+      { r: 'M3',  ki: 60, tierAlt: [3], act: 'agonist', note: 'Also bound; peripheral M3 activation drives the GI side effects that trospium is there to block.' },
+    ],
+    neg: {
+      D1: 10000, D2: 10000, D3: 10000, D4: 10000,
+      '5HT2A': 10000, '5HT2C': 10000, H1: 10000, A1: 10000, A2: 10000, SERT: 10000, NET: 10000,
+    },
+    pearl: 'The first genuinely non-dopaminergic antipsychotic (FDA approved September 2024). Xanomeline is an M1/M4-preferring agonist with no dopamine-receptor binding at all — so no EPS, no prolactin rise, no weight gain. Trospium is a quaternary amine muscarinic ANTAGONIST that does not cross the blood–brain barrier; it is in the tablet purely to block xanomeline’s peripheral cholinergic effects (nausea, vomiting, sweating, salivation). Reported muscarinic Ki values vary widely by assay — both "high" and "moderate" are accepted here.',
+    src: 'Bymaster et al; Kaul et al, Lancet 2024 (EMERGENT); Paul et al, Am J Psychiatry 2024.',
+  },
+];
+
+/* =====================================================================
+ * RECEPTOR LAB
+ * =====================================================================
+ * Drag a receptor out of the tray and into the cell membrane, say what the
+ * drug does there (antagonist / partial agonist / inverse agonist / agonist
+ * / reuptake block) and how hard it binds. Lock in, and the real Ki values
+ * come up beside your answer.
+ *
+ * A perfect round is 1000 points, split across the drug's CORE receptors:
+ * half for knowing it binds at all, a quarter for the action, a quarter for
+ * the strength band (half credit if you are one band out). Bonus receptors
+ * pay 40% of a core one and cost nothing if missed. Placing a receptor the
+ * drug genuinely does not touch costs 40% of a core receptor — knowing what
+ * risperidone does NOT hit is half the point of the exercise.
+ *
+ * Everything runs on pointer events, so a finger and a mouse take the same
+ * path. Tapping a chip arms it; tapping the cell then drops it, which is the
+ * whole interaction on a phone.
+ * ===================================================================== */
+const RLAB = (function () {
+  const view      = document.getElementById('rlabView');
+  const menuEl    = document.getElementById('rlMenu');
+  const playEl    = document.getElementById('rlPlay');
+  const resultEl  = document.getElementById('rlResult');
+  const summaryEl = document.getElementById('rlSummary');
+
+  const pickGrid  = document.getElementById('rlPickGrid');
+  const modeFree  = document.getElementById('rlModeFree');
+  const modeGaunt = document.getElementById('rlModeGauntlet');
+  const modeNote  = document.getElementById('rlModeNote');
+
+  const nameEl    = document.getElementById('rlDrugName');
+  const subEl     = document.getElementById('rlDrugSub');
+  const metaEl    = document.getElementById('rlHeadMeta');
+  const trayFams  = document.getElementById('rlTrayFams');
+  const cellEl    = document.getElementById('rlCell');
+  const cellDrug  = document.getElementById('rlCellDrug');
+  const editorEl  = document.getElementById('rlEditor');
+  const playHint  = document.getElementById('rlPlayHint');
+
+  const resName   = document.getElementById('rlResName');
+  const resSub    = document.getElementById('rlResSub');
+  const resScore  = document.getElementById('rlResScore');
+  const resVerdict= document.getElementById('rlResVerdict');
+  const resTable  = document.getElementById('rlResTable');
+  const resPearl  = document.getElementById('rlResPearl');
+  const resSrc    = document.getElementById('rlResSrc');
+  const nextBtn   = document.getElementById('rlNextBtn');
+  const retryBtn  = document.getElementById('rlRetryBtn');
+  const menuBtn   = document.getElementById('rlMenuBtn');
+
+  const sumSub    = document.getElementById('rlSumSub');
+  const sumScore  = document.getElementById('rlSumScore');
+  const sumOf     = document.getElementById('rlSumOf');
+  const sumVerdict= document.getElementById('rlSumVerdict');
+  const sumList   = document.getElementById('rlSumList');
+
+  const GAUNTLET_N = 5;
+  const BEST_KEY = 'rlab.best.v1';
+  const RUN_KEY  = 'rlab.gauntlet.v1';
+  const FAM_ORDER = ['dopamine', 'serotonin', 'histamine', 'muscarinic', 'adrenergic', 'transporter'];
+  const FAM_NAME = {
+    dopamine: 'Dopamine', serotonin: 'Serotonin', histamine: 'Histamine',
+    muscarinic: 'Muscarinic', adrenergic: 'Adrenergic', transporter: 'Transporters',
+  };
+  const GEN_NAME = {
+    fga: 'First generation', sga: 'Second generation',
+    tga: 'Third generation — D2 partial agonists', new: 'Non-dopaminergic & newest',
+  };
+
+  const recById = {};
+  RL_RECEPTORS.forEach(r => { recById[r.id] = r; });
+  const actById = {};
+  RL_ACTIONS.forEach(a => { actById[a.id] = a; });
+  const drugById = {};
+  RL_DRUGS.forEach(d => { drugById[d.id] = d; });
+
+  const isTransporter = id => recById[id] && recById[id].family === 'transporter';
+
+  /* localStorage is a convenience here, never load-bearing: a private window
+     or a browser with site data blocked just means no saved bests. */
+  function load(key) {
+    try { return JSON.parse(localStorage.getItem(key) || '{}') || {}; }
+    catch (e) { return {}; }
+  }
+  function save(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { /* no store, no problem */ }
+  }
+
+  let mode = 'free';
+  let queue = [];        // drug ids for this run
+  let qIdx = 0;
+  let drug = null;
+  let placed = {};       // recId -> { act, tier }
+  let selected = null;
+  let runResults = [];
+  let runStart = 0;
+  let tick = null;
+
+  const shuffle = arr => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const fmtKi = ki => (ki >= 1000 ? '≥ 1000' : (ki >= 10 ? String(Math.round(ki)) : String(ki)));
+  const fmtTime = ms => {
+    const s = Math.round(ms / 1000);
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  };
+
+  /* ---------------- scoring ---------------- */
+  function scoreRound(d, pl) {
+    const core = d.b.filter(x => x.core);
+    const bonus = d.b.filter(x => !x.core);
+    const per = 1000 / core.length;
+    const W_ID = 0.5, W_ACT = 0.25, W_STR = 0.25;
+    let total = 0;
+    const rows = [];
+
+    const judge = (spec, p, budget) => {
+      const tier = rlTierOf(spec.ki);
+      const actOk = !!p && (p.act === spec.act || (spec.alt || []).indexOf(p.act) !== -1);
+      const tierOk = !!p && (p.tier === tier || (spec.tierAlt || []).indexOf(p.tier) !== -1);
+      const tierNear = !!p && !tierOk && Math.abs(p.tier - tier) === 1;
+      let pts = 0;
+      if (p) {
+        pts = budget * W_ID;
+        if (actOk) pts += budget * W_ACT;
+        if (tierOk) pts += budget * W_STR;
+        else if (tierNear) pts += budget * W_STR * 0.5;
+      }
+      return { spec, tier, got: p || null, pts, budget, actOk, tierOk, tierNear };
+    };
+
+    core.forEach(spec => {
+      const r = judge(spec, pl[spec.r], per);
+      r.kind = 'core';
+      total += r.pts;
+      rows.push(r);
+    });
+
+    bonus.forEach(spec => {
+      const p = pl[spec.r];
+      const r = judge(spec, p, per * 0.4);
+      r.kind = 'bonus';
+      if (p) total += r.pts;
+      rows.push(r);
+    });
+
+    /* False positives: only receptors the drug is documented NOT to hit.
+       Anything unlisted is arguable, so it neither scores nor costs. */
+    const fps = [];
+    Object.keys(pl).forEach(rid => {
+      if (d.b.some(x => x.r === rid)) return;
+      const negKi = d.neg ? d.neg[rid] : null;
+      if (negKi == null) return;
+      const pen = per * 0.4;
+      total -= pen;
+      fps.push({ r: rid, ki: negKi, got: pl[rid], pen: pen });
+    });
+
+    rows.sort((a, b) => a.spec.ki - b.spec.ki);
+    return { score: Math.max(0, Math.min(1000, Math.round(total))), rows, fps, per };
+  }
+
+  /* The round verdict points at the answer table; the gauntlet summary has
+     no table under it, so it gets its own wording. */
+  function runVerdict(avg) {
+    if (avg >= 950) return 'Textbook, the whole way through.';
+    if (avg >= 850) return 'Strong run \u2014 a few bands off.';
+    if (avg >= 700) return 'Solid. The profiles are mostly there.';
+    if (avg >= 500) return 'The outlines are right; the strengths need work.';
+    if (avg >= 250) return 'Some of it landed. Worth another run.';
+    return 'Rough run \u2014 try these in free play first.';
+  }
+
+  function verdictFor(score) {
+    if (score >= 950) return 'Textbook. That is the profile.';
+    if (score >= 850) return 'Strong — a band or an action off somewhere.';
+    if (score >= 700) return 'Good shape. Check the ones you missed below.';
+    if (score >= 500) return 'The outline is there; the strengths need work.';
+    if (score >= 250) return 'Some of it landed. Read the table and run it again.';
+    return 'Rough one — the table below is the whole answer.';
+  }
+
+  /* ---------------- menu ---------------- */
+  function renderMenu() {
+    modeFree.setAttribute('aria-pressed', String(mode === 'free'));
+    modeGaunt.setAttribute('aria-pressed', String(mode === 'gauntlet'));
+
+    const best = load(BEST_KEY);
+    const run = load(RUN_KEY);
+
+    if (mode === 'free') {
+      modeNote.textContent = 'Pick any medication and build its profile. 1000 points a round, '
+        + 'and your best for each drug is kept on this device.';
+      pickGrid.hidden = false;
+      pickGrid.innerHTML = '';
+      let lastGen = null;
+      RL_DRUGS.forEach(d => {
+        if (d.gen !== lastGen) {
+          lastGen = d.gen;
+          const lab = document.createElement('div');
+          lab.className = 'rl-gen-label';
+          lab.textContent = GEN_NAME[d.gen] || '';
+          pickGrid.appendChild(lab);
+        }
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rl-pick';
+        const n = document.createElement('div');
+        n.className = 'rl-pick-name'; n.textContent = d.name;
+        const b = document.createElement('div');
+        b.className = 'rl-pick-brand'; b.textContent = d.brand;
+        const c = document.createElement('div');
+        c.className = 'rl-pick-cls'; c.textContent = d.cls;
+        btn.append(n, b, c);
+        if (best[d.id] != null) {
+          const s = document.createElement('div');
+          s.className = 'rl-pick-best';
+          s.textContent = 'Best ' + best[d.id] + ' / 1000';
+          btn.appendChild(s);
+        }
+        btn.onclick = () => startFree(d.id);
+        pickGrid.appendChild(btn);
+      });
+    } else {
+      const bestLine = run.best != null
+        ? ' Your best so far: ' + run.best + ' / ' + (GAUNTLET_N * 1000) + ' in ' + fmtTime(run.bestTime || 0) + '.'
+        : '';
+      modeNote.innerHTML = GAUNTLET_N + ' medications dealt at random, back to back, with the clock running. '
+        + 'Scoring is the same 1000 a round — the clock is recorded, not scored.' + bestLine;
+      pickGrid.hidden = true;
+      const go = document.createElement('button');
+      go.type = 'button';
+      go.className = 'reset-board-btn';
+      go.style.cssText = 'border-color:var(--gold);color:var(--gold);margin:22px auto 0';
+      go.textContent = 'Start the gauntlet';
+      go.onclick = startGauntlet;
+      pickGrid.hidden = false;
+      pickGrid.innerHTML = '';
+      pickGrid.style.display = 'block';
+      pickGrid.appendChild(go);
+      return;
+    }
+    pickGrid.style.display = '';
+  }
+
+  function show(which) {
+    menuEl.hidden    = which !== 'menu';
+    playEl.hidden    = which !== 'play';
+    resultEl.hidden  = which !== 'result';
+    summaryEl.hidden = which !== 'summary';
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------------- starting a round ---------------- */
+  function startFree(id) {
+    mode = 'free';
+    queue = [id];
+    qIdx = 0;
+    runResults = [];
+    stopClock();
+    openDrug(id);
+  }
+
+  function startGauntlet() {
+    mode = 'gauntlet';
+    queue = shuffle(RL_DRUGS.map(d => d.id)).slice(0, GAUNTLET_N);
+    qIdx = 0;
+    runResults = [];
+    runStart = Date.now();
+    startClock();
+    openDrug(queue[0]);
+  }
+
+  function startClock() {
+    stopClock();
+    tick = setInterval(() => { if (!playEl.hidden) renderMeta(); }, 1000);
+  }
+  function stopClock() {
+    if (tick) { clearInterval(tick); tick = null; }
+  }
+
+  function openDrug(id) {
+    drug = drugById[id];
+    placed = {};
+    selected = null;
+    nameEl.textContent = drug.name;
+    subEl.textContent = drug.brand + ' · ' + drug.cls;
+    cellDrug.textContent = drug.name;
+    playHint.textContent = 'Every receptor in the tray is fair game — some of them this drug does not touch, '
+      + 'and placing one of those costs you.';
+    renderTray();
+    renderCell();
+    renderEditor();
+    renderMeta();
+    show('play');
+  }
+
+  function renderMeta() {
+    metaEl.innerHTML = '';
+    const chip = (k, v) => {
+      const d = document.createElement('div');
+      d.className = 'rl-chip';
+      d.innerHTML = '<span class="k"></span><span class="v"></span>';
+      d.querySelector('.k').textContent = k;
+      d.querySelector('.v').textContent = v;
+      return d;
+    };
+    if (mode === 'gauntlet') {
+      metaEl.appendChild(chip('Drug', (qIdx + 1) + ' / ' + queue.length));
+      metaEl.appendChild(chip('Total', runResults.reduce((a, r) => a + r.score, 0)));
+      metaEl.appendChild(chip('Time', fmtTime(Date.now() - runStart)));
+    } else {
+      const best = load(BEST_KEY)[drug.id];
+      metaEl.appendChild(chip('Placed', Object.keys(placed).length));
+      metaEl.appendChild(chip('Best', best != null ? best : '—'));
+    }
+  }
+
+  /* ---------------- tray ---------------- */
+  function renderTray() {
+    trayFams.innerHTML = '';
+    FAM_ORDER.forEach(fam => {
+      const members = RL_RECEPTORS.filter(r => r.family === fam);
+      if (!members.length) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'rl-fam';
+      const h = document.createElement('div');
+      h.className = 'rl-fam-name';
+      h.textContent = FAM_NAME[fam];
+      const row = document.createElement('div');
+      row.className = 'rl-fam-chips';
+      members.forEach(r => {
+        const c = document.createElement('div');
+        c.className = 'rl-chip-r fam-' + fam + (placed[r.id] ? ' used' : '');
+        c.textContent = r.label;
+        c.title = r.full;
+        c.dataset.rec = r.id;
+        row.appendChild(c);
+      });
+      wrap.append(h, row);
+      trayFams.appendChild(wrap);
+    });
+  }
+
+  /* ---------------- the cell ---------------- */
+  function renderCell() {
+    cellEl.querySelectorAll('.rl-rec, .rl-rec-tag').forEach(n => n.remove());
+    const ids = Object.keys(placed);
+    cellEl.classList.toggle('has-any', ids.length > 0);
+    if (!ids.length) return;
+
+    const w = cellEl.clientWidth || 420;
+    const scale = Math.max(0.62, Math.min(1, w / 440));
+    const SIZE = { 1: 30, 2: 40, 3: 52, 4: 64 };
+    const R = w / 2;                       // centres sit on the membrane ring
+
+    ids.forEach((rid, i) => {
+      const p = placed[rid];
+      const ang = (-Math.PI / 2) + (i * 2 * Math.PI / ids.length);
+      const size = Math.round(SIZE[p.tier] * scale);
+      const cx = R + R * Math.cos(ang);
+      const cy = R + R * Math.sin(ang);
+
+      const el = document.createElement('div');
+      el.className = 'rl-rec act-' + p.act + (selected === rid ? ' sel' : '');
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.left = cx + 'px';
+      el.style.top = cy + 'px';
+      el.title = recById[rid].full + ' — ' + actById[p.act].label;
+      el.dataset.rec = rid;
+      el.onclick = e => { e.stopPropagation(); selectRec(rid); };
+
+      /* Label sits just inside the ring, where there is always room, so it
+         stays legible whatever size the circle is and never spills off a
+         narrow screen. It has to clear the circle along the radius, and the
+         label's own width is what does the colliding at the 3 and 9 o'clock
+         positions — so measure it first, then place it. */
+      const tag = document.createElement('div');
+      tag.className = 'rl-rec-tag' + (selected === rid ? ' sel' : '');
+      tag.textContent = recById[rid].label;
+      tag.style.fontSize = Math.round(12 * scale) + 'px';
+      tag.dataset.rec = rid;
+      tag.onclick = e => { e.stopPropagation(); selectRec(rid); };
+
+      cellEl.append(el, tag);
+
+      const halfW = tag.offsetWidth / 2;
+      const halfH = tag.offsetHeight / 2;
+      const clearance = (size / 2) + 7 * scale
+        + Math.abs(Math.cos(ang)) * halfW + Math.abs(Math.sin(ang)) * halfH;
+      const inner = Math.max(0, R - clearance);
+      tag.style.left = (R + inner * Math.cos(ang)) + 'px';
+      tag.style.top = (R + inner * Math.sin(ang)) + 'px';
+    });
+  }
+
+  function selectRec(rid) {
+    selected = rid;
+    renderCell();
+    renderEditor();
+  }
+
+  function place(rid) {
+    if (placed[rid]) { selectRec(rid); return; }
+    placed[rid] = {
+      act: isTransporter(rid) ? 'reuptake' : 'antagonist',
+      tier: 2,
+    };
+    selected = rid;
+    renderTray();
+    renderCell();
+    renderEditor();
+    renderMeta();
+  }
+
+  function unplace(rid) {
+    delete placed[rid];
+    if (selected === rid) selected = null;
+    renderTray();
+    renderCell();
+    renderEditor();
+    renderMeta();
+  }
+
+  /* ---------------- editor ---------------- */
+  function renderEditor() {
+    editorEl.innerHTML = '';
+    if (!selected || !placed[selected]) {
+      editorEl.className = 'rl-editor empty';
+      editorEl.textContent = Object.keys(placed).length
+        ? 'Tap a receptor on the cell to set what the drug does there and how strongly it binds.'
+        : 'Nothing placed yet. Drag a receptor from the tray onto the membrane.';
+      return;
+    }
+    editorEl.className = 'rl-editor';
+    const rid = selected;
+    const p = placed[rid];
+    const rec = recById[rid];
+
+    const head = document.createElement('div');
+    head.className = 'rl-ed-head';
+    const nm = document.createElement('div');
+    nm.className = 'rl-ed-name';
+    nm.innerHTML = '<span></span><small></small>';
+    nm.querySelector('span').textContent = rec.full;
+    nm.querySelector('small').textContent = FAM_NAME[rec.family];
+    const rm = document.createElement('button');
+    rm.type = 'button';
+    rm.className = 'rl-ed-remove';
+    rm.textContent = 'Take it off';
+    rm.onclick = () => unplace(rid);
+    head.append(nm, rm);
+
+    const actRow = document.createElement('div');
+    actRow.className = 'rl-ed-row';
+    const actLab = document.createElement('div');
+    actLab.className = 'rl-ed-lab';
+    actLab.textContent = 'Action';
+    actRow.appendChild(actLab);
+    RL_ACTIONS.forEach(a => {
+      const only = isTransporter(rid);
+      if (a.transporterOnly !== true && only) return;
+      if (a.transporterOnly === true && !only) return;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rl-opt o-' + a.id;
+      b.textContent = a.label;
+      b.title = a.blurb;
+      b.setAttribute('aria-pressed', String(p.act === a.id));
+      b.onclick = () => { p.act = a.id; renderCell(); renderEditor(); };
+      actRow.appendChild(b);
+    });
+
+    const sizeRow = document.createElement('div');
+    sizeRow.className = 'rl-ed-row';
+    const sizeLab = document.createElement('div');
+    sizeLab.className = 'rl-ed-lab';
+    sizeLab.textContent = 'Strength';
+    sizeRow.appendChild(sizeLab);
+    const DOT = { 4: 20, 3: 16, 2: 12, 1: 9 };
+    RL_TIERS.forEach(t => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rl-opt-size';
+      b.setAttribute('aria-pressed', String(p.tier === t.t));
+      const i = document.createElement('i');
+      i.style.width = DOT[t.t] + 'px';
+      i.style.height = DOT[t.t] + 'px';
+      const txt = document.createElement('span');
+      txt.innerHTML = '<b></b> <em></em>';
+      txt.querySelector('b').textContent = t.name;
+      txt.querySelector('em').textContent = t.band;
+      b.append(i, txt);
+      b.onclick = () => { p.tier = t.t; renderCell(); renderEditor(); };
+      sizeRow.appendChild(b);
+    });
+
+    editorEl.append(head, actRow, sizeRow);
+  }
+
+  /* ---------------- drag & drop ---------------- */
+  let drag = null;   // { rid, ghost, moved, x0, y0 }
+  let armed = null;  // tapped chip waiting for a tap on the cell
+
+  function setArmed(rid) {
+    armed = rid;
+    trayFams.querySelectorAll('.rl-chip-r').forEach(c => {
+      c.classList.toggle('armed', c.dataset.rec === rid);
+    });
+  }
+
+  function overCell(x, y) {
+    const r = cellEl.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  }
+
+  trayFams.addEventListener('pointerdown', e => {
+    const chip = e.target.closest('.rl-chip-r');
+    if (!chip || chip.classList.contains('used')) return;
+    e.preventDefault();
+    drag = { rid: chip.dataset.rec, ghost: null, moved: false, x0: e.clientX, y0: e.clientY };
+    try { chip.setPointerCapture(e.pointerId); } catch (err) { /* older browsers */ }
+    chip._capturedId = e.pointerId;
+  });
+
+  trayFams.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+    drag.moved = true;
+    if (!drag.ghost) {
+      const src = trayFams.querySelector('.rl-chip-r[data-rec="' + drag.rid + '"]');
+      const g = src.cloneNode(true);
+      g.classList.add('ghost');
+      document.body.appendChild(g);
+      drag.ghost = g;
+    }
+    drag.ghost.style.left = e.clientX + 'px';
+    drag.ghost.style.top = e.clientY + 'px';
+    cellEl.classList.toggle('hot', overCell(e.clientX, e.clientY));
+  });
+
+  function endDrag(e) {
+    if (!drag) return;
+    const d = drag;
+    drag = null;
+    if (d.ghost) d.ghost.remove();
+    cellEl.classList.remove('hot');
+    if (d.moved) {
+      if (overCell(e.clientX, e.clientY)) place(d.rid);
+      setArmed(null);
+    } else {
+      setArmed(armed === d.rid ? null : d.rid);
+    }
+  }
+  trayFams.addEventListener('pointerup', endDrag);
+  trayFams.addEventListener('pointercancel', () => {
+    if (drag && drag.ghost) drag.ghost.remove();
+    drag = null;
+    cellEl.classList.remove('hot');
+  });
+
+  cellEl.addEventListener('click', () => {
+    if (armed) { place(armed); setArmed(null); }
+    else { selected = null; renderCell(); renderEditor(); }
+  });
+
+  /* The ring is sized in percentages but the receptors are positioned in
+     pixels, so a resize has to re-lay them out. */
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => { if (!playEl.hidden) renderCell(); }).observe(cellEl);
+  } else {
+    window.addEventListener('resize', () => { if (!playEl.hidden) renderCell(); });
+  }
+
+  /* ---------------- results ---------------- */
+  function lockIn() {
+    if (!Object.keys(placed).length) {
+      playHint.textContent = 'Put at least one receptor in the membrane before locking in.';
+      return;
+    }
+    const res = scoreRound(drug, placed);
+    runResults.push({ id: drug.id, name: drug.name, score: res.score });
+
+    if (mode === 'free') {
+      const best = load(BEST_KEY);
+      if (best[drug.id] == null || res.score > best[drug.id]) {
+        best[drug.id] = res.score;
+        save(BEST_KEY, best);
+      }
+    }
+    renderResult(res);
+    show('result');
+  }
+
+  function pill(actId) {
+    const a = actById[actId];
+    const s = document.createElement('span');
+    s.className = 'rl-pill act-' + actId;
+    s.textContent = a ? a.short : actId;
+    return s;
+  }
+
+  function renderResult(res) {
+    resName.textContent = drug.name;
+    resSub.textContent = drug.brand + ' · ' + drug.cls;
+    resScore.textContent = res.score;
+    resVerdict.textContent = verdictFor(res.score);
+
+    resTable.innerHTML = '';
+    const thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Receptor</th><th>Ki</th><th>Action</th><th>You</th><th>What it means</th></tr>';
+    resTable.appendChild(thead);
+    const tb = document.createElement('tbody');
+
+    res.rows.forEach(r => {
+      const tr = document.createElement('tr');
+      if (!r.got && r.kind === 'core') tr.className = 'miss';
+      else if (r.kind === 'bonus' && r.got) tr.className = 'bonusrow';
+
+      const tdR = document.createElement('td');
+      tdR.className = 'rl-rname';
+      tdR.textContent = recById[r.spec.r].label;
+      if (r.kind === 'bonus') {
+        const s = document.createElement('small');
+        s.style.cssText = 'display:block;color:var(--muted-dim);font-weight:400;letter-spacing:.5px';
+        s.textContent = 'bonus';
+        tdR.appendChild(s);
+      }
+
+      const tdK = document.createElement('td');
+      tdK.className = 'rl-ki';
+      tdK.innerHTML = '<span></span><small></small>';
+      tdK.querySelector('span').textContent = fmtKi(r.spec.ki) + ' nM';
+      const tierDef = RL_TIERS.find(t => t.t === r.tier);
+      tdK.querySelector('small').textContent = tierDef ? tierDef.name.toLowerCase() + ' ' + tierDef.plus : '';
+
+      const tdA = document.createElement('td');
+      tdA.appendChild(pill(r.spec.act));
+      if (r.spec.alt && r.spec.alt.length) {
+        const s = document.createElement('small');
+        s.style.cssText = 'display:block;color:var(--muted-dim);margin-top:4px;font-size:10.5px';
+        s.textContent = 'or ' + r.spec.alt.map(a => actById[a].short.toLowerCase()).join(' / ');
+        tdA.appendChild(s);
+      }
+
+      const tdY = document.createElement('td');
+      if (!r.got) {
+        const m = document.createElement('span');
+        m.className = 'rl-mark ' + (r.kind === 'core' ? 'bad' : '');
+        m.textContent = r.kind === 'core' ? 'missed' : '—';
+        tdY.appendChild(m);
+      } else {
+        tdY.appendChild(pill(r.got.act));
+        const line = document.createElement('div');
+        line.style.cssText = 'margin-top:5px;font-size:11px';
+        const aMark = r.actOk ? '<span class="rl-mark ok">action ✓</span>' : '<span class="rl-mark bad">action ✗</span>';
+        const sMark = r.tierOk ? '<span class="rl-mark ok">size ✓</span>'
+          : r.tierNear ? '<span class="rl-mark part">size ½</span>'
+          : '<span class="rl-mark bad">size ✗</span>';
+        line.innerHTML = aMark + ' &nbsp; ' + sMark;
+        tdY.appendChild(line);
+        const pts = document.createElement('div');
+        pts.style.cssText = 'margin-top:4px;font-size:11px;color:var(--muted-dim)';
+        pts.textContent = '+' + Math.round(r.pts) + ' pts';
+        tdY.appendChild(pts);
+      }
+
+      const tdN = document.createElement('td');
+      tdN.className = 'rl-note';
+      tdN.textContent = r.spec.note || '';
+
+      tr.append(tdR, tdK, tdA, tdY, tdN);
+      tb.appendChild(tr);
+    });
+
+    res.fps.forEach(f => {
+      const tr = document.createElement('tr');
+      tr.className = 'falsepos';
+      const tdR = document.createElement('td');
+      tdR.className = 'rl-rname';
+      tdR.textContent = recById[f.r].label;
+      const tdK = document.createElement('td');
+      tdK.className = 'rl-ki';
+      tdK.innerHTML = '<span></span><small></small>';
+      tdK.querySelector('span').textContent = fmtKi(f.ki) + ' nM';
+      tdK.querySelector('small').textContent = 'negligible';
+      const tdA = document.createElement('td');
+      tdA.innerHTML = '<span style="color:var(--muted-dim);font-size:12px">no meaningful binding</span>';
+      const tdY = document.createElement('td');
+      tdY.appendChild(pill(f.got.act));
+      const pts = document.createElement('div');
+      pts.style.cssText = 'margin-top:5px;font-size:11px';
+      pts.innerHTML = '<span class="rl-mark bad">−' + Math.round(f.pen) + ' pts</span>';
+      tdY.appendChild(pts);
+      const tdN = document.createElement('td');
+      tdN.className = 'rl-note';
+      tdN.textContent = drug.name + ' does not meaningfully bind here — knowing that is worth as much as knowing what it does hit.';
+      tr.append(tdR, tdK, tdA, tdY, tdN);
+      tb.appendChild(tr);
+    });
+
+    resTable.appendChild(tb);
+
+    /* The negatives the player got right by leaving them alone. */
+    const untouched = Object.keys(drug.neg || {}).filter(r => !placed[r]);
+    if (untouched.length) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 5;
+      td.style.cssText = 'color:var(--correct);font-size:12px;padding-top:12px';
+      td.textContent = 'Correctly left off: ' + untouched.map(r => recById[r].label).join(', ')
+        + ' — all negligible (Ki ≥ 1000 nM) for ' + drug.name + '.';
+      tr.appendChild(td);
+      tb.appendChild(tr);
+    }
+
+    resPearl.innerHTML = '<b>Why it matters</b>';
+    const p = document.createElement('span');
+    p.textContent = drug.pearl;
+    resPearl.appendChild(p);
+    resSrc.textContent = 'Ki source: ' + drug.src
+      + ' Binding constants vary with tissue, species and radioligand — treat the band as the point, not the decimal.';
+
+    const more = mode === 'gauntlet' && qIdx < queue.length - 1;
+    nextBtn.hidden = mode !== 'gauntlet';
+    nextBtn.textContent = more ? 'Next drug →' : 'See the run';
+    retryBtn.hidden = mode === 'gauntlet';
+    menuBtn.hidden = mode === 'gauntlet';
+  }
+
+  /* ---------------- gauntlet summary ---------------- */
+  function renderSummary() {
+    stopClock();
+    const total = runResults.reduce((a, r) => a + r.score, 0);
+    const elapsed = Date.now() - runStart;
+    const max = queue.length * 1000;
+    sumSub.textContent = queue.length + ' medications in ' + fmtTime(elapsed);
+    sumScore.textContent = total;
+    sumOf.textContent = 'out of ' + max;
+    sumVerdict.textContent = runVerdict(Math.round(total / queue.length));
+
+    const run = load(RUN_KEY);
+    const isBest = run.best == null || total > run.best;
+    if (isBest) save(RUN_KEY, { best: total, bestTime: elapsed });
+
+    sumList.innerHTML = '';
+    runResults.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'rl-run-row';
+      const n = document.createElement('span');
+      n.className = 'n'; n.textContent = r.name;
+      const s = document.createElement('span');
+      s.className = 's'; s.textContent = r.score + ' / 1000';
+      row.append(n, s);
+      sumList.appendChild(row);
+    });
+    if (isBest && run.best != null) {
+      const b = document.createElement('div');
+      b.style.cssText = 'text-align:center;color:var(--gold);font-size:12.5px;margin-top:14px;letter-spacing:1px';
+      b.textContent = 'New personal best.';
+      sumList.appendChild(b);
+    }
+    show('summary');
+  }
+
+  /* ---------------- wiring ---------------- */
+  modeFree.onclick = () => { mode = 'free'; renderMenu(); };
+  modeGaunt.onclick = () => { mode = 'gauntlet'; renderMenu(); };
+
+  document.getElementById('rlCheckBtn').onclick = lockIn;
+  document.getElementById('rlClearBtn').onclick = () => {
+    placed = {}; selected = null;
+    renderTray(); renderCell(); renderEditor(); renderMeta();
+  };
+  document.getElementById('rlQuitBtn').onclick = () => {
+    stopClock(); renderMenu(); show('menu');
+  };
+
+  nextBtn.onclick = () => {
+    if (qIdx < queue.length - 1) { qIdx++; openDrug(queue[qIdx]); }
+    else renderSummary();
+  };
+  retryBtn.onclick = () => openDrug(drug.id);
+  menuBtn.onclick = () => { renderMenu(); show('menu'); };
+  document.getElementById('rlSumAgainBtn').onclick = startGauntlet;
+  document.getElementById('rlSumMenuBtn').onclick = () => { mode = 'free'; renderMenu(); show('menu'); };
+
+  return {
+    open() {
+      view.hidden = false;
+      renderMenu();
+      show('menu');
+    },
+    close() {
+      view.hidden = true;
+      stopClock();
+      drug = null;
+    },
+  };
+})();
+
 function route() {
   const id = decodeURIComponent(location.hash.replace(/^#/, ''));
   C4.close();   // reopened below if this hash is a Connect Four game
+  RLAB.close(); // likewise — reopened below if this hash is the Receptor Lab
 
   // A phone joining the wizard game: #play-ABCD
   if (/^play(-|$)/i.test(id)) {
@@ -7686,6 +9391,18 @@ function route() {
   overlay.classList.remove('active');
   currentClueEl = null;
   currentKey = null;
+
+  if (extra && extra.id === 'receptor-lab') {
+    current = null;
+    hubView.hidden = true;
+    gameView.hidden = true;
+    wizardView.hidden = true;
+    WIZ.close();
+    document.title = extra.title;
+    RLAB.open();
+    window.scrollTo(0, 0);
+    return;
+  }
 
   if (extra && extra.id === 'wizards-escape') {
     current = null;
