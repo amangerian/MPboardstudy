@@ -839,6 +839,19 @@
   .game-card.arcane h2 { color: #e6dcff; }
   .game-card.arcane .tag { border-color: var(--violet-deep); background: rgba(10,6,30,.6); }
   .game-card.arcane:hover .play-cue { color: var(--arcane); }
+  /* Receptor Lab card wears the lab's own bog-green sky (see #rlabView). */
+  .game-card.lab {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 85%, rgba(61,220,132,.16), transparent 70%),
+      radial-gradient(ellipse at 50% 15%, #10211a 0%, #040907 85%);
+    border-color: #2c4034;
+  }
+  .game-card.lab:hover { border-color: #3ddc84; }
+  .game-card.lab .kind { color: #8fa693; }
+  .game-card.lab h2 { color: #3ddc84; text-shadow: 0 0 18px rgba(61,220,132,.35), 0 2px 0 #04140c; }
+  .game-card.lab p { color: #e9e4d2; }
+  .game-card.lab .tag { border-color: #2c4034; background: rgba(12,26,20,.72); color: #8fa693; }
+  .game-card.lab:hover .play-cue { color: #3ddc84; }
 
   /* ---- shell ---- */
   #wizardView .titlebar h1 {
@@ -2546,7 +2559,7 @@
   <div class="section-label">Pick a game</div>
   <div class="game-grid" id="gameGrid"></div>
 
-  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 18 September 2026</footer>
+  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 19 September 2026</footer>
 </div>
 
 <!-- ===================== GAME VIEW ===================== -->
@@ -4005,6 +4018,7 @@ const EXTRAS = [
     id: "receptor-lab",
     title: "Receptor Lab: Antipsychotics",
     kind: "Drag & drop \u00b7 solo",
+    lab: true,
     blurb: "A drug name over an empty cauldron. Click in every receptor it acts on, say whether it blocks, partially activates, activates or inverts each one, and size the circle to the binding strength. Lock in and your brew is set beside the real one, Ki values and all. Or start in guided brewing, where the teaching paragraph goes up first with the receptors cut out of it and you answer your way back into it.",
     tags: ["Psychopharm", "19 medications", "Guided walkthroughs", "Gauntlet \u00b7 Survival \u00b7 Free play"]
   }
@@ -4080,7 +4094,7 @@ function renderHub() {
     // focus, and no hash to follow.
     const soon = !!game.comingSoon;
     const card = document.createElement(soon ? 'div' : 'a');
-    card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (soon ? ' soon' : '');
+    card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (game.lab ? ' lab' : '') + (soon ? ' soon' : '');
     if (soon) {
       card.setAttribute('aria-disabled', 'true');
     } else {
