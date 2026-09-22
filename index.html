@@ -3997,6 +3997,86 @@ const GAMES = [
         ]
       }
     ]
+  },
+  // Everything on this board dates from roughly 2016 onward. Facts come from the
+  // 2025 Beat The Boards psychiatry review, checked against current FDA labels
+  // and announcements (Sept 2026). Clues marked `wiz: false` test a fact another
+  // game already asks, so they stay on this board but out of Wizard's Escape.
+  {
+    id: "last-decade-jeopardy",
+    title: "The Last Decade Jeopardy",
+    kind: "Jeopardy",
+    blurb: "What changed from about 2016 on: new antipsychotics, rapid-acting antidepressants, the anti-amyloid era, DSM-5-TR, the changing opioid landscape and new wake, sleep and ADHD agents.",
+    tags: ["Recent advances", "6 categories", "30 clues + Final"],
+    subtitle: "New Antipsychotics · Rapid Relief · Anti-Amyloid Era · DSM-5-TR · Opioids Now · Wake, Sleep & Focus · Final Jeopardy",
+    categories: [
+      {
+        name: "New Kids on the Shelf",
+        clues: [
+          { value: 100, clue: "Approved in 2023, Uzedy is a subcutaneous long-acting injectable of this antipsychotic, given every one or two months.", answer: "What is risperidone? Uzedy is extended-release subcutaneous risperidone (FDA April 2023), given once monthly or once every 2 months after oral risperidone tolerability is established.", short: "Risperidone", decoys: ["Aripiprazole", "Paliperidone"] },
+          { value: 200, clue: "A 2016 FDA safety alert linked aripiprazole to compulsive urges. Which urge was reported most often?", answer: "What is gambling? The May 2016 alert also covered compulsive eating, shopping and sex. The urges were rare, most patients had no prior impulse-control problems, and they resolved when the dose was lowered or stopped.", short: "Gambling", decoys: ["Shopping", "Binge eating"] },
+          { value: 300, clue: "Approved in 2019 for schizophrenia and later bipolar depression, this antipsychotic is taken as one fixed 42 mg dose at bedtime.", answer: "What is lumateperone (Caplyta)? FDA December 2019. It causes little weight gain and no clinically meaningful change in glucose, lipids, prolactin or QTc. Avoid with CYP3A4 inducers.", short: "Lumateperone", decoys: ["Cariprazine", "Lurasidone"] },
+          { value: 400, clue: "In Lybalvi (2021), samidorphan is paired with olanzapine to limit weight gain by blocking this receptor.", answer: "What is the mu-opioid receptor? Samidorphan is a mu antagonist (with partial agonism at kappa and delta). That is why Lybalvi is contraindicated in anyone using opioids or in acute opioid withdrawal.", short: "Mu-opioid receptor", decoys: ["Histamine H1 receptor", "Serotonin 5-HT2C receptor"] },
+          { value: 500, clue: "Lumateperone works at lower D2 occupancy than older antipsychotics because it is a partial agonist at D2 receptors in this location.", answer: "What is presynaptic? Lumateperone is a presynaptic D2 partial agonist and postsynaptic D2 antagonist, plus a potent 5-HT2A antagonist, a serotonin reuptake inhibitor and a D1-dependent glutamate modulator.", short: "Presynaptic", decoys: ["Postsynaptic", "Extrasynaptic"] }
+        ]
+      },
+      {
+        name: "Rapid Relief",
+        clues: [
+          { value: 100, clue: "Approved in 2019 and withdrawn in 2025, this postpartum depression treatment required a continuous 60-hour IV infusion with pulse oximetry.", answer: "What is brexanolone (Zulresso)? IV allopregnanolone, a GABA-A positive modulator. Its REMS required monitoring for excessive sedation and loss of consciousness. Sage withdrew the NDA in April 2025 because it was no longer marketed.", short: "Brexanolone", decoys: ["Zuranolone", "Esketamine"] },
+          { value: 200, clue: "Zuranolone's boxed warning says not to drive for at least this long after each dose.", answer: "What is 12 hours? Zuranolone (Zurzuvae, FDA 2023) is an oral GABA-A positive modulator for postpartum depression, and its CNS-depressant effects can impair driving even when the patient feels alert.", short: "12 hours", decoys: ["6 hours", "24 hours"] },
+          { value: 300, clue: "A full course of zuranolone for postpartum depression, 50 mg each evening with fatty food, lasts this long.", answer: "What is 14 days? It can be used alone or with an oral antidepressant. In trials, symptoms improved from day 3 and the benefit held through day 45.", short: "14 days", decoys: ["7 days", "28 days"] },
+          { value: 400, clue: "In January 2025, the FDA approved esketamine for treatment-resistant depression in this new way.", answer: "What is monotherapy? Esketamine (Spravato) was first approved in 2019 only alongside an oral antidepressant. Since January 2025 it can be used on its own for treatment-resistant depression in adults.", short: "As monotherapy", decoys: ["For adolescents", "As a home-use spray"] },
+          { value: 500, clue: "In 2020, esketamine gained a second indication, with an oral antidepressant, for major depression with this feature.", answer: "What is acute suicidal ideation or behavior? Esketamine is approved for depressive symptoms in adults with MDD and acute suicidal ideation or behavior, alongside an oral antidepressant.", short: "Acute suicidal ideation or behavior", decoys: ["Psychotic features", "Peripartum onset"] }
+        ]
+      },
+      {
+        name: "The Anti-Amyloid Era",
+        clues: [
+          { value: 100, clue: "The first anti-amyloid antibody, it received accelerated FDA approval in 2021 and was discontinued in 2024.", answer: "What is aducanumab (Aduhelm)? Its benefit fell below the minimal clinically important difference. Biogen stopped making it in 2024.", short: "Aducanumab", decoys: ["Lecanemab", "Donanemab"] },
+          { value: 200, clue: "Approved in July 2024 and branded Kisunla, this anti-amyloid antibody is given as a monthly IV infusion.", answer: "What is donanemab? Like lecanemab (Leqembi, 2023), it is started at the MCI or mild dementia stage after confirmed amyloid pathology, and carries a boxed warning for ARIA.", short: "Donanemab", decoys: ["Lecanemab", "Aducanumab"] },
+          { value: 300, clue: "Patients with this genotype have the highest risk of symptomatic and serious ARIA on anti-amyloid antibodies.", answer: "What is ApoE ε4 homozygosity? Test ApoE status before starting and discuss ARIA risk across genotypes. A patient can still be treated without the test.", short: "ApoE ε4 homozygous", decoys: ["ApoE ε2 homozygous", "ApoE ε3 homozygous"] },
+          { value: 400, clue: "The 2024 Lancet Commission added untreated vision loss and this risk factor, bringing modifiable dementia risks to 14.", answer: "What is high LDL cholesterol? Together the 14 factors (including hearing loss, hypertension, depression, physical inactivity and air pollution) may account for nearly half of dementia cases.", short: "High LDL cholesterol", decoys: ["High homocysteine", "Low vitamin D"] },
+          { value: 500, clue: "Since August 2025, the FDA has recommended an MRI before this lecanemab infusion, the earliest in its monitoring schedule.", answer: "What is the 3rd infusion? The schedule is now MRI before the 3rd, 5th, 7th and 14th infusions. The 3rd was added after serious ARIA-E cases appeared earlier than expected. Donanemab's schedule is before the 2nd, 3rd, 4th and 7th.", short: "The 3rd infusion", decoys: ["The 2nd infusion", "The 5th infusion"] }
+        ]
+      },
+      {
+        name: "TR Changes",
+        clues: [
+          { value: 100, clue: "Added in DSM-5-TR (2022), this trauma- and stressor-related disorder requires a death at least 12 months earlier in adults.", answer: "What is prolonged grief disorder? It requires intense yearning for, or preoccupation with, the deceased most days for at least the past month, beyond cultural and social norms.", short: "Prolonged grief disorder", decoys: ["Adjustment disorder", "Persistent depressive disorder"] },
+          { value: 200, clue: "For children and adolescents, prolonged grief disorder needs the death to have happened at least this long ago.", answer: "What is 6 months? It is 12 months for adults. In young people the preoccupation may focus on the circumstances of the death.", short: "6 months", decoys: ["3 months", "12 months"] },
+          { value: 300, clue: "Beyond the core grief response, prolonged grief disorder needs at least this many of eight symptoms, such as identity disruption or intense loneliness.", answer: "What is three? The eight are identity disruption, disbelief about the death, avoidance of reminders, intense emotional pain, difficulty reintegrating, emotional numbness, feeling life is meaningless and intense loneliness.", short: "Three", decoys: ["Two", "Five"] },
+          { value: 400, clue: "Reinstated in DSM-5-TR, this diagnosis covers mood symptoms that fall short of both bipolar and depressive disorder criteria.", answer: "What is unspecified mood disorder? It is used when symptoms characteristic of bipolar and/or depressive disorders don't meet full criteria for any disorder in either class.", short: "Unspecified mood disorder", decoys: ["Cyclothymic disorder", "Other specified depressive disorder"] },
+          { value: 500, clue: "DSM-5-TR added codes for suicidal behavior and this related behavior under Other Conditions That May Be a Focus of Clinical Attention.", answer: "What is nonsuicidal self-injury? DSM-5-TR lists them as symptom codes rather than as mental disorders.", short: "Nonsuicidal self-injury", decoys: ["Self-neglect", "Medication nonadherence"] }
+        ]
+      },
+      {
+        name: "Opioids Now",
+        clues: [
+          { value: 100, clue: "Increasingly mixed into illicit fentanyl, this veterinary alpha-2 agonist causes severe necrotic skin wounds.", answer: "What is xylazine (“tranq”)? Naloxone does not reverse its sedation, though it should still be given for the opioid part of an overdose.", short: "Xylazine", decoys: ["Carfentanil", "Ketamine"] },
+          { value: 200, clue: "Approved in November 2017, Sublocade delivers this medication as a once-monthly subcutaneous injection.", answer: "What is buprenorphine? Sublocade was the first once-monthly subcutaneous buprenorphine for moderate to severe opioid use disorder.", short: "Buprenorphine", decoys: ["Naltrexone", "Methadone"] },
+          { value: 300, clue: "Approved in 2023, Brixadi differs from Sublocade by offering this dosing choice.", answer: "What is weekly or monthly dosing? Brixadi is a subcutaneous buprenorphine depot given every 7 or 28 days. Weekly doses cannot be combined to make a monthly dose.", short: "Weekly or monthly injections", decoys: ["Six-month implant", "Daily dissolving film"] },
+          { value: 400, clue: "Approved in 2018 for up to 14 days, this was the first non-opioid drug FDA-approved for opioid withdrawal symptoms.", answer: "What is lofexidine (Lucemyra)? An alpha-2 adrenergic agonist. Common side effects are hypotension, bradycardia, somnolence, dizziness and sedation. Clonidine is used the same way, but off-label.", short: "Lofexidine", decoys: ["Clonidine", "Tizanidine"] },
+          { value: 500, clue: "Delta-8 THC products spread after this 2018 law legalized hemp derivatives.", answer: "What is the 2018 Farm Bill? Delta-8 is milder than delta-9 THC but often made by chemically converting hemp CBD, which raises purity concerns. It can still show up on drug tests as THC.", short: "2018 Farm Bill", decoys: ["SUPPORT Act", "Controlled Substances Act"] }
+        ]
+      },
+      {
+        name: "Wake, Sleep & Focus",
+        clues: [
+          { value: 100, clue: "Approved in 2022, daridorexant belongs to this hypnotic class, along with suvorexant and lemborexant.", answer: "What are dual orexin receptor antagonists (DORAs)? All three carry a warning about complex sleep behaviors. Lemborexant and daridorexant doses are reduced in moderate liver disease.", short: "Dual orexin receptor antagonists", decoys: ["Melatonin receptor agonists", "Z-drugs"] },
+          { value: 200, clue: "In 2018, the FDA cleared deep TMS as an add-on treatment for this disorder.", answer: "What is obsessive-compulsive disorder? Deep TMS is used alongside medication or psychotherapy. DBS had received a humanitarian device exemption for severe, treatment-resistant OCD in 2009.", short: "OCD", decoys: ["PTSD", "Bipolar depression"] },
+          { value: 300, clue: "Solriamfetol, for daytime sleepiness in narcolepsy or sleep apnea, blocks reuptake of these two neurotransmitters.", answer: "What are dopamine and norepinephrine? Solriamfetol is a DNRI. Avoid it within 14 days of an MAOI, and lower the dose in moderate to severe renal disease.", short: "Dopamine and norepinephrine", decoys: ["Serotonin and norepinephrine", "Dopamine and serotonin"] },
+          { value: 400, clue: "Pitolisant treats narcolepsy by acting as an antagonist or inverse agonist at this receptor.", answer: "What is the histamine H3 receptor? Blocking this presynaptic autoreceptor increases histamine release. It treats both excessive daytime sleepiness and cataplexy, and the dose may need lowering in CYP2D6 poor metabolizers.", short: "Histamine H3 receptor", decoys: ["Histamine H1 receptor", "Orexin-2 receptor"] },
+          { value: 500, clue: "Viloxazine ER, a nonstimulant for ADHD, strongly inhibits this CYP enzyme.", answer: "What is CYP1A2? Avoid sensitive CYP1A2 substrates. It weakly inhibits 2D6 and 3A4. It also has a boxed warning for suicidal thoughts in people 24 and under.", short: "CYP1A2", decoys: ["CYP2D6", "CYP3A4"] }
+        ]
+      },
+      {
+        name: "Final Jeopardy ★",
+        clues: [
+          { value: 1000, clue: "Approved in September 2024, xanomeline-trospium treats schizophrenia without blocking D2 receptors. What is xanomeline's mechanism?", answer: "What is M1/M4 muscarinic agonism? Trospium, a peripheral muscarinic antagonist that stays out of the CNS, is added to limit cholinergic side effects. Common side effects are nausea, dyspepsia, constipation, vomiting and hypertension, with little weight gain.", short: "M1/M4 muscarinic agonism", decoys: ["5-HT2A inverse agonism", "TAAR1 agonism"], wiz: false }
+        ]
+      }
+    ]
   }
 ];
 /* ===================== END GAME REGISTRY ===================== */
