@@ -23,7 +23,10 @@ one opens its board.
 | Antipsychotic Jeopardy | Jeopardy, 7 × 5 | FGAs, SGAs and newer agents, clozapine, long-acting injectables, movement side effects, phases of care, name-the-drug receptor binding profiles (picture clues) |
 | Antipsychotic Pharmacology | Connect Four, 5 × 5 or 7 × 6 | Receptor mechanisms, FGA potency, LAIs, CYP interactions, EPS management, clozapine monitoring (15 of the 25 questions also appear in Wizard's Escape) |
 | Wizard's Escape | Speed round, 1–4 players | Any categories you pick — it reuses the Jeopardy questions |
-| Receptor Lab: Antipsychotics | Click & drop, solo | 19 antipsychotics — which receptors each one binds, whether it antagonises / partially activates / activates / inverts them, and how tightly |
+| The Last Decade Jeopardy | Jeopardy, 6 × 5 + Final | New antipsychotics, rapid-acting antidepressants, the anti-amyloid era, DSM-5-TR changes, the opioid landscape, new wake/sleep/ADHD agents |
+| Child & Adolescent Disorders | Jeopardy, 6 × 5 + Final | Autism and social communication disorder, intellectual disability and its genetic syndromes, ADHD, ODD/conduct disorder/DMDD, elimination and feeding disorders, attachment disorders and childhood anxiety |
+| Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
+| Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 
 The four *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
@@ -58,7 +61,34 @@ teaching point, not the decimal. Where the literature legitimately splits —
 "5-HT2A antagonist" versus "inverse agonist" on a constitutively active receptor
 — both answers score full marks.
 
-Three modes. **Gauntlet** is the default: five random drugs back to back against
+There are two **shelves**, picked above the modes: **Antipsychotics** (the
+original 19) and **Antidepressants** (25: six SSRIs, venlafaxine and
+duloxetine, six tricyclics, bupropion, mirtazapine, trazodone, vilazodone,
+vortioxetine, esketamine and five MAOIs — phenelzine, tranylcypromine,
+isocarboxazid, transdermal selegiline and moclobemide — plus linezolid and
+methylene blue as "hidden MAOIs", there for the serotonin-syndrome question),
+and **Both shelves**, which deals from all 46. The tray follows the drug in
+play rather than the menu: an antipsychotic is brewed from the original
+17-receptor tray, unchanged, and an antidepressant from its own tray, which
+drops the receptors that only matter to antipsychotics (D1, D3, D4, 5-HT6, M3,
+M4) and adds DAT, 5-HT1B, 5-HT3, NMDA, sigma-1 and the two MAO isoforms. Each
+receptor's shelf is its `sh` field in `RL_RECEPTORS`, and each drug's is its
+`shelf` field (absent means antipsychotic).
+
+**Strength is not scored on the antidepressant shelf.** Knowing that
+sertraline's SERT Ki is "very high" rather than "high" changes nothing
+clinically, so there the round is half for placing each target and half for
+the action; the circles are all one size and the strength buttons are hidden.
+The Ki values stay in the answer table as reference. The MAO isoforms take
+their own two actions, *irreversible* or *reversible inhibitor*, and a placed
+enzyme starts with neither chosen, so the reversibility call is never
+pre-answered. Antidepressant transporter constants are Tatsumi et al's
+human-transporter KDs (*Eur J Pharmacol* 1997;340:249-58) and receptor
+constants Cusack, Nelson & Richelson's human-brain KDs (*Psychopharmacology*
+1994;114:559-65) or PDSP values; every drug cites its own source on the answer
+screen.
+
+Four modes. **Gauntlet** is the default: five random drugs back to back against
 the clock, with five jars on the shelf that fill in as you go. **Survival** deals
 drugs with no end — score above 800 and you brew on, hit 800 or less and the run
 is over. **Free play** picks any single drug at your own pace, keeping a best
@@ -67,15 +97,86 @@ deliberately not built yet, but every receptor already carries its transduction
 pathway in `RL_TRANSDUCTION`, so that round can be added without re-deriving
 anything.
 
+**Guided brewing** is the fourth, and it runs the other three backwards. The
+summary paragraph that the scored modes only show you at the end goes up *first*,
+with every receptor and every action word cut out of it, and you answer your way
+back into the prose one clinical effect at a time: what the drug is for, then
+what that same binding costs. A wrong answer is never written down — the receptor
+you picked stays out of the cauldron, the true one lights up in the tray and
+drops in for you, and the reason is spelled out before you move on. Nothing is
+scored; the only tally is how many you had first try.
+
+Each drug's walkthrough is generated rather than hand-written. `RL_EFFECT` is a
+lexicon keyed `RECEPTOR|action` — the clinical effect as a question, why that
+receptor is the answer, why the action is what it is, and the sentence it writes
+into the paragraph. Some entries carry an `echo`: a second pass at the *same*
+receptor from the other end, which is the habit the mode exists to build (the
+D2 blockade that treats the psychosis is the D2 blockade that causes the EPS).
+Three entries are chosen by context rather than by key alone — 5-HT2A reads
+differently against a D2 antagonist it out-binds, one it does not, and a D2
+partial agonist — because the same blockade means different things in the first,
+second and third generation. `RL_GUIDE` holds the per-drug overrides: the opening
+line, the order, which receptor carries the single Ki question, and anywhere the
+generic entry would be wrong for that drug. Quetiapine is the worked example —
+"and this is where the EPS comes from" is precisely backwards for a drug that
+barely holds D2 at all, so its D2 echo asks the opposite question. Anything not
+overridden falls through to the lexicon, so all 39 medications can be walked
+through, not just the three in the tutorial (haloperidol, quetiapine,
+aripiprazole — a near-pure D2 blocker, then the one whose whole story is the
+affinity ladder, then the partial agonist).
+
+The antidepressant shelf reads the same way with three differences. A
+walkthrough starts from the target that carries the antidepressant effect (SERT;
+NET for the secondary-amine tricyclics; MAO-A for the MAOIs) rather than from
+D2. A lexicon key ending in `@ad` — `'M1|antagonist@ad'`, say — is preferred
+over the plain key for an antidepressant, because several of the original
+entries are written against the antipsychotics ("which is also what keeps the
+EPS low") and would be wrong read against a tricyclic. And there is no Ki-band
+question: where the *order* of a drug's affinities is the clinical point —
+doxepin, amitriptyline and mirtazapine holding H1 tighter than anything else,
+venlafaxine holding SERT some 30 times tighter than NET — the walkthrough ends
+on a single "which does it hold most tightly?" step instead (`rank` in
+`RL_GUIDE`). Its tutorial is sertraline, amitriptyline and
+mirtazapine: an SSRI with one twist, the tricyclic that holds everything, and
+the antidepressant that inhibits no transporter at all.
+
 Survival has a **shared board**, listed on the mode's menu and again under the
 run summary: the ten longest runs anyone chose to post, from every device.
 Posting is opt-in and happens only at the end of a run — you type the name you
 want to appear under, and nothing leaves the browser until you press the button.
 Runs are ranked by rounds survived first, since that is what the mode asks of
-you; points banked (the surviving rounds only, not the one that ended it) break
-ties between runs of the same length. It is a sibling of Wizard's Escape's board
-but its own database node, `leaderboard/receptor`, because a run here is counted
-in rounds rather than rooms and categories.
+you; total points break ties between runs of the same length — and that total
+includes the round that ended the run, because those points were earned before
+the brew turned. It is a sibling of Wizard's Escape's board but its own database
+node, `leaderboard/receptor`, because a run here is counted in rounds rather
+than rooms and categories. Each shelf has its own board, since a run on
+antidepressants is not the same contest as one on antipsychotics:
+`leaderboard/receptor` for antipsychotics (the original node, so existing runs
+stay put), `leaderboard/receptor-ad` for antidepressants and
+`leaderboard/receptor-mix` for both shelves. Gauntlet and survival bests on the
+device are likewise kept per shelf.
+
+**Signal Lab** is the second-messenger game, and the one daylight theme on the
+site (lab-notebook paper, ink, one colour per pathway, all scoped to
+`#slabView` and the `.signal` hub card). One cell map carries four lanes — Gs,
+Gi/o, Gq/11 and an ion channel — plus the intracellular sites mood stabilizers
+act on (IMPase, MIPS, GSK-3β, HDAC, GABA transaminase, the voltage-gated Na⁺
+channel, SERT, NMDA). Two kinds of card, both in `SL_CARDS`:
+
+- **Receptor cards** (`kind: 'rec'`): a drug at one receptor ("Vortioxetine at
+  5-HT₇, antagonist"). Tap the lane it couples to (500), then say what the drug
+  does to that lane's messenger (500) — which is where the sign-flip lives:
+  blocking a Gi receptor raises cAMP, blocking a Gs receptor lowers it.
+  `laneQ`/`msgQ` override the prompts for cards whose target is an enzyme or a
+  channel rather than a receptor, and `site` keeps that target drawn.
+- **Medication cards** (`kind: 'site'`): pin every site the drug acts on.
+  `sites` share 1000 points; a pin on a `neg` site costs 40% of one site, and a
+  pin on anything else costs 15%, so pinning everything never pays.
+
+Decks: antidepressants and serotonin, mood stabilizers, or both; gauntlet (8
+cards, or the whole deck if smaller) or free play. Bests are kept in
+`localStorage`. The content was reviewed by a separate fact-checking pass
+before release.
 
 **Wizard's Escape** is a haunted-castle escape: each room's exit is blocked by
 three identical pieces of furniture, each labelled with a candidate answer, and
@@ -291,9 +392,10 @@ with unpublished rules refuses every write. `firebase-rules.json` in this folder
 is what to paste — **Realtime Database → Rules** in the Firebase console, then
 **Publish**. It is for the console only; it is not part of the site and does not
 belong in the repo. The same applies after the file changes: the Receptor Lab's
-`leaderboard/receptor` node was added to it later than the rest, so a database
-still running the older rules refuses to show or accept those runs, and the
-board says it is not published yet.
+`leaderboard/receptor` node was added to it later than the rest, and its
+`receptor-ad` and `receptor-mix` siblings later still, so a database running
+older rules refuses to show or accept those runs, and the board says it is not
+published yet.
 
 If they are missing you now find out immediately: opening a room says the
 database refused the write instead of showing a code for a room that was never

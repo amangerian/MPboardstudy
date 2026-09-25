@@ -2565,6 +2565,186 @@
     .rl-slot { width: 88px; min-height: 80px; }
   }
 
+
+  /* ============================================================
+   *                    SIGNAL LAB
+   * A daylight theme, the only light one on the site: lab-notebook
+   * paper, ink, and one colour per pathway. Everything is scoped to
+   * #slabView or the .signal hub card so nothing leaks into the others.
+   * ============================================================ */
+  :root {
+    --sl-paper: #f5f0e4;
+    --sl-paper-2: #ece4d0;
+    --sl-card: #fffdf7;
+    --sl-ink: #1e2430;
+    --sl-ink-soft: #505866;
+    --sl-rule: #d5c9ad;
+    --sl-red: #c2412a;
+    --sl-red-deep: #9a2f1c;
+    --sl-ok: #2d7a3a;
+    --sl-ok-bg: #e3f1e0;
+    --sl-bad-bg: #f8e1da;
+    --sl-gs: #0f7a70;
+    --sl-gi: #2a5caa;
+    --sl-gq: #a8700a;
+    --sl-ion: #7a3a80;
+    --sl-site: #b8452f;
+  }
+  html.slab-active, html.slab-active body {
+    background-color: var(--sl-paper);
+    background-image:
+      linear-gradient(rgba(42,92,170,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(42,92,170,.07) 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+  #slabView { color: var(--sl-ink); font-family: 'Avenir Next', 'Segoe UI', 'Helvetica Neue', Helvetica, sans-serif; }
+  #slabView .back-link { color: var(--sl-ink-soft); border-color: var(--sl-rule); background: var(--sl-card); }
+  #slabView .back-link:hover { color: var(--sl-red); border-color: var(--sl-red); }
+  #slabView .titlebar h1 {
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+    font-style: italic; color: var(--sl-red); text-shadow: none; letter-spacing: .5px;
+  }
+  #slabView .titlebar p { color: var(--sl-ink-soft); }
+  #slabView footer.hint { color: var(--sl-ink-soft); }
+  #slabView .reset-board-btn {
+    background: var(--sl-card); color: var(--sl-ink); border: 2px solid var(--sl-ink);
+    border-radius: 10px; box-shadow: 3px 3px 0 var(--sl-ink);
+  }
+  #slabView .reset-board-btn:hover { background: var(--sl-ink); color: var(--sl-paper); }
+  #slabView .sl-primary { background: var(--sl-red); border-color: var(--sl-red-deep); color: #fff; box-shadow: 3px 3px 0 var(--sl-red-deep); }
+  #slabView .sl-primary:hover { background: var(--sl-red-deep); color: #fff; }
+
+  .sl-seg { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 16px 0 0; }
+  .sl-seg button {
+    background: var(--sl-card); color: var(--sl-ink-soft); border: 2px solid var(--sl-rule);
+    border-radius: 999px; padding: 8px 18px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600;
+  }
+  .sl-seg button:hover { border-color: var(--sl-ink); color: var(--sl-ink); }
+  .sl-seg button[aria-pressed="true"] { background: var(--sl-ink); border-color: var(--sl-ink); color: var(--sl-paper); }
+  .sl-seg.small button { font-size: 12px; padding: 6px 14px; letter-spacing: .5px; }
+  .sl-note { text-align: center; color: var(--sl-ink-soft); font-size: 13.5px; line-height: 1.6; max-width: 720px; margin: 14px auto 0; }
+
+  .sl-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 18px; }
+  .sl-group { grid-column: 1 / -1; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--sl-ink-soft); margin-top: 10px; }
+  .sl-pick {
+    text-align: left; background: var(--sl-card); border: 2px solid var(--sl-rule); border-radius: 12px;
+    padding: 12px 14px; cursor: pointer; font: inherit; color: var(--sl-ink);
+  }
+  .sl-pick:hover { border-color: var(--sl-ink); }
+  .sl-pick b { display: block; font-size: 15.5px; }
+  .sl-pick span { display: block; font-size: 12.5px; color: var(--sl-ink-soft); margin-top: 2px; }
+  .sl-pick em { display: block; font-style: normal; font-size: 11.5px; color: var(--sl-ok); margin-top: 6px; }
+
+  .sl-meta { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+  .sl-chip { background: var(--sl-card); border: 1px solid var(--sl-rule); border-radius: 10px; padding: 6px 14px; text-align: center; min-width: 70px; }
+  .sl-chip .k { display: block; font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--sl-ink-soft); }
+  .sl-chip .v { display: block; font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .sl-card-head { text-align: center; margin: 14px auto 0; }
+  .sl-drug { font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif; font-style: italic; font-size: clamp(30px, 5vw, 44px); line-height: 1.1; }
+  .sl-drug-sub { color: var(--sl-ink-soft); font-size: 13.5px; margin-top: 4px; }
+  .sl-target {
+    display: inline-flex; gap: 8px; align-items: center; margin-top: 10px; padding: 7px 16px;
+    border: 2px solid var(--sl-ink); border-radius: 999px; background: var(--sl-card); font-weight: 700; font-size: 15px;
+  }
+  .sl-target small { font-weight: 600; color: var(--sl-red); font-size: 13px; }
+
+  .sl-stage { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 18px; margin-top: 18px; align-items: start; }
+  @media (max-width: 860px) { .sl-stage { grid-template-columns: minmax(0, 1fr); } }
+
+  .sl-map {
+    position: relative; width: 100%; aspect-ratio: 960 / 600; background: var(--sl-card);
+    border: 2px solid var(--sl-ink); border-radius: 18px; box-shadow: 5px 5px 0 var(--sl-ink); overflow: hidden;
+  }
+  .sl-node .short { display: none; }
+  .sl-site.target { outline: 2px dashed var(--sl-ink); outline-offset: 3px; opacity: 1 !important; }
+  @media (max-width: 700px) {
+    .sl-node { font-size: clamp(7px, 2vw, 11px); padding: .4em .55em; }
+    .sl-node .full { display: none; }
+    .sl-node .short { display: inline; }
+    .sl-site { font-size: clamp(8px, 2.2vw, 11px); min-height: 24px; display: inline-flex; align-items: center; }
+    .sl-map.kind-site .sl-node { display: none; }
+    .sl-map.kind-rec .sl-site { display: none; }
+    .sl-map.kind-rec .sl-site.target { display: inline-flex; }
+    .sl-map svg .sl-ann { display: none; }
+    .sl-map svg .sl-lanehead { font-size: 25px; }
+  }
+  .sl-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .sl-lane {
+    position: absolute; border: 2px dashed transparent; border-radius: 14px; background: transparent;
+    cursor: default; padding: 0; font: inherit;
+  }
+  .sl-map.pick-lane .sl-lane { cursor: pointer; }
+  .sl-map.pick-lane .sl-lane:hover { border-color: currentColor; background: rgba(30,36,48,.04); }
+  .sl-lane.picked { border-style: solid; border-color: currentColor; background: rgba(30,36,48,.05); }
+  .sl-lane.right { border-style: solid; border-color: var(--sl-ok); background: rgba(45,122,58,.10); }
+  .sl-lane.wrong { border-style: solid; border-color: var(--sl-red); background: rgba(194,65,42,.08); }
+  .sl-node, .sl-site {
+    position: absolute; transform: translate(-50%, -50%); white-space: nowrap;
+    font: inherit; font-size: clamp(8.5px, 1.15vw, 12.5px); font-weight: 600; line-height: 1.1;
+    border-radius: 999px; padding: .45em .8em; pointer-events: none;
+  }
+  .sl-node { background: var(--sl-card); border: 1.5px solid currentColor; }
+  .sl-site {
+    pointer-events: auto; cursor: default; background: #fff4ee; color: var(--sl-site);
+    border: 2px solid var(--sl-site); box-shadow: 2px 2px 0 rgba(30,36,48,.18);
+  }
+  .sl-map.pick-site .sl-site { cursor: pointer; }
+  .sl-map.pick-site .sl-site:hover { background: #ffe4d8; }
+  .sl-map.pick-lane .sl-site { opacity: .45; }
+  .sl-site.pinned { background: var(--sl-site); color: #fff; }
+  .sl-site.good { background: var(--sl-ok); border-color: var(--sl-ok); color: #fff; }
+  .sl-site.missed { background: #fff; border: 2px dashed var(--sl-ok); color: var(--sl-ok); }
+  .sl-site.bad { background: var(--sl-red); border-color: var(--sl-red-deep); color: #fff; text-decoration: line-through; }
+
+  .sl-panel {
+    background: var(--sl-card); border: 2px solid var(--sl-ink); border-radius: 16px; padding: 16px 18px;
+    box-shadow: 5px 5px 0 var(--sl-ink); display: flex; flex-direction: column; gap: 12px;
+  }
+  .sl-step { font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--sl-red); }
+  .sl-q { font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif; font-size: 19px; line-height: 1.4; }
+  .sl-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .sl-opt {
+    background: var(--sl-paper); border: 2px solid var(--sl-rule); border-radius: 10px; padding: 10px 12px;
+    font: inherit; font-size: 14px; font-weight: 600; color: var(--sl-ink); cursor: pointer; text-align: left; min-height: 44px;
+  }
+  .sl-opt:hover { border-color: var(--sl-ink); }
+  .sl-opt.right { border-color: var(--sl-ok); background: var(--sl-ok-bg); }
+  .sl-opt.wrong { border-color: var(--sl-red); background: var(--sl-bad-bg); text-decoration: line-through; }
+  .sl-opt:disabled { cursor: default; }
+  .sl-fb { border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.55; }
+  .sl-fb b { display: block; margin-bottom: 4px; }
+  .sl-fb.ok { background: var(--sl-ok-bg); border: 1px solid #b9d8b3; }
+  .sl-fb.miss { background: var(--sl-bad-bg); border: 1px solid #e6b8aa; }
+  .sl-fb.plain { background: var(--sl-paper); border: 1px solid var(--sl-rule); }
+  .sl-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .sl-list li { font-size: 13.5px; line-height: 1.5; padding-left: 12px; border-left: 3px solid var(--sl-rule); }
+  .sl-list li.good { border-left-color: var(--sl-ok); }
+  .sl-list li.missed { border-left-color: var(--sl-gq); }
+  .sl-list li.bad { border-left-color: var(--sl-red); }
+  .sl-score { font-family: 'Palatino Linotype', Palatino, Georgia, serif; font-size: 40px; font-weight: 700; line-height: 1; }
+  .sl-score small { font-size: 14px; font-weight: 400; color: var(--sl-ink-soft); margin-left: 6px; }
+  .sl-legend { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 12px; font-size: 12px; color: var(--sl-ink-soft); }
+  .sl-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .sl-run { max-width: 560px; margin: 16px auto 0; display: flex; flex-direction: column; gap: 6px; }
+  .sl-run div { display: flex; justify-content: space-between; background: var(--sl-card); border: 1px solid var(--sl-rule); border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+
+  /* hub card */
+  .game-card.signal {
+    background-color: var(--sl-paper);
+    background-image:
+      linear-gradient(rgba(42,92,170,.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(42,92,170,.08) 1px, transparent 1px);
+    background-size: 18px 18px;
+    border-color: #1e2430; box-shadow: 0 6px 0 rgba(0,0,0,.35);
+  }
+  .game-card.signal:hover { border-color: var(--sl-red); }
+  .game-card.signal .kind { color: #505866; }
+  .game-card.signal h2 { color: var(--sl-red); text-shadow: none; font-style: italic; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif; }
+  .game-card.signal p { color: #1e2430; }
+  .game-card.signal .tag { background: #fffdf7; border-color: #d5c9ad; color: #505866; }
+  .game-card.signal .play-cue { color: #1e2430; }
+  .game-card.signal:hover .play-cue { color: var(--sl-red); }
 </style>
 </head>
 <body>
@@ -2655,6 +2835,145 @@
   </div>
 
   <footer class="hint" id="c4Hint">Click a column to drop a disc</footer>
+</div>
+
+<!-- ===================== SIGNAL LAB ===================== -->
+<div class="wrap" id="slabView" hidden>
+  <div class="rl-topbar">
+    <a class="back-link" href="#">&larr; All games</a>
+    <a class="back-link" id="slHomeLink" href="#signal-lab" hidden>&larr; Signal Lab</a>
+  </div>
+
+  <!-- menu -->
+  <div id="slMenu">
+    <div class="titlebar">
+      <h1>Signal Lab</h1>
+      <p id="slShelfSub">Second messengers &middot; follow the signal inside the cell</p>
+    </div>
+    <div class="sl-seg" role="group" aria-label="Deck">
+      <button type="button" id="slShelfAd" aria-pressed="true">Antidepressants &amp; serotonin</button>
+      <button type="button" id="slShelfMs" aria-pressed="false">Mood stabilizers</button>
+      <button type="button" id="slShelfMix" aria-pressed="false">Both</button>
+    </div>
+    <div class="sl-seg small" role="group" aria-label="Mode">
+      <button type="button" id="slModeRun" aria-pressed="true">Gauntlet</button>
+      <button type="button" id="slModeFree" aria-pressed="false">Free play</button>
+    </div>
+    <p class="sl-note" id="slModeNote"></p>
+    <div id="slStartRow" class="board-actions">
+      <button class="reset-board-btn sl-primary" id="slStartBtn">Start</button>
+    </div>
+    <div class="sl-picks" id="slPicks"></div>
+    <footer class="hint">Two kinds of card: a receptor card asks for the pathway and what the drug does to its messenger; a medication card asks you to pin every site it acts on &nbsp;&bull;&nbsp; educational use only</footer>
+  </div>
+
+  <!-- play -->
+  <div id="slPlay" hidden>
+    <div class="sl-meta" id="slMeta"></div>
+    <div class="sl-card-head">
+      <div class="sl-drug" id="slDrug"></div>
+      <div class="sl-drug-sub" id="slDrugSub"></div>
+      <div class="sl-target" id="slTarget" hidden><span id="slTargetRec"></span><small id="slTargetAct"></small></div>
+    </div>
+
+    <div class="sl-stage">
+      <div class="sl-map-scroll">
+        <div class="sl-map" id="slMap">
+          <svg viewBox="0 0 960 600" aria-hidden="true" focusable="false">
+            <text class="sl-ann" x="28" y="36" font-size="13" letter-spacing="3" fill="#505866" font-family="Avenir Next, Segoe UI, Helvetica, sans-serif">OUTSIDE THE CELL</text>
+            <rect x="16" y="64" width="928" height="520" rx="42" fill="#fbf7ec" stroke="#1e2430" stroke-width="3"></rect>
+            <rect x="16" y="64" width="928" height="36" fill="#efe2c4"></rect>
+            <line x1="16" y1="64" x2="944" y2="64" stroke="#1e2430" stroke-width="3"></line>
+            <line x1="16" y1="100" x2="944" y2="100" stroke="#b9a57c" stroke-width="2" stroke-dasharray="6 5"></line>
+            <text class="sl-ann" x="470" y="571" font-size="12" letter-spacing="3" fill="#8a8f98" font-family="Avenir Next, Segoe UI, Helvetica, sans-serif">CYTOPLASM</text>
+
+            <!-- pathway lanes -->
+            <rect x="128" y="104" width="144" height="226" rx="14" fill="#0f7a70" fill-opacity=".07"></rect>
+            <rect x="288" y="104" width="144" height="226" rx="14" fill="#2a5caa" fill-opacity=".07"></rect>
+            <rect x="448" y="104" width="144" height="226" rx="14" fill="#a8700a" fill-opacity=".08"></rect>
+            <rect x="608" y="104" width="144" height="226" rx="14" fill="#7a3a80" fill-opacity=".07"></rect>
+
+            <!-- receptors in the membrane -->
+            <rect x="183" y="44" width="34" height="62" rx="9" fill="#d7ece9" stroke="#0f7a70" stroke-width="2.5"></rect>
+            <rect x="343" y="44" width="34" height="62" rx="9" fill="#dbe4f4" stroke="#2a5caa" stroke-width="2.5"></rect>
+            <rect x="503" y="44" width="34" height="62" rx="9" fill="#f2e6cc" stroke="#a8700a" stroke-width="2.5"></rect>
+            <rect x="662" y="44" width="16" height="62" rx="6" fill="#ecdced" stroke="#7a3a80" stroke-width="2.5"></rect>
+            <rect x="682" y="44" width="16" height="62" rx="6" fill="#ecdced" stroke="#7a3a80" stroke-width="2.5"></rect>
+
+            <text class="sl-lanehead" x="200" y="128" text-anchor="middle" font-size="17" font-weight="700" fill="#0f7a70" font-family="Palatino Linotype, Palatino, Georgia, serif">Gs</text>
+            <text class="sl-lanehead" x="360" y="128" text-anchor="middle" font-size="17" font-weight="700" fill="#2a5caa" font-family="Palatino Linotype, Palatino, Georgia, serif">Gi/o</text>
+            <text class="sl-lanehead" x="520" y="128" text-anchor="middle" font-size="17" font-weight="700" fill="#a8700a" font-family="Palatino Linotype, Palatino, Georgia, serif">Gq/11</text>
+            <text class="sl-lanehead" x="680" y="128" text-anchor="middle" font-size="17" font-weight="700" fill="#7a3a80" font-family="Palatino Linotype, Palatino, Georgia, serif">Ion channel</text>
+
+            <!-- cascade arrows -->
+            <g stroke-width="2" fill="none" stroke-linecap="round">
+              <path d="M200 138 V160 M200 190 V220 M200 250 V280" stroke="#0f7a70"></path>
+              <path d="M360 138 V160 M360 190 V220 M360 250 V280" stroke="#2a5caa"></path>
+              <path d="M520 138 V160 M520 190 V220 M520 250 V280" stroke="#a8700a"></path>
+              <path d="M680 138 V160 M680 190 V220" stroke="#7a3a80"></path>
+              <path d="M200 312 C 200 380, 150 420, 132 482" stroke="#0f7a70" stroke-dasharray="5 5"></path>
+              <path d="M548 250 C 596 262, 622 300, 626 334" stroke="#a8700a"></path>
+              <path d="M620 370 C 612 392, 586 398, 560 390 C 516 376, 466 250, 488 176" stroke="#a8700a" stroke-dasharray="5 5"></path>
+              <path d="M812 414 H 760" stroke="#8a8f98"></path>
+            </g>
+            <text class="sl-ann" x="600" y="276" font-size="11.5" fill="#a8700a" font-family="Avenir Next, Segoe UI, Helvetica, sans-serif">IP₁</text>
+            <text class="sl-ann" x="500" y="414" font-size="11.5" fill="#a8700a" font-family="Avenir Next, Segoe UI, Helvetica, sans-serif">inositol → PIP₂</text>
+            <text class="sl-ann" x="818" y="418" font-size="11.5" fill="#505866" font-family="Avenir Next, Segoe UI, Helvetica, sans-serif">glucose-6-P</text>
+            <path d="M688 404 C 668 392, 650 378, 646 362" stroke="#8a8f98" stroke-width="2" fill="none" stroke-dasharray="3 5"></path>
+            <text class="sl-ann" x="672" y="378" font-size="10.5" fill="#8a8f98" font-family="Avenir Next, Segoe UI, Helvetica, sans-serif">Ins-3-P</text>
+
+            <!-- nucleus -->
+            <ellipse cx="190" cy="508" rx="150" ry="60" fill="#efe9f7" stroke="#6a5a9a" stroke-width="2.5"></ellipse>
+            <path d="M80 520 C 110 496, 140 540, 170 516 S 230 494, 300 518" stroke="#b3a6d6" stroke-width="2.5" fill="none"></path>
+            <text class="sl-ann" x="190" y="468" text-anchor="middle" font-size="11" letter-spacing="2" fill="#6a5a9a" font-family="Avenir Next, Segoe UI, Helvetica, sans-serif">NUCLEUS</text>
+
+            <!-- GSK-3β hub -->
+            <circle cx="440" cy="452" r="34" fill="#fbeee4" stroke="#b8452f" stroke-width="2" stroke-dasharray="4 4"></circle>
+
+            <!-- mitochondrion -->
+            <ellipse cx="830" cy="510" rx="96" ry="44" fill="#f7e9e9" stroke="#9a4a4a" stroke-width="2.5"></ellipse>
+            <path d="M752 510 C 772 488, 792 532, 812 510 S 852 488, 872 510 S 900 530, 910 512" stroke="#d9a9a9" stroke-width="2.5" fill="none"></path>
+            <text class="sl-ann" x="830" y="572" text-anchor="middle" font-size="11" letter-spacing="2" fill="#9a4a4a" font-family="Avenir Next, Segoe UI, Helvetica, sans-serif">MITOCHONDRION</text>
+
+            <!-- other membrane proteins -->
+            <rect x="56" y="48" width="28" height="56" rx="12" fill="#f7e2dc" stroke="#b8452f" stroke-width="2.5"></rect>
+            <rect x="784" y="48" width="14" height="56" rx="5" fill="#f7e2dc" stroke="#b8452f" stroke-width="2.5"></rect>
+            <rect x="802" y="48" width="14" height="56" rx="5" fill="#f7e2dc" stroke="#b8452f" stroke-width="2.5"></rect>
+            <rect x="878" y="48" width="14" height="56" rx="5" fill="#f7e2dc" stroke="#b8452f" stroke-width="2.5"></rect>
+            <rect x="896" y="48" width="14" height="56" rx="5" fill="#f7e2dc" stroke="#b8452f" stroke-width="2.5"></rect>
+          </svg>
+        </div>
+        <div class="sl-legend">
+          <span><i style="background:#0f7a70"></i>Gs</span>
+          <span><i style="background:#2a5caa"></i>Gi/o</span>
+          <span><i style="background:#a8700a"></i>Gq/11</span>
+          <span><i style="background:#7a3a80"></i>Ion channel (5-HT₃ drawn)</span>
+          <span><i style="background:#b8452f"></i>Drug sites (medication cards)</span>
+          <span>AC = adenylyl cyclase</span>
+        </div>
+      </div>
+
+      <div class="sl-panel" id="slPanel"></div>
+    </div>
+
+    <div class="board-actions">
+      <button class="reset-board-btn" id="slQuitBtn">Leave round</button>
+    </div>
+  </div>
+
+  <!-- summary -->
+  <div id="slSummary" hidden>
+    <div class="titlebar">
+      <h1 id="slSumTitle">Gauntlet complete</h1>
+      <p id="slSumSub"></p>
+    </div>
+    <div style="text-align:center;margin-top:10px"><span class="sl-score" id="slSumScore">0</span></div>
+    <div class="sl-run" id="slSumList"></div>
+    <div class="board-actions">
+      <button class="reset-board-btn sl-primary" id="slSumAgainBtn">Run it again</button>
+      <button class="reset-board-btn" id="slSumMenuBtn">Back to Signal Lab</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===================== RECEPTOR LAB ===================== -->
@@ -4207,6 +4526,14 @@ const EXTRAS = [
     lab: true,
     blurb: "Two shelves, antipsychotics and antidepressants. A drug name over an empty cauldron. Click in every receptor it acts on, say whether it blocks, partially activates, activates or inverts each one, and size the circle to the binding strength. Lock in and your brew is set beside the real one, Ki values and all. Or start in guided brewing, where the teaching paragraph goes up first with the receptors cut out of it and you answer your way back into it.",
     tags: ["Psychopharm", "19 antipsychotics \u00b7 25 antidepressants \u00b7 2 hidden MAOIs", "Guided walkthroughs", "Gauntlet \u00b7 Survival \u00b7 Free play"]
+  },
+  {
+    id: "signal-lab",
+    title: "Signal Lab",
+    kind: "Cell map \u00b7 solo",
+    signal: true,
+    blurb: "Follow the signal inside the cell. A drug at a serotonin receptor: pick the pathway it couples to, then say what the drug does to its second messenger. A mood stabilizer on its own: pin every site on the cell map where it acts.",
+    tags: ["Second messengers", "Serotonin receptors", "Lithium \u00b7 valproate \u00b7 carbamazepine \u00b7 lamotrigine", "Gauntlet \u00b7 Free play"]
   }
 ];
 
@@ -4280,7 +4607,7 @@ function renderHub() {
     // focus, and no hash to follow.
     const soon = !!game.comingSoon;
     const card = document.createElement(soon ? 'div' : 'a');
-    card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (game.lab ? ' lab' : '') + (soon ? ' soon' : '');
+    card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (game.lab ? ' lab' : '') + (game.signal ? ' signal' : '') + (soon ? ' soon' : '');
     if (soon) {
       card.setAttribute('aria-disabled', 'true');
     } else {
@@ -12205,10 +12532,549 @@ const RLAB = (function () {
   };
 })();
 
+/* =====================================================================
+ * SIGNAL LAB — data
+ * =====================================================================
+ * Two kinds of card, one cell map.
+ *
+ *   kind 'rec'   a drug at one receptor (or at one step of a pathway).
+ *                Step 1: tap the lane the receptor couples to.
+ *                Step 2: say what the drug does to that lane's messenger.
+ *                500 points each.
+ *   kind 'site'  a medication on its own. Pin every site on the map where
+ *                it acts, then lock in. `sites` are the answers and share
+ *                1000 points; `neg` are sites it clearly does NOT act on and
+ *                cost 40% of one site each if pinned; anything else is
+ *                arguable and costs 15% of one site if pinned — a nod to
+ *                the Receptor Lab's core / negligible / unlisted idea,
+ *                with a small cost so pinning everything does not pay.
+ *
+ * Coordinates are in the map's 960 x 600 drawing space.
+ * ===================================================================== */
+
+const SL_LANES = {
+  gs:  { name: 'Gs',          x: 200, color: '#0f7a70', why: 'Gs stimulates adenylyl cyclase: cAMP rises and protein kinase A is switched on. Among serotonin receptors, 5-HT₄, 5-HT₆ and 5-HT₇ couple to Gs.' },
+  gi:  { name: 'Gi/o',        x: 360, color: '#2a5caa', why: 'Gi/o inhibits adenylyl cyclase, so cAMP falls, and its βγ subunits open GIRK potassium channels. The whole 5-HT₁ family (1A, 1B, 1D, 1E, 1F) and 5-HT₅ couple to Gi/o.' },
+  gq:  { name: 'Gq/11',       x: 520, color: '#a8700a', why: 'Gq/11 switches on phospholipase Cβ, which splits PIP₂ into IP₃ (Ca²⁺ release from the endoplasmic reticulum) and DAG (protein kinase C). The 5-HT₂ family (2A, 2B, 2C) couples to Gq/11.' },
+  ion: { name: 'Ion channel', x: 680, color: '#7a3a80', why: '5-HT₃ is the only serotonin receptor that is an ion channel — ligand-gated and cation-selective. No G protein, no second messenger: the pore opens and Na⁺ and Ca²⁺ flow in within milliseconds.' },
+};
+const SL_MNEMONIC = 'The serotonin rule of thumb: 5-HT₁ (and 5-HT₅) are Gi, 5-HT₂ is Gq, 5-HT₃ is the channel, and 4, 6 and 7 are Gs.';
+
+/* [label, x, y, lane, short label for phones] */
+const SL_NODES = [
+  ['AC stimulated', 200, 175, 'gs', 'AC ↑'], ['cAMP ↑', 200, 235, 'gs', 'cAMP ↑'], ['PKA', 200, 296, 'gs', 'PKA'],
+  ['AC inhibited', 360, 175, 'gi', 'AC ↓'], ['cAMP ↓', 360, 235, 'gi', 'cAMP ↓'], ['Gβγ → GIRK', 360, 296, 'gi', 'GIRK'],
+  ['PLCβ', 520, 175, 'gq', 'PLCβ'], ['IP₃ + DAG', 520, 235, 'gq', 'IP₃/DAG'], ['Ca²⁺ · PKC', 520, 296, 'gq', 'Ca²⁺/PKC'],
+  ['Na⁺ · Ca²⁺ in', 680, 175, 'ion', 'Cations in'], ['Depolarisation', 680, 235, 'ion', 'Depol.'],
+];
+
+const SL_SITES = {
+  sert:  { label: 'SERT',        full: 'Serotonin transporter',              x: 70,  y: 132 },
+  nmda:  { label: 'NMDA',        full: 'NMDA receptor (glutamate)',          x: 800, y: 132 },
+  nav:   { label: 'Naᵥ channel', full: 'Voltage-gated Na⁺ channel',          x: 850, y: 205 },
+  imp:   { label: 'IMPase',      full: 'Inositol monophosphatase',           x: 626, y: 350 },
+  mips:  { label: 'MIPS',        full: 'Myo-inositol-1-phosphate synthase',  x: 712, y: 414 },
+  gsk:   { label: 'GSK-3β',      full: 'Glycogen synthase kinase-3β',        x: 440, y: 452 },
+  hdac:  { label: 'HDAC',        full: 'Histone deacetylase',                x: 250, y: 522 },
+  creb:  { label: 'CREB',        full: 'CREB (transcription factor)',        x: 128, y: 504 },
+  gabat: { label: 'GABA-T',      full: 'GABA transaminase',                  x: 830, y: 510 },
+};
+
+const SL_MSG = [
+  { id: 'camp-up',   label: 'cAMP ↑' },
+  { id: 'camp-down', label: 'cAMP ↓' },
+  { id: 'gq-up',     label: 'IP₃ · DAG · Ca²⁺ ↑' },
+  { id: 'gq-down',   label: 'IP₃ · DAG · Ca²⁺ ↓' },
+  { id: 'ion-up',    label: 'Cation influx ↑' },
+  { id: 'ion-down',  label: 'Cation influx ↓' },
+];
+
+const SL_CARDS = [
+  /* ---------------- antidepressants at serotonin receptors ---------------- */
+  { id: 'vila-1a', shelf: 'ad', kind: 'rec', drug: 'Vilazodone', brand: 'Viibryd', rec: '5-HT₁A', act: 'partial agonist',
+    lane: 'gi', msg: 'camp-down',
+    msgWhy: 'A partial agonist at a Gi receptor pushes the signal the same way serotonin does, only less far: adenylyl cyclase is inhibited, cAMP falls, GIRK channels open. Vilazodone builds this 5-HT₁A partial agonism into an SSRI — SSRI-plus-buspirone in one molecule.' },
+  { id: 'busp-1a', shelf: 'ad', kind: 'rec', drug: 'Buspirone', brand: 'BuSpar · SSRI augmentation', rec: '5-HT₁A', act: 'partial agonist',
+    lane: 'gi', msg: 'camp-down',
+    msgWhy: 'Gi-coupled 5-HT₁A: cAMP falls and neurons hyperpolarise through GIRK channels. Buspirone behaves as a near-full agonist at raphe autoreceptors (firing falls, then the autoreceptors desensitise over weeks) and as a partial agonist postsynaptically; the delayed anxiolysis is attributed to that sequence. It is used for anxiety and as an add-on to an SSRI.' },
+  { id: 'vort-1a', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₁A', act: 'agonist',
+    lane: 'gi', msg: 'camp-down',
+    msgWhy: 'Vortioxetine is close to a full agonist here (intrinsic activity about 96% in cell assays), so it drives the Gi signal fully: cAMP down, GIRK open. Contrast buspirone and vilazodone, which are partial agonists at the same receptor.' },
+  { id: 'vort-1b', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₁B', act: 'partial agonist',
+    lane: 'gi', msg: 'camp-down',
+    msgWhy: '5-HT₁B is Gi-coupled like the rest of the 5-HT₁ family: partial agonism lowers cAMP. It sits on axon terminals as an autoreceptor and as a heteroreceptor on other neurons, and it is the vascular receptor behind the triptans.' },
+  { id: 'vort-3', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₃', act: 'antagonist',
+    lane: 'ion', msg: 'ion-down',
+    msgWhy: 'An antagonist keeps serotonin from opening the channel, so less Na⁺ and Ca²⁺ flows in. 5-HT₃ blockade is ondansetron’s mechanism — yet nausea is still vortioxetine’s most common side effect, probably because its SERT blockade raises serotonin at other receptors.' },
+  { id: 'vort-7', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₇', act: 'antagonist',
+    lane: 'gs', msg: 'camp-down',
+    msgWhy: 'Blocking a Gs receptor removes serotonin’s push on adenylyl cyclase, so cAMP ends up lower than it would be. The sign-flip to remember: blocking a Gs receptor lowers cAMP; blocking a Gi receptor raises it.' },
+  { id: 'vort-1d', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₁D', act: 'antagonist',
+    lane: 'gi', msg: 'camp-up',
+    msgWhy: 'The sign-flip card. 5-HT₁D is Gi-coupled, so serotonin normally holds cAMP down there; blocking the receptor lifts that brake and cAMP ends up higher. Blocking a Gi receptor raises cAMP; blocking a Gs receptor lowers it. 5-HT₁D is a terminal autoreceptor, so blocking it also favours serotonin release.' },
+  { id: 'mirt-a2', shelf: 'ad', kind: 'rec', drug: 'Mirtazapine', brand: 'Remeron', rec: 'α₂ (on serotonin and noradrenaline terminals)', act: 'antagonist',
+    lane: 'gi', msg: 'camp-up',
+    laneQ: 'Which pathway does the α₂ receptor signal through? Tap its lane on the map.',
+    laneWhy: 'α₂ adrenergic receptors couple to Gi/o, like the 5-HT₁ family. On noradrenergic terminals they are autoreceptors, and on serotonergic terminals heteroreceptors; either way they are a brake on release.',
+    msgWhy: 'Blocking a Gi receptor lifts its brake: cAMP rises, and the Gβγ brake on presynaptic Ca²⁺ channels comes off, so more noradrenaline and serotonin are released. This is the proposed basis of mirtazapine’s antidepressant effect — it has no reuptake inhibition at all.' },
+  { id: 'mirt-2a', shelf: 'ad', kind: 'rec', drug: 'Mirtazapine', brand: 'Remeron', rec: '5-HT₂A', act: 'antagonist',
+    lane: 'gq', msg: 'gq-down',
+    msgWhy: 'Blocking a Gq receptor takes serotonin’s IP₃/DAG/Ca²⁺ signal away. Much of what the SSRIs do wrong — early jitteriness, insomnia, sexual dysfunction — is put down to 5-HT₂A stimulation, so a 5-HT₂A blocker improves sleep and spares those effects.' },
+  { id: 'mirt-2c', shelf: 'ad', kind: 'rec', drug: 'Mirtazapine', brand: 'Remeron', rec: '5-HT₂C', act: 'antagonist / inverse agonist',
+    lane: 'gq', msg: 'gq-down',
+    msgWhy: '5-HT₂C has real constitutive activity, and mirtazapine is often described as an inverse agonist there — either way the Gq signal falls. That frees prefrontal noradrenaline and dopamine (antidepressant) and releases appetite, which together with its very strong H₁ blockade drives the weight gain.' },
+  { id: 'mirt-3', shelf: 'ad', kind: 'rec', drug: 'Mirtazapine', brand: 'Remeron', rec: '5-HT₃', act: 'antagonist',
+    lane: 'ion', msg: 'ion-down',
+    msgWhy: 'Channel blocked, less cation influx. Mirtazapine blocks no transporter and blocks 5-HT₃ outright, so it tends to settle nausea rather than cause it — the opposite of an SSRI in week one.' },
+  { id: 'traz-2a', shelf: 'ad', kind: 'rec', drug: 'Trazodone', brand: 'Desyrel', rec: '5-HT₂A', act: 'antagonist',
+    lane: 'gq', msg: 'gq-down',
+    msgWhy: '5-HT₂A is trazodone’s tightest target. Blocking its Gq signal deepens slow-wave sleep — with α₁ and H₁ blockade, the reason low-dose trazodone is a hypnotic long before it reaches antidepressant doses.' },
+  { id: 'traz-1a', shelf: 'ad', kind: 'rec', drug: 'Trazodone', brand: 'Desyrel', rec: '5-HT₁A', act: 'partial agonist',
+    lane: 'gi', msg: 'camp-down',
+    msgWhy: 'A weaker action than its 5-HT₂A blockade, but in the Gi direction: partial agonism lowers cAMP. Trazodone combines 5-HT₂A blockade, weak SERT inhibition and 5-HT₁A partial agonism.' },
+  { id: 'flx-2c', shelf: 'ad', kind: 'rec', drug: 'Fluoxetine', brand: 'Prozac', rec: '5-HT₂C', act: 'antagonist',
+    lane: 'gq', msg: 'gq-down',
+    msgWhy: 'Fluoxetine’s best-known receptor action beyond SERT. Blocking the Gq signal at 5-HT₂C releases prefrontal noradrenaline and dopamine — the usual explanation for why fluoxetine is the most activating SSRI.' },
+  { id: 'sert-3', shelf: 'ad', kind: 'rec', drug: 'Sertraline', brand: 'Zoloft · the SSRI in week one', rec: '5-HT₃', act: 'more serotonin reaches it',
+    lane: 'ion', msg: 'ion-up',
+    msgWhy: 'Sertraline has no meaningful direct action at 5-HT₃, but blocking SERT floods it with serotonin: the channel opens more often on gut vagal afferents and in the area postrema, and the result is the nausea of the first weeks, which usually fades as the system adapts.' },
+  { id: 'ssri-2', shelf: 'ad', kind: 'rec', drug: 'Paroxetine', brand: 'Paxil · any SSRI', rec: '5-HT₂A / 5-HT₂C', act: 'more serotonin reaches them',
+    lane: 'gq', msg: 'gq-up',
+    msgWhy: 'More synaptic serotonin drives the Gq signal up at 5-HT₂A and 5-HT₂C. The insomnia, agitation and sexual dysfunction of the SSRIs are attributed largely to these receptors, which is the rationale for adding a 5-HT₂ blocker. Trazodone is widely used for SSRI insomnia; a placebo-controlled trial of mirtazapine for SSRI sexual dysfunction was negative.' },
+
+  /* ---------------- mood stabilizers: which pathway ---------------- */
+  { id: 'li-path', shelf: 'ms', kind: 'rec', drug: 'Lithium', brand: 'Lithobid', rec: 'IMPase', act: 'inhibits', site: 'imp',
+    lane: 'gq', msg: 'gq-down',
+    laneQ: 'Which pathway does IMPase serve? Tap its lane on the map.',
+    msgQ: 'Lithium inhibits IMPase: what happens to that pathway’s signal?',
+    laneWhy: 'Inositol monophosphatase supplies the inositol for PIP₂, the membrane lipid that PLCβ splits every time a Gq/11 receptor fires. It is the last step both of recycling inositol and of making it new, so it belongs to the Gq pathway.',
+    msgWhy: 'Without free inositol, PIP₂ cannot be rebuilt, so the cells firing their Gq receptors hardest make less IP₃ and DAG while quiet cells are spared. This is Berridge’s inositol-depletion hypothesis of lithium’s mood-stabilizing effect.' },
+  { id: 'vpa-path', shelf: 'ms', kind: 'rec', drug: 'Valproate', brand: 'Depakote', rec: 'MIPS (new inositol)', act: 'inhibits, indirectly', site: 'mips',
+    lane: 'gq', msg: 'gq-down',
+    laneQ: 'Which pathway does MIPS serve? Tap its lane on the map.',
+    msgQ: 'Valproate lowers MIPS activity: what happens to that pathway’s signal?',
+    laneWhy: 'Myo-inositol-1-phosphate synthase is the first step in making new inositol from glucose-6-phosphate — fresh supply for PIP₂, the lipid that Gq/11 receptors spend.',
+    msgWhy: 'Less new inositol means less PIP₂, so less IP₃ and DAG. Valproate cuts de novo synthesis at its first step; lithium blocks IMPase, the final step shared by both recycling and new synthesis — two routes that converge on inositol depletion, one of the explanations for why the two drugs share mood-stabilizing effects.' },
+
+  { id: 'li-kidney', shelf: 'ms', kind: 'rec', drug: 'Lithium', brand: 'in the kidney · nephrogenic DI', rec: 'the vasopressin V2 receptor', act: 'blunts its signal',
+    lane: 'gs', msg: 'camp-down',
+    laneQ: 'In the collecting duct, which pathway does the vasopressin V2 receptor signal through? Tap its lane on the map.',
+    msgQ: 'Lithium blunts vasopressin signalling in the collecting duct: what happens to the messenger?',
+    laneWhy: 'The V2 receptor is Gs-coupled: vasopressin raises cAMP, PKA phosphorylates aquaporin-2 and moves it into the apical membrane, and water is reabsorbed.',
+    msgWhy: 'Lithium enters principal cells through the epithelial sodium channel (ENaC) and blunts vasopressin-stimulated cAMP (adenylyl cyclase inhibition, with GSK-3β inhibition contributing). Less aquaporin-2 reaches the membrane, which causes nephrogenic diabetes insipidus. Amiloride blocks ENaC and keeps lithium out of the cell; it is the targeted treatment when lithium has to continue.' },
+  { id: 'ltg-path', shelf: 'ms', kind: 'rec', drug: 'Lamotrigine', brand: 'Lamictal', rec: 'the voltage-gated Na⁺ channel', act: 'blocks', site: 'nav',
+    lane: 'ion', msg: 'ion-down',
+    laneQ: 'What kind of signalling is the voltage-gated Na⁺ channel? Tap its lane on the map.',
+    msgQ: 'Lamotrigine blocks the voltage-gated Na⁺ channel: what happens?',
+    laneWhy: 'An ion channel: no G protein and no second messenger. This one opens with depolarisation rather than with a ligand (5-HT₃ is drawn as the lane’s example), and the inrushing Na⁺ drives the action potential.',
+    msgWhy: 'Lamotrigine binds the channel in its inactivated state and slows recovery, so less Na⁺ enters during rapid firing: fewer action potentials, more stable membranes and less presynaptic glutamate release. Carbamazepine blocks the same channel the same way.' },
+
+  /* ---------------- medication cards: pin every site ---------------- */
+  { id: 'li-site', shelf: 'ms', kind: 'site', drug: 'Lithium', brand: 'Lithobid · lithium carbonate',
+    sites: {
+      imp: 'Uncompetitive inhibition of inositol monophosphatase (and inositol polyphosphate 1-phosphatase). IMPase is the last step of both inositol recycling and new synthesis, so free inositol falls and PIP₂ runs down in the most active cells.',
+      gsk: 'Direct inhibition of GSK-3β by competing with Mg²⁺, plus indirect inhibition by disrupting the β-arrestin-2–Akt–PP2A complex so Akt keeps GSK-3β switched off.',
+    },
+    neg: ['sert', 'hdac', 'gabat', 'nav'],
+    pearl: 'Narrow therapeutic window: maintenance usually about 0.6–0.8 (up to 1.0) mEq/L, lower in older adults; acute mania 0.8–1.2. Cleared almost entirely by the kidney, so levels rise with thiazides, ACE inhibitors, ARBs, NSAIDs and dehydration. Nephrogenic diabetes insipidus, hypothyroidism, hypercalcemia, tremor. The mood stabilizer with the best anti-suicide evidence (meta-analyses; one large VA add-on trial was negative).' },
+  { id: 'vpa-site', shelf: 'ms', kind: 'site', drug: 'Valproate', brand: 'Depakote · divalproex',
+    sites: {
+      hdac: 'Inhibits class I histone deacetylases, loosening chromatin and changing gene expression — thought to contribute to both its mood effects and its teratogenicity.',
+      gabat: 'Raises brain GABA: increases GABA synthesis and release and slows its breakdown — through succinic semialdehyde dehydrogenase and, more weakly at therapeutic levels, GABA transaminase.',
+      nav: 'Limits sustained repetitive firing through voltage-gated Na⁺ channels (and reduces T-type Ca²⁺ currents), part of its anticonvulsant action.',
+      mips: 'Reduces new inositol synthesis by lowering MIPS activity indirectly — cutting de novo supply at its first step, where lithium blocks the final shared step (IMPase).',
+    },
+    neg: ['sert', 'imp'],
+    pearl: 'Boxed warnings for hepatotoxicity, pancreatitis and teratogenicity (neural tube defects, lower IQ) — avoided where possible in anyone who could become pregnant. Also thrombocytopenia, hyperammonemia, weight gain and PCOS. It inhibits lamotrigine’s glucuronidation, roughly doubling lamotrigine levels.' },
+  { id: 'cbz-site', shelf: 'ms', kind: 'site', drug: 'Carbamazepine', brand: 'Equetro · Tegretol',
+    sites: {
+      nav: 'Blocks voltage-gated Na⁺ channels in their inactivated state, use-dependently: the faster a neuron fires, the more it is blocked.',
+    },
+    neg: ['imp', 'gabat'],
+    pearl: 'A strong CYP3A4 inducer, including of its own metabolism (autoinduction over the first weeks). Boxed warnings: SJS/TEN — screen for HLA-B*15:02 in at-risk ancestry (e.g. Han Chinese, Southeast and South Asian) — and aplastic anemia/agranulocytosis. Also hyponatremia (SIADH) and teratogenicity.' },
+  { id: 'ltg-site', shelf: 'ms', kind: 'site', drug: 'Lamotrigine', brand: 'Lamictal',
+    sites: {
+      nav: 'Blocks voltage-gated Na⁺ channels, stabilising neuronal membranes and reducing presynaptic glutamate release.',
+    },
+    neg: ['sert', 'hdac', 'imp', 'gabat', 'mips'],
+    pearl: 'Best for preventing depressive relapse in bipolar disorder (its FDA approval is for maintenance); a modest effect in acute bipolar depression, and not effective for mania. The rash and SJS risk dictates a slow titration: halve the dose when combined with valproate, roughly double it with carbamazepine, and re-titrate from the start after a gap of more than about five half-lives.' },
+  { id: 'sert-site', shelf: 'ad', kind: 'site', drug: 'Sertraline', brand: 'Zoloft',
+    sites: {
+      sert: 'Blocks the serotonin transporter. Synaptic serotonin rises within hours; the antidepressant effect takes weeks, as autoreceptors desensitise and plasticity follows.',
+    },
+    neg: ['imp', 'hdac', 'gabat', 'nmda', 'mips'],
+    pearl: 'The contrast card: an antidepressant with one site on this map, at the membrane. Everything downstream — the receptors in the four lanes — is reached indirectly, through the serotonin it leaves in the synapse.' },
+  { id: 'esk-site', shelf: 'ad', kind: 'site', drug: 'Esketamine', brand: 'Spravato',
+    sites: {
+      nmda: 'Uncompetitive open-channel block of the NMDA receptor at the PCP site. The leading hypothesis: blocking NMDA receptors on GABA interneurons disinhibits a glutamate burst onto AMPA receptors, then BDNF, mTORC1 and new synapses within about a day. The exact antidepressant mechanism is not established.',
+    },
+    neg: ['sert', 'imp', 'gabat', 'mips'],
+    pearl: 'Intranasal, in a certified clinic under a REMS with at least two hours of monitoring for sedation, dissociation, respiratory depression and blood-pressure rise. The first approved antidepressant that works on glutamate rather than on monoamines.' },
+];
+
+/* =====================================================================
+ * SIGNAL LAB — engine
+ * ===================================================================== */
+const SLAB = (function () {
+  const $ = id => document.getElementById(id);
+  const view = $('slabView');
+  const menuEl = $('slMenu'), playEl = $('slPlay'), sumEl = $('slSummary');
+  const homeLink = $('slHomeLink');
+  const mapEl = $('slMap'), panel = $('slPanel');
+  const RUN_N = 8;
+  const shelfBtn = { ad: $('slShelfAd'), ms: $('slShelfMs'), mix: $('slShelfMix') };
+  const modeBtn = { run: $('slModeRun'), free: $('slModeFree') };
+  const SHELF_NAME = { ad: 'Antidepressants & serotonin', ms: 'Mood stabilizers', mix: 'Both decks' };
+
+  function load(k) { try { return JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) { return {}; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* convenience only */ } }
+  const BEST_KEY = 'slab.best.v1';
+  const runKey = () => 'slab.run.' + shelf + '.v1';
+
+  let shelf = 'ad', mode = 'run';
+  try { const s = localStorage.getItem('slab.shelf.v1'); if (SHELF_NAME[s]) shelf = s; } catch (e) { /* none */ }
+  let queue = [], qIdx = 0, results = [];
+  let card = null, phase = '', laneAns = null, msgAns = null, pins = {}, roundPts = 0;
+
+  const pool = () => SL_CARDS.filter(c => shelf === 'mix' || c.shelf === shelf);
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+  const pct = (v, of) => (100 * v / of) + '%';
+
+  /* ---------------- the map ---------------- */
+  const laneEls = {}, siteEls = {};
+  Object.keys(SL_LANES).forEach(k => {
+    const L = SL_LANES[k];
+    const b = el('button', 'sl-lane');
+    b.type = 'button';
+    b.setAttribute('aria-label', L.name + ' pathway');
+    b.style.left = pct(L.x - 74, 960); b.style.top = pct(38, 600);
+    b.style.width = pct(148, 960); b.style.height = pct(296, 600);
+    b.style.color = L.color;
+    b.onclick = () => pickLane(k);
+    mapEl.appendChild(b);
+    laneEls[k] = b;
+  });
+  SL_NODES.forEach(([label, x, y, lane, short]) => {
+    const n = el('span', 'sl-node');
+    n.append(el('span', 'full', label), el('span', 'short', short));
+    n.style.left = pct(x, 960); n.style.top = pct(y, 600);
+    n.style.color = SL_LANES[lane].color;
+    mapEl.appendChild(n);
+  });
+  Object.keys(SL_SITES).forEach(k => {
+    const S = SL_SITES[k];
+    const b = el('button', 'sl-site', S.label);
+    b.type = 'button';
+    b.title = S.full;
+    b.setAttribute('aria-label', S.full);
+    b.style.left = pct(S.x, 960); b.style.top = pct(S.y, 600);
+    b.onclick = () => toggleSite(k);
+    mapEl.appendChild(b);
+    siteEls[k] = b;
+  });
+
+  function paintMap() {
+    const rec = card && card.kind === 'rec';
+    mapEl.classList.toggle('pick-lane', rec && phase === 'lane');
+    mapEl.classList.toggle('pick-site', !rec && phase === 'pin');
+    mapEl.classList.toggle('kind-rec', rec);
+    mapEl.classList.toggle('kind-site', !rec);
+    Object.keys(laneEls).forEach(k => {
+      const b = laneEls[k];
+      b.className = 'sl-lane';
+      b.disabled = !(rec && phase === 'lane');
+      if (!rec || !laneAns) return;
+      if (k === card.lane) b.classList.add('right');
+      else if (k === laneAns) b.classList.add('wrong');
+    });
+    Object.keys(siteEls).forEach(k => {
+      const b = siteEls[k];
+      b.className = 'sl-site';
+      b.disabled = rec || phase !== 'pin';
+      if (rec) { if (card.site === k) b.classList.add('target'); return; }
+      const core = k in card.sites, bad = card.neg.indexOf(k) !== -1;
+      if (phase === 'pin') { if (pins[k]) b.classList.add('pinned'); return; }
+      if (pins[k] && core) b.classList.add('good');
+      else if (!pins[k] && core) b.classList.add('missed');
+      else if (pins[k] && bad) b.classList.add('bad');
+      else if (pins[k]) b.classList.add('pinned');
+    });
+  }
+
+  /* ---------------- the panel ---------------- */
+  function fb(kind, title, body) {
+    const d = el('div', 'sl-fb ' + kind);
+    d.appendChild(el('b', null, title));
+    if (body) d.appendChild(el('div', null, body));
+    return d;
+  }
+  function nextButton(label, fn) {
+    const row = el('div', 'board-actions');
+    row.style.margin = '4px 0 0';
+    const b = el('button', 'reset-board-btn sl-primary', label);
+    b.onclick = fn;
+    row.appendChild(b);
+    setTimeout(() => b.focus({ preventScroll: true }), 0);
+    return row;
+  }
+  const isLast = () => mode === 'free' || qIdx >= queue.length - 1;
+
+  function renderPanel() {
+    panel.innerHTML = '';
+    const rec = card.kind === 'rec';
+    if (rec && phase === 'lane') {
+      panel.append(el('div', 'sl-step', 'Step 1 of 2 · the pathway'),
+        el('div', 'sl-q', card.laneQ || ('Which pathway does ' + card.rec + ' signal through? Tap its lane on the map.')));
+      const opts = el('div', 'sl-opts');
+      Object.keys(SL_LANES).forEach(k => {
+        const b = el('button', 'sl-opt', SL_LANES[k].name);
+        b.type = 'button'; b.style.color = SL_LANES[k].color;
+        b.onclick = () => pickLane(k);
+        opts.appendChild(b);
+      });
+      panel.append(opts, el('div', 'sl-fb plain', 'Or use the buttons — same answer either way.'));
+    } else if (rec && phase === 'lane-done') {
+      const ok = laneAns === card.lane;
+      const L = SL_LANES[card.lane];
+      panel.append(el('div', 'sl-step', 'Step 1 of 2 · the pathway'),
+        fb(ok ? 'ok' : 'miss', ok ? 'Right — ' + L.name : 'It is ' + L.name, (card.laneWhy || L.why) + (card.shelf === 'ad' && !card.laneWhy ? ' ' + SL_MNEMONIC : '')),
+        nextButton('Continue', () => { phase = 'msg'; paintMap(); renderPanel(); }));
+    } else if (rec && phase === 'msg') {
+      panel.append(el('div', 'sl-step', 'Step 2 of 2 · the messenger'),
+        el('div', 'sl-q', card.msgQ || (card.drug + ' (' + card.act + ') at ' + card.rec + ': what happens to the signal?')));
+      const opts = el('div', 'sl-opts');
+      SL_MSG.forEach(m => {
+        const b = el('button', 'sl-opt', m.label);
+        b.type = 'button';
+        b.dataset.msg = m.id;
+        b.onclick = () => pickMsg(m.id);
+        opts.appendChild(b);
+      });
+      panel.appendChild(opts);
+    } else if (rec && phase === 'done') {
+      const ok = msgAns === card.msg;
+      const right = SL_MSG.find(m => m.id === card.msg).label;
+      const opts = el('div', 'sl-opts');
+      SL_MSG.forEach(m => {
+        const b = el('button', 'sl-opt' + (m.id === card.msg ? ' right' : m.id === msgAns ? ' wrong' : ''), m.label);
+        b.disabled = true;
+        opts.appendChild(b);
+      });
+      panel.append(el('div', 'sl-step', 'Step 2 of 2 · the messenger'), opts,
+        fb(ok ? 'ok' : 'miss', ok ? 'Right — ' + right : 'It is ' + right, card.msgWhy),
+        scoreLine(), nextButton(isLast() ? (mode === 'free' ? 'Back to the deck' : 'See the run') : 'Next card →', advance));
+    } else if (!rec && phase === 'pin') {
+      const n = Object.keys(pins).length;
+      panel.append(el('div', 'sl-step', 'Pin every site'),
+        el('div', 'sl-q', 'Where does ' + card.drug + ' act? Tap each site on the map, then lock in.'),
+        el('div', 'sl-fb plain', n ? n + (n === 1 ? ' site pinned.' : ' sites pinned.') + ' Tap a pin again to lift it.'
+          : 'Nothing pinned yet. Some drugs act at one site, some at several. A pin on a site it clearly does not touch costs you, and a pin on an arguable one costs a little.'));
+      const row = el('div', 'board-actions');
+      row.style.margin = '4px 0 0';
+      const lock = el('button', 'reset-board-btn sl-primary', 'Lock in');
+      lock.disabled = !n;
+      lock.onclick = lockIn;
+      row.appendChild(lock);
+      panel.appendChild(row);
+    } else if (!rec && phase === 'done') {
+      panel.append(el('div', 'sl-step', 'The sites'), scoreLine());
+      const ul = el('ul', 'sl-list');
+      Object.keys(card.sites).forEach(k => {
+        const li = el('li', pins[k] ? 'good' : 'missed');
+        li.appendChild(el('b', null, SL_SITES[k].full + (pins[k] ? ' ✓ ' : ' — missed ')));
+        li.appendChild(document.createTextNode(card.sites[k]));
+        ul.appendChild(li);
+      });
+      Object.keys(pins).filter(k => !(k in card.sites)).forEach(k => {
+        const bad = card.neg.indexOf(k) !== -1;
+        const li = el('li', bad ? 'bad' : '');
+        li.appendChild(el('b', null, SL_SITES[k].full + (bad ? ' ✗ ' : ' · ')));
+        li.appendChild(document.createTextNode(bad ? card.drug + ' does not act here.' : 'Not one of its recognised sites of action. Arguable, so only a small cost — enough that pinning everything does not pay.'));
+        ul.appendChild(li);
+      });
+      panel.append(ul, fb('plain', 'Worth knowing', card.pearl),
+        nextButton(isLast() ? (mode === 'free' ? 'Back to the deck' : 'See the run') : 'Next card →', advance));
+    }
+  }
+
+  function scoreLine() {
+    const d = el('div', null);
+    const s = el('span', 'sl-score', String(roundPts));
+    s.appendChild(el('small', null, '/ 1000'));
+    d.appendChild(s);
+    return d;
+  }
+
+  /* ---------------- answering ---------------- */
+  function pickLane(k) {
+    if (!card || card.kind !== 'rec' || phase !== 'lane') return;
+    laneAns = k;
+    if (k === card.lane) roundPts += 500;
+    phase = 'lane-done';
+    paintMap(); renderPanel();
+  }
+  function pickMsg(id) {
+    if (phase !== 'msg') return;
+    msgAns = id;
+    if (id === card.msg) roundPts += 500;
+    phase = 'done';
+    record();
+    paintMap(); renderPanel();
+  }
+  function toggleSite(k) {
+    if (!card || card.kind !== 'site' || phase !== 'pin') return;
+    if (pins[k]) delete pins[k]; else pins[k] = true;
+    paintMap(); renderPanel();
+  }
+  function lockIn() {
+    const core = Object.keys(card.sites);
+    const per = 1000 / core.length;
+    let pts = 0;
+    core.forEach(k => { if (pins[k]) pts += per; });
+    Object.keys(pins).forEach(k => {
+      if (k in card.sites) return;
+      pts -= per * (card.neg.indexOf(k) !== -1 ? 0.4 : 0.15);
+    });
+    roundPts = Math.max(0, Math.min(1000, Math.round(pts)));
+    phase = 'done';
+    record();
+    paintMap(); renderPanel();
+  }
+  function record() {
+    results.push({ id: card.id, name: card.drug + (card.kind === 'rec' ? ' · ' + card.rec : ''), score: roundPts });
+    if (mode === 'free') {
+      const best = load(BEST_KEY);
+      if (best[card.id] == null || roundPts > best[card.id]) { best[card.id] = roundPts; save(BEST_KEY, best); }
+    }
+    renderMeta();
+  }
+
+  /* ---------------- flow ---------------- */
+  function renderMeta() {
+    const m = $('slMeta');
+    m.innerHTML = '';
+    const chip = (k, v) => { const d = el('div', 'sl-chip'); d.append(el('span', 'k', k), el('span', 'v', v)); return d; };
+    if (mode === 'run') {
+      m.append(chip('Card', (qIdx + 1) + ' / ' + queue.length), chip('Total', results.reduce((a, r) => a + r.score, 0)));
+    } else {
+      const best = load(BEST_KEY)[card.id];
+      m.append(chip('Best', best != null ? best : '—'));
+    }
+  }
+
+  function openCard(c) {
+    card = c; laneAns = null; msgAns = null; pins = {}; roundPts = 0;
+    phase = c.kind === 'rec' ? 'lane' : 'pin';
+    $('slDrug').textContent = c.drug;
+    $('slDrugSub').textContent = c.brand + (c.kind === 'rec' ? ' · receptor card' : ' · medication card');
+    const tgt = $('slTarget');
+    tgt.hidden = c.kind !== 'rec';
+    if (c.kind === 'rec') { $('slTargetRec').textContent = 'at ' + c.rec; $('slTargetAct').textContent = c.act; }
+    show('play');
+    renderMeta(); paintMap(); renderPanel();
+  }
+
+  function advance() {
+    if (mode === 'free') { renderMenu(); show('menu'); return; }
+    if (qIdx < queue.length - 1) { qIdx++; openCard(queue[qIdx]); }
+    else renderSummary();
+  }
+
+  function startRun() {
+    mode = 'run';
+    queue = shuffle(pool()).slice(0, RUN_N);
+    qIdx = 0; results = [];
+    openCard(queue[0]);
+  }
+
+  function renderSummary() {
+    const total = results.reduce((a, r) => a + r.score, 0);
+    const best = load(runKey());
+    const isBest = best.best == null || total > best.best;
+    if (isBest) save(runKey(), { best: total });
+    $('slSumTitle').textContent = 'Gauntlet complete';
+    $('slSumSub').textContent = results.length + ' cards · ' + SHELF_NAME[shelf] + (isBest && best.best != null ? ' · a new best' : '');
+    $('slSumScore').textContent = total + ' / ' + (results.length * 1000);
+    const list = $('slSumList');
+    list.innerHTML = '';
+    results.forEach(r => { const d = el('div'); d.append(el('span', null, r.name), el('span', null, r.score + ' / 1000')); list.appendChild(d); });
+    show('summary');
+  }
+
+  function renderMenu() {
+    Object.keys(shelfBtn).forEach(k => shelfBtn[k].setAttribute('aria-pressed', String(k === shelf)));
+    Object.keys(modeBtn).forEach(k => modeBtn[k].setAttribute('aria-pressed', String(k === mode)));
+    $('slShelfSub').textContent = SHELF_NAME[shelf] + ' · follow the signal inside the cell';
+    const picks = $('slPicks');
+    picks.innerHTML = '';
+    const p = pool();
+    const run = load(runKey());
+    if (mode === 'run') {
+      const n = Math.min(RUN_N, p.length);
+      $('slModeNote').textContent = (n === p.length ? 'All ' + n + ' cards in this deck, shuffled' : n + ' cards dealt at random from ' + p.length)
+        + ', mixing receptor cards and medication cards. '
+        + '1000 points a card.' + (run.best != null ? ' Your best: ' + run.best + '.' : '');
+      $('slStartRow').hidden = false;
+      return;
+    }
+    $('slStartRow').hidden = true;
+    $('slModeNote').textContent = 'Pick any card. Receptor cards ask for the pathway, then what the drug does to its messenger; medication cards ask you to pin every site it acts on.';
+    const best = load(BEST_KEY);
+    [['rec', 'Receptor cards — pathway and messenger'], ['site', 'Medication cards — where does it act?']].forEach(([kind, head]) => {
+      const cards = p.filter(c => c.kind === kind);
+      if (!cards.length) return;
+      picks.appendChild(el('div', 'sl-group', head));
+      cards.forEach(c => {
+        const b = el('button', 'sl-pick');
+        b.type = 'button';
+        b.appendChild(el('b', null, c.drug));
+        b.appendChild(el('span', null, c.kind === 'rec' ? 'at ' + c.rec + ' · ' + c.act : c.brand));
+        if (best[c.id] != null) b.appendChild(el('em', null, 'Best ' + best[c.id] + ' / 1000'));
+        b.onclick = () => { mode = 'free'; queue = [c]; qIdx = 0; results = []; openCard(c); };
+        picks.appendChild(b);
+      });
+    });
+  }
+
+  function show(which) {
+    menuEl.hidden = which !== 'menu';
+    playEl.hidden = which !== 'play';
+    sumEl.hidden = which !== 'summary';
+    homeLink.hidden = which === 'menu';
+    window.scrollTo(0, 0);
+  }
+
+  Object.keys(shelfBtn).forEach(k => {
+    shelfBtn[k].onclick = () => { shelf = k; try { localStorage.setItem('slab.shelf.v1', k); } catch (e) { /* convenience */ } renderMenu(); };
+  });
+  modeBtn.run.onclick = () => { mode = 'run'; renderMenu(); };
+  modeBtn.free.onclick = () => { mode = 'free'; renderMenu(); };
+  $('slStartBtn').onclick = startRun;
+  $('slQuitBtn').onclick = () => { renderMenu(); show('menu'); };
+  $('slSumAgainBtn').onclick = startRun;
+  $('slSumMenuBtn').onclick = () => { renderMenu(); show('menu'); };
+  homeLink.onclick = e => { e.preventDefault(); renderMenu(); show('menu'); };
+
+  return {
+    open() {
+      view.hidden = false;
+      document.documentElement.classList.add('slab-active');
+      mode = 'run';
+      renderMenu(); show('menu');
+    },
+    close() {
+      view.hidden = true;
+      document.documentElement.classList.remove('slab-active');
+    },
+  };
+})();
+
 function route() {
   const id = decodeURIComponent(location.hash.replace(/^#/, ''));
   C4.close();   // reopened below if this hash is a Connect Four game
   RLAB.close(); // likewise — reopened below if this hash is the Receptor Lab
+  SLAB.close(); // and the Signal Lab
 
   // A phone joining the wizard game: #play-ABCD
   if (/^play(-|$)/i.test(id)) {
@@ -12254,6 +13120,18 @@ function route() {
   overlay.classList.remove('active');
   currentClueEl = null;
   currentKey = null;
+
+  if (extra && extra.id === 'signal-lab') {
+    current = null;
+    hubView.hidden = true;
+    gameView.hidden = true;
+    wizardView.hidden = true;
+    WIZ.close();
+    document.title = extra.title;
+    SLAB.open();
+    window.scrollTo(0, 0);
+    return;
+  }
 
   if (extra && extra.id === 'receptor-lab') {
     current = null;
