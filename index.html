@@ -2083,6 +2083,7 @@
   .fam-transporter { border-color: #4a8fd6; color: #a9d6ff; }
   .fam-glutamate   { border-color: #e0823d; color: #ffc59a; }
   .fam-sigma       { border-color: #8a9bb0; color: #d6e0ec; }
+  .fam-enzyme      { border-color: #c2410c; color: #fdba74; }
 
   /* ---- the cauldron ---- */
   .rl-cellwrap { display: flex; flex-direction: column; align-items: center; }
@@ -2170,6 +2171,8 @@
   .act-agonist    { background: #35c46a; }
   .act-inverse    { background: #a855f7; }
   .act-reuptake   { background: #14b8a6; }
+  .act-irrev      { background: #ea580c; }
+  .act-rev        { background: #fbbf24; }
 
   .rl-legend {
     display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
@@ -2732,7 +2735,9 @@
           <span><i class="act-agonist"></i>Agonist</span>
           <span><i class="act-inverse"></i>Inverse agonist</span>
           <span><i class="act-reuptake"></i>Reuptake block</span>
-          <span>&mdash; bigger circle = tighter binding</span>
+          <span><i class="act-irrev"></i>Irreversible inhibitor</span>
+          <span><i class="act-rev"></i>Reversible inhibitor</span>
+          <span>&mdash; bigger circle = tighter binding (antipsychotics)</span>
         </div>
       </div>
     </div>
@@ -2813,6 +2818,8 @@
           <span><i class="act-agonist"></i>Agonist</span>
           <span><i class="act-inverse"></i>Inverse agonist</span>
           <span><i class="act-reuptake"></i>Reuptake block</span>
+          <span><i class="act-irrev"></i>Irreversible inhibitor</span>
+          <span><i class="act-rev"></i>Reversible inhibitor</span>
         </div>
         <div class="rl-guide-tally" id="rlGdTally"></div>
       </div>
@@ -4199,7 +4206,7 @@ const EXTRAS = [
     kind: "Drag & drop \u00b7 solo",
     lab: true,
     blurb: "Two shelves, antipsychotics and antidepressants. A drug name over an empty cauldron. Click in every receptor it acts on, say whether it blocks, partially activates, activates or inverts each one, and size the circle to the binding strength. Lock in and your brew is set beside the real one, Ki values and all. Or start in guided brewing, where the teaching paragraph goes up first with the receptors cut out of it and you answer your way back into it.",
-    tags: ["Psychopharm", "19 antipsychotics \u00b7 20 antidepressants", "Guided walkthroughs", "Gauntlet \u00b7 Survival \u00b7 Free play"]
+    tags: ["Psychopharm", "19 antipsychotics \u00b7 25 antidepressants \u00b7 2 hidden MAOIs", "Guided walkthroughs", "Gauntlet \u00b7 Survival \u00b7 Free play"]
   }
 ];
 
@@ -8796,6 +8803,8 @@ const RL_RECEPTORS = [
   { id: 'DAT',   label: 'DAT',     family: 'transporter', full: 'Dopamine transporter',      sh: 'ad' },
   { id: 'NMDA',  label: 'NMDA',    family: 'glutamate',   full: 'Glutamate NMDA receptor',   sh: 'ad' },
   { id: 'S1',    label: 'σ₁',      family: 'sigma',       full: 'Sigma-1 receptor',          sh: 'ad' },
+  { id: 'MAOA',  label: 'MAO-A',   family: 'enzyme',      full: 'Monoamine oxidase A',       sh: 'ad' },
+  { id: 'MAOB',  label: 'MAO-B',   family: 'enzyme',      full: 'Monoamine oxidase B',       sh: 'ad' },
 ];
 
 /* `sh` says which shelf's tray a receptor sits in: 'ap' (antipsychotics
@@ -8806,15 +8815,25 @@ const RL_RECEPTORS = [
 const rlShelfOf = d => (d && d.shelf) || 'ap';
 const rlOnShelf = (r, shelf) => r.sh === 'both' || r.sh === shelf;
 
-/* Actions a player can assign. `reuptake` is offered only for SERT/NET —
- * a transporter is not a receptor and cannot have an agonist. */
+/* Actions a player can assign. `reuptake` is offered only for the
+ * transporters — a transporter is not a receptor and cannot have an agonist —
+ * and the two inhibitor actions only for the MAO enzymes. */
 const RL_ACTIONS = [
   { id: 'antagonist', label: 'Antagonist',      short: 'Antag',   blurb: 'Blocks the receptor' },
   { id: 'partial',    label: 'Partial agonist', short: 'Partial', blurb: 'Submaximal activation — stabiliser' },
   { id: 'agonist',    label: 'Agonist',         short: 'Agonist', blurb: 'Fully activates the receptor' },
   { id: 'inverse',    label: 'Inverse agonist', short: 'Inverse', blurb: 'Drives below baseline tone' },
-  { id: 'reuptake',   label: 'Reuptake block',  short: 'Reuptake',blurb: 'Transporter inhibition', transporterOnly: true },
+  { id: 'reuptake',   label: 'Reuptake block',  short: 'Reuptake',blurb: 'Transporter inhibition', only: 'transporter' },
+  { id: 'irrev',      label: 'Irreversible inhibitor', short: 'Irrev.', blurb: 'Covalently inactivates the enzyme — activity returns only as new enzyme is made', only: 'enzyme' },
+  { id: 'rev',        label: 'Reversible inhibitor',   short: 'Rev.',   blurb: 'Binds and washes off — activity returns as the drug clears', only: 'enzyme' },
 ];
+/* Which actions a target can take: a transporter can only be blocked, an
+ * enzyme only inhibited (reversibly or not), a receptor anything else. */
+const rlKindOf = rid => {
+  const r = RL_RECEPTORS.find(x => x.id === rid);
+  return r && (r.family === 'transporter' || r.family === 'enzyme') ? r.family : 'receptor';
+};
+const rlActFits = (a, rid) => (a.only || 'receptor') === rlKindOf(rid);
 
 const RL_TIERS = [
   { t: 4, name: 'Very high', band: 'Ki < 1 nM',       plus: '++++' },
@@ -8856,6 +8875,8 @@ const RL_TRANSDUCTION = {
   '5HT3': 'Ligand-gated cation channel (Na⁺/K⁺/Ca²⁺) — no G protein',
   NMDA: 'Ionotropic glutamate receptor — Ca²⁺/Na⁺ channel with a voltage-dependent Mg²⁺ block; Ca²⁺ → CaMKII, nNOS',
   S1: 'ER–mitochondria chaperone protein — modulates IP₃-receptor Ca²⁺ release; no G protein',
+  MAOA: 'Outer mitochondrial membrane enzyme (FAD) — deaminates serotonin and noradrenaline; dopamine and tyramine are shared with MAO-B',
+  MAOB: 'Outer mitochondrial membrane enzyme (FAD) — deaminates phenethylamine and benzylamine; dopamine and tyramine are shared with MAO-A',
 };
 
 /* ---------------------------------------------------------------------
@@ -9474,6 +9495,87 @@ const RL_DRUGS = [
     pearl: 'FDA-approved in 2019 for treatment-resistant depression and in 2020 for depression with acute suicidal ideation, originally always alongside an oral antidepressant. It is given intranasally in a certified clinic under a REMS, with at least 2 hours of monitoring for sedation, dissociation and blood-pressure rise. The leading mechanism: blocking NMDA receptors on GABA interneurons releases a burst of glutamate onto AMPA receptors, which drives BDNF release, mTOR signalling and rapid formation of new synapses. That is why it works within hours rather than weeks.',
     src: 'Ebert et al, Eur J Pharmacol 1997;333:99-104; Zanos et al, Pharmacol Rev 2018;70:621-60.',
   },
+  /* ================= MAOIs =================
+   * Enzyme inhibitors, not receptor ligands, so there is no Ki to show: the
+   * points are in naming which isoform(s) and whether the inhibition is
+   * reversible. `ki: 1` is only a sort key; `kiText` is what is displayed. */
+  {
+    id: 'phenelzine', name: 'Phenelzine', brand: 'Nardil',
+    cls: 'MAOI — hydrazine, nonselective', gen: 'maoi', shelf: 'ad',
+    b: [
+      { r: 'MAOA', ki: 1, kiText: 'n/a', act: 'irrev', core: true, note: 'Covalent, irreversible inhibition. Activity returns only as new enzyme is made, over about 2 weeks.' },
+      { r: 'MAOB', ki: 1, kiText: 'n/a', act: 'irrev', core: true, note: 'Nonselective: both isoforms, both irreversibly.' },
+    ],
+    neg: { SERT: 10000, H1: 10000, M1: 10000 },
+    pearl: 'A nonselective, irreversible hydrazine MAOI, and among the best-supported options for atypical and treatment-resistant depression, with trial evidence in panic and social anxiety as well. It also inhibits GABA transaminase, raising brain GABA. The hydrazine side effects are weight gain, sedation, orthostasis, sexual dysfunction, pyridoxine (B6) deficiency and rare hepatotoxicity. It needs a tyramine-restricted diet and a 14-day washout before any serotonergic drug is started.',
+    src: 'Mechanism and clinical data: standard references (Stahl’s Essential Psychopharmacology; package insert). MAOIs have no clinically meaningful transporter or receptor binding.',
+  },
+  {
+    id: 'tranylcypromine', name: 'Tranylcypromine', brand: 'Parnate',
+    cls: 'MAOI — non-hydrazine, nonselective', gen: 'maoi', shelf: 'ad',
+    b: [
+      { r: 'MAOA', ki: 1, kiText: 'n/a', act: 'irrev', core: true, note: 'Irreversible, like phenelzine, despite a completely different structure.' },
+      { r: 'MAOB', ki: 1, kiText: 'n/a', act: 'irrev', core: true, note: 'Nonselective: both isoforms.' },
+    ],
+    neg: { SERT: 10000, H1: 10000, M1: 10000 },
+    pearl: 'A cyclopropylamine, structurally related to amphetamine, and the most activating MAOI: insomnia and restlessness rather than sedation, and less weight gain and hepatotoxicity than the hydrazines. At higher doses it adds amphetamine-like noradrenaline release. Orthostasis is common, and tyramine reactions (hypertensive crisis) are the key danger. After stopping, wait 14 days before starting a serotonergic drug; after fluoxetine, wait 5 weeks before starting it.',
+    src: 'Mechanism and clinical data: standard references (Stahl’s Essential Psychopharmacology; package insert).',
+  },
+  {
+    id: 'isocarboxazid', name: 'Isocarboxazid', brand: 'Marplan',
+    cls: 'MAOI — hydrazine, nonselective', gen: 'maoi', shelf: 'ad',
+    b: [
+      { r: 'MAOA', ki: 1, kiText: 'n/a', act: 'irrev', core: true, note: 'Irreversible hydrazine inhibition, as with phenelzine.' },
+      { r: 'MAOB', ki: 1, kiText: 'n/a', act: 'irrev', core: true, note: 'Nonselective: both isoforms.' },
+    ],
+    neg: { SERT: 10000, H1: 10000, M1: 10000 },
+    pearl: 'The third US oral MAOI and the least prescribed: a nonselective, irreversible hydrazine like phenelzine, with the same dietary rules, the same drug interactions and the same 14-day washout.',
+    src: 'Mechanism and clinical data: standard references (package insert).',
+  },
+  {
+    id: 'selegiline', name: 'Selegiline (transdermal)', brand: 'Emsam',
+    cls: 'MAOI — irreversible, MAO-B-selective at low oral doses', gen: 'maoi', shelf: 'ad',
+    b: [
+      { r: 'MAOB', ki: 1, kiText: 'n/a', act: 'irrev', core: true, note: 'Selective for MAO-B at the low oral doses used in Parkinson’s disease (10 mg/day or less).' },
+      { r: 'MAOA', ki: 1, kiText: 'n/a', act: 'irrev', core: true, note: 'At antidepressant transdermal doses brain MAO-A is inhibited too, and that is what makes it an antidepressant. The patch bypasses the gut and spares intestinal MAO-A, so at 6 mg/24 h no tyramine diet is needed. Dietary restriction applies at 9 and 12 mg/24 h.' },
+    ],
+    neg: { SERT: 10000, H1: 10000, M1: 10000 },
+    pearl: 'The only transdermal antidepressant (FDA 2006). Its selectivity depends on dose: MAO-B only at low oral doses, both isoforms at antidepressant patch doses. It is metabolised to L-methamphetamine and L-amphetamine. Application-site reactions are common. Serotonergic drugs and carbamazepine are still contraindicated.',
+    src: 'Mechanism and clinical data: Emsam package insert; standard references.',
+  },
+  {
+    id: 'moclobemide', name: 'Moclobemide', brand: 'Manerix (not US)',
+    cls: 'RIMA — reversible inhibitor of MAO-A', gen: 'maoi', shelf: 'ad',
+    b: [
+      { r: 'MAOA', ki: 1, kiText: 'n/a', act: 'rev', core: true, note: 'Reversible and selective for MAO-A. A surge of dietary tyramine can displace it from the enzyme.' },
+    ],
+    neg: { MAOB: 10000, SERT: 10000, H1: 10000, M1: 10000 },
+    pearl: 'A reversible inhibitor of MAO-A (RIMA), not marketed in the US but used in Canada, Europe and Australia. Because tyramine can displace it from the enzyme, dietary restriction is minimal at usual doses, and enzyme activity recovers within about a day of stopping rather than two weeks. Combining it with serotonergic drugs is still dangerous.',
+    src: 'Mechanism and clinical data: standard references.',
+  },
+
+  /* ================= HIDDEN MAOIs =================
+   * Not antidepressants — here because the board question is what happens
+   * when one meets an SSRI. */
+  {
+    id: 'linezolid', name: 'Linezolid', brand: 'Zyvox',
+    cls: 'Oxazolidinone antibiotic — weak, reversible, nonselective MAOI', gen: 'hidden', shelf: 'ad',
+    b: [
+      { r: 'MAOA', ki: 1, kiText: 'n/a', act: 'rev', core: true, note: 'Weak and reversible, but enough to matter alongside a serotonergic drug.' },
+      { r: 'MAOB', ki: 1, kiText: 'n/a', act: 'rev', core: true, note: 'Nonselective: both isoforms.' },
+    ],
+    pearl: 'An antibiotic that is also a weak, reversible, nonselective MAO inhibitor. Combined with an SSRI, SNRI or other serotonergic drug it can cause serotonin syndrome, the subject of a 2011 FDA warning. If linezolid is urgently needed, the serotonergic drug is stopped and the patient monitored for 2 weeks (5 weeks after fluoxetine) or until 24 hours after the last linezolid dose, whichever comes first.',
+    src: 'FDA Drug Safety Communication, 2011; standard references.',
+  },
+  {
+    id: 'methyleneblue', name: 'Methylene blue', brand: 'ProvayBlue',
+    cls: 'Dye / methemoglobinemia antidote — potent reversible MAO-A inhibitor', gen: 'hidden', shelf: 'ad',
+    b: [
+      { r: 'MAOA', ki: 1, kiText: 'n/a', act: 'rev', core: true, note: 'A potent, tight-binding but reversible MAO-A inhibitor. At the concentrations reached after an IV dose, MAO-A is completely inhibited.' },
+    ],
+    pearl: 'Used for methemoglobinemia and vasoplegic shock and as a surgical dye, and a potent reversible MAO-A inhibitor. Given IV to a patient on an SSRI or SNRI, it can cause serotonin syndrome, which prompted a 2011 FDA warning. Serotonergic drugs are held beforehand when the situation allows. It inhibits MAO-B only at much higher concentrations, and only partially at IV doses, so MAO-B is left unscored here.',
+    src: 'Ramsay, Dunford & Gillman, Br J Pharmacol 2007;152:946-51; FDA Drug Safety Communication, 2011.',
+  },
 ];
 
 /* =====================================================================
@@ -9509,6 +9611,8 @@ const RL_ACT_WORD = {
   agonist: 'agonism',
   inverse: 'inverse agonism',
   reuptake: 'reuptake blockade',
+  irrev: 'irreversible inhibition',
+  rev: 'reversible inhibition',
 };
 
 const RL_EFFECT = {
@@ -9779,6 +9883,44 @@ const RL_EFFECT = {
     actWhy: 'Agonism. Sigma-1 is not a G-protein-coupled receptor, but its ligands are still classed as agonists or antagonists by what they do to its chaperone activity.',
     line: 'It adds {r} {a} — the strongest of any SSRI.',
   },
+  'MAOA|irrev': {
+    ask: 'Which enzyme — the one that breaks down serotonin and noradrenaline, and destroys dietary tyramine in the gut wall — does it inhibit?',
+    why: 'Monoamine oxidase A. With it inhibited, serotonin, noradrenaline and dopamine are no longer broken down inside the nerve terminal, so more is packaged and released — the antidepressant mechanism, with no transporter or receptor involved at all.',
+    actAsk: 'And is that inhibition reversible or irreversible?',
+    actWhy: 'Irreversible. The drug binds the enzyme\u2019s FAD cofactor covalently, so activity returns only as new enzyme is made — about two weeks. That regeneration time is why a serotonergic drug must wait 14 days after an irreversible MAOI is stopped.',
+    line: 'Its antidepressant effect comes from {a} of {r}.',
+    echo: {
+      ask: 'Aged cheese, then a pounding occipital headache and a blood pressure of 220/120. Which enzyme\u2019s inhibition explains it?',
+      why: 'MAO-A again. Intestinal and hepatic MAO-A normally destroy dietary tyramine before it reaches the circulation. With it inhibited, tyramine gets through and releases noradrenaline from sympathetic terminals: a hypertensive crisis. The same blockade is why adding an SSRI, SNRI, clomipramine, meperidine, tramadol, dextromethorphan or methylene blue can cause serotonin syndrome.',
+      line: 'The same {r} inhibition is behind the tyramine reaction and the serotonin-syndrome interactions.',
+    },
+  },
+  'MAOA|rev': {
+    ask: 'Which enzyme — the one that breaks down serotonin and noradrenaline — does it inhibit?',
+    why: 'Monoamine oxidase A. Inhibiting it means serotonin and noradrenaline are no longer broken down inside the nerve terminal, so more is released.',
+    actAsk: 'And is that inhibition reversible or irreversible?',
+    actWhy: 'Reversible. The drug binds and comes off again, so enzyme activity returns as the drug clears — within a day or so rather than two weeks — and a surge of tyramine can push it off the enzyme, which is why the tyramine risk is far lower than with the irreversible MAOIs.',
+    line: 'It carries {a} of {r}.',
+    echo: {
+      ask: 'Even reversible MAO-A inhibition has one interaction that can kill. Added to an SSRI, which enzyme\u2019s inhibition explains the serotonin syndrome?',
+      why: 'MAO-A again. Block serotonin\u2019s breakdown while an SSRI is also blocking its reuptake, and synaptic serotonin climbs past anything either drug does alone — hyperthermia, clonus, agitation, autonomic instability. Reversibility shortens the washout; it does not make the combination safe.',
+      line: 'The same {r} inhibition is what makes an SSRI combination dangerous.',
+    },
+  },
+  'MAOB|irrev': {
+    ask: 'Which second enzyme — dominant in human brain and glia, and the one that clears phenethylamine — does it also inhibit?',
+    why: 'Monoamine oxidase B. In human brain it carries much of dopamine breakdown, which is why selective MAO-B inhibitors (low-dose selegiline, rasagiline) are Parkinson\u2019s drugs. Selective MAO-B inhibition leaves gut MAO-A free to handle tyramine — and on its own it is not thought to be enough to treat depression.',
+    actAsk: 'And is that inhibition reversible or irreversible?',
+    actWhy: 'Irreversible, like its MAO-A inhibition: covalent binding to the FAD cofactor, with activity returning only as new enzyme is made.',
+    line: 'It also carries {a} of {r}.',
+  },
+  'MAOB|rev': {
+    ask: 'Which second MAO isoform does it also inhibit?',
+    why: 'Monoamine oxidase B. Nonselective inhibition — both isoforms — is what the older irreversible MAOIs do as well.',
+    actAsk: 'And is that inhibition reversible or irreversible?',
+    actWhy: 'Reversible, like its MAO-A inhibition.',
+    line: 'It also carries {a} of {r}.',
+  },
 };
 
 /* What a meaningful "does not bind" is worth saying out loud. Used to write
@@ -9805,6 +9947,8 @@ const RL_NEG_TAKE = {
   '5HT3':  'no 5-HT₃',
   NMDA:    'no NMDA',
   S1:      'no sigma-1',
+  MAOA:    'no MAO-A',
+  MAOB:    'no MAO-B',
 };
 /* The antidepressant shelf's version of the same idea: what a TCA carries
  * and a newer agent does not is the teaching point there, not the D2 story. */
@@ -9812,7 +9956,7 @@ const RL_NEG_TAKE_AD = {
   M1:   'no muscarinic affinity, so none of the dry mouth, constipation, urinary retention or confusion the tricyclics carry',
   H1:   'no H₁, so no antihistamine sedation and no histamine-driven weight gain',
   A1:   'no α₁, so little orthostasis',
-  SERT: 'no serotonin reuptake inhibition, so no serotonergic sexual dysfunction',
+  SERT: 'no serotonin reuptake inhibition',
   NET:  'no noradrenaline reuptake inhibition',
   D2:   'no D₂',
 };
@@ -9954,10 +10098,6 @@ const RL_GUIDE = {
 
   sertraline: {
     lead: 'Sertraline · Zoloft — an SSRI with one twist in its profile.',
-    ki: 'SERT',
-    kiAsk: 'How tightly does sertraline hold SERT? A lower Ki means a tighter grip.',
-    kiWhy: 'KD about 0.3 nM — very high, among the tightest SERT binding of any antidepressant. A grip that tight is why 50 mg is already a full therapeutic dose: the SSRIs reach the roughly 80% SERT occupancy associated with response at their lowest effective doses.',
-    kiLine: 'It holds it at {k} affinity.',
     steps: {
       DAT: {
         ask: 'Here is the twist. Which second transporter — the one the stimulants act on — does sertraline bind, alone among the SSRIs?',
@@ -9971,10 +10111,10 @@ const RL_GUIDE = {
   amitriptyline: {
     lead: 'Amitriptyline · Elavil — the tertiary-amine tricyclic, and a lesson in how many receptors one antidepressant can hold.',
     order: ['SERT', 'NET', 'H1', 'M1', 'A1'],
-    ki: 'H1',
-    kiAsk: 'Its single tightest target is not a transporter. How tightly does amitriptyline hold H₁?',
-    kiWhy: 'KD about 1 nM — high, brushing very high, and tighter than its grip on either transporter. That ordering is why 10–25 mg at bedtime works as a sleep and pain drug long before the antidepressant range of 150 mg and up: at low dose you are mostly getting the antihistamine.',
-    kiLine: 'H₁ is its tightest target, held at {k} affinity — tighter than either transporter.',
+    rank: 'H1',
+    rankAsk: 'Now the ladder. Of everything in the cauldron, which does amitriptyline hold most tightly?',
+    rankWhy: 'H₁ — about 1 nM, tighter than its grip on either transporter. That ordering is why a 10–25 mg bedtime dose is so sedating, far below the antidepressant range of 150 mg and up.',
+    rankLine: 'And its tightest target of all is {r} — which is why even a small bedtime dose sedates.',
     closing: 'Put the five together and the tricyclic reputation writes itself — sedation, anticholinergic burden and orthostasis stacked on the antidepressant effect. And none of that is what kills in overdose: that is fast sodium-channel blockade, which is not in the tray and shows up as a widening QRS.',
   },
 
@@ -9982,10 +10122,10 @@ const RL_GUIDE = {
     lead: 'Mirtazapine · Remeron — an antidepressant that inhibits no transporter at all.',
     anchor: 'A2',
     order: ['A2', 'H1', '5HT2A', '5HT2C', '5HT3'],
-    ki: 'H1',
-    kiAsk: 'How tightly does mirtazapine hold H₁?',
-    kiWhy: 'Ki 0.14–1.6 nM — very high, and far tighter than anything else it binds, α2 (about 20 nM) included. That is why the sedation arrives at the lowest doses, and why it is often said to ease at higher ones, as the noradrenergic effect of α2 blockade builds and starts to push back.',
-    kiLine: 'H₁ is held at {k} affinity — by far its tightest target.',
+    rank: 'H1',
+    rankAsk: 'Of the five, which does mirtazapine hold most tightly — by an order of magnitude?',
+    rankWhy: 'H₁ — Ki 0.14–1.6 nM, far tighter than anything else it binds, α2 (about 20 nM) included. That is why the sedation arrives at the lowest doses, and why it is often said to ease at higher ones, as the noradrenergic effect of α2 blockade builds and starts to push back.',
+    rankLine: 'By far its tightest target is {r}, which is why the lowest doses are the most sedating.',
     steps: {
       H1: {
         why: 'H1 — and mirtazapine holds it more tightly than almost any drug in psychiatry. That is the sedation, which is welcome when insomnia is part of the depression, and it is the appetite and weight gain that most often end a trial of the drug.',
@@ -10028,6 +10168,10 @@ const RL_GUIDE = {
 
   venlafaxine: {
     order: ['SERT', 'NET'],
+    rank: 'SERT',
+    rankAsk: 'Which of the two transporters does venlafaxine hold far more tightly?',
+    rankWhy: 'SERT — roughly 30 times more tightly than NET. That single ratio is the whole dose-response story: an SSRI at 75 mg, an SNRI only from about 150–225 mg, and a blood-pressure rise that arrives with the noradrenergic effect.',
+    rankLine: 'It holds {r} some 30 times more tightly than NET — an SSRI at low doses, an SNRI only at high ones.',
     steps: {
       NET: {
         ask: 'Which second transporter does it reach — but only once the dose goes up?',
@@ -10072,10 +10216,10 @@ const RL_GUIDE = {
     lead: 'Doxepin · Sinequan, Silenor — a tricyclic whose tightest target made it a sleeping pill.',
     order: ['H1', 'SERT', 'NET', 'M1', 'A1'],
     anchor: 'H1',
-    ki: 'H1',
-    kiAsk: 'How tightly does doxepin hold H₁?',
-    kiWhy: 'Ki about 0.24 nM — very high, and tighter than any antihistamine in Cusack’s series. At 3–6 mg that is essentially all doxepin does, which is how an antidepressant became an FDA-approved treatment for sleep-maintenance insomnia.',
-    kiLine: 'It holds it at {k} affinity — tighter than any antihistamine.',
+    rank: 'H1',
+    rankAsk: 'Which of these five does doxepin hold most tightly — the one fact that makes a 3 mg dose useful?',
+    rankWhy: 'H₁ — Ki about 0.24 nM, tighter than any antihistamine in Cusack’s series and hundreds of times tighter than its transporter binding. At 3–6 mg that is essentially all doxepin does, which is how an antidepressant became an FDA-approved treatment for sleep-maintenance insomnia.',
+    rankLine: 'Its tightest target by far is {r}, which is what lets a 3–6 mg dose work as a sleep drug.',
     steps: {
       H1: {
         ask: 'Start with what the low-dose form is for. At 3–6 mg this drug is a sleep aid — which receptor is doing the work?',
@@ -10093,11 +10237,10 @@ const RL_GUIDE = {
     lead: 'Trazodone · Desyrel — prescribed far more often for sleep than for depression, and its affinity ladder explains why.',
     anchor: '5HT2A',
     order: ['5HT2A', 'A1', 'H1', 'SERT'],
-    ki: '5HT2A',
-    kiAsk: 'How tightly does trazodone hold 5-HT₂ₐ?',
-    kiWhy: 'Ki around 20–45 nM — moderate, but it is trazodone’s tightest target, several-fold tighter than its SERT binding (160–370 nM). That gap is why low doses act mainly as a hypnotic, and why serotonin reuptake inhibition only comes in at full antidepressant doses.',
-    kiLine: 'It holds it at {k} affinity — its tightest target.',
     steps: {
+      '5HT2A': {
+        why: '5-HT2A — and it is trazodone’s tightest target, several-fold tighter than its SERT binding. That gap is why low doses act mainly as a hypnotic: 5-HT2A blockade deepens slow-wave sleep, and serotonin reuptake inhibition only comes in at full antidepressant doses.',
+      },
       A1: {
         why: 'α1 — and trazodone holds it more tightly than it holds SERT. That is the orthostasis, and it adds to the sedation.',
         echo: {
@@ -10130,6 +10273,47 @@ const RL_GUIDE = {
     lead: 'Esketamine · Spravato — the first antidepressant approved that works on glutamate rather than on monoamines.',
     anchor: 'NMDA',
     closing: 'And no monoamine target at all: no SERT, no NET, nothing in the monoamine tray. Every effect — the rapid relief and the dissociation alike — runs through the one receptor.',
+  },
+  phenelzine: {
+    lead: 'Phenelzine · Nardil — no transporter, no receptor: the drug works on the enzyme that destroys the monoamines.',
+    closing: 'Nothing in the receptor or transporter tray at all — every effect, the antidepressant action and the dangers alike, comes from the enzymes. And "irreversible" is what sets the 14-day washout: the drug is gone long before the enzyme is back.',
+  },
+  tranylcypromine: {
+    lead: 'Tranylcypromine · Parnate — an MAOI built like an amphetamine.',
+    closing: 'Irreversible and nonselective like phenelzine, but a cyclopropylamine rather than a hydrazine: more activating, less weight gain, less liver risk — and the same tyramine and serotonin-syndrome rules.',
+  },
+  isocarboxazid: {
+    closing: 'A nonselective, irreversible hydrazine like phenelzine — same diet, same interactions, same 14-day washout, and far less often prescribed.',
+  },
+  selegiline: {
+    lead: 'Selegiline · Emsam — an MAOI whose selectivity depends on the dose and the route.',
+    order: ['MAOB', 'MAOA'],
+    steps: {
+      MAOB: {
+        ask: 'At low oral doses this drug is a Parkinson’s medication, selective for one MAO isoform. Which?',
+      },
+      MAOA: {
+        ask: 'At antidepressant patch doses it reaches the other isoform in the brain — the one that matters for mood. Which?',
+        echo: {
+          ask: 'Why can a patient on the 6 mg/24 h patch eat aged cheese, when one on oral phenelzine cannot? Which enzyme is being spared, and where?',
+          why: 'MAO-A in the gut wall. The patch delivers the drug straight into the circulation, bypassing first-pass exposure of intestinal MAO-A, so dietary tyramine is still destroyed at the lowest dose. From 9 mg/24 h enough gut MAO-A is inhibited that the tyramine diet returns.',
+          line: 'Sparing gut {r} is why the lowest patch dose needs no tyramine diet.',
+        },
+      },
+    },
+    closing: 'Irreversible at both isoforms, MAO-B-selective only at low oral doses — and still an MAOI in full for drug interactions: no serotonergic drugs, and no carbamazepine.',
+  },
+  moclobemide: {
+    lead: 'Moclobemide · Manerix — the reversible MAOI, and the reason "reversible" matters.',
+    closing: 'Reversible and MAO-A-selective: tyramine can push it off the enzyme, so the diet is minimal and activity recovers within about a day. Not available in the US — and not safe with an SSRI.',
+  },
+  linezolid: {
+    lead: 'Linezolid · Zyvox — an antibiotic, and an MAOI nobody prescribes as one.',
+    closing: 'A weak, reversible, nonselective MAOI hiding in an antibiotic. The board question is what happens when it meets an SSRI.',
+  },
+  methyleneblue: {
+    lead: 'Methylene blue · ProvayBlue — a dye, an antidote, and a potent MAO-A inhibitor.',
+    closing: 'Potent and reversible at MAO-A, weak at MAO-B — and given IV to a patient on an SSRI or SNRI, a cause of serotonin syndrome serious enough to earn a 2011 FDA warning.',
   },
 
 };
@@ -10253,17 +10437,18 @@ const RLAB = (function () {
   const SIZE = { 1: 28, 2: 42, 3: 58, 4: 78 };
   const TAG_PX = 20;
 
-  const FAM_ORDER = ['dopamine', 'serotonin', 'histamine', 'muscarinic', 'adrenergic', 'transporter', 'glutamate', 'sigma'];
+  const FAM_ORDER = ['dopamine', 'serotonin', 'histamine', 'muscarinic', 'adrenergic', 'transporter', 'enzyme', 'glutamate', 'sigma'];
   const FAM_NAME = {
     dopamine: 'Dopamine', serotonin: 'Serotonin', histamine: 'Histamine',
     muscarinic: 'Muscarinic', adrenergic: 'Adrenergic', transporter: 'Transporters',
-    glutamate: 'Glutamate', sigma: 'Sigma',
+    glutamate: 'Glutamate', sigma: 'Sigma', enzyme: 'Enzymes',
   };
   const GEN_NAME = {
     fga: 'First generation', sga: 'Second generation',
     tga: 'Third generation — D2 partial agonists', new: 'Non-dopaminergic & newest',
     ssri: 'Antidepressants — SSRIs', snri: 'SNRIs', tca: 'Tricyclics',
     atyp: 'Atypical & multimodal', rapid: 'Rapid-acting',
+    maoi: 'MAOIs', hidden: 'Hidden MAOIs — not antidepressants',
   };
 
   const recById = {};
@@ -10274,6 +10459,14 @@ const RLAB = (function () {
   RL_DRUGS.forEach(d => { drugById[d.id] = d; });
 
   const isTransporter = id => recById[id] && recById[id].family === 'transporter';
+  const isEnzyme = id => recById[id] && recById[id].family === 'enzyme';
+  /* On the antidepressant shelf binding strength is not scored: which targets
+     and what the drug does at each is the clinically useful part. The one
+     place relative affinity earns its keep — the dose ladder of doxepin,
+     amitriptyline, mirtazapine and venlafaxine — is taught in guided brewing
+     as a "which does it hold most tightly" question instead. */
+  const noStr = d => rlShelfOf(d) === 'ad';
+  const FLAT_TIER = 3;   // one circle size for every target on that shelf
 
   /* localStorage is a convenience here, never load-bearing: a private window
      or a browser with site data blocked just means no saved bests. */
@@ -10316,14 +10509,15 @@ const RLAB = (function () {
     const core = d.b.filter(x => x.core);
     const bonus = d.b.filter(x => !x.core);
     const per = 1000 / core.length;
-    const W_ID = 0.5, W_ACT = 0.25, W_STR = 0.25;
+    const flat = noStr(d);
+    const W_ID = 0.5, W_ACT = flat ? 0.5 : 0.25, W_STR = flat ? 0 : 0.25;
     let total = 0;
     const rows = [];
 
     const judge = (spec, p, budget) => {
       const tier = rlTierOf(spec.ki);
       const actOk = !!p && (p.act === spec.act || (spec.alt || []).indexOf(p.act) !== -1);
-      const tierOk = !!p && (p.tier === tier || (spec.tierAlt || []).indexOf(p.tier) !== -1);
+      const tierOk = !!p && (flat || p.tier === tier || (spec.tierAlt || []).indexOf(p.tier) !== -1);
       const tierNear = !!p && !tierOk && Math.abs(p.tier - tier) === 1;
       let pts = 0;
       if (p) {
@@ -10672,17 +10866,22 @@ const RLAB = (function () {
     menuSlots.hidden = mode === 'free' || mode === 'guided';
     boardEl.hidden = mode !== 'survival';
 
+    const shelfNote = shelf === 'ad'
+      ? ' On this shelf strength is not scored: name each target and what the drug does there (for an MAOI, whether the inhibition is reversible).'
+      : shelf === 'mix' ? ' Strength is scored for the antipsychotics only.' : '';
     if (mode === 'gauntlet') {
       modeNote.textContent = GAUNTLET_N + ' medications dealt at random, back to back, with the clock running. '
         + '1000 points a round, ' + (GAUNTLET_N * 1000) + ' for a clean sweep — the clock is recorded, not scored.'
-        + (run.best != null ? ' Your best: ' + run.best + ' in ' + fmtTime(run.bestTime || 0) + '.' : '');
+        + (run.best != null ? ' Your best: ' + run.best + ' in ' + fmtTime(run.bestTime || 0) + '.' : '')
+        + shelfNote;
       for (let i = 0; i < GAUNTLET_N; i++) menuSlots.appendChild(slotEl(null));
       startBtn.textContent = 'Start the gauntlet';
 
     } else if (mode === 'survival') {
       modeNote.textContent = 'One drug after another with no end. Score above ' + SURVIVE_AT
         + ' and you brew on; hit ' + SURVIVE_AT + ' or less and the run is over.'
-        + (surv.best ? ' Longest run so far: ' + surv.best + (surv.best === 1 ? ' round.' : ' rounds.') : '');
+        + (surv.best ? ' Longest run so far: ' + surv.best + (surv.best === 1 ? ' round.' : ' rounds.') : '')
+        + shelfNote;
       for (let i = 0; i < 4; i++) menuSlots.appendChild(slotEl(null));
       const inf = slotEl(null);
       inf.querySelector('.q').textContent = '∞';
@@ -10723,7 +10922,7 @@ const RLAB = (function () {
         pickGrid.appendChild(lab);
       } else {
         modeNote.textContent = 'Pick any medication and build its profile at your own pace. '
-          + '1000 points a round, and your best for each drug is kept on this device.';
+          + '1000 points a round, and your best for each drug is kept on this device.' + shelfNote;
       }
 
       const best = load(BEST_KEY);
@@ -10836,8 +11035,15 @@ const RLAB = (function () {
     selected = null;
     nameEl.textContent = drug.name;
     subEl.textContent = drug.brand + ' · ' + drug.cls;
-    playHint.textContent = 'Every receptor in the tray is fair game — some of them this drug does not touch, '
-      + 'and dropping one of those in costs you.';
+    playHint.textContent = noStr(drug)
+      ? 'Every target in the tray is fair game — some of them this drug does not touch, and dropping one of those in costs you. '
+        + 'Strength is not scored on this shelf: what it acts on, and what it does there, is the whole question.'
+      : 'Every receptor in the tray is fair game — some of them this drug does not touch, '
+        + 'and dropping one of those in costs you.';
+    const cellLabel = cellEl.querySelector('.rl-cell-label');
+    if (cellLabel) cellLabel.textContent = noStr(drug)
+      ? 'Drop in every target this drug acts on, then set what it does at each one.'
+      : 'Drop in every receptor this drug acts on, then set what it does at each one and how tightly it binds.';
     addBubbles(cellEl, 9);
     renderTray();
     renderCell();
@@ -10907,9 +11113,11 @@ const RLAB = (function () {
 
   function place(rid) {
     if (placed[rid]) { selectRec(rid); return; }
+    /* An enzyme starts with no action chosen: reversible versus irreversible
+       is the whole question there, so it is never pre-answered. */
     placed[rid] = {
-      act: isTransporter(rid) ? 'reuptake' : 'antagonist',
-      tier: 2,
+      act: isTransporter(rid) ? 'reuptake' : isEnzyme(rid) ? 'pending' : 'antagonist',
+      tier: noStr(drug) ? FLAT_TIER : 2,
     };
     selected = rid;
     renderTray();
@@ -10963,9 +11171,7 @@ const RLAB = (function () {
     actLab.textContent = 'Action';
     actRow.appendChild(actLab);
     RL_ACTIONS.forEach(a => {
-      const only = isTransporter(rid);
-      if (a.transporterOnly !== true && only) return;
-      if (a.transporterOnly === true && !only) return;
+      if (!rlActFits(a, rid)) return;
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'rl-opt o-' + a.id;
@@ -11000,7 +11206,8 @@ const RLAB = (function () {
       sizeRow.appendChild(b);
     });
 
-    editorEl.append(head, actRow, sizeRow);
+    if (noStr(drug)) editorEl.append(head, actRow);
+    else editorEl.append(head, actRow, sizeRow);
   }
 
   /* ---------------- click to drop, drag if you prefer ----------------
@@ -11106,7 +11313,7 @@ const RLAB = (function () {
     const a = actById[actId];
     const s = document.createElement('span');
     s.className = 'rl-pill act-' + actId;
-    s.textContent = a ? a.short : actId;
+    s.textContent = a ? a.short : (actId === 'pending' ? 'Not set' : actId);
     return s;
   }
 
@@ -11129,13 +11336,17 @@ const RLAB = (function () {
     const truth = drug.b.filter(x => x.core)
       .slice()
       .sort((a, b) => a.ki - b.ki)
-      .map(spec => ({ rid: spec.r, act: spec.act, tier: rlTierOf(spec.ki), ki: spec.ki }));
+      .map(spec => noStr(drug)
+        ? { rid: spec.r, act: spec.act, tier: FLAT_TIER, ki: null }
+        : { rid: spec.r, act: spec.act, tier: rlTierOf(spec.ki), ki: spec.ki });
     paintCell(cellTruth, truth, {});
 
     const bonusN = drug.b.length - truth.length;
     yoursFoot.textContent = mine.length + (mine.length === 1 ? ' receptor placed.' : ' receptors placed.')
-      + ' Green rim = right, amber = right receptor but wrong action or band, red = it does not bind there.';
-    truthFoot.textContent = truth.length + ' core receptors'
+      + (noStr(drug)
+        ? ' Green rim = right, amber = right target but wrong action, red = it does not act there.'
+        : ' Green rim = right, amber = right receptor but wrong action or band, red = it does not bind there.');
+    truthFoot.textContent = truth.length + (noStr(drug) ? ' core targets' : ' core receptors')
       + (bonusN > 0 ? ', plus ' + bonusN + ' lower-yield ones in the table below.' : '.');
   }
 
@@ -11157,7 +11368,10 @@ const RLAB = (function () {
 
     resTable.innerHTML = '';
     const thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th>Receptor</th><th>Ki</th><th>Action</th><th>You</th><th>What it means</th></tr>';
+    const flat = noStr(drug);
+    thead.innerHTML = flat
+      ? '<tr><th>Target</th><th>Ki <small style="font-weight:400;letter-spacing:0">(reference)</small></th><th>Action</th><th>You</th><th>What it means</th></tr>'
+      : '<tr><th>Receptor</th><th>Ki</th><th>Action</th><th>You</th><th>What it means</th></tr>';
     resTable.appendChild(thead);
     const tb = document.createElement('tbody');
 
@@ -11179,9 +11393,11 @@ const RLAB = (function () {
       const tdK = document.createElement('td');
       tdK.className = 'rl-ki';
       tdK.innerHTML = '<span></span><small></small>';
-      tdK.querySelector('span').textContent = (r.spec.kiText || fmtKi(r.spec.ki)) + ' nM';
+      tdK.querySelector('span').textContent = r.spec.kiText === 'n/a' ? '—'
+        : (r.spec.kiText || fmtKi(r.spec.ki)) + ' nM';
       const tierDef = RL_TIERS.find(t => t.t === r.tier);
-      tdK.querySelector('small').textContent = tierDef ? tierDef.name.toLowerCase() + ' ' + tierDef.plus : '';
+      tdK.querySelector('small').textContent = flat ? (r.spec.kiText ? '' : 'not scored')
+        : (tierDef ? tierDef.name.toLowerCase() + ' ' + tierDef.plus : '');
 
       const tdA = document.createElement('td');
       tdA.appendChild(pill(r.spec.act));
@@ -11206,7 +11422,7 @@ const RLAB = (function () {
         const sMark = r.tierOk ? '<span class="rl-mark ok">size ✓</span>'
           : r.tierNear ? '<span class="rl-mark part">size ½</span>'
           : '<span class="rl-mark bad">size ✗</span>';
-        line.innerHTML = aMark + ' &nbsp; ' + sMark;
+        line.innerHTML = flat ? aMark : aMark + ' &nbsp; ' + sMark;
         tdY.appendChild(line);
         const pts = document.createElement('div');
         pts.style.cssText = 'margin-top:4px;font-size:11px;color:var(--rl-muted-dim)';
@@ -11231,8 +11447,8 @@ const RLAB = (function () {
       const tdK = document.createElement('td');
       tdK.className = 'rl-ki';
       tdK.innerHTML = '<span></span><small></small>';
-      tdK.querySelector('span').textContent = fmtKi(f.ki) + ' nM';
-      tdK.querySelector('small').textContent = 'negligible';
+      tdK.querySelector('span').textContent = isEnzyme(f.r) ? '—' : fmtKi(f.ki) + ' nM';
+      tdK.querySelector('small').textContent = isEnzyme(f.r) ? '' : 'negligible';
       const tdA = document.createElement('td');
       tdA.innerHTML = '<span style="color:var(--rl-muted-dim);font-size:12px">no meaningful binding</span>';
       const tdY = document.createElement('td');
@@ -11257,7 +11473,8 @@ const RLAB = (function () {
       td.colSpan = 5;
       td.style.cssText = 'color:var(--rl-glow);font-size:12px;padding-top:12px';
       td.textContent = 'Correctly left out: ' + untouched.map(r => recById[r].label).join(', ')
-        + ' — all negligible (Ki ≥ 1000 nM) for ' + drug.name + '.';
+        + (flat ? ' — ' + drug.name + ' does not meaningfully act on any of them.'
+                : ' — all negligible (Ki ≥ 1000 nM) for ' + drug.name + '.');
       tr.appendChild(td);
       tb.appendChild(tr);
     }
@@ -11266,8 +11483,9 @@ const RLAB = (function () {
     const p = document.createElement('span');
     p.textContent = drug.pearl;
     resPearl.appendChild(p);
-    resSrc.textContent = 'Ki source: ' + drug.src
-      + ' Binding constants vary with tissue, species and radioligand — treat the band as the point, not the decimal.';
+    resSrc.textContent = (flat ? 'Source: ' : 'Ki source: ') + drug.src
+      + (flat ? ' Strength is not scored on this shelf; Ki values are shown for reference only.'
+              : ' Binding constants vary with tissue, species and radioligand — treat the band as the point, not the decimal.');
 
     const isRun = mode === 'gauntlet' || mode === 'survival';
     const more = isRun && !died && (mode === 'survival' || qIdx < queue.length - 1);
@@ -11430,18 +11648,21 @@ const RLAB = (function () {
       const o = ov[rid] || {};
       const lab = (recById[rid] || {}).label || rid;
       const trans = isTransporter(rid);
+      const enz = isEnzyme(rid);
       steps.push({
         kind: 'rec', r: rid, bind: bind, note: bind.note,
         ask: o.ask || base.ask || 'Which receptor does this drug act on next?',
         why: o.why || base.why || bind.note,
         actNote: bind.note,
-        actAsk: o.actAsk || base.actAsk || (trans
+        actAsk: o.actAsk || base.actAsk || (enz
+          ? 'And is that inhibition reversible or irreversible?'
+          : trans
           ? 'And what can a drug actually do at ' + lab + '?'
           : 'And at ' + lab + ' — does it block the receptor, partly turn it on, or fully turn it on?'),
         actWhy: o.actWhy || base.actWhy || bind.note,
         line: o.line || base.line || 'It also carries {r} {a}.',
       });
-      if (rid === kiRec) {
+      if (!ad && rid === kiRec) {
         steps.push({
           kind: 'ki', r: rid, bind: bind,
           ask: g.kiAsk || ('How tightly does it hold ' + lab + '? A lower Ki means a tighter grip.'),
@@ -11452,6 +11673,17 @@ const RLAB = (function () {
       const e = ('echo' in o) ? o.echo : base.echo;
       if (e) steps.push({ kind: 'echo', r: rid, bind: bind, ask: e.ask, why: e.why, line: e.line });
     });
+
+    /* The antidepressant shelf has no Ki-band question. Where the ORDER of a
+       drug's affinities carries the clinical story, a single "which does it
+       hold most tightly" question closes the walkthrough instead. */
+    if (ad && g.rank && byR[g.rank]) {
+      steps.push({
+        kind: 'rank', r: g.rank, bind: byR[g.rank],
+        ask: g.rankAsk, why: g.rankWhy, line: g.rankLine,
+        opts: steps.filter(st => st.kind === 'rec').map(st => st.r),
+      });
+    }
 
     let closing = g.closing;
     if (closing === undefined) {
@@ -11582,13 +11814,22 @@ const RLAB = (function () {
         c.onclick = () => answerRec(c.dataset.rec);
       });
 
+    } else if (gPhase === 'rank') {
+      const opts = askShell(st.ask, 'Step ' + nStep + ' of ' + nAll + ' · the affinity ladder');
+      const row = document.createElement('div');
+      row.className = 'rl-ask-row';
+      st.opts.forEach(rid => row.appendChild(gdChip(rid)));
+      opts.appendChild(row);
+      opts.querySelectorAll('.rl-chip-r').forEach(c => {
+        c.onclick = () => answerRank(c.dataset.rec);
+      });
+
     } else if (gPhase === 'act') {
       const opts = askShell(st.actAsk, 'Step ' + nStep + ' of ' + nAll + ' · what it does there');
       const row = document.createElement('div');
       row.className = 'rl-ask-row';
-      const trans = isTransporter(st.r);
       RL_ACTIONS.forEach(a => {
-        if ((a.transporterOnly === true) !== trans) return;
+        if (!rlActFits(a, st.r)) return;
         const b = document.createElement('button');
         b.type = 'button';
         b.className = 'rl-opt o-' + a.id;
@@ -11715,7 +11956,7 @@ const RLAB = (function () {
     if (st.kind === 'rec') {
       gPlaced[st.r] = {
         act: 'pending',
-        tier: (st.r === gKiRec) ? 2 : rlTierOf(st.bind.ki),
+        tier: noStr(drug) ? FLAT_TIER : (st.r === gKiRec) ? 2 : rlTierOf(st.bind.ki),
         judge: ok ? 'ok' : 'part',
       };
     }
@@ -11728,6 +11969,25 @@ const RLAB = (function () {
       st.why,
       ok ? null : 'Nothing you picked goes in the cauldron. ' + recById[st.r].label + ' is lit up in the tray and dropped in for you.',
       st.kind === 'rec' ? st.note : null);
+  }
+
+  function answerRank(rid) {
+    const st = gPlan.steps[gStep];
+    const ok = rid === st.r;
+    gAsked++; if (ok) gFirst++;
+    gFill[gStep] = gFill[gStep] || {};
+    gFill[gStep].r = ok ? 'first' : 'corrected';
+    gdAsk.querySelector('[data-rec="' + rid + '"]').classList.add(ok ? 'right' : 'wrong');
+    if (!ok) {
+      const truth = gdAsk.querySelector('[data-rec="' + st.r + '"]');
+      if (truth) truth.classList.add('reveal');
+    }
+    lockOpts('.rl-chip-r');
+    renderGuidePara();
+    renderGuideCell(st.r);
+    feedback(ok,
+      ok ? 'Correct — ' + recById[st.r].full : 'It is ' + recById[st.r].full,
+      st.why);
   }
 
   function answerAct(actId) {
@@ -11797,8 +12057,8 @@ const RLAB = (function () {
     if (gPhase === 'rec') { gPhase = 'act'; renderGuideAsk(); renderGuidePara(); return; }
     gStep++;
     if (gStep >= gPlan.steps.length) { finishGuide(); return; }
-    gPhase = gPlan.steps[gStep].kind === 'ki' ? 'ki'
-           : gPlan.steps[gStep].kind === 'echo' ? 'echo' : 'rec';
+    const kind = gPlan.steps[gStep].kind;
+    gPhase = kind === 'ki' || kind === 'echo' || kind === 'rank' ? kind : 'rec';
     renderGuideAsk();
     renderGuidePara();
     renderGuideCell();
