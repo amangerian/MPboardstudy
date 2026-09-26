@@ -2717,6 +2717,8 @@
   .sl-fb.ok { background: var(--sl-ok-bg); border: 1px solid #b9d8b3; }
   .sl-fb.miss { background: var(--sl-bad-bg); border: 1px solid #e6b8aa; }
   .sl-fb.plain { background: var(--sl-paper); border: 1px solid var(--sl-rule); }
+  .sl-fb.clin { background: var(--sl-card); border: 1px solid var(--sl-rule); border-left: 4px solid var(--sl-red); }
+  .sl-fb.clin b { color: var(--sl-red); }
   .sl-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
   .sl-list li { font-size: 13.5px; line-height: 1.5; padding-left: 12px; border-left: 3px solid var(--sl-rule); }
   .sl-list li.good { border-left-color: var(--sl-ok); }
@@ -2759,7 +2761,7 @@
   <div class="section-label">Pick a game</div>
   <div class="game-grid" id="gameGrid"></div>
 
-  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 19 September 2026</footer>
+  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 25 September 2026</footer>
 </div>
 
 <!-- ===================== GAME VIEW ===================== -->
@@ -12593,54 +12595,70 @@ const SL_CARDS = [
   /* ---------------- antidepressants at serotonin receptors ---------------- */
   { id: 'vila-1a', shelf: 'ad', kind: 'rec', drug: 'Vilazodone', brand: 'Viibryd', rec: '5-HT₁A', act: 'partial agonist',
     lane: 'gi', msg: 'camp-down',
-    msgWhy: 'A partial agonist at a Gi receptor pushes the signal the same way serotonin does, only less far: adenylyl cyclase is inhibited, cAMP falls, GIRK channels open. Vilazodone builds this 5-HT₁A partial agonism into an SSRI — SSRI-plus-buspirone in one molecule.' },
+    msgWhy: 'A partial agonist at a Gi receptor pushes the signal the same way serotonin does, only less far: adenylyl cyclase is inhibited, cAMP falls, GIRK channels open. Vilazodone builds this 5-HT₁A partial agonism into an SSRI — SSRI-plus-buspirone in one molecule.',
+    clinical: 'The 5-HT₁A partial agonism was meant to speed onset and spare sexual function; neither has been shown convincingly against an ordinary SSRI. What stands out in practice is GI upset — diarrhoea and nausea are its commonest side effects — and it must be taken with food (absorption roughly doubles) and titrated up.' },
   { id: 'busp-1a', shelf: 'ad', kind: 'rec', drug: 'Buspirone', brand: 'BuSpar · SSRI augmentation', rec: '5-HT₁A', act: 'partial agonist',
     lane: 'gi', msg: 'camp-down',
-    msgWhy: 'Gi-coupled 5-HT₁A: cAMP falls and neurons hyperpolarise through GIRK channels. Buspirone behaves as a near-full agonist at raphe autoreceptors (firing falls, then the autoreceptors desensitise over weeks) and as a partial agonist postsynaptically; the delayed anxiolysis is attributed to that sequence. It is used for anxiety and as an add-on to an SSRI.' },
+    msgWhy: 'Gi-coupled 5-HT₁A: cAMP falls and neurons hyperpolarise through GIRK channels. Buspirone behaves as a near-full agonist at raphe autoreceptors (firing falls, then the autoreceptors desensitise over weeks) and as a partial agonist postsynaptically; the delayed anxiolysis is attributed to that sequence. It is used for anxiety and as an add-on to an SSRI.',
+    clinical: 'Anxiolysis for generalized anxiety disorder, building over 2–4 weeks: no use as-needed, and not effective for panic. No sedation, dependence or withdrawal, and no cross-tolerance with benzodiazepines, so it will not cover benzodiazepine withdrawal. Side effects are mild: dizziness, headache, nausea. Also used to augment an SSRI (STAR*D level 2) and, on thin evidence, for SSRI sexual dysfunction.' },
   { id: 'vort-1a', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₁A', act: 'agonist',
     lane: 'gi', msg: 'camp-down',
-    msgWhy: 'Vortioxetine is close to a full agonist here (intrinsic activity about 96% in cell assays), so it drives the Gi signal fully: cAMP down, GIRK open. Contrast buspirone and vilazodone, which are partial agonists at the same receptor.' },
+    msgWhy: 'Vortioxetine is close to a full agonist here (intrinsic activity about 96% in cell assays), so it drives the Gi signal fully: cAMP down, GIRK open. Contrast buspirone and vilazodone, which are partial agonists at the same receptor.',
+    clinical: 'Thought to add to its antidepressant and anti-anxiety effect, as buspirone’s 5-HT₁A action does. Along with its other receptor actions it is part of why vortioxetine is weight-neutral and not sedating.' },
   { id: 'vort-1b', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₁B', act: 'partial agonist',
     lane: 'gi', msg: 'camp-down',
-    msgWhy: '5-HT₁B is Gi-coupled like the rest of the 5-HT₁ family: partial agonism lowers cAMP. It sits on axon terminals as an autoreceptor and as a heteroreceptor on other neurons, and it is the vascular receptor behind the triptans.' },
+    msgWhy: '5-HT₁B is Gi-coupled like the rest of the 5-HT₁ family: partial agonism lowers cAMP. It sits on axon terminals as an autoreceptor and as a heteroreceptor on other neurons, and it is the vascular receptor behind the triptans.',
+    clinical: 'Raises serotonin release, but no clinical effect specific to 5-HT₁B is established — treat it as part of the mechanism, not something you will see in the patient.' },
   { id: 'vort-3', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₃', act: 'antagonist',
     lane: 'ion', msg: 'ion-down',
-    msgWhy: 'An antagonist keeps serotonin from opening the channel, so less Na⁺ and Ca²⁺ flows in. 5-HT₃ blockade is ondansetron’s mechanism — yet nausea is still vortioxetine’s most common side effect, probably because its SERT blockade raises serotonin at other receptors.' },
+    msgWhy: 'An antagonist keeps serotonin from opening the channel, so less Na⁺ and Ca²⁺ flows in. 5-HT₃ blockade is ondansetron’s mechanism — yet nausea is still vortioxetine’s most common side effect, probably because its SERT blockade raises serotonin at other receptors.',
+    clinical: 'Blocking 5-HT₃ is how ondansetron stops nausea, yet nausea is vortioxetine’s commonest side effect (roughly 20–30%, dose-dependent, mostly in the first weeks): the extra serotonin from SERT blockade wins. Sexual side effects are lower than with SSRIs at 5–10 mg, but they rise with dose.' },
   { id: 'vort-7', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₇', act: 'antagonist',
     lane: 'gs', msg: 'camp-down',
-    msgWhy: 'Blocking a Gs receptor removes serotonin’s push on adenylyl cyclase, so cAMP ends up lower than it would be. The sign-flip to remember: blocking a Gs receptor lowers cAMP; blocking a Gi receptor raises it.' },
+    msgWhy: 'Blocking a Gs receptor removes serotonin’s push on adenylyl cyclase, so cAMP ends up lower than it would be. The sign-flip to remember: blocking a Gs receptor lowers cAMP; blocking a Gi receptor raises it.',
+    clinical: 'Proposed to underlie its benefit on cognition in depression — its label reports improved processing speed (the DSST) independent of mood. The 5-HT₇ link is plausible but not proven.' },
   { id: 'vort-1d', shelf: 'ad', kind: 'rec', drug: 'Vortioxetine', brand: 'Trintellix', rec: '5-HT₁D', act: 'antagonist',
     lane: 'gi', msg: 'camp-up',
-    msgWhy: 'The sign-flip card. 5-HT₁D is Gi-coupled, so serotonin normally holds cAMP down there; blocking the receptor lifts that brake and cAMP ends up higher. Blocking a Gi receptor raises cAMP; blocking a Gs receptor lowers it. 5-HT₁D is a terminal autoreceptor, so blocking it also favours serotonin release.' },
+    msgWhy: 'The sign-flip card. 5-HT₁D is Gi-coupled, so serotonin normally holds cAMP down there; blocking the receptor lifts that brake and cAMP ends up higher. Blocking a Gi receptor raises cAMP; blocking a Gs receptor lowers it. 5-HT₁D is a terminal autoreceptor, so blocking it also favours serotonin release.',
+    clinical: 'Blocking this terminal autoreceptor raises serotonin release. No clinical effect specific to 5-HT₁D is established.' },
   { id: 'mirt-a2', shelf: 'ad', kind: 'rec', drug: 'Mirtazapine', brand: 'Remeron', rec: 'α₂ (on serotonin and noradrenaline terminals)', act: 'antagonist',
     lane: 'gi', msg: 'camp-up',
     laneQ: 'Which pathway does the α₂ receptor signal through? Tap its lane on the map.',
     laneWhy: 'α₂ adrenergic receptors couple to Gi/o, like the 5-HT₁ family. On noradrenergic terminals they are autoreceptors, and on serotonergic terminals heteroreceptors; either way they are a brake on release.',
-    msgWhy: 'Blocking a Gi receptor lifts its brake: cAMP rises, and the Gβγ brake on presynaptic Ca²⁺ channels comes off, so more noradrenaline and serotonin are released. This is the proposed basis of mirtazapine’s antidepressant effect — it has no reuptake inhibition at all.' },
+    msgWhy: 'Blocking a Gi receptor lifts its brake: cAMP rises, and the Gβγ brake on presynaptic Ca²⁺ channels comes off, so more noradrenaline and serotonin are released. This is the proposed basis of mirtazapine’s antidepressant effect — it has no reuptake inhibition at all.',
+    clinical: 'The antidepressant effect itself: more noradrenaline and serotonin released without any reuptake inhibition, so little sexual dysfunction and little nausea. That also makes it a common add-on to an SSRI or SNRI in treatment-resistant depression.' },
   { id: 'mirt-2a', shelf: 'ad', kind: 'rec', drug: 'Mirtazapine', brand: 'Remeron', rec: '5-HT₂A', act: 'antagonist',
     lane: 'gq', msg: 'gq-down',
-    msgWhy: 'Blocking a Gq receptor takes serotonin’s IP₃/DAG/Ca²⁺ signal away. Much of what the SSRIs do wrong — early jitteriness, insomnia, sexual dysfunction — is put down to 5-HT₂A stimulation, so a 5-HT₂A blocker improves sleep and spares those effects.' },
+    msgWhy: 'Blocking a Gq receptor takes serotonin’s IP₃/DAG/Ca²⁺ signal away. Much of what the SSRIs do wrong — early jitteriness, insomnia, sexual dysfunction — is put down to 5-HT₂A stimulation, so a 5-HT₂A blocker improves sleep and spares those effects.',
+    clinical: 'Better sleep, and none of the SSRI’s early jitteriness or sexual dysfunction. (The heavy sedation at low doses is mostly its H₁ blockade, which is why sedation lessens as the dose goes up and noradrenergic effects grow.)' },
   { id: 'mirt-2c', shelf: 'ad', kind: 'rec', drug: 'Mirtazapine', brand: 'Remeron', rec: '5-HT₂C', act: 'antagonist / inverse agonist',
     lane: 'gq', msg: 'gq-down',
-    msgWhy: '5-HT₂C has real constitutive activity, and mirtazapine is often described as an inverse agonist there — either way the Gq signal falls. That frees prefrontal noradrenaline and dopamine (antidepressant) and releases appetite, which together with its very strong H₁ blockade drives the weight gain.' },
+    msgWhy: '5-HT₂C has real constitutive activity, and mirtazapine is often described as an inverse agonist there — either way the Gq signal falls. That frees prefrontal noradrenaline and dopamine (antidepressant) and releases appetite, which together with its very strong H₁ blockade drives the weight gain.',
+    clinical: 'Increased appetite and weight gain (with H₁ blockade), among the highest of any antidepressant. Useful in an older or cancer patient with depression, insomnia and poor appetite; a problem in metabolic syndrome.' },
   { id: 'mirt-3', shelf: 'ad', kind: 'rec', drug: 'Mirtazapine', brand: 'Remeron', rec: '5-HT₃', act: 'antagonist',
     lane: 'ion', msg: 'ion-down',
-    msgWhy: 'Channel blocked, less cation influx. Mirtazapine blocks no transporter and blocks 5-HT₃ outright, so it tends to settle nausea rather than cause it — the opposite of an SSRI in week one.' },
+    msgWhy: 'Channel blocked, less cation influx. Mirtazapine blocks no transporter and blocks 5-HT₃ outright, so it tends to settle nausea rather than cause it — the opposite of an SSRI in week one.',
+    clinical: 'Antiemetic: mirtazapine rarely causes nausea and can relieve it, which helps in depression with nausea (e.g. during chemotherapy) or in patients who could not tolerate an SSRI’s first weeks.' },
   { id: 'traz-2a', shelf: 'ad', kind: 'rec', drug: 'Trazodone', brand: 'Desyrel', rec: '5-HT₂A', act: 'antagonist',
     lane: 'gq', msg: 'gq-down',
-    msgWhy: '5-HT₂A is trazodone’s tightest target. Blocking its Gq signal deepens slow-wave sleep — with α₁ and H₁ blockade, the reason low-dose trazodone is a hypnotic long before it reaches antidepressant doses.' },
+    msgWhy: '5-HT₂A is trazodone’s tightest target. Blocking its Gq signal deepens slow-wave sleep — with α₁ and H₁ blockade, the reason low-dose trazodone is a hypnotic long before it reaches antidepressant doses.',
+    clinical: 'Deeper slow-wave sleep: a hypnotic at 25–100 mg, well below antidepressant doses (150–400 mg or more). Its other side effects come from other receptors — orthostatic hypotension and priapism from α₁ blockade (priapism is rare but a urological emergency), sedation from H₁.' },
   { id: 'traz-1a', shelf: 'ad', kind: 'rec', drug: 'Trazodone', brand: 'Desyrel', rec: '5-HT₁A', act: 'partial agonist',
     lane: 'gi', msg: 'camp-down',
-    msgWhy: 'A weaker action than its 5-HT₂A blockade, but in the Gi direction: partial agonism lowers cAMP. Trazodone combines 5-HT₂A blockade, weak SERT inhibition and 5-HT₁A partial agonism.' },
+    msgWhy: 'A weaker action than its 5-HT₂A blockade, but in the Gi direction: partial agonism lowers cAMP. Trazodone combines 5-HT₂A blockade, weak SERT inhibition and 5-HT₁A partial agonism.',
+    clinical: 'May contribute to its anxiolytic and antidepressant effect at full doses. No clinical effect can be pinned on this receptor alone.' },
   { id: 'flx-2c', shelf: 'ad', kind: 'rec', drug: 'Fluoxetine', brand: 'Prozac', rec: '5-HT₂C', act: 'antagonist',
     lane: 'gq', msg: 'gq-down',
-    msgWhy: 'Fluoxetine’s best-known receptor action beyond SERT. Blocking the Gq signal at 5-HT₂C releases prefrontal noradrenaline and dopamine — the usual explanation for why fluoxetine is the most activating SSRI.' },
+    msgWhy: 'Fluoxetine’s best-known receptor action beyond SERT. Blocking the Gq signal at 5-HT₂C releases prefrontal noradrenaline and dopamine — the usual explanation for why fluoxetine is the most activating SSRI.',
+    clinical: 'Activation: early insomnia, anxiety or restlessness, so fluoxetine is dosed in the morning and suits a patient with fatigue and hypersomnia. Early appetite suppression too. The 5-HT₂C action is one proposed reason for the olanzapine–fluoxetine combination (Symbyax) in bipolar and treatment-resistant depression.' },
   { id: 'sert-3', shelf: 'ad', kind: 'rec', drug: 'Sertraline', brand: 'Zoloft · the SSRI in week one', rec: '5-HT₃', act: 'more serotonin reaches it',
     lane: 'ion', msg: 'ion-up',
-    msgWhy: 'Sertraline has no meaningful direct action at 5-HT₃, but blocking SERT floods it with serotonin: the channel opens more often on gut vagal afferents and in the area postrema, and the result is the nausea of the first weeks, which usually fades as the system adapts.' },
+    msgWhy: 'Sertraline has no meaningful direct action at 5-HT₃, but blocking SERT floods it with serotonin: the channel opens more often on gut vagal afferents and in the area postrema, and the result is the nausea of the first weeks, which usually fades as the system adapts.',
+    clinical: 'Nausea in the first 1–2 weeks, and loose stools — sertraline causes the most diarrhoea of the SSRIs. It usually settles; starting low, taking it with food, and a short course of ondansetron all help.' },
   { id: 'ssri-2', shelf: 'ad', kind: 'rec', drug: 'Paroxetine', brand: 'Paxil · any SSRI', rec: '5-HT₂A / 5-HT₂C', act: 'more serotonin reaches them',
     lane: 'gq', msg: 'gq-up',
-    msgWhy: 'More synaptic serotonin drives the Gq signal up at 5-HT₂A and 5-HT₂C. The insomnia, agitation and sexual dysfunction of the SSRIs are attributed largely to these receptors, which is the rationale for adding a 5-HT₂ blocker. Trazodone is widely used for SSRI insomnia; a placebo-controlled trial of mirtazapine for SSRI sexual dysfunction was negative.' },
+    msgWhy: 'More synaptic serotonin drives the Gq signal up at 5-HT₂A and 5-HT₂C. The insomnia, agitation and sexual dysfunction of the SSRIs are attributed largely to these receptors, which is the rationale for adding a 5-HT₂ blocker. Trazodone is widely used for SSRI insomnia; a placebo-controlled trial of mirtazapine for SSRI sexual dysfunction was negative.',
+    clinical: 'Insomnia, agitation or jitteriness early on, and sexual dysfunction (low libido, delayed orgasm or anorgasmia, erectile dysfunction) that often persists. Options: wait, lower the dose, switch to bupropion, mirtazapine or vortioxetine, add bupropion, or a PDE5 inhibitor for erectile dysfunction. Paroxetine is the worst SSRI for sexual effects.' },
 
   /* ---------------- mood stabilizers: which pathway ---------------- */
   { id: 'li-path', shelf: 'ms', kind: 'rec', drug: 'Lithium', brand: 'Lithobid', rec: 'IMPase', act: 'inhibits', site: 'imp',
@@ -12648,26 +12666,30 @@ const SL_CARDS = [
     laneQ: 'Which pathway does IMPase serve? Tap its lane on the map.',
     msgQ: 'Lithium inhibits IMPase: what happens to that pathway’s signal?',
     laneWhy: 'Inositol monophosphatase supplies the inositol for PIP₂, the membrane lipid that PLCβ splits every time a Gq/11 receptor fires. It is the last step both of recycling inositol and of making it new, so it belongs to the Gq pathway.',
-    msgWhy: 'Without free inositol, PIP₂ cannot be rebuilt, so the cells firing their Gq receptors hardest make less IP₃ and DAG while quiet cells are spared. This is Berridge’s inositol-depletion hypothesis of lithium’s mood-stabilizing effect.' },
+    msgWhy: 'Without free inositol, PIP₂ cannot be rebuilt, so the cells firing their Gq receptors hardest make less IP₃ and DAG while quiet cells are spared. This is Berridge’s inositol-depletion hypothesis of lithium’s mood-stabilizing effect.',
+    clinical: 'Mood stabilization: acute antimania, prevention of both manic and depressive relapse, and the best evidence of any mood stabilizer for reducing suicide.' },
   { id: 'vpa-path', shelf: 'ms', kind: 'rec', drug: 'Valproate', brand: 'Depakote', rec: 'MIPS (new inositol)', act: 'inhibits, indirectly', site: 'mips',
     lane: 'gq', msg: 'gq-down',
     laneQ: 'Which pathway does MIPS serve? Tap its lane on the map.',
     msgQ: 'Valproate lowers MIPS activity: what happens to that pathway’s signal?',
     laneWhy: 'Myo-inositol-1-phosphate synthase is the first step in making new inositol from glucose-6-phosphate — fresh supply for PIP₂, the lipid that Gq/11 receptors spend.',
-    msgWhy: 'Less new inositol means less PIP₂, so less IP₃ and DAG. Valproate cuts de novo synthesis at its first step; lithium blocks IMPase, the final step shared by both recycling and new synthesis — two routes that converge on inositol depletion, one of the explanations for why the two drugs share mood-stabilizing effects.' },
+    msgWhy: 'Less new inositol means less PIP₂, so less IP₃ and DAG. Valproate cuts de novo synthesis at its first step; lithium blocks IMPase, the final step shared by both recycling and new synthesis — two routes that converge on inositol depletion, one of the explanations for why the two drugs share mood-stabilizing effects.',
+    clinical: 'Mood stabilization, mainly antimanic: valproate works for acute mania, including mixed episodes and rapid cycling. Its evidence for bipolar depression and maintenance is weaker than lithium’s.' },
 
   { id: 'li-kidney', shelf: 'ms', kind: 'rec', drug: 'Lithium', brand: 'in the kidney · nephrogenic DI', rec: 'the vasopressin V2 receptor', act: 'blunts its signal',
     lane: 'gs', msg: 'camp-down',
     laneQ: 'In the collecting duct, which pathway does the vasopressin V2 receptor signal through? Tap its lane on the map.',
     msgQ: 'Lithium blunts vasopressin signalling in the collecting duct: what happens to the messenger?',
     laneWhy: 'The V2 receptor is Gs-coupled: vasopressin raises cAMP, PKA phosphorylates aquaporin-2 and moves it into the apical membrane, and water is reabsorbed.',
-    msgWhy: 'Lithium enters principal cells through the epithelial sodium channel (ENaC) and blunts vasopressin-stimulated cAMP (adenylyl cyclase inhibition, with GSK-3β inhibition contributing). Less aquaporin-2 reaches the membrane, which causes nephrogenic diabetes insipidus. Amiloride blocks ENaC and keeps lithium out of the cell; it is the targeted treatment when lithium has to continue.' },
+    msgWhy: 'Lithium enters principal cells through the epithelial sodium channel (ENaC) and blunts vasopressin-stimulated cAMP (adenylyl cyclase inhibition, with GSK-3β inhibition contributing). Less aquaporin-2 reaches the membrane, which causes nephrogenic diabetes insipidus. Amiloride blocks ENaC and keeps lithium out of the cell; it is the targeted treatment when lithium has to continue.',
+    clinical: 'Polyuria and polydipsia — common, and in a minority frank nephrogenic diabetes insipidus that does not respond to desmopressin. Dehydration then raises lithium levels and risks toxicity. Amiloride is the treatment if lithium must continue; long-term use can also cause chronic kidney disease, so creatinine is monitored.' },
   { id: 'ltg-path', shelf: 'ms', kind: 'rec', drug: 'Lamotrigine', brand: 'Lamictal', rec: 'the voltage-gated Na⁺ channel', act: 'blocks', site: 'nav',
     lane: 'ion', msg: 'ion-down',
     laneQ: 'What kind of signalling is the voltage-gated Na⁺ channel? Tap its lane on the map.',
     msgQ: 'Lamotrigine blocks the voltage-gated Na⁺ channel: what happens?',
     laneWhy: 'An ion channel: no G protein and no second messenger. This one opens with depolarisation rather than with a ligand (5-HT₃ is drawn as the lane’s example), and the inrushing Na⁺ drives the action potential.',
-    msgWhy: 'Lamotrigine binds the channel in its inactivated state and slows recovery, so less Na⁺ enters during rapid firing: fewer action potentials, more stable membranes and less presynaptic glutamate release. Carbamazepine blocks the same channel the same way.' },
+    msgWhy: 'Lamotrigine binds the channel in its inactivated state and slows recovery, so less Na⁺ enters during rapid firing: fewer action potentials, more stable membranes and less presynaptic glutamate release. Carbamazepine blocks the same channel the same way.',
+    clinical: 'Prevents depressive relapse in bipolar disorder, with little effect against mania. Na⁺-channel side effects are dizziness, diplopia, ataxia and headache. The serious risk — rash and SJS/TEN — is immune-mediated rather than from the channel, and is why titration is slow.' },
 
   /* ---------------- medication cards: pin every site ---------------- */
   { id: 'li-site', shelf: 'ms', kind: 'site', drug: 'Lithium', brand: 'Lithobid · lithium carbonate',
@@ -12863,6 +12885,7 @@ const SLAB = (function () {
       });
       panel.append(el('div', 'sl-step', 'Step 2 of 2 · the messenger'), opts,
         fb(ok ? 'ok' : 'miss', ok ? 'Right — ' + right : 'It is ' + right, card.msgWhy),
+        card.clinical ? fb('clin', 'Clinical effect', card.clinical) : '',
         scoreLine(), nextButton(isLast() ? (mode === 'free' ? 'Back to the deck' : 'See the run') : 'Next card →', advance));
     } else if (!rec && phase === 'pin') {
       const n = Object.keys(pins).length;
