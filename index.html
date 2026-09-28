@@ -3020,6 +3020,16 @@
   .ar-actions button:hover:not(:disabled) { color: var(--ar-gold); border-color: var(--ar-gold); }
   .ar-actions button:disabled { opacity: .4; cursor: default; }
 
+
+  .ar-help { margin-top: 14px; background: rgba(26,16,54,.6); border: 1px solid #5a3560; border-radius: 12px; padding: 0 16px; color: var(--ar-muted); font-size: 13.5px; line-height: 1.6; }
+  .ar-help summary { cursor: pointer; padding: 10px 0; font: 700 12px Arial, sans-serif; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ar-gold); list-style: none; }
+  .ar-help summary::-webkit-details-marker { display: none; }
+  .ar-help summary::before { content: '\25B8'; display: inline-block; margin-right: 8px; transition: transform .15s; }
+  .ar-help[open] summary::before { transform: rotate(90deg); }
+  .ar-help summary:focus-visible { outline: 2px solid var(--ar-gold); outline-offset: 2px; border-radius: 4px; }
+  .ar-help ul { margin: 0 0 12px; padding-left: 20px; }
+  .ar-help b { color: var(--ar-text); }
+  .ar-disclaimer { margin-top: 12px; background: #fff3d6; color: var(--ar-ink); border: 2px solid var(--ar-ink); border-left: 8px solid #d9541e; border-radius: 10px; padding: 10px 14px; font-size: 13px; line-height: 1.5; }
   /* ---- result card ---- */
   .ar-card { margin-top: 12px; background: var(--ar-paper); color: var(--ar-ink); border: 4px solid var(--ar-ink); border-radius: 14px; padding: 16px 18px 18px; box-shadow: 6px 6px 0 rgba(0,0,0,.35); }
   .ar-card.won { border-color: #1f7a3a; }
@@ -3772,6 +3782,23 @@
       <button type="button" id="arQuit">Quit</button>
     </div>
     <div class="ar-card" id="arCard" hidden></div>
+
+    <details class="ar-help" id="arHelp">
+      <summary>How to play</summary>
+      <ul>
+        <li>The meter shows the medication&rsquo;s level. Get the marker into the green <b>window</b>.</li>
+        <li><b>Too weak?</b> Throw something that <b>inhibits</b> the enzyme that clears it. <b>Too strong?</b> Throw an <b>inducer</b>.</li>
+        <li><b>Strong</b> perpetrators move the meter two notches, <b>moderate</b> ones one, and <b>weak</b> ones only flicker &mdash; so a strong throw can overshoot.</li>
+        <li>Wrong enzyme: no effect. Wrong direction: it gets worse. Each turn that ends outside the window, the medication hits you (2 HP when it&rsquo;s far out).</li>
+        <li>Lithium, valproate and lamotrigine aren&rsquo;t cleared by CYP enzymes &mdash; think kidney and glucuronidation instead.</li>
+        <li>After each battle the card shows every throw&rsquo;s real pathway and strength, and why the interaction matters clinically.</li>
+        <li>Keys: <b>1&ndash;4</b> to throw, <b>Space</b> or a tap on the text box to skip ahead.</li>
+      </ul>
+    </details>
+
+    <div class="ar-disclaimer" role="note">
+      <b>Educational use only.</b> Medications should generally not be used to change the concentration of other medications, except in rare situations. This game is meant for board review, not as clinical guidance.
+    </div>
   </div>
 
   <!-- survival summary -->
