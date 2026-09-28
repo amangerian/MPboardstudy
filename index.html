@@ -2747,6 +2747,341 @@
   .game-card.signal .tag { background: #fffdf7; border-color: #d5c9ad; color: #505866; }
   .game-card.signal .play-cue { color: #1e2430; }
   .game-card.signal:hover .play-cue { color: var(--sl-red); }
+
+  /* ============================================================
+   * WIZARD ARENA — a dusk colosseum. Everything is scoped to
+   * #arenaView or the .arena hub card so nothing leaks out.
+   * ============================================================ */
+  :root {
+    --ar-sky-1: #1a1036;
+    --ar-sky-2: #4a2160;
+    --ar-sky-3: #c7514a;
+    --ar-sky-4: #f3a45a;
+    --ar-sand: #e9cf95;
+    --ar-sand-2: #c9a466;
+    --ar-stone: #3a2447;
+    --ar-ink: #2a1a2e;
+    --ar-paper: #fcf6e6;
+    --ar-paper-2: #f1e5c6;
+    --ar-gold: #ffcc4d;
+    --ar-text: #fff4e0;
+    --ar-muted: #e4c9d8;
+    --ar-muted-dim: #b28aa6;
+    --ar-ok: #3fbf5f;
+    --ar-mid: #f2c230;
+    --ar-low: #e04b3a;
+    --ar-frost: #5ac8fa;
+    --ar-fire: #ff7a3d;
+  }
+  .game-card.arena {
+    background:
+      radial-gradient(ellipse 90% 45% at 50% 100%, rgba(243,164,90,.45), transparent 70%),
+      linear-gradient(180deg, #2a1648 0%, #5a2660 55%, #9c3e52 100%);
+    border-color: #7a3a6e;
+  }
+  .game-card.arena:hover { border-color: var(--ar-gold); }
+  .game-card.arena .kind { color: var(--ar-sky-4); }
+  .game-card.arena h2 { color: var(--ar-gold); text-shadow: 0 2px 0 #2a1036, 0 0 16px rgba(255,160,80,.35); }
+  .game-card.arena p { color: #fbe8e4; }
+  .game-card.arena .tag { border-color: #7a3a6e; background: rgba(26,16,54,.6); color: var(--ar-muted); }
+  .game-card.arena:hover .play-cue { color: var(--ar-gold); }
+
+  html.arena-active, html.arena-active body {
+    background-color: #1c0f30;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% 100%, rgba(243,164,90,.18), transparent 70%),
+      linear-gradient(180deg, #120a26 0%, #24123c 60%, #3a1a3e 100%);
+    background-attachment: fixed;
+  }
+  #arenaView { color: var(--ar-text); }
+  #arenaView .back-link { color: var(--ar-muted-dim); border-color: #5a3560; }
+  #arenaView .back-link:hover { color: var(--ar-gold); border-color: var(--ar-gold); }
+  #arenaView .titlebar h1 { color: var(--ar-gold); font-style: normal; text-shadow: 0 3px 0 #2a1036, 0 0 26px rgba(255,140,70,.45); }
+  #arenaView .titlebar p { color: var(--ar-muted); }
+  #arenaView footer.hint { color: var(--ar-muted-dim); }
+  #arenaView .reset-board-btn { border-color: #7a3a6e; color: var(--ar-muted); background: rgba(26,16,54,.5); }
+  #arenaView .reset-board-btn:hover { border-color: var(--ar-gold); color: var(--ar-gold); }
+  #arenaView .ar-primary { background: var(--ar-gold); color: var(--ar-ink); border-color: var(--ar-gold); }
+  #arenaView .ar-primary:hover { background: #ffe08a; color: var(--ar-ink); }
+
+  .ar-topbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 4px 0 0; }
+  .ar-mute {
+    margin-left: auto; background: rgba(26,16,54,.6); color: var(--ar-muted); border: 1px solid #5a3560;
+    border-radius: 20px; padding: 6px 14px; font: 700 12px Arial, sans-serif; letter-spacing: 1px; cursor: pointer;
+  }
+  .ar-mute:hover { color: var(--ar-gold); border-color: var(--ar-gold); }
+  .ar-mute[aria-pressed="true"] { opacity: .65; text-decoration: line-through; }
+
+  .ar-seg { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+  .ar-seg button {
+    background: rgba(26,16,54,.6); color: var(--ar-muted); border: 2px solid #5a3560; border-radius: 999px;
+    padding: 8px 18px; cursor: pointer; font: 700 13px Arial, sans-serif; letter-spacing: .5px;
+  }
+  .ar-seg button:hover { border-color: var(--ar-gold); color: var(--ar-gold); }
+  .ar-seg button[aria-pressed="true"] { background: var(--ar-gold); border-color: var(--ar-gold); color: var(--ar-ink); }
+  .ar-seg.small button { font-size: 12px; padding: 6px 14px; }
+  .ar-note { text-align: center; color: var(--ar-muted); font-size: 14px; line-height: 1.6; max-width: 700px; margin: 14px auto 0; }
+  .ar-how {
+    max-width: 760px; margin: 22px auto 0; background: rgba(26,16,54,.55); border: 1px solid #5a3560; border-radius: 12px;
+    padding: 14px 18px; font-size: 13.5px; line-height: 1.6; color: var(--ar-muted);
+  }
+  .ar-how b { color: var(--ar-text); }
+  .ar-how ul { margin: 6px 0 0; padding-left: 20px; }
+
+  .ar-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin-top: 18px; }
+  .ar-group { grid-column: 1 / -1; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ar-sky-4); margin-top: 10px; }
+  .ar-pick {
+    display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer;
+    background: linear-gradient(160deg, rgba(90,38,96,.7), rgba(26,16,54,.8)); border: 2px solid #5a3560; border-radius: 12px;
+    padding: 8px 12px 8px 6px; color: var(--ar-text); font: inherit;
+  }
+  .ar-pick:hover:not(:disabled) { border-color: var(--ar-gold); transform: translateY(-1px); }
+  .ar-pick:disabled { opacity: .35; cursor: not-allowed; }
+  .ar-pick-sprite { width: 46px; height: 46px; flex: none; }
+  .ar-pick-sprite svg { width: 100%; height: 100%; }
+  .ar-pick-txt { display: flex; flex-direction: column; min-width: 0; }
+  .ar-pick-name { font: 900 15px Georgia, serif; }
+  .ar-pick-sub { font-size: 11px; color: var(--ar-muted-dim); letter-spacing: .3px; }
+
+  .ar-duel-names { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+  .ar-duel-names input, .ar-post-row input {
+    background: var(--ar-paper); color: var(--ar-ink); border: 2px solid var(--ar-ink); border-radius: 8px;
+    padding: 8px 12px; font: 700 14px Arial, sans-serif; width: 180px; max-width: 100%;
+  }
+
+  .ar-board { max-width: 640px; margin: 24px auto 0; background: rgba(26,16,54,.6); border: 1px solid #5a3560; border-radius: 12px; padding: 14px 16px; }
+  .ar-board-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .ar-board-head h3 { margin: 0; font: 900 18px Georgia, serif; color: var(--ar-gold); }
+  .ar-board-refresh { background: none; border: 1px solid #5a3560; color: var(--ar-muted); border-radius: 14px; padding: 4px 12px; cursor: pointer; font-size: 12px; }
+  .ar-board-refresh:hover { color: var(--ar-gold); border-color: var(--ar-gold); }
+  .ar-board-sub { color: var(--ar-muted-dim); font-size: 12.5px; margin: 6px 0 10px; }
+  .ar-best { text-align: center; color: var(--ar-muted); font-size: 13px; margin-top: 10px; min-height: 1em; }
+  .ar-lb-row {
+    display: grid; grid-template-columns: 26px minmax(0, 1.2fr) minmax(0, 1fr) 56px; gap: 10px; align-items: center;
+    padding: 8px 6px; border-top: 1px solid rgba(122,58,110,.5);
+  }
+  .ar-lb-row.fresh { background: rgba(255,204,77,.12); border-radius: 8px; }
+  .ar-lb-row .rank { font: 900 13px Georgia, serif; color: var(--ar-muted-dim); text-align: center; }
+  .ar-lb-row .who { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ar-lb-row .pts { font: 900 16px Georgia, serif; color: var(--ar-gold); }
+  .ar-lb-row .meta { font-size: 11.5px; color: var(--ar-muted-dim); display: flex; gap: 8px; flex-wrap: wrap; }
+  .ar-lb-row .when { font-size: 11.5px; color: var(--ar-muted-dim); text-align: right; }
+  .ar-lb-empty { color: var(--ar-muted-dim); font-size: 13px; padding: 10px 4px; }
+
+  /* ---- battle ---- */
+  #arBattle { max-width: 780px; margin: 10px auto 0; }
+  .ar-hud { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 6px 0 10px; }
+  .ar-hud-item { background: rgba(26,16,54,.65); border: 1px solid #5a3560; border-radius: 999px; padding: 4px 12px; font-size: 12px; color: var(--ar-muted); }
+  .ar-hud-item b { color: var(--ar-gold); margin-left: 6px; font-size: 13px; }
+
+  .ar-stage {
+    position: relative; height: clamp(270px, 52vw, 380px); overflow: hidden;
+    border: 4px solid var(--ar-ink); border-radius: 14px;
+    background:
+      linear-gradient(180deg, var(--ar-sky-1) 0%, var(--ar-sky-2) 30%, var(--ar-sky-3) 52%, var(--ar-sky-4) 60%, transparent 60.2%),
+      linear-gradient(180deg, var(--ar-sand-2) 60%, var(--ar-sand) 100%);
+    box-shadow: 0 8px 0 rgba(0,0,0,.35);
+  }
+  .ar-arches { position: absolute; left: 0; right: 0; top: 41%; height: 20%; opacity: .9; }
+  .ar-arches svg { width: 100%; height: 100%; display: block; }
+  .ar-sun { position: absolute; left: 50%; top: 44%; width: 120px; height: 120px; margin-left: -60px; border-radius: 50%;
+    background: radial-gradient(circle, #ffe3a0 0%, rgba(255,200,120,.6) 45%, transparent 70%); }
+  .ar-star { position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%; opacity: .7; }
+  .ar-pad { position: absolute; border-radius: 50%; background: radial-gradient(ellipse, #b88a4e 0%, #a67a42 60%, rgba(166,122,66,0) 72%); }
+  .ar-pad.foe { right: 5%; top: 50%; width: 34%; height: 15%; }
+  .ar-pad.me { left: 2%; bottom: -6%; width: 42%; height: 20%; }
+
+  .ar-plate {
+    position: absolute; background: var(--ar-paper); color: var(--ar-ink); border: 3px solid var(--ar-ink); border-radius: 10px;
+    padding: 7px 10px 8px; box-shadow: 4px 4px 0 rgba(42,26,46,.55); z-index: 3;
+  }
+  .ar-plate-name { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font: 900 15px Georgia, serif; }
+  .ar-foe-plate { left: 10px; top: 10px; width: min(54%, 320px); }
+  .ar-badge { font: 700 10px Arial, sans-serif; letter-spacing: 1px; text-transform: uppercase; border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+  .ar-badge.weak { background: #d9ecff; color: #1d5b8f; }
+  .ar-badge.strong { background: #ffd9d2; color: #a3291a; }
+  .ar-badge.ok { background: #d8f5df; color: #1f7a3a; }
+  .ar-path { margin-top: 4px; font: 700 11px Arial, sans-serif; color: #6a3fd6; }
+  .ar-meter-wrap { position: relative; margin-top: 16px; }
+  .ar-meter { display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; }
+  .ar-meter span { height: 12px; border: 2px solid var(--ar-ink); border-radius: 3px; opacity: .55; }
+  .ar-meter span:nth-child(1) { background: #1d4f8f; } .ar-meter span:nth-child(2) { background: #2f6fb8; }
+  .ar-meter span:nth-child(3) { background: #5a98d6; } .ar-meter span:nth-child(4) { background: #9cc8ee; }
+  .ar-meter span:nth-child(5) { background: var(--ar-ok); opacity: 1; box-shadow: 0 0 0 2px #fff inset; }
+  .ar-meter span:nth-child(6) { background: #f6b7a8; } .ar-meter span:nth-child(7) { background: #ef8266; }
+  .ar-meter span:nth-child(8) { background: #e04b3a; } .ar-meter span:nth-child(9) { background: #a3291a; }
+  .ar-meter span.on { opacity: 1; transform: scaleY(1.35); }
+  .ar-marker { position: absolute; top: -13px; width: 0; height: 0; margin-left: -7px;
+    border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 10px solid var(--ar-ink);
+    transition: left .5s cubic-bezier(.3,1.4,.5,1); }
+  .ar-meter-labels { display: flex; justify-content: space-between; font: 700 9px Arial, sans-serif; letter-spacing: .8px; text-transform: uppercase; color: #6b5a6e; margin-top: 4px; }
+  .ar-meter-labels span:nth-child(2) { color: #1f7a3a; }
+  .ar-meter.wobble { animation: arWobble .5s ease; }
+  @keyframes arWobble { 0%,100% { transform: none; } 25% { transform: translateX(3px); } 50% { transform: translateX(-3px); } 75% { transform: translateX(2px); } }
+
+  .ar-foe { position: absolute; right: 9%; top: 11%; width: 27%; max-width: 170px; aspect-ratio: 1; z-index: 2; }
+  .ar-foe svg { width: 100%; height: 100%; overflow: visible; }
+  .ar-foe-svg.weak .ar-body { opacity: .72; filter: saturate(.55); }
+  .ar-foe-svg.strong .ar-body { filter: drop-shadow(0 0 7px rgba(255,70,40,.9)); }
+  .ar-bob { animation: arBob 1.6s ease-in-out infinite; transform-origin: 80px 140px; }
+  .ar-foe-svg.weak .ar-bob { animation-duration: 2.8s; }
+  .ar-foe-svg.strong .ar-bob { animation: arRage .45s ease-in-out infinite; }
+  @keyframes arBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes arRage { 0%,100% { transform: translateX(0); } 50% { transform: translateX(2px) translateY(-2px); } }
+  .ar-z { fill: #fff; font-family: Georgia, serif; font-weight: 900; animation: arZ 2s ease-in-out infinite; }
+  .ar-z.z2 { animation-delay: .6s; }
+  @keyframes arZ { 0% { opacity: 0; transform: translateY(6px); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-8px); } }
+  .ar-foe.hit { animation: arHit .45s ease; }
+  @keyframes arHit { 0%,100% { transform: none; } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-3px); } }
+  .ar-foe.hit.frost::after, .ar-foe.hit.fire::after, .ar-foe.hit.flick::after, .ar-foe.hit.dud::after {
+    content: ''; position: absolute; inset: 10%; border-radius: 50%; pointer-events: none; animation: arSplash .6s ease-out forwards;
+  }
+  .ar-foe.hit.frost::after { background: radial-gradient(circle, rgba(90,200,250,.85), rgba(90,200,250,0) 70%); }
+  .ar-foe.hit.fire::after { background: radial-gradient(circle, rgba(255,122,61,.9), rgba(255,122,61,0) 70%); }
+  .ar-foe.hit.flick::after { background: radial-gradient(circle, rgba(255,255,255,.6), rgba(255,255,255,0) 70%); }
+  .ar-foe.hit.dud::after { background: radial-gradient(circle, rgba(120,110,120,.55), rgba(120,110,120,0) 70%); }
+  @keyframes arSplash { from { transform: scale(.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
+  .ar-foe.lunge { animation: arLunge .45s ease; }
+  @keyframes arLunge { 0%,100% { transform: none; } 40% { transform: translate(-18%, 14%) scale(1.06); } }
+
+  .ar-me { position: absolute; left: 7%; bottom: 0; width: 25%; max-width: 150px; display: flex; align-items: flex-end; z-index: 2; }
+  .ar-me.two { width: 38%; max-width: 230px; gap: 0; }
+  .ar-wiz { flex: 1; transition: opacity .3s, transform .3s; }
+  .ar-wiz svg { width: 100%; display: block; }
+  .ar-wiz.idle { opacity: .5; transform: scale(.82); transform-origin: bottom center; }
+  .ar-orb { animation: arOrb 1.8s ease-in-out infinite; }
+  @keyframes arOrb { 0%,100% { fill: #7cf0d8; } 50% { fill: #c9fff2; } }
+  .ar-me.faint .ar-wiz:not(.idle) { animation: arFaint .9s ease forwards; }
+  @keyframes arFaint { to { transform: translateY(40%); opacity: 0; } }
+  .ar-me-plates { position: absolute; right: 10px; bottom: 10px; width: min(50%, 290px); display: flex; flex-direction: column; gap: 6px; z-index: 3; }
+  .ar-me-plates .ar-plate { position: static; }
+  .ar-me-plate.active { outline: 3px solid var(--ar-gold); outline-offset: 1px; }
+  .ar-me-plate.down { opacity: .6; }
+  .ar-stars { color: #d49a00; font-size: 13px; letter-spacing: 1px; }
+  .ar-hp { display: flex; align-items: center; gap: 6px; margin-top: 5px; }
+  .ar-hp-lab { font: 900 10px Arial, sans-serif; color: #c9a227; background: var(--ar-ink); border-radius: 4px; padding: 1px 4px; }
+  .ar-hp-track { flex: 1; height: 9px; background: #5d4a5f; border: 2px solid var(--ar-ink); border-radius: 6px; overflow: hidden; }
+  .ar-hp-fill { height: 100%; background: var(--ar-ok); transition: width .5s ease, background .3s; }
+  .ar-hp-fill.mid { background: var(--ar-mid); }
+  .ar-hp-fill.low { background: var(--ar-low); }
+  .ar-hp-num { text-align: right; font: 700 12px Arial, sans-serif; margin-top: 2px; }
+  .two ~ .ar-me-plates .ar-hp-num { display: none; }
+
+  .ar-proj { position: absolute; left: 22%; bottom: 30%; width: 34px; height: 42px; z-index: 4; opacity: 0; pointer-events: none; }
+  .ar-proj svg { width: 100%; height: 100%; }
+  .ar-proj.fly { animation: arFly .6s cubic-bezier(.35,.1,.6,1) forwards; }
+  @keyframes arFly {
+    0% { opacity: 1; transform: translate(0, 0) rotate(0); }
+    50% { transform: translate(130%, -260%) rotate(260deg); }
+    100% { opacity: 1; transform: translate(300%, -300%) rotate(520deg) scale(.8); }
+  }
+  @media (min-width: 600px) { @keyframes arFly {
+    0% { opacity: 1; transform: translate(0, 0) rotate(0); }
+    50% { transform: translate(430%, -320%) rotate(260deg); }
+    100% { opacity: 1; transform: translate(870%, -300%) rotate(520deg) scale(.8); }
+  } }
+  .ar-float { position: absolute; right: 16%; top: 16%; z-index: 5; pointer-events: none; }
+  .ar-pop { position: absolute; right: 0; font: 900 22px Georgia, serif; white-space: nowrap; text-shadow: 0 2px 0 var(--ar-ink); animation: arPop 1.2s ease-out forwards; }
+  .ar-pop.up { color: var(--ar-frost); } .ar-pop.down { color: var(--ar-fire); }
+  .ar-pop.flick { color: #fff; } .ar-pop.dud { color: #d9cbd6; font-size: 16px; font-family: Arial, sans-serif; }
+  @keyframes arPop { from { opacity: 0; transform: translateY(10px); } 20% { opacity: 1; } to { opacity: 0; transform: translateY(-26px); } }
+  .ar-stage.shake { animation: arShake .35s ease; }
+  @keyframes arShake { 0%,100% { transform: none; } 25% { transform: translate(-4px, 2px); } 50% { transform: translate(4px, -2px); } 75% { transform: translate(-2px, 1px); } }
+  .ar-stage.enter .ar-foe { animation: arEnterFoe .6s ease-out; }
+  .ar-stage.enter .ar-me { animation: arEnterMe .6s ease-out; }
+  @keyframes arEnterFoe { from { transform: translateX(120%); opacity: 0; } }
+  @keyframes arEnterMe { from { transform: translateX(-120%); opacity: 0; } }
+
+  .ar-textbox {
+    position: relative; margin-top: 12px; min-height: 64px; background: var(--ar-paper); color: var(--ar-ink);
+    border: 4px double var(--ar-ink); border-radius: 10px; padding: 12px 34px 12px 16px;
+    font: 700 16px/1.45 'Courier New', ui-monospace, monospace; cursor: pointer; box-shadow: 4px 4px 0 rgba(0,0,0,.35);
+  }
+  .ar-more { position: absolute; right: 12px; bottom: 8px; font-size: 13px; opacity: 0; }
+  .ar-textbox.ready .ar-more { opacity: 1; animation: arMore .8s steps(2) infinite; }
+  @keyframes arMore { 50% { transform: translateY(3px); } }
+
+  .ar-moves { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .ar-move {
+    position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
+    background: linear-gradient(180deg, var(--ar-paper), var(--ar-paper-2)); color: var(--ar-ink);
+    border: 3px solid var(--ar-ink); border-radius: 10px; padding: 10px 12px 10px 38px; cursor: pointer;
+    box-shadow: 0 4px 0 var(--ar-ink); font: inherit; transition: transform .08s;
+  }
+  .ar-move:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 var(--ar-ink); background: #fff; }
+  .ar-move:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 var(--ar-ink); }
+  .ar-move:disabled { opacity: .55; cursor: default; }
+  .ar-move.dose { background: linear-gradient(180deg, #e9f4ff, #cfe3f7); }
+  .ar-key { position: absolute; left: 10px; top: 50%; margin-top: -11px; width: 20px; height: 22px; border-radius: 5px; background: var(--ar-ink); color: var(--ar-paper); font: 900 12px/22px Arial, sans-serif; text-align: center; }
+  .ar-move-name { font: 900 17px Georgia, serif; }
+  .ar-move-cls { font: 700 10.5px Arial, sans-serif; letter-spacing: 1px; text-transform: uppercase; color: #7a5b7a; }
+  .ar-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+  .ar-actions button { background: rgba(26,16,54,.6); border: 1px solid #5a3560; color: var(--ar-muted); border-radius: 999px; padding: 6px 14px; font: 700 12px Arial, sans-serif; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+  .ar-actions button:hover:not(:disabled) { color: var(--ar-gold); border-color: var(--ar-gold); }
+  .ar-actions button:disabled { opacity: .4; cursor: default; }
+
+  /* ---- result card ---- */
+  .ar-card { margin-top: 12px; background: var(--ar-paper); color: var(--ar-ink); border: 4px solid var(--ar-ink); border-radius: 14px; padding: 16px 18px 18px; box-shadow: 6px 6px 0 rgba(0,0,0,.35); }
+  .ar-card.won { border-color: #1f7a3a; }
+  .ar-card.lost { border-color: #a3291a; }
+  .ar-card-eyebrow { font: 700 11px Arial, sans-serif; letter-spacing: 2px; text-transform: uppercase; color: #8a6a8a; }
+  .ar-card.won .ar-card-eyebrow { color: #1f7a3a; }
+  .ar-card.lost .ar-card-eyebrow { color: #a3291a; }
+  .ar-card h3 { margin: 4px 0 8px; font: 900 22px Georgia, serif; }
+  .ar-card-label { font: 700 10.5px Arial, sans-serif; letter-spacing: 1.5px; text-transform: uppercase; color: #8a6a8a; margin-right: 8px; }
+  .ar-card-label.block { display: block; margin: 14px 0 6px; }
+  .ar-card-path { font-size: 14px; line-height: 1.5; }
+  .ar-warn { margin-top: 10px; background: #ffe7d6; border-left: 5px solid #d9541e; padding: 8px 12px; border-radius: 6px; font-size: 13.5px; line-height: 1.5; }
+  .ar-warn.soft { background: #e9f1ff; border-left-color: #2f6fb8; }
+  .ar-log { display: flex; flex-direction: column; gap: 4px; }
+  .ar-log-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto; gap: 10px; align-items: baseline; padding: 6px 8px; border-radius: 6px; background: var(--ar-paper-2); font-size: 13px; }
+  .ar-log-name { font-weight: 900; }
+  .ar-log-by { font-weight: 400; color: #8a6a8a; }
+  .ar-log-what { color: #5a4a5e; }
+  .ar-log-res { font: 700 11px Arial, sans-serif; letter-spacing: .5px; text-transform: uppercase; white-space: nowrap; }
+  .ar-log-row.balanced .ar-log-res, .ar-log-row.closer .ar-log-res { color: #1f7a3a; }
+  .ar-log-row.wrong .ar-log-res, .ar-log-row.overshoot .ar-log-res { color: #a3291a; }
+  .ar-log-row.none .ar-log-res, .ar-log-row.flicker .ar-log-res { color: #8a6a8a; }
+  .ar-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ar-chip { background: #fff; border: 2px solid var(--ar-ink); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; }
+  .ar-note-box { margin-top: 14px; background: #fff; border: 2px solid var(--ar-ink); border-radius: 10px; padding: 10px 14px; }
+  .ar-note-box p { margin: 6px 0 0; font-size: 14px; line-height: 1.6; }
+  .ar-tidbits p { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: #5a4a5e; }
+  #arenaView .ar-card .board-actions .reset-board-btn { background: #fff; color: var(--ar-ink); border: 2px solid var(--ar-ink); }
+  #arenaView .ar-card .board-actions .reset-board-btn:hover { background: var(--ar-ink); color: var(--ar-paper); }
+  #arenaView .ar-card .board-actions .ar-primary { background: var(--ar-gold); color: var(--ar-ink); }
+
+  /* ---- summary ---- */
+  #arSummary { max-width: 700px; margin: 0 auto; text-align: center; }
+  .ar-post { margin: 16px auto 0; max-width: 460px; }
+  .ar-post.locked, .ar-posted { color: var(--ar-muted); font-size: 13.5px; }
+  .ar-post-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .ar-post-row .reset-board-btn { margin: 0; }
+  .ar-post-hint { color: var(--ar-muted-dim); font-size: 12px; margin-top: 8px; }
+
+  @media (max-width: 600px) {
+    .ar-stage { height: 350px; }
+    .ar-foe-plate { width: calc(100% - 20px); }
+    .ar-foe { top: 29%; right: 6%; width: 36%; }
+    .ar-pad.foe { top: 56%; right: 2%; width: 44%; }
+    .ar-arches { top: 36%; height: 16%; }
+    .ar-sun { top: 38%; }
+    .ar-me { width: 34%; }
+    .ar-me.two { width: 46%; }
+    .ar-me-plates { width: 52%; }
+    .ar-plate-name { font-size: 13.5px; }
+    .ar-move { padding: 8px 8px 8px 34px; }
+    .ar-move-name { font-size: 15px; }
+    .ar-textbox { font-size: 14.5px; }
+    .ar-log-row { grid-template-columns: 1fr auto; }
+    .ar-log-what { grid-column: 1 / -1; grid-row: 2; }
+    .ar-lb-row { grid-template-columns: 22px minmax(0, 1.1fr) minmax(0, 1fr); }
+    .ar-lb-row .when { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ar-bob, .ar-z, .ar-orb, .ar-textbox.ready .ar-more { animation: none !important; }
+    .ar-stage.enter .ar-foe, .ar-stage.enter .ar-me, .ar-stage.shake, .ar-foe.hit, .ar-foe.lunge { animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -2761,7 +3096,7 @@
   <div class="section-label">Pick a game</div>
   <div class="game-grid" id="gameGrid"></div>
 
-  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 25 September 2026</footer>
+  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 28 September 2026</footer>
 </div>
 
 <!-- ===================== GAME VIEW ===================== -->
@@ -3320,6 +3655,145 @@
 <!-- ===================== JOIN SCREEN ===================== -->
 <!-- Fills the screen with the code and a large QR, for a room looking at a
      projector. Click anywhere or press Escape to dismiss it. -->
+<!-- ============ WIZARD ARENA ============ -->
+<div class="wrap" id="arenaView" hidden>
+  <div class="ar-topbar">
+    <a class="back-link" href="#">&larr; All games</a>
+    <a class="back-link" id="arHomeLink" href="#wizard-arena" hidden>&larr; Arena menu</a>
+    <button type="button" class="ar-mute" id="arMute" aria-pressed="false">&#9834; Music on</button>
+  </div>
+
+  <!-- menu -->
+  <div id="arMenu">
+    <div class="titlebar">
+      <h1>Wizard Arena</h1>
+      <p>Restore the balance &middot; drug interactions</p>
+    </div>
+
+    <div class="ar-seg" role="group" aria-label="Mode">
+      <button type="button" id="arModeFree" aria-pressed="true">Free play</button>
+      <button type="button" id="arModeSurv" aria-pressed="false">Survival</button>
+      <button type="button" id="arModeDuel" aria-pressed="false">Two-wizard duel</button>
+    </div>
+    <p class="ar-note" id="arModeNote"></p>
+
+    <div id="arDuelOpts" hidden>
+      <div class="ar-duel-names">
+        <input id="arDuelName1" maxlength="14" placeholder="Wizard 1" aria-label="Wizard 1 name">
+        <input id="arDuelName2" maxlength="14" placeholder="Wizard 2" aria-label="Wizard 2 name">
+      </div>
+    </div>
+
+    <div class="board-actions">
+      <button class="reset-board-btn ar-primary" id="arStartBtn">Random encounter</button>
+    </div>
+
+    <div id="arFreeOpts">
+      <div class="ar-seg small" role="group" aria-label="Which imbalance">
+        <button type="button" id="arDirAny" aria-pressed="true">Either way</button>
+        <button type="button" id="arDirLow" aria-pressed="false">Too weak</button>
+        <button type="button" id="arDirHigh" aria-pressed="false">Too strong</button>
+      </div>
+      <div class="ar-picks" id="arPicks"></div>
+    </div>
+
+    <div class="ar-board" id="arBoard" hidden>
+      <div class="ar-board-head">
+        <h3>Longest runs</h3>
+        <button type="button" class="ar-board-refresh" id="arBoardRefresh">Refresh</button>
+      </div>
+      <p class="ar-board-sub">The ten longest survival runs players chose to post, from every device &mdash; ranked by medications balanced, then by points.</p>
+      <div class="ar-lb-list" id="arBoardList"></div>
+      <div class="ar-best" id="arBest"></div>
+    </div>
+
+    <div class="ar-how">
+      <b>How it works.</b> Each medication shows up with its level out of the therapeutic window. You see the drug&rsquo;s name, never its pathway, and your four throws show only their names.
+      <ul>
+        <li><b>Too weak?</b> Throw something that <b>inhibits</b> the enzyme clearing it. <b>Too strong?</b> Throw an <b>inducer</b>.</li>
+        <li>A <b>strong</b> perpetrator moves the meter two notches, a <b>moderate</b> one moves it one, and a <b>weak</b> one barely flickers &mdash; so a strong throw can overshoot.</li>
+        <li>Wrong enzyme: no effect. Wrong direction: it gets worse. Every turn it ends out of the window, it hits you.</li>
+        <li>Lithium, valproate and lamotrigine don&rsquo;t play by CYP rules at all.</li>
+      </ul>
+      Keys: <b>1&ndash;4</b> to throw, <b>Space</b> to skip text.
+    </div>
+
+    <footer class="hint">Strengths follow the FDA&rsquo;s table of drugs that interact with CYP enzymes (May 2026); dose advice follows each drug&rsquo;s label &nbsp;&bull;&nbsp; a game, not a prescribing guide &mdash; educational use only</footer>
+  </div>
+
+  <!-- battle -->
+  <div id="arBattle" hidden>
+    <div class="ar-hud" id="arHud"></div>
+    <div class="ar-stage" id="arStage">
+      <div class="ar-star" style="left:12%;top:8%"></div><div class="ar-star" style="left:34%;top:4%"></div>
+      <div class="ar-star" style="left:58%;top:12%"></div><div class="ar-star" style="left:82%;top:6%"></div>
+      <div class="ar-star" style="left:70%;top:22%"></div><div class="ar-star" style="left:24%;top:20%"></div>
+      <div class="ar-sun"></div>
+      <div class="ar-arches" aria-hidden="true">
+        <svg viewBox="0 0 400 40" preserveAspectRatio="none">
+          <path d="M0 40 V10 H400 V40 Z" fill="#3a2447"/>
+          <g fill="#6a3a5e">
+            <path d="M8 40 V22 a8 8 0 0 1 16 0 V40 Z"/><path d="M36 40 V22 a8 8 0 0 1 16 0 V40 Z"/><path d="M64 40 V22 a8 8 0 0 1 16 0 V40 Z"/>
+            <path d="M92 40 V22 a8 8 0 0 1 16 0 V40 Z"/><path d="M120 40 V22 a8 8 0 0 1 16 0 V40 Z"/><path d="M148 40 V22 a8 8 0 0 1 16 0 V40 Z"/>
+            <path d="M236 40 V22 a8 8 0 0 1 16 0 V40 Z"/><path d="M264 40 V22 a8 8 0 0 1 16 0 V40 Z"/><path d="M292 40 V22 a8 8 0 0 1 16 0 V40 Z"/>
+            <path d="M320 40 V22 a8 8 0 0 1 16 0 V40 Z"/><path d="M348 40 V22 a8 8 0 0 1 16 0 V40 Z"/><path d="M376 40 V22 a8 8 0 0 1 16 0 V40 Z"/>
+          </g>
+          <path d="M0 10 H400 V14 H0 Z" fill="#2a1a2e"/>
+          <path d="M176 40 V4 h48 V40 Z" fill="#2a1a2e"/><path d="M186 40 V22 a14 14 0 0 1 28 0 V40 Z" fill="#f3a45a" opacity=".6"/>
+        </svg>
+      </div>
+      <div class="ar-pad foe"></div>
+      <div class="ar-pad me"></div>
+
+      <div class="ar-plate ar-foe-plate">
+        <div class="ar-plate-name"><span id="arFoeName"></span><span class="ar-badge" id="arFoeBadge"></span></div>
+        <div class="ar-path" id="arFoePath" hidden></div>
+        <div class="ar-meter-wrap">
+          <div class="ar-meter" id="arMeter" role="img" aria-label="Drug level">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="ar-marker" id="arMarker"></div>
+        </div>
+        <div class="ar-meter-labels"><span>Too weak</span><span>Window</span><span>Too strong</span></div>
+      </div>
+      <div class="ar-foe" id="arFoe"></div>
+      <div class="ar-me" id="arMe"></div>
+      <div class="ar-me-plates" id="arMePlates"></div>
+      <div class="ar-proj" id="arProj"></div>
+      <div class="ar-float" id="arFloat"></div>
+    </div>
+
+    <div class="ar-textbox" id="arText" aria-live="polite"><span id="arTextInner"></span><span class="ar-more" aria-hidden="true">&#9660;</span></div>
+    <div class="ar-moves" id="arMoves"></div>
+    <div class="ar-actions">
+      <button type="button" id="arScout">Scout the pathway</button>
+      <button type="button" id="arRun">Run</button>
+      <button type="button" id="arQuit">Quit</button>
+    </div>
+    <div class="ar-card" id="arCard" hidden></div>
+  </div>
+
+  <!-- survival summary -->
+  <div id="arSummary" hidden>
+    <div class="titlebar">
+      <h1 id="arSumTitle"></h1>
+      <p id="arSumSub"></p>
+    </div>
+    <div id="arSumPost"></div>
+    <div class="board-actions">
+      <button class="reset-board-btn ar-primary" id="arSumAgain">Run it again</button>
+      <button class="reset-board-btn" id="arSumMenu">Arena menu</button>
+    </div>
+    <div class="ar-board">
+      <div class="ar-board-head">
+        <h3>Longest runs</h3>
+        <button type="button" class="ar-board-refresh" id="arSumRefresh">Refresh</button>
+      </div>
+      <div class="ar-lb-list"></div>
+    </div>
+  </div>
+</div>
+
 <div class="join-screen" id="joinScreen" hidden>
   <div class="join-inner">
     <div class="join-title" id="joinTitle"></div>
@@ -4530,6 +5004,14 @@ const EXTRAS = [
     tags: ["Psychopharm", "19 antipsychotics \u00b7 25 antidepressants \u00b7 2 hidden MAOIs", "Guided walkthroughs", "Gauntlet \u00b7 Survival \u00b7 Free play"]
   },
   {
+    id: "wizard-arena",
+    title: "Wizard Arena",
+    kind: "Battle \u00b7 solo or duel",
+    arena: true,
+    blurb: "A wild medication appears with its level too weak or too strong. Throw a real co-medication at it \u2014 an inhibitor or inducer of the enzyme that clears it \u2014 to push the level back into the therapeutic window. Strong ones move it two notches, moderate one, weak ones barely flicker. Wrong enzyme and nothing happens; wrong direction and it hits back.",
+    tags: ["CYP1A2 \u00b7 2C19 \u00b7 2D6 \u00b7 3A4", "Lithium, valproate & lamotrigine twists", "32 medications", "Free play \u00b7 Survival \u00b7 Duel", "Chiptune"]
+  },
+  {
     id: "signal-lab",
     title: "Signal Lab",
     kind: "Cell map \u00b7 solo",
@@ -4609,7 +5091,7 @@ function renderHub() {
     // focus, and no hash to follow.
     const soon = !!game.comingSoon;
     const card = document.createElement(soon ? 'div' : 'a');
-    card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (game.lab ? ' lab' : '') + (game.signal ? ' signal' : '') + (soon ? ' soon' : '');
+    card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (game.lab ? ' lab' : '') + (game.signal ? ' signal' : '') + (game.arena ? ' arena' : '') + (soon ? ' soon' : '');
     if (soon) {
       card.setAttribute('aria-disabled', 'true');
     } else {
@@ -13093,11 +13575,1328 @@ const SLAB = (function () {
   };
 })();
 
+// ---------------- WIZARD ARENA ----------------
+// Pokémon-style battles on drug levels. A medication appears with its level
+// out of the therapeutic window; the player throws a real co-medication — an
+// inhibitor or inducer of the pathway that clears it — to push the level back.
+//
+// DATA RULES (write to these when adding anything):
+//  * Throwable `acts` are FDA strengths from "FDA's Examples of Drugs that
+//    Interact with CYP Enzymes and Transporter Systems" (updated May 2026):
+//    [pathway, +1 inhibitor (raises the victim) / -1 inducer (lowers it), 'S'|'M'|'W'].
+//  * Step size: on an enemy's main pathway a strong perpetrator moves the meter
+//    2 notches, moderate 1, weak only flickers. An enemy marked sens 'lo'
+//    (a label that only halves or doubles the dose for a strong perpetrator)
+//    takes 1 notch from strong and flickers for moderate or weak.
+//  * `minor` pathways: any inhibitor only flickers; a strong inducer moves 1.
+//  * `fx` overrides everything for that one throwable (a number of notches,
+//    or 'f' for a flicker, or 0 for no effect). Non-CYP enemies are fx-only.
+//  * `exclude` keeps a throwable out of that enemy's hand — used where "no
+//    effect" would teach something false, or where the pair is dangerous.
+//  * `special` throwables (lithium and valproate perpetrators) are dealt only
+//    to enemies that list them in fx.
+const AR_THROWS = [
+  // --- CYP2D6 inhibitors ---
+  { id: 'fluoxetine', name: 'Fluoxetine', cls: 'SSRI', acts: [['2D6', 1, 'S'], ['2C19', 1, 'S']], note: 'Norfluoxetine keeps the inhibition going for weeks after the last dose.' },
+  { id: 'paroxetine', name: 'Paroxetine', cls: 'SSRI', acts: [['2D6', 1, 'S']] },
+  { id: 'bupropion', name: 'Bupropion', cls: 'NDRI', acts: [['2D6', 1, 'S']], note: 'Not a 2D6 substrate itself (it is cleared by 2B6), but a strong 2D6 inhibitor.' },
+  { id: 'quinidine', name: 'Quinidine', cls: 'Antiarrhythmic', acts: [['2D6', 1, 'S']] },
+  { id: 'terbinafine', name: 'Terbinafine', cls: 'Antifungal', acts: [['2D6', 1, 'S']], note: 'The antifungal people forget: strong at 2D6, not at 3A4.' },
+  { id: 'duloxetine', name: 'Duloxetine', cls: 'SNRI', acts: [['2D6', 1, 'M']] },
+  { id: 'sertraline', name: 'Sertraline', cls: 'SSRI', acts: [['2D6', 1, 'W']] },
+  { id: 'escitalopram', name: 'Escitalopram', cls: 'SSRI', acts: [['2D6', 1, 'W']] },
+  // --- CYP1A2 / 2C19 inhibitors ---
+  { id: 'fluvoxamine', name: 'Fluvoxamine', cls: 'SSRI', acts: [['1A2', 1, 'S'], ['2C19', 1, 'S'], ['3A4', 1, 'W'], ['2D6', 1, 'W']], note: 'Only weak at 3A4 on the FDA table — not moderate, as it is often taught.' },
+  { id: 'ciprofloxacin', name: 'Ciprofloxacin', cls: 'Fluoroquinolone', acts: [['1A2', 1, 'M'], ['3A4', 1, 'M']], note: 'The FDA table rates it moderate at 1A2; the clozapine label groups it with the strong ones.' },
+  { id: 'ocp', name: 'Estrogen OCP', cls: 'Contraceptive', acts: [['1A2', 1, 'M']], note: 'Also induces the glucuronidation (UGT) that clears lamotrigine.' },
+  { id: 'omeprazole', name: 'Omeprazole', cls: 'PPI', acts: [['2C19', 1, 'W']] },
+  { id: 'cimetidine', name: 'Cimetidine', cls: 'H2 blocker', acts: [['3A4', 1, 'W'], ['1A2', 1, 'W'], ['2D6', 1, 'W']] },
+  // --- CYP3A4 inhibitors ---
+  { id: 'clarithromycin', name: 'Clarithromycin', cls: 'Macrolide', acts: [['3A4', 1, 'S']] },
+  { id: 'ketoconazole', name: 'Ketoconazole', cls: 'Azole', acts: [['3A4', 1, 'S']] },
+  { id: 'itraconazole', name: 'Itraconazole', cls: 'Azole', acts: [['3A4', 1, 'S']] },
+  { id: 'posaconazole', name: 'Posaconazole', cls: 'Azole', acts: [['3A4', 1, 'S']] },
+  { id: 'voriconazole', name: 'Voriconazole', cls: 'Azole', acts: [['3A4', 1, 'S'], ['2C19', 1, 'M']] },
+  { id: 'ritonavir', name: 'Ritonavir', cls: 'HIV booster', acts: [['3A4', 1, 'S']], note: 'The "booster" in boosted HIV regimens — used precisely because it shuts down 3A4.' },
+  { id: 'nefazodone', name: 'Nefazodone', cls: 'Antidepressant', acts: [['3A4', 1, 'S']] },
+  { id: 'fluconazole', name: 'Fluconazole', cls: 'Azole', acts: [['2C19', 1, 'S'], ['3A4', 1, 'M']] },
+  { id: 'erythromycin', name: 'Erythromycin', cls: 'Macrolide', acts: [['3A4', 1, 'M']] },
+  { id: 'diltiazem', name: 'Diltiazem', cls: 'Ca channel blocker', acts: [['3A4', 1, 'M']] },
+  { id: 'verapamil', name: 'Verapamil', cls: 'Ca channel blocker', acts: [['3A4', 1, 'M']] },
+  { id: 'grapefruit', name: 'Grapefruit juice', cls: 'Breakfast', acts: [['3A4', 1, 'M']], note: 'Mostly gut-wall 3A4, and the size of the effect depends on the juice.' },
+  // --- inducers ---
+  { id: 'carbamazepine', name: 'Carbamazepine', cls: 'Anticonvulsant', acts: [['3A4', -1, 'S'], ['2B6', -1, 'S']], note: 'Also induces UGT glucuronidation — and its own metabolism.' },
+  { id: 'phenytoin', name: 'Phenytoin', cls: 'Anticonvulsant', acts: [['3A4', -1, 'S'], ['1A2', -1, 'M'], ['2C19', -1, 'M']] },
+  { id: 'rifampin', name: 'Rifampin', cls: 'Antibiotic', acts: [['3A4', -1, 'S'], ['2C19', -1, 'S'], ['1A2', -1, 'M'], ['2B6', -1, 'M']], note: 'The textbook strong inducer: induction builds over about a week and fades over weeks after stopping.' },
+  { id: 'stjohns', name: "St John's wort", cls: 'Supplement', acts: [['3A4', -1, 'S']], note: 'Hyperforin does the inducing; strength varies with the preparation.' },
+  { id: 'phenobarbital', name: 'Phenobarbital', cls: 'Barbiturate', acts: [['3A4', -1, 'M']] },
+  { id: 'primidone', name: 'Primidone', cls: 'Anticonvulsant', acts: [['3A4', -1, 'M']], note: 'Partly converted to phenobarbital.' },
+  { id: 'efavirenz', name: 'Efavirenz', cls: 'HIV NNRTI', acts: [['3A4', -1, 'M'], ['2B6', -1, 'M'], ['2C19', -1, 'M']] },
+  { id: 'smoking', name: 'Smoking', cls: 'Habit', acts: [['1A2', -1, 'M']], note: 'The polycyclic hydrocarbons in smoke induce 1A2 — not nicotine, so patches and vapes do not replace the effect.' },
+  { id: 'modafinil', name: 'Modafinil', cls: 'Wake agent', acts: [['3A4', -1, 'W']] },
+  // --- non-CYP perpetrators, dealt only where an enemy lists them in fx ---
+  { id: 'valproate', name: 'Valproate', cls: 'Mood stabilizer', special: true, reveal: 'Inhibits UGT glucuronidation' },
+  { id: 'felbamate', name: 'Felbamate', cls: 'Anticonvulsant', special: true, reveal: 'Slows valproate clearance' },
+  { id: 'aspirin', name: 'Aspirin', cls: 'Salicylate', special: true, reveal: 'Displaces valproate from albumin and slows its β-oxidation — the free level rises' },
+  { id: 'meropenem', name: 'Meropenem', cls: 'Carbapenem', special: true, reveal: 'Blocks the enzyme that turns valproate glucuronide back into valproate, so it is excreted instead of recycled' },
+  { id: 'hctz', name: 'Hydrochlorothiazide', cls: 'Thiazide', special: true, reveal: 'Mild volume loss makes the proximal tubule reabsorb more sodium — and lithium with it' },
+  { id: 'ibuprofen', name: 'Ibuprofen', cls: 'NSAID', special: true, reveal: 'Blocks renal prostaglandins, lowering lithium clearance' },
+  { id: 'lisinopril', name: 'Lisinopril', cls: 'ACE inhibitor', special: true, reveal: 'Lowers GFR and promotes sodium loss, so lithium is retained' },
+  { id: 'losartan', name: 'Losartan', cls: 'ARB', special: true, reveal: 'Lowers GFR and promotes sodium loss, so lithium is retained' },
+  { id: 'furosemide', name: 'Furosemide', cls: 'Loop diuretic', special: true, reveal: 'Can raise lithium, but far less predictably than a thiazide' },
+  { id: 'theophylline', name: 'Theophylline', cls: 'Methylxanthine', special: true, reveal: 'Raises renal lithium clearance' },
+  { id: 'caffeine', name: 'Caffeine', cls: 'Methylxanthine', special: true, reveal: 'Raises renal lithium clearance (cutting back can push lithium up)' },
+  { id: 'acetazolamide', name: 'Acetazolamide', cls: 'Carbonic anhydrase inhibitor', special: true, reveal: 'Proximal diuresis carries lithium out' },
+];
+
+// Contraindication / warning lists reused below.
+const AR_S3A_INH = ['clarithromycin', 'ketoconazole', 'itraconazole', 'posaconazole', 'voriconazole', 'ritonavir', 'nefazodone'];
+const AR_S3A_IND = ['carbamazepine', 'phenytoin', 'rifampin', 'stjohns'];
+// 3A4 perpetrators whose effect on a mostly-2D6 drug is not well described —
+// kept out of those hands rather than scored "no effect".
+const AR_3A_ALL = AR_S3A_INH.concat(['fluconazole', 'erythromycin', 'diltiazem', 'verapamil', 'grapefruit', 'ciprofloxacin', 'cimetidine', 'stjohns', 'phenobarbital', 'primidone', 'efavirenz', 'modafinil']);
+
+/* Enemies. `low` / `high` are what the enemy hits you with while its level is
+   below / above the window. `note` is what a clinician actually does, from the
+   label where there is one. `warn` stamps the result card when any listed
+   throwable was part of the fix. */
+const AR_FOES = [
+  // ---------- antidepressants ----------
+  { id: 'nortriptyline', name: 'Nortriptyline', group: 'Antidepressants', shape: 'capsule', colors: ['#f4e3b5', '#d0763a'],
+    paths: ['2D6'], dirs: ['low'], exclude: AR_3A_ALL,
+    path: 'CYP2D6 · moderate sensitive substrate',
+    low: 'the depression creeps back', high: 'anticholinergic storm — the QRS widens',
+    note: 'Nortriptyline has a real therapeutic window (about 50–150 ng/mL). Strong 2D6 inhibitors — fluoxetine, paroxetine, bupropion — can raise TCA levels several-fold: check a level, cut the dose, and watch the QRS.' },
+  { id: 'desipramine', name: 'Desipramine', group: 'Antidepressants', shape: 'tablet', colors: ['#f7c9d4', '#b34a6a'],
+    paths: ['2D6'], dirs: ['low'], exclude: AR_3A_ALL,
+    path: 'CYP2D6 · sensitive substrate (the FDA index substrate)',
+    low: 'the depression creeps back', high: 'arrhythmia and seizure risk climb',
+    note: 'Desipramine is the FDA’s index CYP2D6 substrate — the drug used to measure how hard something inhibits 2D6. Strong inhibitors raise it several-fold; TCA toxicity means arrhythmias and seizures, so check a level and lower the dose.' },
+  { id: 'vortioxetine', name: 'Vortioxetine', group: 'Antidepressants', shape: 'tablet', colors: ['#c9b6ff', '#6a3fd6'],
+    paths: ['2D6'], sens: { inh: 'lo' }, fx: { rifampin: -1, carbamazepine: -1, phenytoin: -1 },
+    exclude: AR_3A_ALL,
+    path: 'CYP2D6 (main), with several other CYPs behind it',
+    low: 'the depression creeps back', high: 'waves of nausea',
+    note: 'Label: halve the vortioxetine dose with a strong 2D6 inhibitor (bupropion, fluoxetine, paroxetine, quinidine). With a strong CYP inducer (rifampin, carbamazepine, phenytoin) for more than 14 days, consider raising it — to no more than 3× the original dose.' },
+  { id: 'duloxetine', name: 'Duloxetine', group: 'Antidepressants', shape: 'capsule', colors: ['#9fd8ff', '#2b6cb0'],
+    paths: ['1A2'], minor: ['2D6'], dirs: ['low'], fx: { smoking: 'f' },
+    exclude: ['phenytoin', 'rifampin'],
+    path: 'CYP1A2 (main) · CYP2D6 (minor)',
+    low: 'the pain and low mood return', high: 'nausea, sweating, blood pressure up',
+    warn: [{ ids: ['fluvoxamine'], text: 'The duloxetine label says to avoid potent 1A2 inhibitors like fluvoxamine — and an SSRI plus an SNRI adds serotonin-syndrome risk.' }],
+    note: 'Label: avoid potent 1A2 inhibitors — fluvoxamine raised duloxetine exposure about sixfold. Paroxetine (2D6) raised it only about 60%. Smokers run about a third lower, and the label recommends no dose change for that.' },
+  { id: 'citalopram', name: 'Citalopram', group: 'Antidepressants', shape: 'tablet', colors: ['#ffe08a', '#c99a14'],
+    paths: ['2C19'], minor: ['3A4', '2D6'], fx: { carbamazepine: 'f' },
+    path: 'CYP2C19 (main) · 3A4 and 2D6 (minor)',
+    low: 'the depression returns', high: 'the QT stretches',
+    warn: [{ ids: ['fluoxetine', 'fluvoxamine'], text: 'Two SSRIs together has no clinical rationale and adds serotonin-syndrome risk — the real-life fix is the citalopram dose.' }],
+    note: 'Label: 20 mg/day is the maximum with cimetidine or another CYP2C19 inhibitor (and in 2C19 poor metabolizers), because citalopram prolongs the QT in a dose-dependent way.' },
+  { id: 'escitalopram', name: 'Escitalopram', group: 'Antidepressants', shape: 'tablet', colors: ['#fff3b8', '#b8860b'],
+    paths: ['2C19'], minor: ['3A4', '2D6'], fx: { carbamazepine: 'f' },
+    path: 'CYP2C19 (main) · 3A4 and 2D6 (minor)',
+    low: 'the depression returns', high: 'the QT stretches',
+    warn: [{ ids: ['fluoxetine', 'fluvoxamine'], text: 'Two SSRIs together has no clinical rationale and adds serotonin-syndrome risk — the real-life fix is the escitalopram dose.' }],
+    note: 'Escitalopram shares citalopram’s 2C19-first metabolism. Weak 2C19 inhibitors like omeprazole nudge it up; strong ones like fluconazole push it further. CPIC suggests a 50% lower starting dose in 2C19 poor metabolizers for the same reason.' },
+  { id: 'trazodone', name: 'Trazodone', group: 'Antidepressants', shape: 'tablet', colors: ['#ffd1a8', '#d9772b'],
+    paths: ['3A4'], sens: 'lo',
+    path: 'CYP3A4',
+    low: 'insomnia wins', high: 'orthostasis and syncope',
+    note: 'Label: consider a lower trazodone dose with a strong 3A4 inhibitor — ritonavir raised trazodone enough to cause nausea, hypotension and syncope — and a higher one with an inducer such as carbamazepine.' },
+
+  // ---------- antipsychotics ----------
+  { id: 'risperidone', name: 'Risperidone', group: 'Antipsychotics', shape: 'tablet', colors: ['#ffb3b3', '#c43d3d'],
+    paths: ['2D6'], sens: { inh: 'lo' }, fx: { carbamazepine: -1, phenytoin: -1, rifampin: -1, phenobarbital: -1 },
+    exclude: AR_3A_ALL.filter(x => ['phenobarbital'].indexOf(x) < 0),
+    path: 'CYP2D6 → 9-hydroxyrisperidone (paliperidone), which is just as active',
+    low: 'the voices creep back', high: 'EPS and prolactin rise',
+    note: 'Because 2D6 turns risperidone into another active drug, strong 2D6 inhibitors raise the total active moiety only modestly — one notch here. Label: lower the dose with fluoxetine or paroxetine and don’t exceed 8 mg/day; strong inducers such as carbamazepine cut the active moiety, so the dose may need to rise.' },
+  { id: 'aripiprazole', name: 'Aripiprazole', group: 'Antipsychotics', shape: 'tablet', colors: ['#b8e6ff', '#3a7fc4'],
+    paths: ['2D6', '3A4'], sens: 'lo',
+    path: 'CYP2D6 + CYP3A4',
+    low: 'psychosis flickers back', high: 'akathisia sets in',
+    note: 'Label: halve the aripiprazole dose with a strong 2D6 or a strong 3A4 inhibitor, quarter it with both, and double it with a strong 3A4 inducer such as carbamazepine or rifampin.' },
+  { id: 'brexpiprazole', name: 'Brexpiprazole', group: 'Antipsychotics', shape: 'tablet', colors: ['#c8f0e4', '#2f9e82'],
+    paths: ['2D6', '3A4'], sens: 'lo',
+    path: 'CYP2D6 + CYP3A4',
+    low: 'psychosis flickers back', high: 'akathisia sets in',
+    note: 'Label: halve the brexpiprazole dose with a strong 2D6 or strong 3A4 inhibitor, quarter it with both, and double it with a strong 3A4 inducer.' },
+  { id: 'iloperidone', name: 'Iloperidone', group: 'Antipsychotics', shape: 'tablet', colors: ['#e2d4ff', '#7a5bc9'],
+    paths: ['2D6', '3A4'], sens: 'lo', dirs: ['low'],
+    path: 'CYP2D6 + CYP3A4',
+    low: 'psychosis flickers back', high: 'the QT stretches, orthostasis hits',
+    note: 'Label: halve the iloperidone dose with a strong 2D6 inhibitor (fluoxetine, paroxetine) or a strong 3A4 inhibitor (ketoconazole, clarithromycin). QT prolongation is why it matters.' },
+  { id: 'perphenazine', name: 'Perphenazine', group: 'Antipsychotics', shape: 'tablet', colors: ['#d9d9d9', '#555b66'],
+    paths: ['2D6'], dirs: ['low'], exclude: AR_3A_ALL,
+    path: 'CYP2D6 · sensitive substrate',
+    low: 'psychosis flickers back', high: 'rigidity, akathisia, sedation',
+    note: 'Perphenazine runs several-fold higher in 2D6 poor metabolizers, and a strong 2D6 inhibitor reproduces that. Expect more sedation and EPS — lower the dose.' },
+  { id: 'clozapine', name: 'Clozapine', group: 'Antipsychotics', shape: 'tablet', colors: ['#fff6c8', '#d6b23a'],
+    paths: ['1A2'], minor: ['3A4', '2D6'], fx: { stjohns: -1 },
+    exclude: ['carbamazepine', 'omeprazole'],
+    path: 'CYP1A2 (main) · moderate sensitive substrate; 3A4 and 2D6 minor',
+    low: 'psychosis roars back', high: 'seizures, sedation, drooling',
+    note: 'Label: use one-third the clozapine dose with a strong 1A2 inhibitor (fluvoxamine — the label also names ciprofloxacin). Smoking induces 1A2 through the hydrocarbons in smoke: quitting, or a smoke-free admission, can push clozapine up sharply, and nicotine replacement does not prevent it. Strong 3A4 inducers are not recommended. (Carbamazepine is left out of this battle on purpose — it adds agranulocytosis risk.)' },
+  { id: 'olanzapine', name: 'Olanzapine', group: 'Antipsychotics', shape: 'tablet', colors: ['#ffe0b3', '#e08a1e'],
+    paths: ['1A2'], minor: ['2D6'], sens: 'lo', fx: { carbamazepine: -1 },
+    exclude: AR_S3A_INH.concat(['erythromycin', 'diltiazem', 'verapamil', 'grapefruit', 'fluconazole', 'stjohns', 'phenobarbital', 'primidone', 'efavirenz', 'modafinil', 'omeprazole', 'phenytoin']),
+    path: 'CYP1A2 + glucuronidation (UGT)',
+    low: 'psychosis flickers back', high: 'sedation and orthostasis',
+    note: 'Olanzapine is cleared by 1A2 and by direct glucuronidation, so even fluvoxamine only roughly doubles it — one notch, not two (label: consider a lower olanzapine dose). Carbamazepine raises its clearance by about half. Smokers clear it faster too, a smaller effect than with clozapine.' },
+  { id: 'quetiapine', name: 'Quetiapine', group: 'Antipsychotics', shape: 'tablet', colors: ['#ffd6e8', '#d6589a'],
+    paths: ['3A4'],
+    path: 'CYP3A4 · sensitive substrate',
+    low: 'psychosis and insomnia return', high: 'sedation and orthostasis hit hard',
+    note: 'Label: cut quetiapine to one-sixth of the dose with a strong 3A4 inhibitor, and raise it up to fivefold with a strong 3A4 inducer (phenytoin, carbamazepine, rifampin, St John’s wort) given for 7–14 days or more.' },
+  { id: 'lurasidone', name: 'Lurasidone', group: 'Antipsychotics', shape: 'tablet', colors: ['#d7f5c4', '#4f9a2a'],
+    paths: ['3A4'],
+    path: 'CYP3A4 · sensitive substrate',
+    low: 'the depression and psychosis return', high: 'akathisia and somnolence',
+    warn: [{ ids: AR_S3A_INH.concat(AR_S3A_IND), text: 'Contraindicated in real life: the lurasidone label bars strong 3A4 inhibitors and strong 3A4 inducers.' }],
+    note: 'Label: contraindicated with strong 3A4 inhibitors (ketoconazole, clarithromycin, ritonavir, voriconazole) and strong 3A4 inducers (rifampin, carbamazepine, phenytoin, St John’s wort). With a moderate inhibitor (diltiazem, erythromycin, fluconazole, verapamil), halve the dose, up to 80 mg/day.' },
+  { id: 'cariprazine', name: 'Cariprazine', group: 'Antipsychotics', shape: 'capsule', colors: ['#e8e1ff', '#5b4bb3'],
+    paths: ['3A4'],
+    path: 'CYP3A4',
+    low: 'psychosis flickers back', high: 'akathisia sets in',
+    warn: [{ ids: AR_S3A_IND, text: 'Not recommended in real life: the cariprazine label advises against strong 3A4 inducers.' }],
+    note: 'Label: halve the cariprazine dose with a strong 3A4 inhibitor; strong 3A4 inducers are not recommended. Its long-lived active metabolite means any change plays out over weeks.' },
+  { id: 'lumateperone', name: 'Lumateperone', group: 'Antipsychotics', shape: 'capsule', colors: ['#cfe8ff', '#1f5f99'],
+    paths: ['3A4'],
+    path: 'CYP3A4 (plus UGT)',
+    low: 'the mood and psychosis return', high: 'somnolence sets in',
+    warn: [{ ids: AR_S3A_IND.concat(['phenobarbital', 'primidone', 'efavirenz', 'modafinil']), text: 'Not in real life: the lumateperone label says to avoid 3A4 inducers.' }],
+    note: 'Label: lower the lumateperone dose with a moderate or strong 3A4 inhibitor, and avoid 3A4 inducers altogether.' },
+  { id: 'haloperidol', name: 'Haloperidol', group: 'Antipsychotics', shape: 'tablet', colors: ['#f0f0f0', '#7a7f8c'],
+    paths: ['3A4'], minor: ['2D6'], sens: 'lo',
+    path: 'CYP3A4 (main) · 2D6 and glucuronidation',
+    low: 'agitation and psychosis return', high: 'rigidity, dystonia, the QT stretches',
+    note: 'Haloperidol runs on several pathways, so single interactions are moderate: rifampin cut haloperidol levels by about 70% and carbamazepine lowers them too, while azoles and 2D6 inhibitors push them up modestly. Watch EPS and the QT.' },
+
+  // ---------- mood stabilizers & anticonvulsants ----------
+  { id: 'lithium', name: 'Lithium', group: 'Mood stabilizers', shape: 'crystal', colors: ['#f2f7ff', '#9fb4d6'],
+    nonCyp: true,
+    fx: { hctz: 1, ibuprofen: 1, lisinopril: 1, losartan: 1, furosemide: 'f', theophylline: -1, caffeine: -1, acetazolamide: -1 },
+    decoys: ['clarithromycin', 'ketoconazole', 'grapefruit', 'smoking', 'rifampin', 'omeprazole', 'bupropion', 'ciprofloxacin', 'paroxetine'],
+    path: 'Renal — filtered and reabsorbed like sodium; no CYP metabolism at all',
+    low: 'mania surges back', high: 'tremor, ataxia, confusion',
+    note: 'Lithium is cleared unchanged by the kidney, so no CYP drug touches it. Anything that makes the kidney hold on to sodium holds lithium too: thiazides (roughly 25–40% higher levels), NSAIDs, ACE inhibitors and ARBs — each is a one-notch problem because the window is so narrow. Theophylline, caffeine and acetazolamide speed lithium out.' },
+  { id: 'valproate', name: 'Valproate', group: 'Mood stabilizers', shape: 'drop', colors: ['#ffd0a8', '#e0692e'],
+    nonCyp: true,
+    fx: { meropenem: -2, carbamazepine: -1, phenytoin: -1, phenobarbital: -1, rifampin: -1, ocp: 'f', felbamate: 1, aspirin: 1 },
+    decoys: ['paroxetine', 'bupropion', 'clarithromycin', 'ketoconazole', 'grapefruit', 'smoking', 'ciprofloxacin', 'quinidine'],
+    path: 'Glucuronidation and mitochondrial β-oxidation — little CYP',
+    low: 'seizures and mania break through', high: 'tremor, sedation, ammonia rising',
+    warn: [{ ids: ['meropenem'], text: 'Real-life version: a carbapenem crashes valproate within about a day, and raising the valproate dose does not rescue it — change the antibiotic or cover seizures another way.' }],
+    note: 'Valproate is mostly glucuronidated and β-oxidized. Carbapenems (meropenem, ertapenem) can drop levels 60–100% within about a day, and more valproate won’t fix it. Enzyme inducers lower it more gradually; felbamate raises it, and aspirin raises the free (unbound) fraction — so a "normal" total level can hide toxicity.' },
+  { id: 'lamotrigine', name: 'Lamotrigine', group: 'Mood stabilizers', shape: 'tablet', colors: ['#fff0f5', '#c9577f'],
+    nonCyp: true,
+    fx: { valproate: 1, ocp: -1, carbamazepine: -1, phenytoin: -1, phenobarbital: -1, primidone: -1, rifampin: -1 },
+    decoys: ['bupropion', 'paroxetine', 'clarithromycin', 'ketoconazole', 'grapefruit', 'ciprofloxacin', 'smoking', 'quinidine'],
+    path: 'Glucuronidation (UGT1A4) — not CYP',
+    low: 'the depression and seizures break through', high: 'dizziness, diplopia, ataxia',
+    warn: [{ ids: ['valproate'], text: 'A real combination — but lamotrigine must then be started at a lower dose and titrated more slowly, because fast rises drive the rash/SJS risk.' }],
+    note: 'Lamotrigine is glucuronidated, not CYP-metabolized. Valproate blocks that glucuronidation and roughly doubles lamotrigine, so the label halves the lamotrigine dose and slows the titration to limit rash and SJS. Carbamazepine, phenytoin, phenobarbital, primidone, rifampin and estrogen-containing pills lower it — and levels rebound during the pill-free week.' },
+  { id: 'carbamazepine', name: 'Carbamazepine', group: 'Mood stabilizers', shape: 'tablet', colors: ['#e6f0ff', '#4a6fa5'],
+    paths: ['3A4'], autoinduce: true, exclude: ['valproate'],
+    warn: [{ ids: ['nefazodone'], text: 'Contraindicated in real life: the nefazodone label bars carbamazepine (carbamazepine also wipes out nefazodone levels).' }],
+    path: 'CYP3A4 — and it induces 3A4, including its own metabolism',
+    low: 'seizures and mania break through', high: 'diplopia, ataxia, nystagmus',
+    note: 'Carbamazepine induces the enzyme that clears it, so levels fall over the first few weeks of therapy (autoinduction) and doses creep up. Macrolides (erythromycin, clarithromycin), azoles, diltiazem, verapamil and grapefruit push it into toxicity: diplopia, ataxia, nystagmus. Phenytoin, phenobarbital and rifampin pull it down.' },
+
+  // ---------- anxiolytics & hypnotics ----------
+  { id: 'buspirone', name: 'Buspirone', group: 'Anxiolytics & hypnotics', shape: 'tablet', colors: ['#d9f7ff', '#2a93b0'],
+    paths: ['3A4'],
+    path: 'CYP3A4 · sensitive substrate',
+    low: 'the anxiety creeps back', high: 'dizziness and nausea',
+    note: 'Buspirone is an FDA sensitive 3A substrate: itraconazole raised its exposure more than tenfold and rifampin cut it by about 90%. Label: with a strong 3A4 inhibitor, use a low buspirone dose cautiously.' },
+  { id: 'alprazolam', name: 'Alprazolam', group: 'Anxiolytics & hypnotics', shape: 'tablet', colors: ['#fff2c2', '#c9a227'],
+    paths: ['3A4'], fx: { fluvoxamine: 1, fluoxetine: 'f' },
+    path: 'CYP3A4 · moderate sensitive substrate',
+    low: 'panic returns', high: 'sedation and slurred speech',
+    warn: [{ ids: ['ketoconazole', 'itraconazole'], text: 'Contraindicated in real life: the alprazolam label bars ketoconazole and itraconazole.' }],
+    note: 'Label: contraindicated with ketoconazole and itraconazole. Fluvoxamine — only weak at 3A4 on the FDA table — still roughly doubles alprazolam, and its label says to at least halve the starting alprazolam dose. A reminder that a class rating is an average, not a promise.' },
+  { id: 'diazepam', name: 'Diazepam', group: 'Anxiolytics & hypnotics', shape: 'tablet', colors: ['#fff9d6', '#b59b2b'],
+    paths: ['2C19', '3A4'],
+    path: 'CYP2C19 + CYP3A4 → desmethyldiazepam (active, long-lived)',
+    low: 'the anxiety creeps back', high: 'deep, lingering sedation',
+    warn: [{ ids: ['fluvoxamine'], text: 'The fluvoxamine label calls this combination generally not advisable.' }],
+    note: 'Diazepam is demethylated by 2C19 and 3A4. Fluvoxamine, which hits 2C19 hard, raised diazepam exposure nearly threefold, and the long-lived active metabolite stretches the sedation out further. Rifampin and carbamazepine speed its clearance.' },
+  { id: 'triazolam', name: 'Triazolam', group: 'Anxiolytics & hypnotics', shape: 'tablet', colors: ['#e6f7ff', '#5a8fb3'],
+    paths: ['3A4'],
+    path: 'CYP3A4 · sensitive substrate (an FDA index substrate)',
+    low: 'insomnia wins', high: 'deep sedation and amnesia',
+    warn: [{ ids: AR_S3A_INH, text: 'Contraindicated in real life: the triazolam label bars strong 3A4 inhibitors such as ketoconazole, itraconazole and nefazodone.' }],
+    note: 'Triazolam is one of the FDA’s index 3A substrates. Label: contraindicated with strong 3A4 inhibitors (ketoconazole, itraconazole, nefazodone and others) — the result is deep, prolonged sedation.' },
+  { id: 'zolpidem', name: 'Zolpidem', group: 'Anxiolytics & hypnotics', shape: 'capsule', colors: ['#dfe3ff', '#4452a8'],
+    paths: ['3A4'], sens: 'lo',
+    path: 'CYP3A4 (main), with 2C9 and 1A2 behind it',
+    low: 'insomnia wins', high: 'complex sleep behaviors and next-day impairment',
+    note: 'Zolpidem is only partly a 3A4 story: ketoconazole raised its exposure about 70% (label: consider a lower zolpidem dose), and rifampin cut it sharply. The label advises against St John’s wort.' },
+  { id: 'suvorexant', name: 'Suvorexant', group: 'Anxiolytics & hypnotics', shape: 'tablet', colors: ['#e0f5ea', '#3b8f63'],
+    paths: ['3A4'],
+    path: 'CYP3A4',
+    low: 'insomnia wins', high: 'next-day somnolence',
+    warn: [{ ids: AR_S3A_INH, text: 'Not recommended in real life: the suvorexant label advises against strong 3A4 inhibitors.' }],
+    note: 'Label: not recommended with strong 3A4 inhibitors; with a moderate inhibitor start at 5 mg and don’t exceed 10 mg. Strong inducers can blunt it.' },
+
+  // ---------- addiction & ADHD ----------
+  { id: 'methadone', name: 'Methadone', group: 'Addiction & ADHD', shape: 'drop', colors: ['#ffe5cc', '#b35c1e'],
+    paths: ['3A4', '2B6'], sens: { inh: 'lo', ind: 'hi' },
+    path: 'CYP2B6 + CYP3A4',
+    low: 'opioid withdrawal kicks in', high: 'respiratory depression, the QT stretches',
+    note: 'Methadone is cleared by 2B6 and 3A4. Inducers — rifampin, carbamazepine, phenytoin, efavirenz, St John’s wort — can precipitate withdrawal within days. Inhibitors raise it more modestly but add sedation, respiratory depression and QT risk. Adjust the dose and watch closely either way.' },
+  { id: 'buprenorphine', name: 'Buprenorphine', group: 'Addiction & ADHD', shape: 'film', colors: ['#fbe3ff', '#9b4fb0'],
+    paths: ['3A4'], sens: 'lo',
+    path: 'CYP3A4 (to norbuprenorphine) + glucuronidation',
+    low: 'withdrawal and cravings', high: 'sedation creeps in',
+    note: 'Buprenorphine has a lot of reserve: ketoconazole raised it by roughly half (label: monitor and reduce if needed), and strong inducers can bring on withdrawal or loss of effect. Its ceiling on respiratory depression makes inhibitor effects less dangerous than with methadone.' },
+  { id: 'atomoxetine', name: 'Atomoxetine', group: 'Addiction & ADHD', shape: 'capsule', colors: ['#d6f0ff', '#1d7fb8'],
+    paths: ['2D6'], dirs: ['low'], exclude: AR_3A_ALL,
+    path: 'CYP2D6 · sensitive substrate',
+    low: 'inattention returns', high: 'tachycardia, blood pressure up, insomnia',
+    note: 'Label: with a strong 2D6 inhibitor (paroxetine, fluoxetine, quinidine), or in a 2D6 poor metabolizer, adults start at 40 mg/day and go to 80 mg only if symptoms haven’t improved after 4 weeks.' },
+];
+
+const ARENA = (function () {
+  const $ = id => document.getElementById(id);
+  const TBY = {}; AR_THROWS.forEach(t => { TBY[t.id] = t; });
+  const FBY = {}; AR_FOES.forEach(f => { FBY[f.id] = f; });
+
+  const STR = { S: 'strong', M: 'moderate', W: 'weak' };
+  const STEP = { hi: { S: 2, M: 1, W: 'f' }, lo: { S: 1, M: 'f', W: 'f' } };
+  const LVL_MIN = -4, LVL_MAX = 4;
+  const rnd = n => Math.floor(Math.random() * n);
+  const pick = a => a[rnd(a.length)];
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function load(k) { try { return JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) { return {}; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* convenience only */ } }
+
+  /* ================= interaction engine ================= */
+  function sensFor(en, dir) {
+    const s = en.sens;
+    if (!s) return 'hi';
+    if (typeof s === 'string') return s;
+    return (dir > 0 ? s.inh : s.ind) || 'hi';
+  }
+  function norm(v) {
+    if (v === 'f') return { kind: 'flicker', step: 0 };
+    if (!v) return { kind: 'none', step: 0 };
+    return { kind: 'move', step: v };
+  }
+  // What one throwable does to one enemy: {kind: move|flicker|none, step}
+  function effectOf(en, t) {
+    if (t.dose) return { kind: 'move', step: t.step };
+    if (en.fx && Object.prototype.hasOwnProperty.call(en.fx, t.id)) return norm(en.fx[t.id]);
+    if (en.nonCyp || t.special) return { kind: 'none', step: 0 };
+    let best = { kind: 'none', step: 0 };
+    (t.acts || []).forEach(([path, dir, str]) => {
+      let mag = null;
+      if ((en.paths || []).indexOf(path) >= 0) mag = STEP[sensFor(en, dir)][str];
+      else if ((en.minor || []).indexOf(path) >= 0) mag = dir > 0 ? 'f' : (str === 'S' ? 1 : 'f');
+      if (mag === null) return;
+      const cand = mag === 'f' ? { kind: 'flicker', step: 0, dir } : { kind: 'move', step: dir * mag };
+      const rank = c => c.kind === 'move' ? 10 + Math.abs(c.step) : c.kind === 'flicker' ? 1 : 0;
+      if (rank(cand) > rank(best)) best = cand;
+    });
+    return best;
+  }
+  // Every throwable that could be dealt against this enemy.
+  function poolFor(en) {
+    const ex = new Set((en.exclude || []).concat([en.id]));
+    return AR_THROWS.filter(t => {
+      if (ex.has(t.id)) return false;
+      if (t.special) return !!(en.fx && en.fx[t.id] !== undefined);
+      if (en.nonCyp) {
+        const e = effectOf(en, t);
+        return e.kind !== 'none' || (en.decoys || []).indexOf(t.id) >= 0;
+      }
+      return true;
+    });
+  }
+  function classify(en, t, level) {
+    const e = effectOf(en, t);
+    const need = level < 0 ? 1 : -1;
+    if (e.kind === 'move') {
+      if (Math.sign(e.step) === need) return Math.abs(e.step) <= Math.abs(level) ? 'works' : 'overshoot';
+      return 'wrong';
+    }
+    return e.kind; // flicker | none
+  }
+  function doseCard(en, level) {
+    const up = level < 0;
+    return { id: 'dose', dose: true, step: up ? 1 : -1, name: (up ? 'Raise' : 'Lower') + ' the dose', cls: 'Dose change',
+      reveal: up ? 'Raise the ' + en.name + ' dose one step' : 'Lower the ' + en.name + ' dose one step' };
+  }
+  // Four throws, at least one of which moves the level toward the window without overshooting.
+  function dealHand(en, level, size) {
+    size = size || 4;
+    const buckets = { works: [], overshoot: [], wrong: [], flicker: [], none: [] };
+    poolFor(en).forEach(t => buckets[classify(en, t, level)].push(t));
+    Object.keys(buckets).forEach(k => shuffle(buckets[k]));
+    const hand = [];
+    const take = arr => { while (arr.length) { const t = arr.pop(); if (hand.indexOf(t) < 0) { hand.push(t); return true; } } return false; };
+    if (buckets.works.length) {
+      // Prefer the one that lands exactly, half the time, so a hand isn't always solvable in one throw.
+      const exact = buckets.works.filter(t => Math.abs(effectOf(en, t).step) === Math.abs(level));
+      const first = exact.length && Math.random() < .5 ? pick(exact) : buckets.works[buckets.works.length - 1];
+      buckets.works.splice(buckets.works.indexOf(first), 1);
+      hand.push(first);
+    } else {
+      hand.push(doseCard(en, level));
+    }
+    take(buckets.wrong);
+    take(buckets.none);
+    const rest = shuffle([].concat(buckets.flicker, buckets.overshoot, buckets.none, buckets.wrong, buckets.works));
+    while (hand.length < size && rest.length) { const t = rest.pop(); if (hand.indexOf(t) < 0) hand.push(t); }
+    return shuffle(hand);
+  }
+  function revealOf(t) {
+    if (t.reveal) return t.reveal;
+    const parts = (t.acts || []).map(([p, d, s]) => STR[s] + ' CYP' + p + ' ' + (d > 0 ? 'inhibitor' : 'inducer'));
+    return parts.join(' · ');
+  }
+  // All throwables that fix the starting imbalance, strongest first.
+  function answerKey(en, startLevel) {
+    const need = startLevel < 0 ? 1 : -1;
+    return poolFor(en).map(t => ({ t, e: effectOf(en, t) }))
+      .filter(x => x.e.kind === 'move' && Math.sign(x.e.step) === need)
+      .sort((a, b) => Math.abs(b.e.step) - Math.abs(a.e.step) || a.t.name.localeCompare(b.t.name));
+  }
+  function dirsOf(en) {
+    if (en.dirs) return en.dirs;
+    // An enemy only spawns in a direction the game can actually fix.
+    const out = [];
+    const pool = poolFor(en);
+    if (pool.some(t => { const e = effectOf(en, t); return e.kind === 'move' && e.step > 0; })) out.push('low');
+    if (pool.some(t => { const e = effectOf(en, t); return e.kind === 'move' && e.step < 0; })) out.push('high');
+    return out;
+  }
+  function startLevelFor(en, want) {
+    const dirs = dirsOf(en);
+    const d = want && dirs.indexOf(want) >= 0 ? want : pick(dirs);
+    const mag = Math.random() < .6 ? 2 : 3;
+    return d === 'low' ? -mag : mag;
+  }
+
+  /* ================= audio: original chiptune + sfx ================= */
+  const AUDIO = (function () {
+    const MUTE_KEY = 'arena.mute.v1';
+    let muted = false;
+    try { muted = localStorage.getItem(MUTE_KEY) === '1'; } catch (e) { /* default on */ }
+    let ctx = null, master, musicBus, sfxBus, noiseBuf;
+    let timer = null, nextT = 0, step = 0, want = false;
+    const BPM = 146, E8 = 60 / BPM / 2;
+    const A = [
+      [['A4', 2], ['C5', 1], ['E5', 1], ['D5', 1], ['C5', 1], ['B4', 1], ['C5', 1]],
+      [['A4', 2], ['F4', 1], ['A4', 1], ['C5', 2], ['A4', 2]],
+      [['B4', 2], ['D5', 1], ['G5', 1], ['F5', 1], ['E5', 1], ['D5', 1], ['B4', 1]],
+      [['E5', 3], ['D5', 1], ['C5', 1], ['B4', 1], ['G#4', 2]],
+      [['A4', 1], ['E5', 1], ['A5', 2], ['G5', 1], ['E5', 1], ['C5', 2]],
+      [['F5', 2], ['E5', 1], ['D5', 1], ['C5', 2], ['A4', 2]],
+      [['D5', 1], ['F5', 1], ['A5', 2], ['G5', 1], ['F5', 1], ['E5', 1], ['D5', 1]],
+      [['E5', 2], ['G#5', 2], ['B5', 2], ['E5', 2]],
+    ];
+    const B = [
+      [['C5', 2], ['A4', 2], ['F5', 2], ['E5', 1], ['D5', 1]],
+      [['D5', 2], ['B4', 2], ['G5', 3], ['F5', 1]],
+      [['E5', 1], ['G5', 1], ['B5', 2], ['A5', 1], ['G5', 1], ['E5', 2]],
+      [['A5', 4], ['E5', 2], ['C5', 2]],
+      [['F5', 1], ['E5', 1], ['F5', 1], ['A5', 1], ['C6', 2], ['A5', 2]],
+      [['G5', 1], ['F5', 1], ['G5', 1], ['B5', 1], ['D6', 2], ['B5', 2]],
+      [['G#5', 2], ['E5', 2], ['B4', 2], ['D5', 2]],
+      [['E5', 4], [null, 2], ['E4', 1], ['G#4', 1]],
+    ];
+    const ROOTS = ['A2', 'F2', 'G2', 'E2', 'A2', 'F2', 'D2', 'E2', 'F2', 'G2', 'E2', 'A2', 'F2', 'G2', 'E2', 'E2'];
+    const LEAD = {}; // step -> [note, len]
+    (function build() {
+      let s = 0;
+      A.concat(B).forEach(bar => bar.forEach(([n, l]) => { if (n) LEAD[s] = [n, l]; s += l; }));
+    })();
+    const LOOP = 128;
+
+    function freq(n) {
+      const m = /^([A-G])(#|b)?(\d)$/.exec(n);
+      const base = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
+      return 440 * Math.pow(2, ((+m[3] + 1) * 12 + base - 69) / 12);
+    }
+    function ensure() {
+      if (!ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        try { ctx = new AC(); } catch (e) { return null; }
+        master = ctx.createGain(); master.gain.value = muted ? 0 : 1; master.connect(ctx.destination);
+        musicBus = ctx.createGain(); musicBus.gain.value = .13; musicBus.connect(master);
+        sfxBus = ctx.createGain(); sfxBus.gain.value = .22; sfxBus.connect(master);
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate * .5, ctx.sampleRate);
+        const d = noiseBuf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      }
+      if (ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    }
+    function tone(type, f, t, dur, vol, bus, slideTo) {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+      g.gain.setValueAtTime(.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + .008);
+      g.gain.setValueAtTime(vol, t + Math.max(.01, dur * .55));
+      g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g); g.connect(bus || sfxBus);
+      o.start(t); o.stop(t + dur + .03);
+    }
+    function noise(t, dur, vol, hp, bus) {
+      const s = ctx.createBufferSource(); s.buffer = noiseBuf;
+      const f = ctx.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = hp;
+      const g = ctx.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      s.connect(f); f.connect(g); g.connect(bus || sfxBus); s.start(t); s.stop(t + dur + .02);
+    }
+    function schedule(s, t) {
+      const bar = Math.floor(s / 8), inBar = s % 8;
+      const lead = LEAD[s];
+      if (lead) tone('square', freq(lead[0]), t, lead[1] * E8 * .92, .42, musicBus);
+      const root = freq(ROOTS[bar]);
+      tone('triangle', inBar % 2 ? root * 2 : root, t, E8 * .85, .9, musicBus);
+      if (inBar === 0 || inBar === 4) tone('sine', 150, t, .12, .9, musicBus, 45);
+      if (inBar === 2 || inBar === 6) noise(t, .1, .5, 1200, musicBus);
+      noise(t, .03, inBar % 2 ? .12 : .2, 7000, musicBus);
+    }
+    function tick() {
+      while (nextT < ctx.currentTime + .12) { schedule(step, nextT); nextT += E8; step = (step + 1) % LOOP; }
+    }
+    function startMusic() {
+      want = true;
+      if (muted || timer || !ensure()) return;
+      step = 0; nextT = ctx.currentTime + .06;
+      timer = setInterval(tick, 25);
+    }
+    function stopMusic(keepWant) {
+      if (!keepWant) want = false;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    function jingle(notes, type) {
+      if (muted || !ensure()) return;
+      let t = ctx.currentTime + .03;
+      notes.forEach(([n, d]) => { if (n) tone(type || 'square', freq(n), t, d * .95, .5); t += d; });
+    }
+    const SFX = {
+      throw() { tone('square', 300, ctx.currentTime, .2, .35, null, 900); },
+      up() { const t = ctx.currentTime; [523, 659, 784].forEach((f, i) => tone('triangle', f, t + i * .06, .1, .6)); },
+      down() { const t = ctx.currentTime; [784, 659, 523].forEach((f, i) => tone('triangle', f, t + i * .06, .1, .6)); },
+      none() { const t = ctx.currentTime; tone('square', 180, t, .08, .35); tone('square', 150, t + .1, .1, .35); },
+      flicker() { const t = ctx.currentTime; tone('sine', 620, t, .08, .4); tone('sine', 700, t + .08, .08, .4); tone('sine', 620, t + .16, .1, .4); },
+      hurt() { noise(ctx.currentTime, .18, .6, 400); tone('square', 420, ctx.currentTime, .25, .35, null, 110); },
+      pick() { tone('square', 880, ctx.currentTime, .04, .2); },
+    };
+    function sfx(name) { if (muted || !ensure()) return; try { SFX[name](); } catch (e) { /* ignore */ } }
+    function setMuted(m) {
+      muted = m;
+      try { localStorage.setItem(MUTE_KEY, m ? '1' : '0'); } catch (e) { /* convenience */ }
+      if (ctx) master.gain.value = m ? 0 : 1;
+      if (m) stopMusic(true); else if (want) startMusic();
+    }
+    return {
+      startMusic, stopMusic, sfx, setMuted,
+      isMuted: () => muted,
+      win() { stopMusic(true); jingle([['C5', .09], ['E5', .09], ['G5', .09], ['C6', .18], ['G5', .1], ['C6', .5]]); },
+      lose() { stopMusic(true); jingle([['E5', .2], ['D#5', .2], ['D5', .2], ['C#5', .6]], 'triangle'); },
+      suspend() { stopMusic(); if (ctx && ctx.state === 'running') ctx.suspend(); },
+    };
+  })();
+
+  /* ================= sprites ================= */
+  const INK = '#2a1a2e';
+  function shapeSVG(shape, c1, c2) {
+    switch (shape) {
+      case 'capsule':
+        return `<g transform="rotate(-16 80 84)">
+          <rect x="30" y="54" width="100" height="60" rx="30" fill="${c1}" stroke="${INK}" stroke-width="4"/>
+          <path d="M80 56 H100 A28 28 0 0 1 100 112 H80 Z" fill="${c2}"/>
+          <rect x="30" y="54" width="100" height="60" rx="30" fill="none" stroke="${INK}" stroke-width="4"/>
+          <line x1="80" y1="56" x2="80" y2="112" stroke="${INK}" stroke-width="3" opacity=".5"/>
+          <rect x="42" y="62" width="56" height="8" rx="4" fill="#fff" opacity=".45"/></g>`;
+      case 'crystal':
+        return `<polygon points="80,30 124,54 80,78 36,54" fill="${c1}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+          <polygon points="36,54 80,78 80,128 36,104" fill="${c2}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+          <polygon points="80,78 124,54 124,104 80,128" fill="${c1}" opacity=".85" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+          <polygon points="80,78 124,54 124,104 80,128" fill="${c2}" opacity=".35"/>
+          <line x1="52" y1="48" x2="72" y2="38" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/>`;
+      case 'drop':
+        return `<path d="M80 26 C96 52 126 74 126 100 A46 34 0 0 1 34 100 C34 74 64 52 80 26 Z" fill="${c1}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M40 104 A42 30 0 0 0 120 104 C116 118 100 128 80 128 C60 128 44 118 40 104 Z" fill="${c2}" opacity=".55"/>
+          <path d="M62 56 C56 66 50 76 50 86" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>`;
+      case 'film':
+        return `<g transform="rotate(8 80 84)"><rect x="34" y="40" width="92" height="88" rx="14" fill="${c1}" stroke="${INK}" stroke-width="4"/>
+          <rect x="42" y="48" width="76" height="72" rx="9" fill="none" stroke="${c2}" stroke-width="4" stroke-dasharray="7 5"/>
+          <rect x="44" y="50" width="34" height="7" rx="3.5" fill="#fff" opacity=".55"/></g>`;
+      default: // tablet
+        return `<circle cx="80" cy="84" r="46" fill="${c1}" stroke="${INK}" stroke-width="4"/>
+          <circle cx="80" cy="84" r="38" fill="none" stroke="${c2}" stroke-width="5" opacity=".75"/>
+          <line x1="80" y1="40" x2="80" y2="52" stroke="${INK}" stroke-width="3" opacity=".45"/>
+          <path d="M52 62 A36 36 0 0 1 84 46" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/>`;
+    }
+  }
+  function faceSVG(mood) {
+    const y = 88;
+    if (mood === 'weak') {
+      return `<path d="M60 ${y} q7 6 14 0" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M86 ${y} q7 6 14 0" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M72 ${y + 16} q8 -5 16 0" stroke="${INK}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M100 ${y - 2} q3 8 0 12" stroke="#7fc6ff" stroke-width="3" fill="#7fc6ff" opacity=".8"/>`;
+    }
+    if (mood === 'strong') {
+      return `<path d="M56 ${y - 14} L74 ${y - 7}" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+        <path d="M104 ${y - 14} L86 ${y - 7}" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="67" cy="${y}" r="6.5" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="69" cy="${y + 1}" r="3" fill="${INK}"/>
+        <circle cx="93" cy="${y}" r="6.5" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="91" cy="${y + 1}" r="3" fill="${INK}"/>
+        <path d="M68 ${y + 18} h24 v6 h-24 z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M74 ${y + 18} v6 M80 ${y + 18} v6 M86 ${y + 18} v6" stroke="${INK}" stroke-width="2"/>
+        <ellipse cx="56" cy="${y + 12}" rx="6" ry="3.5" fill="#ff6a5a" opacity=".6"/><ellipse cx="104" cy="${y + 12}" rx="6" ry="3.5" fill="#ff6a5a" opacity=".6"/>`;
+    }
+    return `<path d="M60 ${y + 2} q7 -8 14 0" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M86 ${y + 2} q7 -8 14 0" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M68 ${y + 12} q12 12 24 0" stroke="${INK}" stroke-width="4" fill="#ff8f8f" stroke-linejoin="round"/>
+      <ellipse cx="56" cy="${y + 10}" rx="6" ry="3.5" fill="#ff9aa8" opacity=".7"/><ellipse cx="104" cy="${y + 10}" rx="6" ry="3.5" fill="#ff9aa8" opacity=".7"/>`;
+  }
+  function foeSVG(en, mood) {
+    const extra = mood === 'weak'
+      ? `<text x="118" y="40" class="ar-z" font-size="18">z</text><text x="130" y="26" class="ar-z z2" font-size="13">z</text>`
+      : mood === 'strong'
+        ? `<path d="M34 34 l-8 -10 M44 28 l-4 -12 M122 30 l8 -10 M114 24 l4 -12" stroke="#ff5a3c" stroke-width="4" stroke-linecap="round"/>`
+        : `<path d="M28 44 l4 -10 l4 10 l-4 10 z M128 36 l3 -8 l3 8 l-3 8 z" fill="#fff6b0"/>`;
+    return `<svg viewBox="0 0 160 160" class="ar-foe-svg ${mood}" aria-hidden="true">
+      <ellipse cx="80" cy="140" rx="44" ry="7" fill="rgba(0,0,0,.28)"/>
+      <g class="ar-bob">
+        <ellipse cx="62" cy="130" rx="11" ry="7" fill="${en.colors[1]}" stroke="${INK}" stroke-width="3.5"/>
+        <ellipse cx="98" cy="130" rx="11" ry="7" fill="${en.colors[1]}" stroke="${INK}" stroke-width="3.5"/>
+        <g class="ar-body">${shapeSVG(en.shape, en.colors[0], en.colors[1])}${faceSVG(mood)}</g>
+      </g>${extra}</svg>`;
+  }
+  function wizardSVG(robe, trim) {
+    return `<svg viewBox="0 0 140 170" class="ar-wiz-svg" aria-hidden="true">
+      <ellipse cx="66" cy="162" rx="46" ry="7" fill="rgba(0,0,0,.3)"/>
+      <line x1="112" y1="54" x2="100" y2="160" stroke="#6b4526" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="113" cy="48" r="11" fill="#7cf0d8" stroke="${INK}" stroke-width="3.5" class="ar-orb"/>
+      <path d="M66 70 C40 74 26 110 22 160 H110 C106 110 92 74 66 70 Z" fill="${robe}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M26 150 H106" stroke="${trim}" stroke-width="6"/>
+      <path d="M66 74 V158" stroke="${INK}" stroke-width="2.5" opacity=".35"/>
+      <circle cx="66" cy="72" r="20" fill="#e8c9a6" stroke="${INK}" stroke-width="4"/>
+      <path d="M46 66 C50 50 82 50 86 66" fill="#5a3b24"/>
+      <path d="M36 70 L96 70 L86 62 L70 8 L46 60 Z" fill="${robe}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M40 68 H92" stroke="${trim}" stroke-width="5"/>
+      <path d="M64 34 l3 7 l7 1 l-5 5 l1 7 l-6 -4 l-6 4 l1 -7 l-5 -5 l7 -1 z" fill="#ffd96a"/>
+      <path d="M104 96 C114 92 116 70 112 60" stroke="${robe}" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <path d="M104 96 C114 92 116 70 112 60" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round" opacity=".5"/>
+    </svg>`;
+  }
+  const WIZ_COLORS = [['#6a3fd6', '#ffcc4d'], ['#1f8f7a', '#ff9d3c']];
+  const POTION = `<svg viewBox="0 0 40 48" aria-hidden="true"><rect x="15" y="2" width="10" height="8" rx="2" fill="#8a5c33" stroke="${INK}" stroke-width="2.5"/>
+    <path d="M14 10 h12 v8 c8 4 11 10 11 16 a17 12 0 0 1 -34 0 c0 -6 3 -12 11 -16 z" fill="#b98cff" stroke="${INK}" stroke-width="2.5"/>
+    <path d="M6 32 a14 9 0 0 0 28 0 z" fill="#7cf0d8" opacity=".8"/><circle cx="14" cy="26" r="3" fill="#fff" opacity=".7"/></svg>`;
+
+  /* ================= elements & state ================= */
+  const view = $('arenaView');
+  const menuEl = $('arMenu'), battleEl = $('arBattle'), sumEl = $('arSummary');
+  const homeLink = $('arHomeLink'), muteBtn = $('arMute');
+  const modeBtns = { free: $('arModeFree'), survival: $('arModeSurv'), duel: $('arModeDuel') };
+  const modeNote = $('arModeNote');
+  const freeOpts = $('arFreeOpts'), duelOpts = $('arDuelOpts');
+  const dirBtns = { any: $('arDirAny'), low: $('arDirLow'), high: $('arDirHigh') };
+  const picksEl = $('arPicks');
+  const startBtn = $('arStartBtn');
+  const boardEl = $('arBoard'), boardList = $('arBoardList');
+  const hudEl = $('arHud'), stage = $('arStage');
+  const foeName = $('arFoeName'), foeBadge = $('arFoeBadge'), foePath = $('arFoePath');
+  const meterEl = $('arMeter'), markerEl = $('arMarker');
+  const foeEl = $('arFoe'), meEl = $('arMe'), mePlates = $('arMePlates');
+  const projEl = $('arProj'), floatEl = $('arFloat');
+  const textEl = $('arText'), textInner = $('arTextInner');
+  const movesEl = $('arMoves'), cardEl = $('arCard');
+  const scoutBtn = $('arScout'), runBtn = $('arRun'), quitBtn = $('arQuit');
+
+  let mode = 'free';
+  let wantDir = 'any';
+  let freeFoe = null;           // a specific enemy picked in free play, or null for random
+  let token = 0;                // bumps whenever a battle is abandoned; stale awaits bail
+  let S = null;                 // the whole run: players, round, score...
+  let B = null;                 // the current battle
+  let busy = false;
+
+  const MAX_HP = { free: 5, survival: 10, duel: 6 };
+  const DUEL_TARGET = 3;
+  const BEST_KEY = 'arena.best.v1';
+  const NAME_KEY = 'arena.name.v1';
+  const DUEL_KEY = 'arena.duel.names.v1';
+
+  /* ================= text box ================= */
+  let advance = null;
+  function say(msg, opts) {
+    const my = token;
+    return new Promise(resolve => {
+      textEl.classList.remove('ready');
+      const full = String(msg);
+      let i = 0, typing = true, timer = null, auto = null;
+      const done = () => {
+        clearInterval(timer); clearTimeout(auto);
+        advance = null;
+        resolve(my === token);
+      };
+      const finishTyping = () => {
+        typing = false; clearInterval(timer);
+        textInner.textContent = full;
+        textEl.classList.add('ready');
+        auto = setTimeout(done, (opts && opts.hold) || (900 + full.length * 14));
+      };
+      advance = () => { if (typing) finishTyping(); else done(); };
+      if (reduced()) { finishTyping(); return; }
+      textInner.textContent = '';
+      timer = setInterval(() => {
+        i += 2;
+        textInner.textContent = full.slice(0, i);
+        if (i >= full.length) finishTyping();
+      }, 18);
+    });
+  }
+  textEl.addEventListener('click', () => { if (advance) advance(); });
+  const wait = ms => new Promise(r => setTimeout(r, reduced() ? Math.min(ms, 60) : ms));
+
+  /* ================= rendering ================= */
+  function levelWords(L) {
+    if (L === 0) return 'In the window';
+    if (L <= -4) return 'Far too weak';
+    if (L <= -2) return 'Too weak';
+    if (L === -1) return 'A little weak';
+    if (L === 1) return 'A little strong';
+    if (L <= 3) return 'Too strong';
+    return 'Toxic';
+  }
+  function moodOf(L) { return L < 0 ? 'weak' : L > 0 ? 'strong' : 'ok'; }
+  function renderMeter() {
+    const L = B.level;
+    [...meterEl.children].forEach((c, i) => { c.classList.toggle('on', i - 4 === L); });
+    markerEl.style.left = ((L + 4 + .5) / 9 * 100) + '%';
+    foeBadge.textContent = levelWords(L);
+    foeBadge.className = 'ar-badge ' + moodOf(L);
+    meterEl.setAttribute('aria-label', 'Drug level: ' + levelWords(L));
+  }
+  function renderFoe() {
+    foeEl.innerHTML = foeSVG(B.foe, moodOf(B.level));
+  }
+  function renderPlates() {
+    mePlates.innerHTML = '';
+    meEl.innerHTML = '';
+    S.players.forEach((p, i) => {
+      const plate = document.createElement('div');
+      plate.className = 'ar-plate ar-me-plate' + (S.players.length > 1 && i === B.turn ? ' active' : '') + (p.hp <= 0 ? ' down' : '');
+      const top = document.createElement('div'); top.className = 'ar-plate-name';
+      const nm = document.createElement('span'); nm.textContent = p.name;
+      top.appendChild(nm);
+      if (mode === 'duel') {
+        const stars = document.createElement('span'); stars.className = 'ar-stars';
+        stars.textContent = '★'.repeat(p.wins) + '☆'.repeat(Math.max(0, DUEL_TARGET - p.wins));
+        stars.title = p.wins + ' balanced';
+        top.appendChild(stars);
+      }
+      const bar = document.createElement('div'); bar.className = 'ar-hp';
+      const lab = document.createElement('span'); lab.className = 'ar-hp-lab'; lab.textContent = 'HP';
+      const track = document.createElement('div'); track.className = 'ar-hp-track';
+      const fill = document.createElement('div'); fill.className = 'ar-hp-fill';
+      const frac = Math.max(0, p.hp) / p.max;
+      fill.style.width = (frac * 100) + '%';
+      fill.classList.toggle('mid', frac <= .5 && frac > .25);
+      fill.classList.toggle('low', frac <= .25);
+      track.appendChild(fill);
+      bar.append(lab, track);
+      const num = document.createElement('div'); num.className = 'ar-hp-num'; num.textContent = Math.max(0, p.hp) + ' / ' + p.max;
+      plate.append(top, bar, num);
+      mePlates.appendChild(plate);
+
+      const w = document.createElement('div');
+      w.className = 'ar-wiz' + (S.players.length > 1 && i !== B.turn ? ' idle' : '');
+      w.innerHTML = wizardSVG(WIZ_COLORS[i][0], WIZ_COLORS[i][1]);
+      meEl.appendChild(w);
+    });
+    meEl.classList.toggle('two', S.players.length > 1);
+  }
+  function renderHud() {
+    hudEl.innerHTML = '';
+    const add = (label, val) => {
+      const d = document.createElement('div'); d.className = 'ar-hud-item';
+      const l = document.createElement('span'); l.textContent = label;
+      const v = document.createElement('b'); v.textContent = val;
+      d.append(l, v); hudEl.appendChild(d);
+    };
+    if (mode === 'survival') {
+      add('Balanced', S.rounds);
+      add('Points', S.score);
+      add('Best', Math.max(load(BEST_KEY).rounds || 0, S.rounds));
+    } else if (mode === 'duel') {
+      add('Encounter', S.encounter);
+      add('First to', DUEL_TARGET);
+    } else {
+      add('Balanced', S.rounds);
+      add('Encounters', S.encounter);
+    }
+  }
+  function renderMoves() {
+    movesEl.innerHTML = '';
+    B.hand.forEach((t, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ar-move' + (t.dose ? ' dose' : '');
+      b.disabled = busy;
+      const k = document.createElement('span'); k.className = 'ar-key'; k.textContent = i + 1;
+      const n = document.createElement('span'); n.className = 'ar-move-name'; n.textContent = t.name;
+      const c = document.createElement('span'); c.className = 'ar-move-cls'; c.textContent = t.cls;
+      b.append(k, n, c);
+      b.onclick = () => throwIt(t);
+      movesEl.appendChild(b);
+    });
+  }
+  function setBusy(v) {
+    busy = v;
+    [...movesEl.querySelectorAll('button')].forEach(b => { b.disabled = v; });
+    scoutBtn.disabled = v || B.scouted; runBtn.disabled = v;
+  }
+  function floatText(txt, cls) {
+    const d = document.createElement('div');
+    d.className = 'ar-pop ' + (cls || '');
+    d.textContent = txt;
+    floatEl.appendChild(d);
+    setTimeout(() => d.remove(), 1300);
+  }
+
+  /* ================= battle flow ================= */
+  function newRun() {
+    const names = mode === 'duel' ? load(DUEL_KEY) : {};
+    const n1 = ($('arDuelName1') && $('arDuelName1').value.trim()) || names.a || 'Wizard 1';
+    const n2 = ($('arDuelName2') && $('arDuelName2').value.trim()) || names.b || 'Wizard 2';
+    if (mode === 'duel') save(DUEL_KEY, { a: n1, b: n2 });
+    const max = MAX_HP[mode];
+    S = {
+      players: mode === 'duel'
+        ? [{ name: n1, hp: max, max, wins: 0 }, { name: n2, hp: max, max, wins: 0 }]
+        : [{ name: 'Your wizard', hp: max, max, wins: 0 }],
+      rounds: 0, score: 0, encounter: 0, last: '', seen: [], firstTurn: 0,
+    };
+  }
+  function chooseFoe() {
+    if (mode === 'free' && freeFoe) return FBY[freeFoe];
+    // Survival and duel avoid repeats until most of the roster has been seen.
+    let pool = AR_FOES.filter(f => S.seen.indexOf(f.id) < 0);
+    if (pool.length < 6) { S.seen = S.seen.slice(-4); pool = AR_FOES.filter(f => S.seen.indexOf(f.id) < 0); }
+    const want = mode === 'free' && wantDir !== 'any' ? wantDir : null;
+    if (want) pool = pool.filter(f => dirsOf(f).indexOf(want) >= 0);
+    return pick(pool.length ? pool : AR_FOES);
+  }
+  async function startBattle() {
+    const my = ++token;
+    const foe = chooseFoe();
+    S.encounter++;
+    S.seen.push(foe.id);
+    if (mode === 'free') S.players[0].hp = S.players[0].max;
+    const want = mode === 'free' && wantDir !== 'any' ? wantDir : null;
+    const level = startLevelFor(foe, want);
+    B = {
+      foe, level, start: level, turn: mode === 'duel' ? S.firstTurn : 0,
+      log: [], hurt: [0, 0], scouted: false, autoinduced: false, hand: [], throws: 0,
+    };
+    show('battle');
+    cardEl.hidden = true; movesEl.hidden = false;
+    battleEl.querySelector('.ar-actions').hidden = false;
+    foeName.textContent = foe.name;
+    foePath.hidden = true; foePath.textContent = foe.path;
+    scoutBtn.hidden = mode !== 'free';
+    runBtn.hidden = mode !== 'free';
+    renderHud(); renderPlates(); renderFoe(); renderMeter();
+    movesEl.innerHTML = '';
+    stage.classList.remove('enter'); void stage.offsetWidth; stage.classList.add('enter');
+    AUDIO.startMusic();
+    setBusy(true);
+    if (!await say('A wild ' + foe.name.toUpperCase() + ' appeared!')) return;
+    if (my !== token) return;
+    if (!await say(foe.name + '’s level is ' + (level < 0 ? 'too weak' : 'too strong') + ' — ' + (level < 0 ? foe.low : foe.high) + '.')) return;
+    nextTurn(true);
+  }
+  function nextTurn(first) {
+    B.hand = dealHand(B.foe, B.level);
+    renderPlates();
+    renderMoves();
+    setBusy(false);
+    const p = S.players[B.turn];
+    textInner.textContent = mode === 'duel'
+      ? p.name + ', what will you throw?'
+      : (first ? 'What will you throw?' : 'What will you throw next?');
+    textEl.classList.remove('ready');
+  }
+  async function throwIt(t) {
+    if (busy || !B) return;
+    const my = token;
+    setBusy(true);
+    AUDIO.sfx('pick');
+    const who = S.players[B.turn];
+    B.throws++;
+    const before = B.level;
+    const eff = effectOf(B.foe, t);
+    if (!await say((mode === 'duel' ? who.name : 'You') + ' threw ' + t.name + '!', { hold: 350 })) return;
+    // projectile
+    projEl.innerHTML = POTION;
+    projEl.className = 'ar-proj fly';
+    AUDIO.sfx('throw');
+    await wait(620);
+    if (my !== token) return;
+    projEl.className = 'ar-proj';
+    projEl.innerHTML = '';
+
+    let after = before, verdict;
+    if (eff.kind === 'move') {
+      after = Math.max(LVL_MIN, Math.min(LVL_MAX, before + eff.step));
+      const toward = Math.sign(eff.step) === (before < 0 ? 1 : -1);
+      verdict = after === 0 ? 'balanced' : !toward ? 'wrong' : Math.sign(after) !== Math.sign(before) ? 'overshoot' : 'closer';
+    } else verdict = eff.kind;
+    B.log.push({ t, eff, before, after, verdict, by: B.turn });
+    B.level = after;
+
+    const splash = eff.kind === 'move' ? (eff.step > 0 ? 'frost' : 'fire') : eff.kind === 'flicker' ? 'flick' : 'dud';
+    foeEl.classList.remove('hit', 'frost', 'fire', 'flick', 'dud'); void foeEl.offsetWidth;
+    foeEl.classList.add('hit', splash);
+    if (eff.kind === 'move') {
+      AUDIO.sfx(eff.step > 0 ? 'up' : 'down');
+      floatText((eff.step > 0 ? '▲' : '▼').repeat(Math.abs(eff.step)), eff.step > 0 ? 'up' : 'down');
+      renderMeter(); renderFoe();
+    } else if (eff.kind === 'flicker') {
+      AUDIO.sfx('flicker');
+      meterEl.classList.remove('wobble'); void meterEl.offsetWidth; meterEl.classList.add('wobble');
+      floatText('~', 'flick');
+    } else {
+      AUDIO.sfx('none');
+      floatText('no effect', 'dud');
+    }
+    await wait(420);
+    const F = B.foe.name;
+    let line;
+    if (t.dose) line = 'You ' + (eff.step > 0 ? 'raised' : 'lowered') + ' the ' + F + ' dose.';
+    else if (verdict === 'none') line = 'It had no effect!';
+    else if (verdict === 'flicker') line = 'The level flickers… and settles back. Barely a nudge.';
+    else if (verdict === 'balanced') line = F + '’s level slides into the therapeutic window!';
+    else if (verdict === 'overshoot') line = 'Too much! ' + F + ' shot straight past the window.';
+    else if (verdict === 'wrong') line = before === after ? F + ' can’t get any ' + (before < 0 ? 'weaker' : 'stronger') + '… but that was the wrong way.' : 'Wrong way! ' + F + ' gets ' + (after < 0 ? 'weaker' : 'more toxic') + '!';
+    else line = F + '’s level ' + (eff.step > 0 ? 'rises' : 'falls') + (Math.abs(eff.step) > 1 ? ' sharply' : '') + '. Closer!';
+    if (!await say(line)) return;
+
+    if (B.level === 0 && B.foe.autoinduce && !B.autoinduced) {
+      B.autoinduced = true;
+      await wait(250);
+      if (!await say('Weeks pass… carbamazepine induces its own metabolism!')) return;
+      B.level = -1;
+      AUDIO.sfx('down'); floatText('▼', 'down');
+      renderMeter(); renderFoe();
+      if (!await say('Autoinduction pulls the level back down. Keep going.')) return;
+      return endOfTurn(false);
+    }
+    if (B.level === 0) return victory();
+    return endOfTurn(true);
+  }
+  async function endOfTurn(attack) {
+    const my = token;
+    if (attack) {
+      const p = S.players[B.turn];
+      const dmg = Math.abs(B.level) >= 3 ? 2 : 1;
+      await wait(200);
+      foeEl.classList.remove('lunge'); void foeEl.offsetWidth; foeEl.classList.add('lunge');
+      await wait(260);
+      if (my !== token) return;
+      AUDIO.sfx('hurt');
+      p.hp -= dmg; B.hurt[B.turn] += dmg;
+      stage.classList.remove('shake'); void stage.offsetWidth; stage.classList.add('shake');
+      renderPlates();
+      if (!await say(B.foe.name + ' lashes out — ' + (B.level < 0 ? B.foe.low : B.foe.high) + '! (−' + dmg + ' HP)')) return;
+      if (p.hp <= 0) return fainted();
+    }
+    if (mode === 'duel') B.turn = 1 - B.turn;
+    nextTurn(false);
+  }
+  async function victory() {
+    const my = token;
+    renderFoe();
+    AUDIO.win();
+    const p = S.players[B.turn];
+    S.rounds++;
+    let gained = 0;
+    if (mode === 'survival') {
+      const clean = B.hurt[0] === 0;
+      gained = 100 + (clean ? 50 : 0) + Math.max(0, 4 - B.throws) * 10;
+      S.score += gained;
+      const heal = clean ? 2 : 1;
+      p.hp = Math.min(p.max, p.hp + heal);
+      renderPlates();
+    }
+    if (mode === 'duel') p.wins++;
+    renderHud();
+    S.last = B.foe.name;
+    if (!await say(mode === 'duel' ? p.name + ' balanced ' + B.foe.name + '!' : B.foe.name + ' is balanced!')) return;
+    if (my !== token) return;
+    const matchOver = mode === 'duel' && p.wins >= DUEL_TARGET;
+    showCard(true, { gained, matchOver, winner: mode === 'duel' ? B.turn : null });
+  }
+  async function fainted() {
+    const my = token;
+    const p = S.players[B.turn];
+    AUDIO.lose();
+    meEl.classList.add('faint');
+    if (!await say(p.name + ' fainted!')) return;
+    meEl.classList.remove('faint');
+    if (my !== token) return;
+    if (mode === 'duel') {
+      showCard(false, { matchOver: true, winner: 1 - B.turn, ko: true });
+    } else {
+      showCard(false, { runOver: mode === 'survival' });
+    }
+  }
+
+  /* ================= result card ================= */
+  function effWords(e, t) {
+    if (t.dose) return e.step > 0 ? 'raised one notch' : 'lowered one notch';
+    if (e.kind === 'none') return 'no effect';
+    if (e.kind === 'flicker') return 'flicker only';
+    const n = Math.abs(e.step);
+    return (e.step > 0 ? 'raised ' : 'lowered ') + n + (n === 1 ? ' notch' : ' notches');
+  }
+  function el(tag, cls, text) { const d = document.createElement(tag); if (cls) d.className = cls; if (text !== undefined) d.textContent = text; return d; }
+  function showCard(won, info) {
+    const en = B.foe;
+    movesEl.hidden = true;
+    battleEl.querySelector('.ar-actions').hidden = true;
+    cardEl.hidden = false;
+    cardEl.innerHTML = '';
+    cardEl.className = 'ar-card ' + (won ? 'won' : 'lost');
+
+    const head = el('div', 'ar-card-head');
+    let title;
+    if (mode === 'duel' && info.matchOver) title = S.players[info.winner].name + ' wins the duel!';
+    else if (won) title = en.name + ' — balanced';
+    else title = en.name + ' — your wizard fainted';
+    head.appendChild(el('div', 'ar-card-eyebrow', won ? (info.gained ? '+' + info.gained + ' points' : 'Restored to the window') : (info.runOver ? 'Run over' : 'Out of HP')));
+    head.appendChild(el('h3', null, title));
+    cardEl.appendChild(head);
+
+    const path = el('div', 'ar-card-path');
+    path.appendChild(el('span', 'ar-card-label', 'Pathway'));
+    path.appendChild(el('span', null, en.path));
+    cardEl.appendChild(path);
+
+    // warnings: any listed throwable that actually moved the level
+    const used = new Set(B.log.filter(x => x.eff.kind === 'move').map(x => x.t.id));
+    (en.warn || []).forEach(w => {
+      if (w.ids.some(id => used.has(id))) {
+        const d = el('div', 'ar-warn');
+        d.appendChild(el('b', null, '⚠ '));
+        d.appendChild(document.createTextNode(w.text));
+        cardEl.appendChild(d);
+      }
+    });
+    if (B.log.some(x => x.t.dose)) {
+      cardEl.appendChild(el('div', 'ar-warn soft', en.paths && en.paths.length === 1 && en.paths[0] === '2D6'
+        ? 'No co-medication can pull a 2D6 substrate down — CYP2D6 isn’t meaningfully inducible. In real life you lower the dose or stop the inhibitor.'
+        : 'Nothing in the hand could fix that step, so the dose did. In real life, that is usually the first move anyway.'));
+    }
+
+    if (B.log.length) {
+      cardEl.appendChild(el('div', 'ar-card-label block', 'Your throws'));
+      const list = el('div', 'ar-log');
+      B.log.forEach(x => {
+        const row = el('div', 'ar-log-row ' + x.verdict);
+        const nm = el('div', 'ar-log-name', x.t.name);
+        if (mode === 'duel') nm.appendChild(el('span', 'ar-log-by', ' · ' + S.players[x.by].name));
+        const what = el('div', 'ar-log-what', revealOf(x.t));
+        const res = el('div', 'ar-log-res', effWords(x.eff, x.t));
+        row.append(nm, what, res);
+        list.appendChild(row);
+      });
+      cardEl.appendChild(list);
+    }
+
+    const key = answerKey(en, B.start);
+    if (key.length) {
+      cardEl.appendChild(el('div', 'ar-card-label block', (B.start < 0 ? 'What raises ' : 'What lowers ') + en.name + ' in this game'));
+      const chips = el('div', 'ar-chips');
+      key.forEach(({ t, e }) => {
+        const c = el('span', 'ar-chip');
+        c.appendChild(el('b', null, t.name));
+        c.appendChild(document.createTextNode(' ' + (e.step > 0 ? '▲' : '▼').repeat(Math.abs(e.step))));
+        c.title = revealOf(t);
+        chips.appendChild(c);
+      });
+      cardEl.appendChild(chips);
+    }
+
+    const note = el('div', 'ar-note-box');
+    note.appendChild(el('div', 'ar-card-label', 'What a clinician does'));
+    note.appendChild(el('p', null, en.note));
+    cardEl.appendChild(note);
+
+    const notes = [];
+    B.log.forEach(x => { if (x.t.note && notes.indexOf(x.t.note) < 0) notes.push(x.t.name + ': ' + x.t.note); });
+    if (notes.length) {
+      const nb = el('div', 'ar-tidbits');
+      notes.forEach(n => nb.appendChild(el('p', null, n)));
+      cardEl.appendChild(nb);
+    }
+
+    const act = el('div', 'board-actions');
+    const primary = el('button', 'reset-board-btn ar-primary');
+    if (mode === 'survival' && info.runOver) {
+      primary.textContent = 'See the run';
+      primary.onclick = () => showSummary();
+    } else if (mode === 'duel' && info.matchOver) {
+      primary.textContent = 'Rematch';
+      primary.onclick = () => { newRun(); startBattle(); };
+    } else {
+      primary.textContent = mode === 'free' && freeFoe ? (won ? 'Battle it again' : 'Try again') : 'Next encounter';
+      primary.onclick = () => {
+        if (mode === 'duel') S.firstTurn = 1 - S.firstTurn;
+        startBattle();
+      };
+    }
+    const back = el('button', 'reset-board-btn', 'Arena menu');
+    back.onclick = () => { token++; AUDIO.stopMusic(); renderMenu(); show('menu'); };
+    act.append(primary, back);
+    if (mode === 'free' && freeFoe) {
+      const rand = el('button', 'reset-board-btn', 'Random encounter');
+      rand.onclick = () => { freeFoe = null; startBattle(); };
+      act.appendChild(rand);
+    }
+    cardEl.appendChild(act);
+    setTimeout(() => cardEl.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'nearest' }), 60);
+    primary.focus({ preventScroll: true });
+  }
+
+  /* ================= survival summary + shared board ================= */
+  const LB_URL = 'https://mp-board-study-default-rtdb.firebaseio.com/leaderboard/arena';
+  const LB_SHOW = 10;
+  const LB_DENIED = {};
+  let lbFresh = null;
+  function lbRow(row, i) {
+    const r = el('div', 'ar-lb-row' + (row.id && row.id === lbFresh ? ' fresh' : ''));
+    r.appendChild(el('div', 'rank', String(i + 1)));
+    const who = el('div', 'who', row.who); who.title = row.who;
+    const mid = el('div', 'mid');
+    mid.appendChild(el('div', 'pts', row.rounds + ' balanced'));
+    const meta = el('div', 'meta');
+    meta.appendChild(el('span', null, (row.score || 0) + ' pts'));
+    if (row.last) meta.appendChild(el('span', null, 'fell to ' + row.last));
+    mid.appendChild(meta);
+    const when = el('div', 'when', new Date(row.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
+    r.append(who, mid, when);
+    return r;
+  }
+  function lbRender(rows, note) {
+    document.querySelectorAll('.ar-lb-list').forEach(list => {
+      list.innerHTML = '';
+      if (note) { list.appendChild(el('div', 'ar-lb-empty', note)); return; }
+      rows.forEach((row, i) => list.appendChild(lbRow(row, i)));
+    });
+  }
+  function lbLoad() {
+    lbRender([], 'Loading…');
+    fetch(LB_URL + '.json').then(r => {
+      if (r.status === 401 || r.status === 403) return LB_DENIED;
+      if (!r.ok) throw new Error(String(r.status));
+      return r.json();
+    }).then(data => {
+      if (data === LB_DENIED || (data && data.error)) return lbRender([], 'The shared board is not published yet.');
+      const rows = Object.keys(data || {}).map(k => { const row = data[k]; if (row) row.id = k; return row; })
+        .filter(row => row && row.who)
+        .sort((a, b) => (b.rounds || 0) - (a.rounds || 0) || (b.score || 0) - (a.score || 0))
+        .slice(0, LB_SHOW);
+      if (!rows.length) return lbRender([], 'Nothing posted yet — survive a run and put yourself up there.');
+      lbRender(rows);
+    }).catch(() => lbRender([], 'Could not reach the shared board.'));
+  }
+  function lbPost(entry) {
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    return fetch(LB_URL + '/' + id + '.json', { method: 'PUT', body: JSON.stringify(entry) })
+      .then(r => { if (!r.ok) throw new Error(String(r.status)); lbFresh = id; return r; });
+  }
+  function showSummary() {
+    token++;
+    AUDIO.stopMusic();
+    const best = load(BEST_KEY);
+    const isBest = S.rounds > (best.rounds || 0) || (S.rounds === (best.rounds || 0) && S.score > (best.score || 0));
+    if (isBest && S.rounds > 0) save(BEST_KEY, { rounds: S.rounds, score: S.score });
+    $('arSumTitle').textContent = S.rounds + (S.rounds === 1 ? ' medication balanced' : ' medications balanced');
+    $('arSumSub').textContent = S.score + ' points' + ' · your wizard fell to ' + B.foe.name + (isBest && S.rounds > 0 ? ' · a new personal best' : '');
+    const post = $('arSumPost');
+    post.innerHTML = '';
+    if (!S.rounds) {
+      post.appendChild(el('div', 'ar-post locked', 'Balance at least one medication to post a run to the shared board.'));
+    } else {
+      const box = el('div', 'ar-post');
+      const row = el('div', 'ar-post-row');
+      const input = document.createElement('input');
+      input.maxLength = 14; input.placeholder = 'Your name'; input.value = load(NAME_KEY).who || '';
+      input.setAttribute('aria-label', 'Name for the shared board');
+      const btn = el('button', 'reset-board-btn ar-primary', 'Post to shared board');
+      row.append(input, btn);
+      const hint = el('div', 'ar-post-hint', 'Optional. Posts your name, how many you balanced and your points where anyone on the site can see them.');
+      box.append(row, hint);
+      post.appendChild(box);
+      const ended = B.foe.name;
+      btn.onclick = () => {
+        const who = (input.value || '').trim().slice(0, 14);
+        if (!who) { hint.textContent = 'Put a name in first.'; return; }
+        btn.disabled = true; btn.textContent = 'Posting…';
+        save(NAME_KEY, { who });
+        lbPost({ who, rounds: S.rounds, score: S.score, last: ended, at: Date.now() }).then(() => {
+          box.innerHTML = '';
+          box.appendChild(el('div', 'ar-posted', 'Posted as ' + who + (/[.!?]$/.test(who) ? '' : '.')));
+          lbLoad();
+        }).catch(err => {
+          btn.disabled = false; btn.textContent = 'Post to shared board';
+          hint.textContent = /^40[13]$/.test(String(err && err.message))
+            ? 'The shared board is not published yet — your best is still saved on this device.'
+            : 'Could not reach the shared board — try again in a moment.';
+        });
+      };
+    }
+    show('summary');
+    lbLoad();
+  }
+
+  /* ================= menu ================= */
+  const MODE_NOTES = {
+    free: 'Pick any medication, or take a random encounter. Your wizard has 5 HP per battle, and you can scout the pathway if you’re stuck.',
+    survival: 'One wizard, 10 HP, encounter after encounter. Balancing heals 1 HP (2 if you took no hits). How many can you balance?',
+    duel: 'Two wizards, one screen, one enemy at a time. Take turns throwing — whoever lands it in the window scores it, and every miss that leaves it out of range hurts the thrower. First to 3.',
+  };
+  function renderMenu() {
+    Object.keys(modeBtns).forEach(k => modeBtns[k].setAttribute('aria-pressed', String(mode === k)));
+    Object.keys(dirBtns).forEach(k => dirBtns[k].setAttribute('aria-pressed', String(wantDir === k)));
+    modeNote.textContent = MODE_NOTES[mode];
+    freeOpts.hidden = mode !== 'free';
+    duelOpts.hidden = mode !== 'duel';
+    boardEl.hidden = mode !== 'survival';
+    startBtn.textContent = mode === 'free' ? 'Random encounter' : mode === 'survival' ? 'Start survival' : 'Start the duel';
+    if (mode === 'duel') {
+      const n = load(DUEL_KEY);
+      if (!$('arDuelName1').value) $('arDuelName1').value = n.a || '';
+      if (!$('arDuelName2').value) $('arDuelName2').value = n.b || '';
+    }
+    if (mode === 'survival') {
+      const best = load(BEST_KEY);
+      $('arBest').textContent = best.rounds ? 'Your best on this device: ' + best.rounds + ' balanced · ' + best.score + ' pts' : '';
+      lbLoad();
+    }
+    if (mode === 'free') renderPicks();
+  }
+  function renderPicks() {
+    picksEl.innerHTML = '';
+    const groups = [];
+    AR_FOES.forEach(f => { if (groups.indexOf(f.group) < 0) groups.push(f.group); });
+    groups.forEach(g => {
+      picksEl.appendChild(el('div', 'ar-group', g));
+      AR_FOES.filter(f => f.group === g).forEach(f => {
+        const dirs = dirsOf(f);
+        const ok = wantDir === 'any' || dirs.indexOf(wantDir) >= 0;
+        const b = el('button', 'ar-pick');
+        b.type = 'button';
+        b.disabled = !ok;
+        b.innerHTML = '<span class="ar-pick-sprite">' + foeSVG(f, 'ok') + '</span>';
+        const nm = el('span', 'ar-pick-name', f.name);
+        // No direction hint here: "only ever too weak" would give away a 2D6 substrate.
+        const txt = el('span', 'ar-pick-txt'); txt.append(nm);
+        b.appendChild(txt);
+        b.title = ok ? '' : 'Never spawns ' + (wantDir === 'low' ? 'too weak' : 'too strong');
+        b.onclick = () => { freeFoe = f.id; newRun(); startBattle(); };
+        picksEl.appendChild(b);
+      });
+    });
+  }
+  function show(which) {
+    menuEl.hidden = which !== 'menu';
+    battleEl.hidden = which !== 'battle';
+    sumEl.hidden = which !== 'summary';
+    homeLink.hidden = which === 'menu';
+    if (which !== 'battle') window.scrollTo(0, 0);
+  }
+  function renderMute() {
+    const m = AUDIO.isMuted();
+    muteBtn.setAttribute('aria-pressed', String(m));
+    muteBtn.textContent = m ? '♪ Music off' : '♪ Music on';
+  }
+
+  Object.keys(modeBtns).forEach(k => { modeBtns[k].onclick = () => { mode = k; renderMenu(); }; });
+  Object.keys(dirBtns).forEach(k => { dirBtns[k].onclick = () => { wantDir = k; renderMenu(); }; });
+  startBtn.onclick = () => { freeFoe = null; newRun(); startBattle(); };
+  muteBtn.onclick = () => { AUDIO.setMuted(!AUDIO.isMuted()); renderMute(); };
+  scoutBtn.onclick = () => {
+    if (!B || busy) return;
+    B.scouted = true; foePath.hidden = false; scoutBtn.disabled = true;
+  };
+  runBtn.onclick = async () => {
+    if (!B || busy) return;
+    setBusy(true);
+    if (!await say('Got away safely!', { hold: 500 })) return;
+    freeFoe = null;
+    startBattle();
+  };
+  quitBtn.onclick = () => {
+    if (mode === 'survival' && S && S.rounds > 0 && !confirmQuit()) return;
+    token++; AUDIO.stopMusic(); renderMenu(); show('menu');
+  };
+  // No browser dialog: a second click within 3 s confirms.
+  let quitArmed = 0;
+  function confirmQuit() {
+    if (Date.now() - quitArmed < 3000) return true;
+    quitArmed = Date.now();
+    quitBtn.textContent = 'Quit? Click again';
+    setTimeout(() => { quitBtn.textContent = 'Quit'; }, 3000);
+    return false;
+  }
+  $('arSumAgain').onclick = () => { newRun(); startBattle(); };
+  $('arSumMenu').onclick = () => { renderMenu(); show('menu'); };
+  $('arBoardRefresh').onclick = lbLoad;
+  $('arSumRefresh').onclick = lbLoad;
+  homeLink.onclick = e => { e.preventDefault(); token++; AUDIO.stopMusic(); renderMenu(); show('menu'); };
+
+  document.addEventListener('keydown', e => {
+    if (view.hidden || battleEl.hidden) return;
+    if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+    if ((e.key === ' ' || e.key === 'Enter') && advance) { e.preventDefault(); advance(); return; }
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4 && !busy && B && B.hand[n - 1] && !movesEl.hidden) { e.preventDefault(); throwIt(B.hand[n - 1]); }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) AUDIO.stopMusic(true);
+    else if (!view.hidden && !battleEl.hidden && cardEl.hidden) AUDIO.startMusic();
+  });
+
+  return {
+    open() {
+      view.hidden = false;
+      document.documentElement.classList.add('arena-active');
+      renderMute();
+      renderMenu(); show('menu');
+    },
+    close() {
+      if (view.hidden) return;
+      token++;
+      view.hidden = true;
+      document.documentElement.classList.remove('arena-active');
+      AUDIO.suspend();
+    },
+    // exposed for testing and content audits
+    _engine: { effectOf, dealHand, answerKey, dirsOf, poolFor, classify },
+  };
+})();
+
 function route() {
   const id = decodeURIComponent(location.hash.replace(/^#/, ''));
   C4.close();   // reopened below if this hash is a Connect Four game
   RLAB.close(); // likewise — reopened below if this hash is the Receptor Lab
   SLAB.close(); // and the Signal Lab
+  ARENA.close(); // and the Wizard Arena
 
   // A phone joining the wizard game: #play-ABCD
   if (/^play(-|$)/i.test(id)) {
@@ -13152,6 +14951,18 @@ function route() {
     WIZ.close();
     document.title = extra.title;
     SLAB.open();
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  if (extra && extra.id === 'wizard-arena') {
+    current = null;
+    hubView.hidden = true;
+    gameView.hidden = true;
+    wizardView.hidden = true;
+    WIZ.close();
+    document.title = extra.title;
+    ARENA.open();
     window.scrollTo(0, 0);
     return;
   }
