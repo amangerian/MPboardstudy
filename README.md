@@ -27,6 +27,7 @@ one opens its board.
 | Child & Adolescent Disorders | Jeopardy, 6 × 5 + Final | Autism and social communication disorder, intellectual disability and its genetic syndromes, ADHD, ODD/conduct disorder/DMDD, elimination and feeding disorders, attachment disorders and childhood anxiety |
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
+| Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
 
 The four *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
@@ -169,6 +170,10 @@ channel, SERT, NMDA). Two kinds of card, both in `SL_CARDS`:
   blocking a Gi receptor raises cAMP, blocking a Gs receptor lowers it.
   `laneQ`/`msgQ` override the prompts for cards whose target is an enzyme or a
   channel rather than a receptor, and `site` keeps that target drawn.
+  After step 2 each card also shows a **Clinical effect** box (`clinical`) —
+  the symptoms, side effects or therapeutic effect that follow from that
+  receptor action. It is display-only and not scored; where no distinct
+  clinical effect is established (vortioxetine at 5-HT₁B/₁D), it says so.
 - **Medication cards** (`kind: 'site'`): pin every site the drug acts on.
   `sites` share 1000 points; a pin on a `neg` site costs 40% of one site, and a
   pin on anything else costs 15%, so pinning everything never pays.
@@ -177,6 +182,43 @@ Decks: antidepressants and serotonin, mood stabilizers, or both; gauntlet (8
 cards, or the whole deck if smaller) or free play. Bests are kept in
 `localStorage`. The content was reviewed by a separate fact-checking pass
 before release.
+
+**Wizard Arena** is a Pokémon-style battle on drug levels, in its own dusk-
+colosseum palette (scoped to `#arenaView` and the `.arena` hub card). A medication
+appears with its level on a nine-notch meter, two or three notches out of the
+green therapeutic window, and the player throws one of four co-medications at
+it. The throws show only a name and a class; the pathway and strength are
+revealed on the result card, which also says *why this matters clinically* — what happens
+when the two drugs end up prescribed together and how the label adjusts the dose
+(throwing a drug to fix a level is the game's conceit, not a practice). An inhibitor of the enemy's pathway raises its
+level and an inducer lowers it. A strong perpetrator (FDA table) moves two
+notches, a moderate one one, and a weak one only flickers, so a strong throw can
+overshoot. Wrong enzyme: no effect. Wrong direction: it gets worse. Every turn
+that ends out of the window costs the wizard 1 HP (2 when three or more notches
+out). Every hand holds at least one throw that moves the level toward the window
+without overshooting; when no co-medication can (a 2D6 substrate pushed too high,
+since 2D6 is not inducible), a "Lower the dose" card stands in and the result
+card says why.
+
+The data is two arrays, `AR_THROWS` and `AR_FOES`, with the scoring rules in the
+comment above them. Enemies whose label only halves or doubles the dose for a
+strong perpetrator are marked `sens: 'lo'` and take one notch instead of two;
+`minor` pathways only flicker for inhibitors; `fx` overrides a single pair, and
+lithium, valproate and lamotrigine are fx-only. `exclude` keeps a throwable out
+of an enemy's hand where "no effect" would teach something false or the pair is
+dangerous (carbamazepine is never dealt against clozapine). `warn` stamps the
+result card when a label contraindication was part of the fix — lurasidone with
+a strong 3A4 inhibitor, say. Carbamazepine autoinduces once per battle: the first
+time it reaches the window, weeks pass and it slips a notch.
+
+Modes: free play (pick any drug or a random one; 5 HP per battle; the pathway
+can be scouted), survival (10 HP for the whole run — damage carries across
+encounters and never heals; posted to its own shared board at
+`leaderboard/arena`), and a same-screen two-wizard duel (one enemy at a time,
+alternate throws, whoever lands it in the window scores it, first to 3). The
+music and sound effects are an original chiptune generated with the Web Audio
+API — no audio files — and the mute setting is remembered on the device. Keys
+are `1`–`4` to throw and Space to skip text.
 
 **Wizard's Escape** is a haunted-castle escape: each room's exit is blocked by
 three identical pieces of furniture, each labelled with a candidate answer, and
@@ -393,7 +435,8 @@ is what to paste — **Realtime Database → Rules** in the Firebase console, th
 **Publish**. It is for the console only; it is not part of the site and does not
 belong in the repo. The same applies after the file changes: the Receptor Lab's
 `leaderboard/receptor` node was added to it later than the rest, and its
-`receptor-ad` and `receptor-mix` siblings later still, so a database running
+`receptor-ad` and `receptor-mix` siblings later still, and Wizard Arena's
+`leaderboard/arena` last of all, so a database running
 older rules refuses to show or accept those runs, and the board says it is not
 published yet.
 
