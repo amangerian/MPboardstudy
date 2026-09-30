@@ -5006,6 +5006,437 @@ const GAMES = [
         ]
       }
     ]
+  },
+  // Six board-review boards built from the ABPN gap analysis (Sept 2026):
+  // substance use, anxiety & OCD, personality disorders, bipolar, forensics/
+  // ethics/biostatistics, and psychiatric genetics. All are wizard-ready
+  // (short + two decoys on every clue) and fact-checked, but parked with
+  // comingSoon: true. Delete that line on a board to switch it on.
+  {
+    id: "substance-jeopardy",
+    title: "Substance Use Jeopardy",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "Use disorder criteria, alcohol withdrawal and its biomarkers, medications for alcohol and opioid use disorder, stimulants, cannabis and club drugs, and sedatives, tobacco and stages of change.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "Diagnosis · Alcohol · AUD Meds · Opioids · Stimulants, Cannabis & Club Drugs · Sedatives, Tobacco & Change",
+    categories: [
+      {
+        name: "Diagnosing Use Disorders",
+        clues: [
+          { value: 100, clue: "A DSM-5-TR substance use disorder needs at least this many of the 11 criteria within a 12-month period.", answer: "What is two? Two to three criteria is mild, four to five moderate, six or more severe.", short: "Two", decoys: ["Three", "Four"] },
+          { value: 200, clue: "A patient meeting five substance use disorder criteria gets this severity specifier.", answer: "What is moderate? Mild is 2–3 criteria, moderate 4–5, severe 6 or more.", short: "Moderate", decoys: ["Mild", "Severe"] },
+          { value: 300, clue: "Tolerance and withdrawal are not counted toward a use disorder when the drug is taken this way.", answer: "What is as prescribed under appropriate medical supervision? Physiologic dependence on a legitimately prescribed opioid or benzodiazepine is not by itself a use disorder.", short: "As prescribed", decoys: ["Less than daily", "Only on weekends"] },
+          { value: 400, clue: "“In early remission” requires at least this long without meeting any use disorder criterion, craving excepted.", answer: "What is 3 months? Early remission is 3 to under 12 months; sustained remission is 12 months or longer. Craving alone does not break remission.", short: "3 months", decoys: ["1 month", "6 months"] },
+          { value: 500, clue: "This is the only non-substance addictive disorder in the DSM-5-TR substance chapter.", answer: "What is gambling disorder? It needs 4 of 9 criteria in 12 months and must not be better explained by a manic episode. Internet gaming disorder sits in Section III as a condition for further study.", short: "Gambling disorder", decoys: ["Internet gaming disorder", "Kleptomania"] }
+        ]
+      },
+      {
+        name: "Alcohol",
+        clues: [
+          { value: 100, clue: "Alcohol withdrawal seizures cluster around this time after the last drink.", answer: "What is about 24 hours (range roughly 6 to 48)? They are usually generalized tonic-clonic, may recur within hours, and a sizable fraction of untreated patients go on to delirium tremens.", short: "About 24 hours", decoys: ["About 72 hours", "About 7 days"] },
+          { value: 200, clue: "Delirium tremens most often begins within this window after the last drink.", answer: "What is 48 to 96 hours? DTs combine confusion with autonomic hyperactivity and can be fatal; prevention with early benzodiazepines is the key.", short: "48 to 96 hours", decoys: ["6 to 12 hours", "10 to 14 days"] },
+          { value: 300, clue: "Formed only in the presence of ethanol and bound to red cell membranes, this biomarker reflects drinking over the prior 2 to 4 weeks.", answer: "What is phosphatidylethanol (PEth)? It is a direct marker. Ethyl glucuronide (EtG) covers only a few days and turns positive from incidental exposure; CDT is indirect and flags heavy drinking.", short: "Phosphatidylethanol (PEth)", decoys: ["Ethyl glucuronide (EtG)", "Carbohydrate-deficient transferrin"] },
+          { value: 400, clue: "A heavy drinker has confusion, ophthalmoplegia and ataxia; give this vitamin before any glucose.", answer: "What is thiamine (vitamin B1)? This is Wernicke encephalopathy. Glucose first can precipitate or worsen it; untreated, it can progress to Korsakoff syndrome.", short: "Thiamine", decoys: ["Folate", "Vitamin B12"] },
+          { value: 500, clue: "In alcohol withdrawal with liver disease, these three benzodiazepines are preferred because they skip oxidative metabolism.", answer: "What are lorazepam, oxazepam and temazepam (“LOT” / “out the liver”)? They are glucuronidated directly, so they do not accumulate in hepatic impairment the way diazepam or chlordiazepoxide can.", short: "Lorazepam, oxazepam, temazepam", decoys: ["Diazepam, chlordiazepoxide, clonazepam", "Alprazolam, triazolam, midazolam"] }
+        ]
+      },
+      {
+        name: "Medications for AUD",
+        clues: [
+          { value: 100, clue: "Disulfiram blocks this enzyme, so acetaldehyde builds up after a drink.", answer: "What is aldehyde dehydrogenase? The flushing, nausea and tachycardia work by aversion; it suits motivated, supervised patients. Check LFTs, since hepatotoxicity can occur early.", short: "Aldehyde dehydrogenase", decoys: ["Alcohol dehydrogenase", "CYP2E1"] },
+          { value: 200, clue: "Acamprosate is contraindicated once creatinine clearance falls to or below this.", answer: "What is 30 mL/min? It is renally cleared; halve the dose at 30–50 mL/min. It is the AUD drug of choice in liver disease.", short: "30 mL/min", decoys: ["60 mL/min", "90 mL/min"] },
+          { value: 300, clue: "Naltrexone for alcohol use disorder is contraindicated in patients who take, or will soon need, these.", answer: "What are opioids? As a mu antagonist it precipitates withdrawal and blocks analgesia. Also avoid it in acute hepatitis or liver failure.", short: "Opioids", decoys: ["Benzodiazepines", "Stimulants"] },
+          { value: 400, clue: "APA suggests these two drugs for AUD when naltrexone and acamprosate fail or can't be used.", answer: "What are topiramate and gabapentin? The APA also recommends against antidepressants for AUD itself, unless a co-occurring disorder calls for one.", short: "Topiramate or gabapentin", decoys: ["Baclofen or ondansetron", "Sertraline or buspirone"] },
+          { value: 500, clue: "Before the first extended-release naltrexone injection, a patient should be opioid-free for at least this long.", answer: "What is 7 to 10 days? Starting earlier risks precipitated withdrawal; people coming off buprenorphine or methadone may need up to about 2 weeks.", short: "7 to 10 days", decoys: ["24 to 48 hours", "3 to 4 weeks"] }
+        ]
+      },
+      {
+        name: "Opioids",
+        clues: [
+          { value: 100, clue: "Pinpoint pupils, unresponsiveness and this third sign make up the opioid overdose triad.", answer: "What is respiratory depression? Give naloxone and call for help; fentanyl may need repeated doses.", short: "Respiratory depression", decoys: ["Hypothermia", "Bradycardia"] },
+          { value: 200, clue: "Buprenorphine should be started only after the patient shows objective signs of this.", answer: "What is opioid withdrawal (for example, a COWS score of about 8–12)? Starting too early displaces the full agonist and precipitates withdrawal.", short: "Opioid withdrawal", decoys: ["Opioid intoxication", "A negative urine drug screen"] },
+          { value: 300, clue: "Buprenorphine binds mu receptors very tightly but only partly activates them — this property.", answer: "What is partial agonism (high affinity, low intrinsic activity)? That gives a ceiling on respiratory depression, blocks other opioids, and explains precipitated withdrawal.", short: "Partial agonism", decoys: ["Full agonism", "Kappa antagonism"] },
+          { value: 400, clue: "This antihypertensive is the classic off-label non-opioid for the autonomic symptoms of opioid withdrawal.", answer: "What is clonidine? It is a central alpha-2 agonist; watch for hypotension and sedation. Lofexidine is the FDA-approved relative.", short: "Clonidine", decoys: ["Propranolol", "Prazosin"] },
+          { value: 500, clue: "Finding this metabolite in urine confirms that a methadone patient is actually taking the dose.", answer: "What is EDDP? Methadone alone without EDDP suggests the sample was spiked rather than the drug metabolized. Standard opiate immunoassays do not detect methadone.", short: "EDDP", decoys: ["Norfentanyl", "6-monoacetylmorphine"] }
+        ]
+      },
+      {
+        name: "Stimulants, Cannabis & Club Drugs",
+        clues: [
+          { value: 100, clue: "A daily cannabis user has cyclic vomiting that he relieves with long, hot showers.", answer: "What is cannabinoid hyperemesis syndrome? Antiemetics often fail; topical capsaicin, haloperidol or benzodiazepines may help, but only stopping cannabis cures it.", short: "Cannabinoid hyperemesis syndrome", decoys: ["Cyclic vomiting syndrome", "Gastroparesis"] },
+          { value: 200, clue: "A urine screen for cocaine actually detects this inactive metabolite, typically for 2 to 3 days.", answer: "What is benzoylecgonine? Cocaine itself has a half-life of about an hour. Cocaethylene forms when cocaine and alcohol are used together.", short: "Benzoylecgonine", decoys: ["Cocaethylene", "Norcocaine"] },
+          { value: 300, clue: "Severe agitation, vertical nystagmus and insensitivity to pain point to intoxication with this drug.", answer: "What is phencyclidine (PCP)? It is an NMDA antagonist. Other signs include hypertension, rigidity and hyperacusis. Treat with a calm environment and benzodiazepines.", short: "Phencyclidine (PCP)", decoys: ["LSD", "Cocaine"] },
+          { value: 400, clue: "The 2024 ASAM/AAAP guideline names this the most effective treatment for stimulant use disorder.", answer: "What is contingency management? Tangible rewards for verified abstinence. No medication is FDA-approved for stimulant use disorder.", short: "Contingency management", decoys: ["Motivational interviewing", "12-step facilitation"] },
+          { value: 500, clue: "Heavy recreational nitrous oxide use causes a myeloneuropathy by inactivating this vitamin.", answer: "What is vitamin B12 (cobalamin)? The picture is subacute combined degeneration of the dorsal columns and corticospinal tracts, sometimes with a normal serum B12 but high methylmalonic acid.", short: "Vitamin B12", decoys: ["Thiamine", "Folate"] }
+        ]
+      },
+      {
+        name: "Sedatives, Tobacco & Change",
+        clues: [
+          { value: 100, clue: "This is the only DSM-5-TR substance class with no use disorder diagnosis.", answer: "What is caffeine? Caffeine has intoxication and withdrawal, but caffeine use disorder is only a Section III condition for further study. Tobacco, by contrast, has no intoxication diagnosis.", short: "Caffeine", decoys: ["Tobacco", "Inhalants"] },
+          { value: 200, clue: "To taper a patient off a short-acting benzodiazepine, first switch to this.", answer: "What is a long-acting benzodiazepine, such as diazepam, clonazepam or chlordiazepoxide? Then taper slowly. Stopping short-acting agents abruptly risks seizures.", short: "A long-acting benzodiazepine", decoys: ["A short-acting benzodiazepine", "An SSRI"] },
+          { value: 300, clue: "Unlike withdrawal from opioids, withdrawal from this drug class can cause seizures and death.", answer: "What are sedative-hypnotics (benzodiazepines, barbiturates), along with alcohol? Opioid withdrawal is miserable but rarely life-threatening in healthy adults.", short: "Sedative-hypnotics", decoys: ["Opioids", "Stimulants"] },
+          { value: 400, clue: "This smoking-cessation drug is a partial agonist at alpha-4 beta-2 nicotinic receptors.", answer: "What is varenicline? EAGLES found it the most effective single agent, with no significant rise in neuropsychiatric events over placebo. The FDA removed the boxed warning in 2016.", short: "Varenicline", decoys: ["Bupropion", "Nicotine patch"] },
+          { value: 500, clue: "In the stages of change, a person who admits a problem but isn't ready to act is here.", answer: "What is contemplation? The stages are precontemplation, contemplation, preparation, action and maintenance, and relapse is common. Motivational interviewing works with the ambivalence.", short: "Contemplation", decoys: ["Precontemplation", "Preparation"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "anxiety-ocd-jeopardy",
+    title: "Anxiety & OCD Jeopardy",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "Panic and agoraphobia, GAD, social and specific phobia, anxiolytic pharmacology, OCD and its treatment, the obsessive-compulsive related disorders, and separation anxiety and cultural syndromes.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "Panic · GAD & Phobias · Anxiolytics · OCD · OC-Related · Separation & Culture",
+    categories: [
+      {
+        name: "Panic & Agoraphobia",
+        clues: [
+          { value: 100, clue: "A panic attack requires at least this many of the 13 listed symptoms.", answer: "What is four? Fewer than four is a limited-symptom attack.", short: "Four", decoys: ["Three", "Five"] },
+          { value: 200, clue: "Panic disorder requires at least one attack followed by this long of persistent worry or behavior change.", answer: "What is 1 month? The attacks must also be unexpected, and at least some must come out of the blue.", short: "1 month", decoys: ["2 weeks", "6 months"] },
+          { value: 300, clue: "Agoraphobia requires fear or avoidance in at least this many of the five listed situation types.", answer: "What is two? The five are public transport, open spaces, enclosed places, lines or crowds, and being outside the home alone. It is diagnosed independently of panic disorder.", short: "Two", decoys: ["One", "Three"] },
+          { value: 400, clue: "In CBT for panic, running up stairs or breathing through a straw are examples of this technique.", answer: "What is interoceptive exposure? It deliberately provokes feared body sensations so the patient learns they are not dangerous.", short: "Interoceptive exposure", decoys: ["In vivo exposure", "Imaginal exposure"] },
+          { value: 500, clue: "A man with past anxiety feels breathless and “panicky” hours after a long flight; rule this out first.", answer: "What is pulmonary embolism? New panic-like symptoms need a medical workup, especially with risk factors like long-haul travel.", short: "Pulmonary embolism", decoys: ["Hyperthyroidism", "Panic disorder"] }
+        ]
+      },
+      {
+        name: "GAD & Phobias",
+        clues: [
+          { value: 100, clue: "Generalized anxiety disorder requires hard-to-control worry on most days for at least this long.", answer: "What is 6 months? Adults also need 3 of 6 physical symptoms.", short: "6 months", decoys: ["1 month", "2 years"] },
+          { value: 200, clue: "An adult with GAD needs at least this many of six physical symptoms, while a child needs only one.", answer: "What is three? The six are restlessness, fatigability, poor concentration, irritability, muscle tension and sleep disturbance.", short: "Three", decoys: ["Two", "Four"] },
+          { value: 300, clue: "This DSM-5-TR specifier applies to social anxiety confined to speaking or performing in public.", answer: "What is performance only? Beta-blockers or an as-needed benzodiazepine may help with discrete performances.", short: "Performance only", decoys: ["Generalized", "With panic attacks"] },
+          { value: 400, clue: "This is the first-line treatment for specific phobia.", answer: "What is exposure therapy — in vivo, virtual reality, or even a single session? No medication is FDA-approved for specific phobia.", short: "Exposure therapy", decoys: ["An SSRI", "An as-needed benzodiazepine"] },
+          { value: 500, clue: "Blood-injection-injury phobia is unusual because exposure can cause fainting through this response.", answer: "What is a vasovagal (biphasic) response? Heart rate and blood pressure rise, then drop. Applied tension is a specific technique for it.", short: "Vasovagal response", decoys: ["Hyperventilation", "Sympathetic surge"] }
+        ]
+      },
+      {
+        name: "Anxiolytics",
+        clues: [
+          { value: 100, clue: "This 5-HT1A partial agonist helps GAD but not panic disorder, and takes weeks to work.", answer: "What is buspirone? It has no abuse or dependence liability, and it tends to work less well in patients previously treated with benzodiazepines.", short: "Buspirone", decoys: ["Hydroxyzine", "Pregabalin"] },
+          { value: 200, clue: "By binding GABA-A receptors, benzodiazepines increase how often this ion channel opens.", answer: "What is the chloride channel? Benzodiazepines increase opening frequency, while barbiturates prolong opening duration.", short: "Chloride channel", decoys: ["Sodium channel", "Calcium channel"] },
+          { value: 300, clue: "For social anxiety disorder that fails SSRIs and SNRIs, this MAOI has the strongest evidence.", answer: "What is phenelzine? It needs a tyramine-restricted diet and careful drug-interaction checks.", short: "Phenelzine", decoys: ["Selegiline", "Moclobemide"] },
+          { value: 400, clue: "A single dose of this beta-blocker before a recital blunts the tremor and palpitations of performance anxiety.", answer: "What is propranolol? Take it 30–60 minutes beforehand. It treats the physical symptoms, not generalized social anxiety.", short: "Propranolol", decoys: ["Clonidine", "Prazosin"] },
+          { value: 500, clue: "A patient on alprazolam wakes at 4 a.m. with panic; the short half-life causes this.", answer: "What is interdose (rebound) withdrawal? Switching to a longer-acting agent such as clonazepam smooths it out.", short: "Interdose rebound anxiety", decoys: ["Paradoxical disinhibition", "Serotonin syndrome"] }
+        ]
+      },
+      {
+        name: "OCD",
+        clues: [
+          { value: 100, clue: "Apart from distress or impairment, OCD symptoms qualify when they take more than this much time a day.", answer: "What is 1 hour? Obsessions are intrusive and unwanted; compulsions are meant to neutralize them.", short: "1 hour", decoys: ["30 minutes", "3 hours"] },
+          { value: 200, clue: "In adults, OCD is distributed this way between the sexes.", answer: "What is roughly equally (slight female excess in adults)? Adult OCD has no strong sex skew, unlike most anxiety disorders. Males have earlier onset and predominate in childhood OCD.", short: "Roughly equally", decoys: ["2:1 female", "2:1 male"] },
+          { value: 300, clue: "This psychotherapy is the treatment of choice for OCD.", answer: "What is exposure and response prevention (ERP)? Graded exposure to triggers while blocking the rituals.", short: "Exposure and response prevention", decoys: ["Dialectical behavior therapy", "Psychodynamic therapy"] },
+          { value: 400, clue: "After OCD remits on an SRI, keep the full dose for at least this long before trying a slow taper.", answer: "What is 1 to 2 years? Relapse after stopping is common. SRIs for OCD usually need high doses and a 10–12 week trial.", short: "1 to 2 years", decoys: ["3 to 6 months", "5 years"] },
+          { value: 500, clue: "This insight specifier applies when a patient is completely convinced the OCD beliefs are true.", answer: "What is “with absent insight/delusional beliefs”? It is still OCD, not a psychotic disorder, when no other psychotic symptoms are present.", short: "With absent insight/delusional beliefs", decoys: ["With poor insight", "With psychotic features"] }
+        ]
+      },
+      {
+        name: "OC-Related Disorders",
+        clues: [
+          { value: 100, clue: "Preoccupation with a flaw others can barely see, plus mirror checking and camouflaging, defines this.", answer: "What is body dysmorphic disorder? Suicidal ideation is very common, and cosmetic procedures rarely help.", short: "Body dysmorphic disorder", decoys: ["Illness anxiety disorder", "Olfactory reference disorder"] },
+          { value: 200, clue: "A weightlifter convinced he's too small and insufficiently muscular gets this BDD specifier.", answer: "What is with muscle dysmorphia? It occurs almost exclusively in men and is linked to anabolic steroid misuse.", short: "With muscle dysmorphia", decoys: ["With good insight", "With actual flaws"] },
+          { value: 300, clue: "This behavioral therapy is first-line for trichotillomania and skin-picking disorder.", answer: "What is habit reversal training? Its components include awareness training and a competing response.", short: "Habit reversal training", decoys: ["Exposure and response prevention", "Dialectical behavior therapy"] },
+          { value: 400, clue: "This glutamate-modulating supplement has evidence for hair pulling and skin picking, alone or with an SSRI.", answer: "What is N-acetylcysteine (NAC)? Clomipramine and SSRIs are other options, with mixed evidence.", short: "N-acetylcysteine", decoys: ["Memantine", "Inositol"] },
+          { value: 500, clue: "In hoarding disorder, this specifier applies to the large majority who also buy or collect free items.", answer: "What is with excessive acquisition? It applies in roughly 80–90%. Hoarding is often chronic and is most severe in older adults.", short: "With excessive acquisition", decoys: ["With poor insight", "With animal hoarding"] }
+        ]
+      },
+      {
+        name: "Separation & Culture",
+        clues: [
+          { value: 100, clue: "In adults, separation anxiety disorder typically requires symptoms lasting at least this long.", answer: "What is 6 months? Children and adolescents need only 4 weeks. Most adult cases begin in adulthood rather than persisting from childhood.", short: "6 months", decoys: ["4 weeks", "1 year"] },
+          { value: 200, clue: "Selective mutism requires failure to speak in specific settings for at least this long, not just the first month of school.", answer: "What is 1 month? It is treated behaviorally with graded exposure; it often overlaps with social anxiety.", short: "1 month", decoys: ["2 weeks", "6 months"] },
+          { value: 300, clue: "A young man is gripped by sudden terror that his penis is retracting into his body and he'll die.", answer: "What is koro? It is a cultural syndrome described mainly in Southeast Asia. Dhat, a South Asian syndrome, centers on fear of semen loss.", short: "Koro", decoys: ["Dhat syndrome", "Taijin kyofusho"] },
+          { value: 400, clue: "A form of taijin kyofusho, this is fear that one's body odor offends others.", answer: "What is olfactory reference disorder (jikoshu-kyofu)? It is an example of other specified obsessive-compulsive and related disorder.", short: "Olfactory reference disorder", decoys: ["Body dysmorphic disorder", "Delusional disorder, somatic type"] },
+          { value: 500, clue: "This Cambodian cultural syndrome features panic-like “wind attacks” with catastrophic fears about the body.", answer: "What is khyâl cap? It is an example of other specified anxiety disorder, along with ataque de nervios.", short: "Khyâl cap", decoys: ["Ataque de nervios", "Koro"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "personality-jeopardy",
+    title: "Personality Disorders Jeopardy",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "General criteria and the clusters, all ten personality disorders, defense mechanisms, and the evidence-based therapies for borderline personality disorder.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "General Criteria · Cluster A · Cluster B · Cluster C · Defenses · Treatment",
+    categories: [
+      {
+        name: "General Criteria",
+        clues: [
+          { value: 100, clue: "Cognition, affectivity, interpersonal functioning and this fourth area make up the general personality disorder criteria.", answer: "What is impulse control? The enduring pattern must show in at least two of the four areas.", short: "Impulse control", decoys: ["Perception", "Memory"] },
+          { value: 200, clue: "Only this personality disorder requires evidence of another disorder that began before age 15.", answer: "What is antisocial personality disorder? It requires conduct disorder with onset before 15.", short: "Antisocial personality disorder", decoys: ["Borderline personality disorder", "Schizotypal personality disorder"] },
+          { value: 300, clue: "Antisocial personality disorder cannot be diagnosed before this age.", answer: "What is 18? The pervasive disregard for others' rights must be present since age 15.", short: "18", decoys: ["15", "21"] },
+          { value: 400, clue: "Relatives of patients with cluster C personality disorders show higher rates of this spectrum of disorders.", answer: "What are anxiety disorders? Cluster A tracks with psychotic disorders in relatives; cluster B with mood and substance use disorders.", short: "Anxiety disorders", decoys: ["Psychotic disorders", "Substance use disorders"] },
+          { value: 500, clue: "The DSM-5-TR alternative model rates impairment in self and interpersonal functioning with this scale.", answer: "What is the Level of Personality Functioning Scale (LPFS)? The model's five trait domains are assessed with the PID-5.", short: "Level of Personality Functioning Scale", decoys: ["PID-5", "SCID-5-PD"] }
+        ]
+      },
+      {
+        name: "Cluster A",
+        clues: [
+          { value: 100, clue: "Lifelong distrust, grudges, and suspecting a spouse's fidelity without reason.", answer: "What is paranoid personality disorder? Unlike delusional disorder, there are no fixed delusions.", short: "Paranoid personality disorder", decoys: ["Schizotypal personality disorder", "Delusional disorder"] },
+          { value: 200, clue: "A loner who neither wants nor enjoys close relationships and is indifferent to praise and criticism.", answer: "What is schizoid personality disorder? Unlike avoidant PD, the patient does not want connection.", short: "Schizoid personality disorder", decoys: ["Avoidant personality disorder", "Schizotypal personality disorder"] },
+          { value: 300, clue: "Magical thinking, ideas of reference, and odd speech and appearance.", answer: "What is schizotypal personality disorder? It is the cluster A disorder most closely linked to schizophrenia; brief psychotic episodes can occur under stress.", short: "Schizotypal personality disorder", decoys: ["Schizoid personality disorder", "Paranoid personality disorder"] },
+          { value: 400, clue: "In schizotypal PD, social anxiety doesn't fade with familiarity and is driven mostly by this.", answer: "What are paranoid fears? In avoidant PD, social anxiety stems from fear of negative judgment of oneself.", short: "Paranoid fears", decoys: ["Fear of negative evaluation", "Fear of embarrassment"] },
+          { value: 500, clue: "In schizotypal PD, this alpha-2A agonist has shown benefit for cognitive deficits.", answer: "What is guanfacine? Low-dose antipsychotics are used only for brief psychotic symptoms.", short: "Guanfacine", decoys: ["Clonidine", "Modafinil"] }
+        ]
+      },
+      {
+        name: "Cluster B",
+        clues: [
+          { value: 100, clue: "Frantic efforts to avoid abandonment, chronic emptiness, and unstable relationships.", answer: "What is borderline personality disorder? It is the most prevalent personality disorder in clinical settings.", short: "Borderline personality disorder", decoys: ["Histrionic personality disorder", "Dependent personality disorder"] },
+          { value: 200, clue: "Grandiosity, entitlement, a need for admiration and a lack of empathy.", answer: "What is narcissistic personality disorder? Presentations range from the oblivious, thick-skinned type to the fragile, hypervigilant type.", short: "Narcissistic personality disorder", decoys: ["Histrionic personality disorder", "Antisocial personality disorder"] },
+          { value: 300, clue: "Shallow, rapidly shifting emotion and speech that is impressionistic and short on detail.", answer: "What is histrionic personality disorder? Patients also use their appearance to draw attention and see relationships as more intimate than they are.", short: "Histrionic personality disorder", decoys: ["Borderline personality disorder", "Narcissistic personality disorder"] },
+          { value: 400, clue: "Histrionic personality disorder is frequently comorbid with this disorder.", answer: "What is somatic symptom disorder? Substance use disorders are common too.", short: "Somatic symptom disorder", decoys: ["Obsessive-compulsive disorder", "Anorexia nervosa"] },
+          { value: 500, clue: "In long-term follow-up, most borderline patients stop meeting criteria; after 10 years, roughly this share still do.", answer: "What is about 10%? In the McLean and CLPS studies, symptomatic remission was the rule, though social functioning often lagged behind.", short: "About 10%", decoys: ["About 50%", "About 90%"] }
+        ]
+      },
+      {
+        name: "Cluster C",
+        clues: [
+          { value: 100, clue: "Wants relationships but avoids them for fear of being shamed or ridiculed.", answer: "What is avoidant personality disorder? It overlaps heavily with social anxiety disorder, and both can be diagnosed together.", short: "Avoidant personality disorder", decoys: ["Schizoid personality disorder", "Dependent personality disorder"] },
+          { value: 200, clue: "Needs others to make everyday decisions and volunteers for unpleasant tasks to keep their support.", answer: "What is dependent personality disorder? Patients urgently seek a new caregiver when a relationship ends.", short: "Dependent personality disorder", decoys: ["Avoidant personality disorder", "Borderline personality disorder"] },
+          { value: 300, clue: "Perfectionism so strict that projects never get finished, plus miserliness and rigidity.", answer: "What is obsessive-compulsive personality disorder (OCPD)? Unlike OCD, there are no true obsessions or compulsions.", short: "Obsessive-compulsive personality disorder", decoys: ["Obsessive-compulsive disorder", "Hoarding disorder"] },
+          { value: 400, clue: "Unlike OCD symptoms, OCPD traits are typically experienced this way.", answer: "What is ego-syntonic? The traits feel consistent with the self, while OCD obsessions are unwanted and intrusive.", short: "Ego-syntonic", decoys: ["Ego-dystonic", "Delusional"] },
+          { value: 500, clue: "This defense is the one most characteristic of OCPD.", answer: "What is isolation of affect? Intellectualization, reaction formation and undoing are also typical.", short: "Isolation of affect", decoys: ["Splitting", "Projective identification"] }
+        ]
+      },
+      {
+        name: "Defense Mechanisms",
+        clues: [
+          { value: 100, clue: "Seeing people as all good or all bad, with nothing in between.", answer: "What is splitting? It is the defense classically tied to borderline PD, alternating idealization and devaluation.", short: "Splitting", decoys: ["Projection", "Denial"] },
+          { value: 200, clue: "Channeling aggressive urges into competitive boxing.", answer: "What is sublimation? It is a mature defense, along with altruism, humor and suppression.", short: "Sublimation", decoys: ["Displacement", "Reaction formation"] },
+          { value: 300, clue: "Yelling at your dog after your boss yells at you.", answer: "What is displacement? The feeling is shifted to a safer target. It is a neurotic defense.", short: "Displacement", decoys: ["Projection", "Acting out"] },
+          { value: 400, clue: "Showering a hated rival with lavish kindness.", answer: "What is reaction formation? An unacceptable impulse is turned into its opposite.", short: "Reaction formation", decoys: ["Undoing", "Altruism"] },
+          { value: 500, clue: "This defense in the patient: they treat the psychiatrist as incompetent until the psychiatrist starts to feel and act incompetent.", answer: "What is projective identification? The projected feeling is taken on by the other person, unlike simple projection.", short: "Projective identification", decoys: ["Projection", "Splitting"] }
+        ]
+      },
+      {
+        name: "Treatment",
+        clues: [
+          { value: 100, clue: "This BPD therapy has the clearest evidence for reducing suicide attempts.", answer: "What is dialectical behavior therapy (DBT)? It combines individual therapy, skills groups, phone coaching and a therapist consultation team.", short: "Dialectical behavior therapy", decoys: ["Mentalization-based treatment", "Transference-focused psychotherapy"] },
+          { value: 200, clue: "DBT skills groups teach mindfulness, interpersonal effectiveness, emotion regulation and this fourth module.", answer: "What is distress tolerance? The core dialectic is acceptance and change.", short: "Distress tolerance", decoys: ["Cognitive restructuring", "Exposure"] },
+          { value: 300, clue: "This psychodynamic BPD therapy interprets split “object relations dyads” as they appear in the transference.", answer: "What is transference-focused psychotherapy (TFP)? Kernberg's model aims to integrate polarized views of self and others.", short: "Transference-focused psychotherapy", decoys: ["Mentalization-based treatment", "Schema therapy"] },
+          { value: 400, clue: "Gunderson's generalist BPD approach, built for clinicians without specialist training.", answer: "What is Good Psychiatric Management (GPM)? It is once-weekly, stresses disclosing the diagnosis, and is built on an interpersonal hypersensitivity model.", short: "Good Psychiatric Management", decoys: ["Supportive psychotherapy", "STEPPS"] },
+          { value: 500, clue: "Mentalization-based treatment targets a deficit in this capacity.", answer: "What is mentalizing — understanding behavior in terms of one's own and others' mental states? MBT was developed by Bateman and Fonagy.", short: "Mentalizing", decoys: ["Emotion regulation", "Distress tolerance"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "bipolar-jeopardy",
+    title: "Bipolar Disorder Jeopardy",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "Mania versus hypomania, bipolar II, cyclothymia and the specifiers, lithium, the anticonvulsant mood stabilizers, FDA-approved treatment choices, and secondary mania.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "Episodes · Bipolar II & Specifiers · Lithium · Anticonvulsants · Treatment Choices · Secondary Mania & More",
+    categories: [
+      {
+        name: "Episodes & Criteria",
+        clues: [
+          { value: 100, clue: "Mania needs 1 week (or hospitalization); hypomania needs at least this long.", answer: "What is 4 consecutive days? Symptoms lasting 2–3 days fall under other specified bipolar disorder.", short: "4 consecutive days", decoys: ["2 days", "7 days"] },
+          { value: 200, clue: "If mood is only irritable, mania requires at least this many B-criterion symptoms.", answer: "What is four? Elevated or expansive mood needs three (DIGFAST).", short: "Four", decoys: ["Three", "Five"] },
+          { value: 300, clue: "Apart from duration, mania differs from hypomania by marked impairment, hospitalization, or this.", answer: "What is psychosis? Psychotic features at any point make the episode manic by definition.", short: "Psychosis", decoys: ["Decreased need for sleep", "Grandiosity"] },
+          { value: 400, clue: "DSM-5 added this requirement to criterion A alongside elevated, expansive or irritable mood.", answer: "What is persistently increased activity or energy?", short: "Increased activity or energy", decoys: ["Decreased need for sleep", "Distractibility"] },
+          { value: 500, clue: "Full mania that begins on an antidepressant and persists beyond the drug's physiological effect supports this diagnosis.", answer: "What is bipolar I disorder? If it doesn't outlast the drug's effect, it is substance/medication-induced bipolar disorder.", short: "Bipolar I disorder", decoys: ["Substance-induced bipolar disorder", "Bipolar II disorder"] }
+        ]
+      },
+      {
+        name: "Bipolar II & Specifiers",
+        clues: [
+          { value: 100, clue: "Bipolar II requires at least one hypomanic episode and at least one of these.", answer: "What is a major depressive episode? Any lifetime manic episode changes the diagnosis to bipolar I.", short: "A major depressive episode", decoys: ["A manic episode", "A mixed episode"] },
+          { value: 200, clue: "In adults, cyclothymic disorder requires this long of subthreshold ups and downs.", answer: "What is 2 years (1 year in children and adolescents)? Symptoms are present at least half the time, with no symptom-free stretch longer than 2 months.", short: "2 years", decoys: ["1 year", "6 months"] },
+          { value: 300, clue: "The rapid-cycling specifier needs at least this many mood episodes in 12 months.", answer: "What is four? Mania, hypomania and depression all count. It is more common in women and in bipolar II.", short: "Four", decoys: ["Two", "Six"] },
+          { value: 400, clue: "The mixed features specifier needs at least this many symptoms of the opposite pole during most days.", answer: "What is three? If full criteria for both mania and depression are met at the same time, call it a manic episode with mixed features.", short: "Three", decoys: ["Two", "Five"] },
+          { value: 500, clue: "The peripartum-onset specifier covers onset in pregnancy or within this long after delivery.", answer: "What is 4 weeks? Postpartum psychosis is a psychiatric emergency and is strongly associated with bipolar disorder.", short: "4 weeks", decoys: ["3 months", "12 months"] }
+        ]
+      },
+      {
+        name: "Lithium",
+        clues: [
+          { value: 100, clue: "First-trimester lithium exposure raises the risk of this tricuspid valve malformation.", answer: "What is Ebstein anomaly? The absolute risk is small (roughly 1 in 1,000 or less). Levels shift across pregnancy and delivery.", short: "Ebstein anomaly", decoys: ["Tetralogy of Fallot", "Neural tube defects"] },
+          { value: 200, clue: "This potassium-sparing diuretic treats lithium-induced nephrogenic diabetes insipidus.", answer: "What is amiloride? It blocks lithium entry through ENaC channels in the collecting duct.", short: "Amiloride", decoys: ["Hydrochlorothiazide", "Furosemide"] },
+          { value: 300, clue: "This is lithium's classic endocrine side effect, so TSH is monitored.", answer: "What is hypothyroidism? Lithium can also cause hyperparathyroidism with hypercalcemia, so check calcium too.", short: "Hypothyroidism", decoys: ["Hyperthyroidism", "Adrenal insufficiency"] },
+          { value: 400, clue: "NSAIDs, ACE inhibitors and this diuretic class raise lithium levels.", answer: "What are thiazides? They increase proximal sodium and lithium reabsorption. Toxicity signs include coarse tremor, ataxia and confusion.", short: "Thiazide diuretics", decoys: ["Carbonic anhydrase inhibitors", "Osmotic diuretics"] },
+          { value: 500, clue: "Of the mood stabilizers, this one has the best evidence for lowering suicide risk.", answer: "What is lithium? The anti-suicide effect appears to be partly independent of its mood effects.", short: "Lithium", decoys: ["Valproate", "Lamotrigine"] }
+        ]
+      },
+      {
+        name: "Anticonvulsants",
+        clues: [
+          { value: 100, clue: "Adding this drug roughly doubles lamotrigine levels, so start low and titrate slowly.", answer: "What is valproate? It inhibits lamotrigine's glucuronidation. Carbamazepine and estrogen-containing contraceptives lower lamotrigine.", short: "Valproate", decoys: ["Carbamazepine", "Lithium"] },
+          { value: 200, clue: "Lamotrigine's boxed warning is for this.", answer: "What is serious rash (SJS/TEN)? Risk is highest in the first 2–8 weeks and with fast titration or valproate.", short: "Serious rash (SJS/TEN)", decoys: ["Hepatotoxicity", "Agranulocytosis"] },
+          { value: 300, clue: "Before carbamazepine, the FDA recommends screening patients of Asian ancestry for this allele.", answer: "What is HLA-B*1502? It is strongly associated with carbamazepine-induced SJS/TEN.", short: "HLA-B*1502", decoys: ["HLA-B*5801", "HLA-B*5701"] },
+          { value: 400, clue: "Valproate can raise ammonia without liver injury by interfering with this pathway.", answer: "What is the urea cycle? Valproate hyperammonemic encephalopathy can occur with normal LFTs; L-carnitine is used.", short: "The urea cycle", decoys: ["Gluconeogenesis", "Heme synthesis"] },
+          { value: 500, clue: "Carbamazepine levels fall over the first weeks of treatment because of this.", answer: "What is autoinduction? Carbamazepine induces CYP3A4, which metabolizes carbamazepine itself.", short: "Autoinduction", decoys: ["Enzyme saturation", "Protein-binding displacement"] }
+        ]
+      },
+      {
+        name: "Treatment Choices",
+        clues: [
+          { value: 100, clue: "The “A ROLL” maintenance monotherapies are aripiprazole, risperidone LAI, olanzapine, lithium and this.", answer: "What is lamotrigine? It works best at preventing depressive episodes. Asenapine and aripiprazole LAI are also approved as maintenance monotherapy, quetiapine and ziprasidone only as adjuncts to lithium or valproate. Valproate is widely used but not FDA-approved for maintenance.", short: "Lamotrigine", decoys: ["Valproate", "Quetiapine"] },
+          { value: 200, clue: "Olanzapine is FDA-approved for bipolar depression only when combined with this drug.", answer: "What is fluoxetine (Symbyax)? Other approved options include quetiapine, lurasidone, cariprazine and lumateperone.", short: "Fluoxetine", decoys: ["Sertraline", "Lamotrigine"] },
+          { value: 300, clue: "In STEP-BD, adding this to a mood stabilizer gave no added benefit for bipolar depression.", answer: "What is an antidepressant (paroxetine or bupropion)? It did not trigger more switching either. Antidepressant monotherapy in bipolar I should be avoided.", short: "An antidepressant", decoys: ["Quetiapine", "Intensive psychotherapy"] },
+          { value: 400, clue: "Approved in 2022, this sublingual alpha-2 agonist treats acute agitation in bipolar disorder and schizophrenia.", answer: "What is dexmedetomidine (Igalmi)? Watch for hypotension and bradycardia.", short: "Dexmedetomidine", decoys: ["Clonidine", "Lofexidine"] },
+          { value: 500, clue: "In rapid cycling, besides stopping antidepressants, check the function of this gland.", answer: "What is the thyroid? Hypothyroidism, including lithium-induced, is associated with rapid cycling.", short: "The thyroid", decoys: ["The adrenal glands", "The pituitary"] }
+        ]
+      },
+      {
+        name: "Secondary Mania & More",
+        clues: [
+          { value: 100, clue: "A first manic episode at age 60 with no family history should raise suspicion for this.", answer: "What is a secondary (medical or substance-induced) cause? Examples include tumor, stroke, steroids, thyroid disease and HIV.", short: "A secondary medical cause", decoys: ["Bipolar II disorder", "Cyclothymic disorder"] },
+          { value: 200, clue: "Strokes causing secondary mania are more often on this side of the brain.", answer: "What is the right side? Right-sided frontal, temporal and subcortical lesions are the classic culprits.", short: "The right side", decoys: ["The left side", "Both sides equally"] },
+          { value: 300, clue: "This drug class, given in bursts for asthma or autoimmune flares, is a classic cause of medication-induced mania.", answer: "What are corticosteroids? The risk is dose-related. Other culprits include stimulants, levodopa and isoniazid.", short: "Corticosteroids", decoys: ["Beta-blockers", "Antihistamines"] },
+          { value: 400, clue: "This psychotherapy stabilizes daily routines of sleep, meals and activity to prevent relapse.", answer: "What is interpersonal and social rhythm therapy (IPSRT)? It builds on the circadian vulnerability of bipolar disorder.", short: "Interpersonal and social rhythm therapy", decoys: ["Dialectical behavior therapy", "Mentalization-based treatment"] },
+          { value: 500, clue: "Onset in the late teens, strong family history and good lithium response point to this rather than secondary mania.", answer: "What is primary bipolar disorder? Secondary mania tends to start later, have weaker family history and respond less well to lithium.", short: "Primary bipolar disorder", decoys: ["Substance-induced mania", "Mania due to a medical condition"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "forensics-biostats-jeopardy",
+    title: "Forensics, Ethics & Biostatistics",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "Landmark mental health law cases, insanity standards and malpractice, consent and confidentiality, and the biostatistics and study design that show up on every board exam.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "Landmark Cases · Insanity & Malpractice · Consent & Capacity · Statistics · Tests & Validity · Study Design",
+    categories: [
+      {
+        name: "Landmark Cases",
+        clues: [
+          { value: 100, clue: "This California case created a clinician's duty to protect people a patient threatens.", answer: "What is Tarasoff v. Regents of the University of California (1976)? States now differ: some mandate warning or protecting, others only permit it.", short: "Tarasoff", decoys: ["Dusky", "Rogers v. Okin"] },
+          { value: 200, clue: "This case set the competency-to-stand-trial standard: rational and factual understanding plus the ability to consult counsel.", answer: "What is Dusky v. United States (1960)?", short: "Dusky v. United States", decoys: ["Jackson v. Indiana", "Ford v. Wainwright"] },
+          { value: 300, clue: "This case set “clear and convincing evidence” as the minimum standard for civil commitment.", answer: "What is Addington v. Texas (1979)? That is higher than a preponderance but lower than beyond a reasonable doubt.", short: "Addington v. Texas", decoys: ["O'Connor v. Donaldson", "Kansas v. Hendricks"] },
+          { value: 400, clue: "The Supreme Court upheld civil commitment of sexually violent predators after they served their prison terms.", answer: "What is Kansas v. Hendricks (1997)? The commitment was ruled civil, not criminal, so it was not double jeopardy.", short: "Kansas v. Hendricks", decoys: ["Addington v. Texas", "Jackson v. Indiana"] },
+          { value: 500, clue: "An incompetent defendant can't be held indefinitely just because of incompetence, this case held.", answer: "What is Jackson v. Indiana (1972)? If competence can't be restored in a reasonable time, the state must civilly commit or release.", short: "Jackson v. Indiana", decoys: ["Sell v. United States", "Dusky v. United States"] }
+        ]
+      },
+      {
+        name: "Insanity & Malpractice",
+        clues: [
+          { value: 100, clue: "Under this rule, a defendant is insane only if he didn't know what he was doing or that it was wrong.", answer: "What is the M'Naghten rule? It is the strictest, cognitive-only test and is still used in many states.", short: "M'Naghten rule", decoys: ["ALI test", "Irresistible impulse test"] },
+          { value: 200, clue: "This insanity test adds lacking substantial capacity to conform conduct to the law.", answer: "What is the American Law Institute (Model Penal Code) test? It combines a cognitive prong with a volitional one.", short: "ALI test", decoys: ["Durham rule", "M'Naghten rule"] },
+          { value: 300, clue: "Malpractice requires duty, dereliction, direct causation and this fourth element.", answer: "What are damages (harm)? These are the four D's. The harm need not be irreparable.", short: "Damages", decoys: ["Intent", "Irreparable harm"] },
+          { value: 400, clue: "Civil malpractice claims must be proven to this standard.", answer: "What is a preponderance of the evidence (more likely than not)? Criminal cases need proof beyond a reasonable doubt.", short: "Preponderance of the evidence", decoys: ["Clear and convincing evidence", "Beyond a reasonable doubt"] },
+          { value: 500, clue: "Under this verdict, the defendant receives psychiatric treatment and then serves the rest of the sentence.", answer: "What is guilty but mentally ill? Unlike a not-guilty-by-reason-of-insanity (NGRI) verdict, it does not remove criminal responsibility.", short: "Guilty but mentally ill", decoys: ["Not guilty by reason of insanity", "Diminished capacity"] }
+        ]
+      },
+      {
+        name: "Consent & Capacity",
+        clues: [
+          { value: 100, clue: "Decision-making capacity requires communicating a choice, understanding, appreciation, and this.", answer: "What is reasoning (rationally manipulating the information)? These are the four Appelbaum criteria.", short: "Reasoning", decoys: ["Agreement with the physician", "Literacy"] },
+          { value: 200, clue: "Unlike capacity, which is a clinical judgment, this is determined by a court.", answer: "What is competence? A court can find a person generally or specifically incompetent and appoint a guardian.", short: "Competence", decoys: ["Decision-making capacity", "Informed consent"] },
+          { value: 300, clue: "Without an advance directive, a surrogate should first try to decide using this standard.", answer: "What is substituted judgment — what the patient would have wanted? The best-interests standard is used when the patient's wishes are unknown.", short: "Substituted judgment", decoys: ["Best interests", "Reasonable person"] },
+          { value: 400, clue: "A minor who is married, in the military, or living independently and self-supporting may be this.", answer: "What is an emancipated minor? Emancipated minors can consent to their own care.", short: "Emancipated minor", decoys: ["Mature minor", "Ward of the state"] },
+          { value: 500, clue: "This 1990 federal law requires Medicare and Medicaid providers to tell patients about their right to advance directives.", answer: "What is the Patient Self-Determination Act?", short: "Patient Self-Determination Act", decoys: ["HIPAA", "EMTALA"] }
+        ]
+      },
+      {
+        name: "Statistics",
+        clues: [
+          { value: 100, clue: "In a positively skewed distribution, the mean sits here relative to the median.", answer: "What is above (to the right of) the median? The long right tail pulls the mean up. In a symmetric distribution the two are equal.", short: "Above the median", decoys: ["Below the median", "Equal to the median"] },
+          { value: 200, clue: "Rejecting a null hypothesis that is actually true is this.", answer: "What is a type I (alpha) error, a false positive? A type II (beta) error is missing a real effect.", short: "Type I error", decoys: ["Type II error", "Sampling error"] },
+          { value: 300, clue: "Statistical power equals this expression.", answer: "What is 1 minus beta? It is the probability of detecting an effect that really exists; bigger samples and bigger effects increase it.", short: "1 minus beta", decoys: ["1 minus alpha", "Alpha"] },
+          { value: 400, clue: "This nonparametric test compares two independent groups when the data aren't normally distributed.", answer: "What is the Mann-Whitney U test? Kruskal-Wallis is the nonparametric counterpart of ANOVA for three or more groups.", short: "Mann-Whitney U test", decoys: ["Kruskal-Wallis test", "Paired t test"] },
+          { value: 500, clue: "An odds ratio of 1.4 with a 95% confidence interval of 0.9 to 1.9 means this.", answer: "What is no statistically significant association? The interval includes 1, the null value.", short: "No significant association", decoys: ["A significant 40% increase", "A type I error"] }
+        ]
+      },
+      {
+        name: "Tests & Validity",
+        clues: [
+          { value: 100, clue: "The proportion of people with the disease who test positive.", answer: "What is sensitivity? Specificity is the proportion without the disease who test negative.", short: "Sensitivity", decoys: ["Specificity", "Positive predictive value"] },
+          { value: 200, clue: "With sensitivity and specificity fixed, this measure falls as disease prevalence falls.", answer: "What is positive predictive value? Negative predictive value rises as prevalence falls.", short: "Positive predictive value", decoys: ["Negative predictive value", "Specificity"] },
+          { value: 300, clue: "A new anxiety scale's scores correlate strongly with HAM-A scores, supporting this.", answer: "What is convergent validity? The scale agrees with an established measure of the same thing.", short: "Convergent validity", decoys: ["Discriminant validity", "Face validity"] },
+          { value: 400, clue: "Stable patients score the same when the test is given again a week later.", answer: "What is test-retest reliability? Inter-rater reliability is agreement between different raters.", short: "Test-retest reliability", decoys: ["Inter-rater reliability", "Predictive validity"] },
+          { value: 500, clue: "At a glance, a new ADHD scale's items don't even look like they're about attention or hyperactivity.", answer: "What is low face validity? Content validity asks whether all aspects of the condition are covered.", short: "Low face validity", decoys: ["Low content validity", "Low construct validity"] }
+        ]
+      },
+      {
+        name: "Study Design & Bias",
+        clues: [
+          { value: 100, clue: "This design starts with people who have the outcome and looks back for exposures.", answer: "What is a case-control study? It is fast and cheap and suits rare diseases, but it is prone to recall bias. It yields odds ratios.", short: "Case-control study", decoys: ["Cohort study", "Cross-sectional study"] },
+          { value: 200, clue: "Subjects take drug A, wash out, then switch to drug B, serving as their own controls.", answer: "What is a crossover design? A parallel-group design keeps each arm on a single treatment.", short: "Crossover design", decoys: ["Parallel-group design", "Time-series design"] },
+          { value: 300, clue: "All randomized subjects are analyzed in their assigned arm, whether or not they finished.", answer: "What is intention-to-treat analysis? It guards against attrition bias and preserves randomization.", short: "Intention-to-treat analysis", decoys: ["Per-protocol analysis", "Completers analysis"] },
+          { value: 400, clue: "Mothers of children with birth defects remember prenatal exposures more thoroughly than control mothers.", answer: "What is recall bias? It is a classic weakness of case-control studies.", short: "Recall bias", decoys: ["Selection bias", "Observer bias"] },
+          { value: 500, clue: "Subjects improve simply because they know they're being watched.", answer: "What is the Hawthorne effect? The nocebo effect is when negative expectations produce adverse effects or worsening.", short: "Hawthorne effect", decoys: ["Placebo effect", "Nocebo effect"] }
+        ]
+      }
+    ]
+  },
+  {
+    id: "genetics-jeopardy",
+    title: "Psychiatric Genetics Jeopardy",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "How genes are hunted (GWAS, linkage, polygenic scores), epigenetics, heritability across disorders, the syndromes and repeat expansions, pharmacogenomics, and specific gene–disorder links.",
+    tags: ["Board review", "6 categories", "30 clues"],
+    subtitle: "Research Methods · Epigenetics · Heritability · Syndromes & Repeats · Pharmacogenomics · Genes & Disorders",
+    categories: [
+      {
+        name: "Research Methods",
+        clues: [
+          { value: 100, clue: "This approach scans common variants across the whole genome for statistical association with a trait.", answer: "What is a genome-wide association study (GWAS)? Each hit usually carries a tiny effect, which is why psychiatric disorders look polygenic.", short: "Genome-wide association study", decoys: ["Linkage analysis", "Candidate gene study"] },
+          { value: 200, clue: "A single number summing the small effects of many risk variants in one person.", answer: "What is a polygenic risk score? For depression, the score and childhood trauma each add risk independently; a large Psychiatric Genomics Consortium meta-analysis found no interaction between them.", short: "Polygenic risk score", decoys: ["Heritability estimate", "Odds ratio"] },
+          { value: 300, clue: "Identical twins reared apart help separate genetic effects from this.", answer: "What is the shared (family) environment? Twins reared apart are about as alike in personality as twins reared together, which suggests little shared-environment effect.", short: "Shared environment", decoys: ["Epigenetic change", "De novo mutation"] },
+          { value: 400, clue: "This older family method tracks chromosomal regions co-inherited with illness through pedigrees.", answer: "What is linkage analysis? It finds rare, large-effect genes well but has largely failed for common psychiatric disorders.", short: "Linkage analysis", decoys: ["GWAS", "Exome sequencing"] },
+          { value: 500, clue: "The exome, all the protein-coding DNA, makes up roughly this share of the genome.", answer: "What is about 1.5% (1–2%)? ACMG (2021) now recommends exome or genome sequencing as a first- or second-tier test for developmental delay and intellectual disability.", short: "About 1.5%", decoys: ["About 15%", "About 50%"] }
+        ]
+      },
+      {
+        name: "Epigenetics",
+        clues: [
+          { value: 100, clue: "This term covers heritable changes in gene expression without any change in DNA sequence.", answer: "What is epigenetics? Adverse childhood experiences can leave lasting epigenetic marks on stress-response genes.", short: "Epigenetics", decoys: ["Mutation", "Polymorphism"] },
+          { value: 200, clue: "Methylation of CpG sites in a gene's promoter usually has this effect on expression.", answer: "What is silencing (reducing) it? Methyl groups block transcription-factor binding and recruit repressive proteins.", short: "Reduces (silences) expression", decoys: ["Increases expression", "Has no effect on expression"] },
+          { value: 300, clue: "Besides DNA methylation and microRNAs, this third mechanism changes how tightly DNA is packaged.", answer: "What is histone modification (acetylation, methylation and so on)? Acetylation loosens chromatin and generally increases transcription.", short: "Histone modification", decoys: ["Codon substitution", "Gene duplication"] },
+          { value: 400, clue: "Valproate inhibits this class of epigenetic enzymes, loosening chromatin.", answer: "What are histone deacetylases (HDACs)? The same property is being studied in oncology.", short: "Histone deacetylases", decoys: ["DNA methyltransferases", "Histone acetyltransferases"] },
+          { value: 500, clue: "The same 15q11–q13 deletion causes Prader-Willi or Angelman depending on which parent it came from — this phenomenon.", answer: "What is genomic imprinting? A paternal deletion causes Prader-Willi; a maternal deletion causes Angelman.", short: "Genomic imprinting", decoys: ["Anticipation", "Mosaicism"] }
+        ]
+      },
+      {
+        name: "Heritability",
+        clues: [
+          { value: 100, clue: "The identical twin of a person with schizophrenia has roughly this lifetime risk.", answer: "What is about 50% (roughly 40–50%)? That compares with about 1% in the general population and about 10–15% for a dizygotic twin. Heritability is about 80%.", short: "About 50%", decoys: ["About 10%", "About 90%"] },
+          { value: 200, clue: "Twin studies put major depressive disorder's heritability at about this.", answer: "What is roughly 35–40%? That is moderate. MZ concordance is about 50% versus about 20% in DZ twins.", short: "About 35–40%", decoys: ["About 80%", "About 10%"] },
+          { value: 300, clue: "With heritability around 0.74 to 0.77, this childhood-onset disorder is among the most heritable in psychiatry.", answer: "What is ADHD? Always ask which family members have it.", short: "ADHD", decoys: ["Conduct disorder", "Separation anxiety disorder"] },
+          { value: 400, clue: "In classic twin data, this cluster A personality disorder was the most heritable, at about 0.6.", answer: "What is schizotypal personality disorder (about 0.61 in Torgersen's 2000 twin study)? Its genetic tie to schizophrenia is consistent with that. Paranoid (0.28) and schizoid (0.29) were far lower.", short: "Schizotypal personality disorder", decoys: ["Paranoid personality disorder", "Schizoid personality disorder"] },
+          { value: 500, clue: "Carrying one APOE ε4 allele raises Alzheimer risk by roughly this factor, compared with ε3/ε3.", answer: "What is about 3-fold? Two copies raise it about 12 to 15-fold. ε4 is a risk allele, not a causative mutation, so routine testing isn't recommended.", short: "About 3-fold", decoys: ["About 15-fold", "No change"] }
+        ]
+      },
+      {
+        name: "Syndromes & Repeats",
+        clues: [
+          { value: 100, clue: "This is the most common genetic, though usually not inherited, cause of intellectual disability.", answer: "What is Down syndrome (trisomy 21)? Fragile X is the most common inherited cause. In Down syndrome, Alzheimer pathology is nearly universal by 40.", short: "Down syndrome", decoys: ["Fragile X syndrome", "Prader-Willi syndrome"] },
+          { value: 200, clue: "Fragile X syndrome comes from expansion of this trinucleotide repeat in FMR1.", answer: "What is CGG? Full mutations exceed about 200 repeats and silence the gene by methylation. Chromosomal microarray misses it.", short: "CGG", decoys: ["CAG", "GAA"] },
+          { value: 300, clue: "Huntington disease is an expansion of this trinucleotide repeat in HTT.", answer: "What is CAG? It codes a polyglutamine tract. Paternal transmission favors anticipation, meaning earlier onset in later generations.", short: "CAG", decoys: ["CGG", "CTG"] },
+          { value: 400, clue: "A girl loses purposeful hand use and develops hand-wringing after normal early development; this gene is mutated.", answer: "What is MECP2? This is Rett syndrome, which is X-linked and seen almost only in girls.", short: "MECP2", decoys: ["FMR1", "TSC2"] },
+          { value: 500, clue: "Early-onset familial Alzheimer disease is most often caused by mutations in this gene on chromosome 14.", answer: "What is PSEN1 (presenilin 1)? PSEN2 (chromosome 1) and APP (chromosome 21) are the other autosomal dominant causes.", short: "PSEN1", decoys: ["PSEN2", "APOE"] }
+        ]
+      },
+      {
+        name: "Pharmacogenomics",
+        clues: [
+          { value: 100, clue: "Alongside CYP2D6, psychiatric pharmacogenomic panels focus on this enzyme, key for citalopram and sertraline.", answer: "What is CYP2C19? CPIC guidance covers CYP2C19-based dosing of citalopram, escitalopram and sertraline.", short: "CYP2C19", decoys: ["CYP1A2", "CYP3A4"] },
+          { value: 200, clue: "In people of European and Japanese ancestry, this HLA allele predicts carbamazepine hypersensitivity such as DRESS.", answer: "What is HLA-A*3101? HLA-B*1502 is the SJS/TEN allele emphasized in people of Asian ancestry.", short: "HLA-A*3101", decoys: ["HLA-B*1502", "HLA-B*5701"] },
+          { value: 300, clue: "Ultrarapid metabolizers at this enzyme turn codeine into morphine dangerously fast.", answer: "What is CYP2D6? Poor metabolizers at 2D6 need lower doses of drugs like aripiprazole, atomoxetine and vortioxetine.", short: "CYP2D6", decoys: ["CYP2C19", "CYP3A4"] },
+          { value: 400, clue: "The MTHFR C677T variant impairs folate metabolism and has driven use of this supplement.", answer: "What is L-methylfolate? It is the active form, which bypasses the MTHFR step. Evidence for routine MTHFR testing is weak.", short: "L-methylfolate", decoys: ["Folic acid", "Vitamin B6"] },
+          { value: 500, clue: "Per the ISPG, CYP2D6 and CYP2C19 results help most in patients who have had this.", answer: "What is an inadequate response to, or intolerable side effects from, a prior antidepressant or antipsychotic? Routine up-front testing has weak support.", short: "A failed or poorly tolerated prior trial", decoys: ["A first episode of depression", "A family history of depression"] }
+        ]
+      },
+      {
+        name: "Genes & Disorders",
+        clues: [
+          { value: 100, clue: "A Val/Met polymorphism in this dopamine-degrading enzyme modifies the psychosis risk of adolescent cannabis use.", answer: "What is COMT (catechol-O-methyltransferase)? Val carriers who use cannabis in adolescence showed the highest risk in the Dunedin cohort.", short: "COMT", decoys: ["MAOA", "DAT1"] },
+          { value: 200, clue: "This serotonin transporter gene is famous for its 5-HTTLPR short/long promoter polymorphism.", answer: "What is SLC6A4? Early gene-by-stress findings largely failed to replicate in large studies.", short: "SLC6A4", decoys: ["SLC6A3", "HTR2A"] },
+          { value: 300, clue: "Schizophrenia's strongest GWAS signal lies in this immune region on chromosome 6.", answer: "What is the major histocompatibility complex (MHC)? Complement C4A variants there are linked to excessive synaptic pruning.", short: "MHC", decoys: ["APOE locus", "FMR1 locus"] },
+          { value: 400, clue: "Bipolar GWAS hits such as CACNA1C, an L-type channel subunit, point to this class of proteins.", answer: "What are voltage-gated calcium channels, and ion channels more broadly? Synaptic, neurotransmitter and immune genes are also implicated.", short: "Calcium channels", decoys: ["Dopamine receptors", "Serotonin transporters"] },
+          { value: 500, clue: "Copy number variants detectable on microarray explain roughly this share of autism cases.", answer: "What is roughly 5–10% (microarray yield is about 10%)? Most autism risk is polygenic and not yet identifiable, though heritability is about 80%.", short: "About 5–10%", decoys: ["About 1–2%", "About 40–50%"] }
+        ]
+      }
+    ]
   }
 ];
 /* ===================== END GAME REGISTRY ===================== */

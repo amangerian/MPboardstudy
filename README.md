@@ -25,14 +25,22 @@ one opens its board.
 | Wizard's Escape | Speed round, 1–4 players | Any categories you pick — it reuses the Jeopardy questions |
 | The Last Decade Jeopardy | Jeopardy, 6 × 5 + Final | New antipsychotics, rapid-acting antidepressants, the anti-amyloid era, DSM-5-TR changes, the opioid landscape, new wake/sleep/ADHD agents |
 | Child & Adolescent Disorders | Jeopardy, 6 × 5 + Final | Autism and social communication disorder, intellectual disability and its genetic syndromes, ADHD, ODD/conduct disorder/DMDD, elimination and feeding disorders, attachment disorders and childhood anxiety |
+| Substance Use Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Use disorder criteria, alcohol withdrawal and biomarkers, medications for alcohol use disorder, opioids, stimulants/cannabis/club drugs, sedatives, tobacco and stages of change |
+| Anxiety & OCD Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Panic and agoraphobia, GAD and phobias, anxiolytics, OCD, OC-related disorders, separation anxiety and cultural syndromes |
+| Personality Disorders Jeopardy | Jeopardy, 6 × 5 · *coming soon* | General criteria, clusters A, B and C, defense mechanisms, DBT/TFP/MBT/GPM |
+| Bipolar Disorder Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Mania vs. hypomania, bipolar II and specifiers, lithium, anticonvulsant mood stabilizers, FDA-approved treatment choices, secondary mania |
+| Forensics, Ethics & Biostatistics | Jeopardy, 6 × 5 · *coming soon* | Landmark cases, insanity and malpractice, consent and capacity, statistics, test validity, study design and bias |
+| Psychiatric Genetics Jeopardy | Jeopardy, 6 × 5 · *coming soon* | GWAS and polygenic scores, epigenetics, heritability, repeat-expansion syndromes, pharmacogenomics, gene–disorder links |
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
 
-The four *coming soon* boards are finished and wizard-ready — every clue carries
+The ten *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
 `comingSoon: true`, so no card is clickable and none of their categories reach
-Wizard's Escape yet. Deleting that one line on a game switches it fully on.
+Wizard's Escape yet. Deleting that one line on a game switches it fully on. The six newest (substance use,
+anxiety & OCD, personality, bipolar, forensics/ethics/biostatistics and genetics) were
+built from the ABPN blueprint gap analysis and checked by a separate fact-checking pass.
 
 **Receptor Lab** is the odd one out — no clues, no teams, no buzzer, and its own
 cauldron-lit palette instead of the navy and gold. You get an empty cell and a
