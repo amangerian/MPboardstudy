@@ -3093,6 +3093,230 @@
     .ar-bob, .ar-z, .ar-orb, .ar-textbox.ready .ar-more { animation: none !important; }
     .ar-stage.enter .ar-foe, .ar-stage.enter .ar-me, .ar-stage.shake, .ar-foe.hit, .ar-foe.lunge { animation: none; }
   }
+  /* ===================== CASE ROUNDS ===================== */
+  #caseView {
+    --cr-bg: #0b1220; --cr-panel: #131d2e; --cr-panel2: #0f1828; --cr-line: #26354f; --cr-line2: #34466a;
+    --cr-ink: #e8edf5; --cr-ink2: #c9d3e3; --cr-mute: #a3b0c5; --cr-teal: #45c7b8; --cr-teal-ink: #06201c;
+    --cr-amber: #f2b544; --cr-coral: #ff8a7a; --cr-blue: #8ab4ff; --cr-green: #6fd08c;
+    --cr-sans: 'Avenir Next', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --cr-mono: 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+    color: var(--cr-ink); font-family: var(--cr-sans); max-width: 1440px;
+  }
+  html.case-active, html.case-active body { background: #0b1220; }
+  #caseView .back-link { color: var(--cr-mute); border-color: var(--cr-line2); }
+  #caseView button.back-link { background: transparent; cursor: pointer; font-family: inherit; line-height: normal; }
+  #caseView .back-link:hover { color: var(--cr-teal); border-color: var(--cr-teal); }
+  .cr-topbar { display: flex; gap: 8px; flex-wrap: wrap; padding: 4px 0 0; }
+  #caseView .titlebar h1 { font-family: var(--cr-sans); font-style: normal; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: var(--cr-ink); text-shadow: none; font-size: clamp(30px, 5vw, 46px); }
+  #caseView .titlebar p { color: var(--cr-mute); letter-spacing: 2px; }
+  #caseView footer.hint { color: var(--cr-mute); text-align: center; margin-top: 24px; font-size: 12px; }
+  #caseView a { color: var(--cr-teal); }
+  #caseView button { font-family: inherit; }
+  #caseView :focus-visible { outline: 2px solid var(--cr-teal); outline-offset: 2px; }
+
+  .cr-how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 26px 0 18px; }
+  .cr-how div { background: var(--cr-panel); border: 1px solid var(--cr-line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .cr-how b { font-size: 15px; }
+  .cr-how span { color: var(--cr-ink2); font-size: 14px; line-height: 1.45; }
+  .cr-cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .cr-casecard { background: var(--cr-panel); border: 1px solid var(--cr-line2); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .cr-casecard h2 { margin: 0; font-size: 24px; }
+  .cr-casecard p { margin: 0; color: var(--cr-ink2); line-height: 1.5; }
+  .cr-casecard.cr-soon { border-style: dashed; background: transparent; }
+  .cr-kicker { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cr-teal); font-weight: 700; }
+  .cr-kicker.warn { color: var(--cr-amber); } .cr-kicker.bad { color: var(--cr-coral); }
+  .cr-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cr-tag { font-size: 12px; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--cr-line2); color: var(--cr-ink2); }
+
+  .cr-btn { min-height: 44px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--cr-line2); background: transparent; color: var(--cr-ink); font-size: 15px; font-weight: 600; cursor: pointer; text-align: left; }
+  .cr-btn:hover:not([disabled]) { border-color: var(--cr-teal); }
+  .cr-btn.cr-primary { background: var(--cr-teal); color: var(--cr-teal-ink); border-color: var(--cr-teal); text-align: center; }
+  .cr-btn.cr-primary:hover { background: #63d6c9; }
+  .cr-btn.right { border-color: var(--cr-green); background: rgba(111,208,140,.14); }
+  .cr-btn.wrong { border-color: var(--cr-coral); background: rgba(255,138,122,.12); }
+  .cr-btn[disabled] { cursor: default; opacity: .85; }
+
+  /* play head */
+  .cr-head { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; justify-content: space-between; margin: 14px 0 12px; padding: 14px 18px; background: var(--cr-panel2); border: 1px solid var(--cr-line); border-radius: 12px; }
+  .cr-head-name { font-size: 20px; font-weight: 700; }
+  .cr-head-sub { color: var(--cr-ink2); font-size: 14px; margin-top: 2px; }
+  .cr-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #18263f; color: var(--cr-blue); border: 1px solid #2e4670; }
+  .cr-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0; }
+  .cr-chip { font-size: 12px; padding: 5px 10px; border-radius: 6px; color: var(--cr-mute); border: 1px solid var(--cr-line); }
+  .cr-chip.done { color: var(--cr-ink2); background: #16233a; }
+  .cr-chip.now { color: var(--cr-teal-ink); background: var(--cr-teal); border-color: var(--cr-teal); font-weight: 700; }
+  .cr-head-score { display: flex; gap: 8px; }
+  .cr-score { font-size: 13px; color: var(--cr-mute); padding: 6px 10px; border: 1px solid var(--cr-line); border-radius: 8px; }
+  .cr-score b { color: var(--cr-ink); font-family: var(--cr-mono); font-size: 15px; }
+  .cr-score.warn b { color: var(--cr-amber); }
+
+  .cr-grid { display: grid; grid-template-columns: 260px minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+  .cr-card { background: var(--cr-panel); border: 1px solid var(--cr-line); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+  .cr-card h3, .cr-sub { margin: 0 0 10px; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cr-mute); font-weight: 700; }
+  .cr-sub { margin-top: 18px; }
+  .cr-dim { color: var(--cr-mute); font-size: 14px; margin: 0; line-height: 1.45; }
+  .cr-vitals { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-family: var(--cr-mono); font-size: 14px; }
+  .cr-vitals dt { color: var(--cr-mute); } .cr-vitals dd { margin: 0; }
+  .cr-meter { margin-bottom: 10px; }
+  .cr-meter-top { display: flex; justify-content: space-between; font-size: 14px; }
+  .cr-meter-val { color: var(--cr-mute); font-size: 13px; }
+  .cr-meter-bar { height: 7px; background: #1e2a40; border-radius: 4px; margin-top: 5px; }
+  .cr-meter-bar i { display: block; height: 7px; border-radius: 4px; background: var(--cr-blue); }
+  .cr-medlist, .cr-notes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+  .cr-medlist li { display: flex; justify-content: space-between; gap: 8px; }
+  .cr-medlist li small { color: var(--cr-mute); white-space: nowrap; }
+  .cr-medlist li.held span { text-decoration: line-through; color: var(--cr-mute); }
+  .cr-notes li { color: var(--cr-ink2); line-height: 1.4; padding-left: 12px; position: relative; }
+  .cr-notes li::before { content: ''; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 1px; background: var(--cr-teal); }
+
+  .cr-scene { background: var(--cr-panel); border: 1px solid var(--cr-line); border-radius: 12px; padding: 18px 20px; }
+  .cr-scene-title { margin: 0 0 8px; font-size: 22px; }
+  .cr-scene p { margin: 8px 0 0; font-size: 16px; line-height: 1.55; color: var(--cr-ink2); }
+  .cr-tabs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 14px 0 0; border-bottom: 1px solid var(--cr-line); }
+  .cr-tab { min-height: 44px; padding: 8px 14px; background: transparent; color: var(--cr-ink2); border: 0; border-bottom: 3px solid transparent; font-size: 15px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .cr-tab.on { color: var(--cr-ink); border-bottom-color: var(--cr-teal); }
+  .cr-count { font-size: 12px; background: var(--cr-teal); color: var(--cr-teal-ink); border-radius: 999px; padding: 1px 7px; }
+  .cr-clock { margin-left: auto; font-size: 13px; color: var(--cr-mute); padding: 6px 0; }
+  .cr-clock b { font-family: var(--cr-mono); color: var(--cr-amber); font-size: 15px; }
+  .cr-panel { padding: 14px 0 0; }
+  .cr-help { margin: 0 0 12px; color: var(--cr-mute); font-size: 14px; line-height: 1.45; }
+  .cr-qgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+  .cr-q { min-height: 48px; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--cr-line2); background: var(--cr-panel); color: var(--cr-ink); font-size: 14px; line-height: 1.35; cursor: pointer; }
+  .cr-q:hover:not([disabled]) { border-color: var(--cr-teal); }
+  .cr-q small { color: var(--cr-amber); font-family: var(--cr-mono); font-size: 12px; white-space: nowrap; }
+  .cr-q.done { background: #102725; border-color: #2b5f57; color: var(--cr-ink2); }
+  .cr-q.done small { color: var(--cr-teal); }
+  .cr-q[disabled]:not(.done) { opacity: .45; cursor: not-allowed; }
+  .cr-transcript { display: flex; flex-direction: column; gap: 8px; }
+  .cr-tx { background: var(--cr-panel2); border: 1px solid var(--cr-line); border-radius: 8px; padding: 10px 12px; }
+  .cr-tx-q { font-size: 13px; color: var(--cr-mute); }
+  .cr-tx-a { font-size: 15px; line-height: 1.5; margin-top: 3px; }
+  .cr-findings { display: grid; grid-template-columns: minmax(120px, 200px) 1fr; gap: 6px 14px; margin: 0; font-size: 15px; line-height: 1.45; }
+  .cr-findings dt { color: var(--cr-mute); } .cr-findings dd { margin: 0; }
+
+  .cr-orderbar { display: flex; flex-direction: column; gap: 10px; margin: 16px 0 10px; }
+  .cr-search { min-height: 46px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--cr-line2); background: var(--cr-bg); color: var(--cr-ink); font-size: 16px; }
+  .cr-search:focus { border-color: var(--cr-teal); outline: none; }
+  .cr-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cr-filter { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--cr-line2); background: transparent; color: var(--cr-ink2); font-size: 13px; cursor: pointer; }
+  .cr-filter.on { background: var(--cr-ink); color: var(--cr-bg); border-color: var(--cr-ink); font-weight: 700; }
+  .cr-olist { border: 1px solid var(--cr-line); border-radius: 10px; overflow: hidden; }
+  .cr-catalog { max-height: 460px; overflow-y: auto; }
+  .cr-ogroup { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cr-mute); padding: 10px 14px 4px; background: var(--cr-panel2); position: sticky; top: 0; }
+  .cr-orow { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 14px; border-top: 1px solid #1e2a40; background: var(--cr-panel); flex-wrap: wrap; }
+  .cr-oname { display: flex; flex-direction: column; min-width: 0; }
+  .cr-oname span { font-size: 15px; }
+  .cr-oname small { color: var(--cr-mute); font-size: 12px; }
+  .cr-oacts { display: flex; flex-wrap: wrap; gap: 4px; }
+  .cr-act { min-height: 34px; padding: 0 11px; border-radius: 6px; border: 1px solid var(--cr-line2); background: transparent; color: var(--cr-ink); font-size: 13px; cursor: pointer; }
+  .cr-act:hover { border-color: var(--cr-teal); }
+  .cr-act.on { background: var(--cr-teal); border-color: var(--cr-teal); color: var(--cr-teal-ink); font-weight: 700; }
+
+  .cr-group { border: 1px solid var(--cr-line); border-radius: 10px; padding: 12px 14px 8px; margin: 0 0 12px; background: var(--cr-panel); }
+  .cr-group legend { padding: 0 6px; font-weight: 700; font-size: 15px; line-height: 1.45; max-width: 100%; }
+  .cr-opt { display: flex; gap: 10px; align-items: flex-start; padding: 8px 4px; font-size: 15px; line-height: 1.45; cursor: pointer; border-radius: 6px; }
+  .cr-opt:hover { background: #17233a; }
+  .cr-opt input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--cr-teal); flex-shrink: 0; }
+  .cr-pimp { border: 1px solid #2e4670; background: #14233a; border-radius: 10px; padding: 14px 16px; margin: 0 0 14px; }
+  .cr-pimp .cr-kicker { color: var(--cr-blue); }
+  .cr-pimp-q { margin: 6px 0 10px; font-size: 16px; font-weight: 600; line-height: 1.45; }
+  .cr-pimp-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cr-pimp-opts.col { flex-direction: column; }
+  .cr-pimp-why { margin: 10px 0 0; line-height: 1.5; color: var(--cr-ink2); }
+
+  .cr-chartwrap { width: 100%; }
+  .cr-chart { width: 100%; height: auto; display: block; }
+  .cr-chart .band { fill: rgba(69,199,184,.13); }
+  .cr-chart .tox { stroke: var(--cr-coral); stroke-dasharray: 4 4; stroke-width: 1.2; }
+  .cr-chart .ax { fill: var(--cr-mute); font-size: 10px; font-family: var(--cr-sans); }
+  .cr-chart .toxl { fill: var(--cr-coral); } .cr-chart .bandl { fill: var(--cr-teal); }
+  .cr-chart .line { fill: none; stroke: var(--cr-blue); stroke-width: 2; }
+  .cr-chart .dot { fill: var(--cr-blue); stroke: var(--cr-panel); stroke-width: 2; }
+  .cr-chart .dot.hot { fill: var(--cr-coral); }
+  .cr-chart .dot.peak { fill: var(--cr-panel); stroke: var(--cr-amber); }
+  .cr-chart .val { fill: var(--cr-ink); font-size: 10px; font-family: var(--cr-mono); }
+  .cr-trend { margin-bottom: 8px; }
+  .cr-trend-l { font-size: 13px; color: var(--cr-mute); }
+  .cr-trend-v { display: flex; flex-wrap: wrap; gap: 4px 10px; font-family: var(--cr-mono); font-size: 12px; color: var(--cr-ink2); }
+  .cr-sheet { position: sticky; top: 12px; }
+  .cr-cart { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .cr-cart li { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 14px; background: #102725; border: 1px solid #2b5f57; border-radius: 6px; padding: 4px 4px 4px 10px; }
+  .cr-x { width: 32px; height: 32px; border: 0; background: transparent; color: var(--cr-mute); font-size: 20px; cursor: pointer; border-radius: 6px; }
+  .cr-x:hover { color: var(--cr-coral); }
+  .cr-sign { width: 100%; }
+  .cr-flash { color: var(--cr-amber); font-size: 14px; line-height: 1.45; margin: 0 0 10px; }
+
+  .cr-modal { position: fixed; inset: 0; background: rgba(4,8,16,.78); display: flex; align-items: flex-start; justify-content: center; padding: 6vh 16px 16px; z-index: 50; overflow-y: auto; }
+  .cr-modal-card { width: 100%; max-width: 640px; background: var(--cr-panel); border: 1px solid var(--cr-line2); border-radius: 14px; padding: 22px 24px; color: var(--cr-ink); font-family: var(--cr-sans); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .cr-modal-card h2 { margin: 6px 0 10px; font-size: 22px; line-height: 1.3; }
+  .cr-modal-card p { line-height: 1.55; color: var(--cr-ink2); }
+  .cr-conseq { font-size: 17px; color: var(--cr-ink) !important; border-left: 0; background: #2a1719; border: 1px solid #6b2e2e; border-radius: 10px; padding: 12px 14px; }
+  .cr-attending { background: #14233a; border: 1px solid #2e4670; border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+  .cr-attending .cr-kicker { color: var(--cr-blue); }
+  .cr-attending h3 { margin: 4px 0 6px; font-size: 16px; }
+  .cr-attending p { margin: 0; }
+  .cr-refline { font-size: 13px; color: var(--cr-mute); margin-top: 6px; }
+  .cr-modal-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .cr-modal-actions.center { justify-content: center; margin: 22px 0 10px; }
+  .cr-results { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .cr-results th, .cr-results td { text-align: left; padding: 6px 8px; border-top: 1px solid var(--cr-line); vertical-align: top; }
+  .cr-results th { color: var(--cr-mute); font-weight: 600; width: 40%; }
+  .cr-results tr.hi td, .cr-results tr.lo td { color: var(--cr-amber); }
+  .cr-roughlist { margin: 0; padding-left: 18px; line-height: 1.5; color: var(--cr-ink2); }
+  .cr-roughlist li { margin-bottom: 6px; }
+
+  /* debrief */
+  #crDebrief { padding-bottom: 30px; }
+  .cr-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 20px 0 10px; }
+  .cr-stat { background: var(--cr-panel); border: 1px solid var(--cr-line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 2px; }
+  .cr-stat b { font-family: var(--cr-mono); font-size: 26px; }
+  .cr-stat span { font-size: 14px; } .cr-stat small { color: var(--cr-mute); font-size: 12px; }
+  .cr-grade { font-size: 16px; color: var(--cr-ink2); margin: 6px 0 16px; }
+  .cr-grade b { color: var(--cr-teal); }
+  .cr-debhead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin: 18px 0 10px; }
+  .cr-debhead h2 { margin: 0; font-size: 20px; }
+  .cr-debscene { margin-bottom: 18px; }
+  .cr-debscene h3 { font-size: 16px; margin: 0 0 8px; }
+  .cr-debscene ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .cr-deb { display: grid; grid-template-columns: 96px 1fr; gap: 12px; background: var(--cr-panel); border: 1px solid var(--cr-line); border-radius: 10px; padding: 10px 12px; }
+  .cr-kind { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 6px; border-radius: 6px; text-align: center; align-self: start; }
+  .cr-deb.good .cr-kind { background: #12302c; color: #7fe0d4; }
+  .cr-deb.ok .cr-kind { background: #16233a; color: var(--cr-blue); }
+  .cr-deb.low .cr-kind, .cr-deb.caught .cr-kind, .cr-deb.note .cr-kind { background: #2a2416; color: #f6d18a; }
+  .cr-deb.miss .cr-kind { background: #3a2e12; color: var(--cr-amber); }
+  .cr-deb.bad .cr-kind, .cr-deb.critical .cr-kind { background: #3a1a1c; color: #ff9c8f; }
+  .cr-deb.critical { border-color: #6b2e2e; }
+  .cr-deb-t { font-weight: 600; font-size: 15px; line-height: 1.4; }
+  .cr-deb-w { color: var(--cr-ink2); font-size: 14px; line-height: 1.5; margin-top: 3px; }
+  .cr-refs ol { margin: 0; padding-left: 20px; line-height: 1.55; color: var(--cr-ink2); font-size: 14px; }
+  .cr-disclaimer { text-align: center; margin-top: 12px; }
+
+  /* hub card */
+  .game-card.caserounds { background: #0f1828; border-color: #34466a; box-shadow: 0 6px 0 rgba(0,0,0,.35); }
+  .game-card.caserounds:hover { border-color: #45c7b8; }
+  .game-card.caserounds .kind { color: #a3b0c5; }
+  .game-card.caserounds h2 { color: #e8edf5; font-style: normal; text-shadow: none; letter-spacing: 3px; text-transform: uppercase; font-family: 'Avenir Next', 'Segoe UI', Helvetica, sans-serif; }
+  .game-card.caserounds p { color: #c9d3e3; }
+  .game-card.caserounds .tag { background: #131d2e; border-color: #34466a; color: #a3b0c5; }
+  .game-card.caserounds .play-cue { color: #a3b0c5; }
+  .game-card.caserounds:hover .play-cue { color: #45c7b8; }
+
+  @media (max-width: 1180px) {
+    .cr-grid { grid-template-columns: minmax(0, 1fr) 300px; }
+    .cr-side { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .cr-side .cr-card { margin: 0; }
+  }
+  @media (max-width: 820px) {
+    .cr-grid { grid-template-columns: minmax(0, 1fr); }
+    .cr-main { order: 1; } .cr-side { order: 2; } .cr-right { order: 3; }
+    .cr-sheet { position: static; }
+    .cr-clock { margin-left: 0; width: 100%; }
+    .cr-findings { grid-template-columns: 1fr; }
+    .cr-findings dd { margin-bottom: 8px; }
+    .cr-deb { grid-template-columns: 1fr; gap: 6px; }
+    .cr-kind { justify-self: start; }
+    .cr-orow { padding: 8px 10px; }
+  }
 </style>
 </head>
 <body>
@@ -4004,6 +4228,48 @@
     </div>
     <div class="c4-judge-row" id="c4JudgeRow" hidden></div>
     <button class="c4-cancel" id="c4CancelBtn">Wrong column? Take the move back</button>
+  </div>
+</div>
+
+<!-- ===================== CASE ROUNDS ===================== -->
+<div class="wrap cr-wrap" id="caseView" hidden>
+  <div class="rl-topbar cr-topbar">
+    <a class="back-link" href="#">&larr; All games</a>
+    <button type="button" class="back-link" id="crMenuLink" hidden>&larr; Case list</button>
+  </div>
+
+  <div id="crMenu">
+    <div class="titlebar">
+      <h1>Case Rounds</h1>
+      <p>One patient &middot; office to maintenance &middot; your orders, your consequences</p>
+    </div>
+    <div class="cr-how">
+      <div><b>Interview &amp; examine</b><span>Every question and exam costs visit minutes. What you don&rsquo;t ask stays hidden.</span></div>
+      <div><b>Order from everything</b><span>The whole formulary and lab catalog is there every time. You have to find the right one.</span></div>
+      <div><b>Set the clock</b><span>Pick when to check levels and when to see her next. Time moves on, and so does her illness.</span></div>
+      <div><b>Live with it</b><span>Mistakes come back later. Go too far off the rails and the attending steps in, and you can rewind the visit.</span></div>
+    </div>
+    <div class="cr-cases" id="crCases"></div>
+    <footer class="hint">Fictional patient &nbsp;&bull;&nbsp; doses aren&rsquo;t modelled &nbsp;&bull;&nbsp; educational use only</footer>
+  </div>
+
+  <div id="crPlay" hidden>
+    <header class="cr-head" id="crHead"></header>
+    <div class="cr-grid">
+      <aside class="cr-side" id="crSide" aria-label="Patient"></aside>
+      <main class="cr-main">
+        <section class="cr-scene" id="crScene"></section>
+        <div class="cr-tabs" id="crTabs" role="tablist" aria-label="Visit actions"></div>
+        <div class="cr-panel" id="crPanel"></div>
+      </main>
+      <aside class="cr-right" id="crRight" aria-label="Trends and orders"></aside>
+    </div>
+  </div>
+
+  <div id="crDebrief" hidden></div>
+
+  <div class="cr-modal" id="crModal" hidden>
+    <div class="cr-modal-card" id="crModalCard" role="dialog" aria-modal="true" aria-labelledby="crModalTitle"></div>
   </div>
 </div>
 
@@ -5553,6 +5819,14 @@ const EXTRAS = [
     signal: true,
     blurb: "Follow the signal inside the cell. A drug at a serotonin receptor: pick the pathway it couples to, then say what the drug does to its second messenger. A mood stabilizer on its own: pin every site on the cell map where it acts.",
     tags: ["Second messengers", "Serotonin receptors", "Lithium \u00b7 valproate \u00b7 carbamazepine \u00b7 lamotrigine", "Gauntlet \u00b7 Free play"]
+  },
+  {
+    id: "case-rounds",
+    title: "Case Rounds",
+    kind: "Case simulation \u00b7 solo",
+    caserounds: true,
+    blurb: "One patient from the first office visit to six months later. Interview on a clock, examine, order from the whole formulary, decide when to check levels and when to see her again. What you skip comes back; go off the rails and the attending steps in. The debrief cites the guidelines and data behind every call.",
+    tags: ["Case 1: lithium for acute mania", "Levels, interactions & toxicity", "Thyroid, renal & pregnancy planning", "Evidence-cited debrief"]
   }
 ];
 
@@ -5616,7 +5890,7 @@ const valueOf = (clueObj, row) =>
 // Built with DOM nodes rather than an HTML string so any punctuation in a
 // title or blurb is rendered as plain text.
 //
-// Two layouts share #hubView. Home ('' hash) shows five tiles: one collection
+// Two layouts share #hubView. Home ('' hash) shows six tiles: one collection
 // tile that opens the Jeopardy & Learning Games list, plus each EXTRAS game.
 // The list (#games) shows every GAMES entry — playable ones first, then the
 // parked (comingSoon) ones under their own "Coming soon" heading.
@@ -5640,7 +5914,7 @@ function makeCard(game) {
   // focus, and no hash to follow.
   const soon = !!game.comingSoon;
   const card = document.createElement(soon ? 'div' : 'a');
-  card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (game.lab ? ' lab' : '') + (game.signal ? ' signal' : '') + (game.arena ? ' arena' : '') + (game.id === GAMES_LIST_ID ? ' collection' : '') + (soon ? ' soon' : '');
+  card.className = 'game-card' + (game.arcane ? ' arcane' : '') + (game.lab ? ' lab' : '') + (game.signal ? ' signal' : '') + (game.arena ? ' arena' : '') + (game.caserounds ? ' caserounds' : '') + (game.id === GAMES_LIST_ID ? ' collection' : '') + (soon ? ' soon' : '');
   if (soon) {
     card.setAttribute('aria-disabled', 'true');
   } else {
@@ -15459,12 +15733,1848 @@ const ARENA = (function () {
   };
 })();
 
+/* ---------- Case Rounds: order catalog ----------
+ * Every case shows the whole catalog every time. Dosing is not modelled:
+ * medications are started, increased, decreased, held or stopped.
+ * kind: 'med' | 'lab' | 'test' | 'consult'
+ * cat (filter chip): 'psych' | 'medicine' | 'lab' | 'test' | 'consult'
+ */
+const CR_CATALOG = (function () {
+  const out = [];
+  const add = (cat, kind, sub, list) => list.forEach(([id, name]) => out.push({ id, name, cat, kind, sub }));
+
+  add('psych', 'med', 'Mood stabilizer', [
+    ['lithium', 'Lithium carbonate'], ['divalproex', 'Divalproex (valproate)'], ['carbamazepine', 'Carbamazepine'],
+    ['oxcarbazepine', 'Oxcarbazepine'], ['lamotrigine', 'Lamotrigine'], ['topiramate', 'Topiramate'], ['gabapentin', 'Gabapentin'],
+  ]);
+  add('psych', 'med', 'Second-generation antipsychotic', [
+    ['aripiprazole', 'Aripiprazole'], ['asenapine', 'Asenapine (sublingual)'], ['brexpiprazole', 'Brexpiprazole'],
+    ['cariprazine', 'Cariprazine'], ['clozapine', 'Clozapine'], ['iloperidone', 'Iloperidone'], ['lumateperone', 'Lumateperone'],
+    ['lurasidone', 'Lurasidone'], ['olanzapine', 'Olanzapine'], ['olz_sam', 'Olanzapine/samidorphan'], ['paliperidone', 'Paliperidone'],
+    ['quetiapine', 'Quetiapine'], ['risperidone', 'Risperidone'], ['ziprasidone', 'Ziprasidone'], ['pimavanserin', 'Pimavanserin'],
+    ['olz_flx', 'Olanzapine/fluoxetine'],
+  ]);
+  add('psych', 'med', 'First-generation antipsychotic', [
+    ['haloperidol', 'Haloperidol'], ['chlorpromazine', 'Chlorpromazine'], ['fluphenazine', 'Fluphenazine'],
+    ['perphenazine', 'Perphenazine'], ['loxapine', 'Loxapine'],
+  ]);
+  add('psych', 'med', 'SSRI', [
+    ['sertraline', 'Sertraline'], ['fluoxetine', 'Fluoxetine'], ['escitalopram', 'Escitalopram'], ['citalopram', 'Citalopram'],
+    ['paroxetine', 'Paroxetine'], ['fluvoxamine', 'Fluvoxamine'],
+  ]);
+  add('psych', 'med', 'SNRI', [
+    ['venlafaxine', 'Venlafaxine'], ['desvenlafaxine', 'Desvenlafaxine'], ['duloxetine', 'Duloxetine'], ['levomilnacipran', 'Levomilnacipran'],
+  ]);
+  add('psych', 'med', 'Other antidepressant', [
+    ['bupropion', 'Bupropion'], ['mirtazapine', 'Mirtazapine'], ['trazodone', 'Trazodone'], ['vilazodone', 'Vilazodone'],
+    ['vortioxetine', 'Vortioxetine'], ['dm_bup', 'Dextromethorphan/bupropion'], ['esketamine', 'Esketamine (intranasal)'],
+  ]);
+  add('psych', 'med', 'Tricyclic / MAOI', [
+    ['amitriptyline', 'Amitriptyline'], ['nortriptyline', 'Nortriptyline'], ['clomipramine', 'Clomipramine'],
+    ['imipramine', 'Imipramine'], ['phenelzine', 'Phenelzine'], ['tranylcypromine', 'Tranylcypromine'],
+  ]);
+  add('psych', 'med', 'Benzodiazepine / hypnotic', [
+    ['lorazepam', 'Lorazepam'], ['clonazepam', 'Clonazepam'], ['diazepam', 'Diazepam'], ['alprazolam', 'Alprazolam'],
+    ['zolpidem', 'Zolpidem'], ['ramelteon', 'Ramelteon'], ['melatonin', 'Melatonin'], ['hydroxyzine', 'Hydroxyzine'],
+    ['diphenhydramine', 'Diphenhydramine'],
+  ]);
+  add('psych', 'med', 'Other psychotropic', [
+    ['benztropine', 'Benztropine'], ['buspirone', 'Buspirone'], ['prazosin', 'Prazosin'], ['clonidine', 'Clonidine'],
+    ['methylphenidate', 'Methylphenidate'], ['amphetamine', 'Amphetamine salts'], ['modafinil', 'Modafinil'], ['naltrexone', 'Naltrexone'],
+  ]);
+
+  add('medicine', 'med', 'Analgesic', [
+    ['acetaminophen', 'Acetaminophen'], ['ibuprofen', 'Ibuprofen'], ['naproxen', 'Naproxen'], ['ketorolac', 'Ketorolac'],
+    ['celecoxib', 'Celecoxib'], ['aspirin81', 'Aspirin 81 mg'],
+  ]);
+  add('medicine', 'med', 'Cardiovascular / renal', [
+    ['lisinopril', 'Lisinopril'], ['losartan', 'Losartan'], ['hctz', 'Hydrochlorothiazide'], ['furosemide', 'Furosemide'],
+    ['amiloride', 'Amiloride'], ['amlodipine', 'Amlodipine'], ['metoprolol', 'Metoprolol'], ['propranolol', 'Propranolol'],
+  ]);
+  add('medicine', 'med', 'Fluids & toxicology', [
+    ['ns', 'IV 0.9% sodium chloride'], ['lr', 'IV lactated Ringer’s'], ['d5w', 'IV dextrose 5% in water'],
+    ['charcoal', 'Activated charcoal'], ['wbi', 'Whole-bowel irrigation (PEG)'], ['sps', 'Sodium polystyrene sulfonate'],
+  ]);
+  add('medicine', 'med', 'Endocrine', [
+    ['levothyroxine', 'Levothyroxine'], ['liothyronine', 'Liothyronine (T3)'], ['methimazole', 'Methimazole'],
+    ['metformin', 'Metformin'],
+  ]);
+  add('medicine', 'med', 'GI', [
+    ['ondansetron', 'Ondansetron'], ['metoclopramide', 'Metoclopramide'], ['loperamide', 'Loperamide'], ['omeprazole', 'Omeprazole'],
+  ]);
+  add('medicine', 'med', 'Other medicine', [
+    ['metronidazole', 'Metronidazole'], ['tmp_smx', 'Trimethoprim/sulfamethoxazole'], ['nitrofurantoin', 'Nitrofurantoin'],
+    ['coc', 'Combined oral contraceptive'], ['dmpa', 'Medroxyprogesterone injection'], ['folic', 'Folic acid'],
+    ['thiamine', 'Thiamine'], ['nicotine', 'Nicotine patch'],
+  ]);
+
+  add('lab', 'lab', 'Chemistry', [
+    ['bmp', 'Basic metabolic panel (creatinine, eGFR, Na)'], ['cmp', 'Comprehensive metabolic panel'],
+    ['calcium', 'Calcium'], ['mag', 'Magnesium'], ['phos', 'Phosphorus'], ['lfts', 'Hepatic function panel'],
+    ['sosm', 'Serum osmolality'], ['uosm', 'Urine osmolality'], ['ck', 'Creatine kinase'], ['lipase', 'Lipase'],
+    ['ammonia', 'Ammonia'], ['troponin', 'Troponin'],
+  ]);
+  add('lab', 'lab', 'Endocrine & metabolic', [
+    ['tsh', 'TSH'], ['ft4', 'Free T4'], ['pth', 'Parathyroid hormone'], ['a1c', 'Hemoglobin A1c'],
+    ['fglucose', 'Fasting glucose'], ['lipids', 'Fasting lipid panel'], ['prolactin', 'Prolactin'], ['cortisol', 'Morning cortisol'],
+    ['vitd', 'Vitamin D'],
+  ]);
+  add('lab', 'lab', 'Hematology & serology', [
+    ['cbc', 'CBC with differential'], ['esr', 'ESR / CRP'], ['b12', 'Vitamin B12'], ['folate', 'Folate'],
+    ['rpr', 'RPR (syphilis)'], ['hiv', 'HIV screen'], ['ana', 'ANA'], ['cerulo', 'Ceruloplasmin'],
+  ]);
+  add('lab', 'lab', 'Urine & toxicology', [
+    ['uhcg', 'Urine hCG (pregnancy test)'], ['shcg', 'Serum quantitative hCG'], ['uds', 'Urine drug screen'],
+    ['etoh', 'Blood alcohol level'], ['ua', 'Urinalysis'], ['ucx', 'Urine culture'], ['bcx', 'Blood cultures'],
+  ]);
+  add('lab', 'lab', 'Drug levels', [
+    ['lilevel', 'Lithium level'], ['vpalevel', 'Valproate level'], ['cbzlevel', 'Carbamazepine level'],
+    ['clozlevel', 'Clozapine level'], ['apap', 'Acetaminophen level'], ['asa', 'Salicylate level'],
+  ]);
+
+  add('test', 'test', 'Cardiac', [['ecg', '12-lead ECG'], ['tele', 'Cardiac telemetry']]);
+  add('test', 'test', 'Imaging & neuro', [
+    ['ct', 'CT head'], ['mri', 'MRI brain'], ['eeg', 'EEG'], ['lp', 'Lumbar puncture'], ['cxr', 'Chest X-ray'],
+  ]);
+  add('test', 'test', 'Bedside', [
+    ['weight', 'Weight, BMI & waist'], ['orthostatics', 'Orthostatic vitals'], ['neurochecks', 'Neuro checks every 4 h'],
+    ['io', 'Strict intake & output'],
+  ]);
+
+  add('consult', 'consult', 'Consult', [
+    ['nephro', 'Nephrology'], ['tox', 'Medical toxicology / poison center'], ['endo', 'Endocrinology'],
+    ['neuro', 'Neurology'], ['gyn', 'Gynecology / contraception clinic'], ['perinatal', 'Perinatal psychiatry'],
+    ['sw', 'Social work'], ['pharm', 'Clinical pharmacist'],
+  ]);
+  add('consult', 'consult', 'Procedure / program', [
+    ['hd', 'Hemodialysis'], ['ect', 'Electroconvulsive therapy'], ['psychoed', 'Bipolar psychoeducation group'],
+    ['ipsrt', 'Psychotherapy referral (IPSRT / family-focused)'], ['obs1', '1:1 observation'],
+  ]);
+
+  return out;
+})();
+
+const CR_BY_ID = {};
+CR_CATALOG.forEach(it => { CR_BY_ID[it.id] = it; });
+
+const CR_GROUPS = {
+  sgaCombo: ['quetiapine', 'aripiprazole', 'risperidone', 'asenapine'],
+  sgaOther: ['paliperidone', 'cariprazine', 'ziprasidone', 'olanzapine', 'olz_sam', 'lurasidone', 'brexpiprazole', 'iloperidone', 'lumateperone'],
+  fga: ['haloperidol', 'chlorpromazine', 'fluphenazine', 'perphenazine', 'loxapine'],
+  antidepressant: ['sertraline', 'fluoxetine', 'escitalopram', 'citalopram', 'paroxetine', 'fluvoxamine', 'venlafaxine', 'desvenlafaxine',
+    'duloxetine', 'levomilnacipran', 'bupropion', 'mirtazapine', 'vilazodone', 'vortioxetine', 'dm_bup', 'esketamine',
+    'amitriptyline', 'nortriptyline', 'clomipramine', 'imipramine', 'phenelzine', 'tranylcypromine', 'olz_flx'],
+  teratogenAED: ['divalproex', 'carbamazepine', 'topiramate'],
+  noAntimanic: ['lamotrigine', 'gabapentin', 'topiramate', 'oxcarbazepine'],
+  nsaid: ['ibuprofen', 'naproxen', 'ketorolac', 'celecoxib'],
+  liRaiser: ['lisinopril', 'losartan', 'hctz', 'metronidazole'],
+  benzo: ['lorazepam', 'clonazepam', 'diazepam', 'alprazolam'],
+};
+// antipsychotics that genuinely treat acute mania (used to judge "is she covered?")
+CR_GROUPS.antimanicAP = ['quetiapine', 'aripiprazole', 'risperidone', 'asenapine', 'paliperidone', 'cariprazine', 'ziprasidone',
+  'olanzapine', 'olz_sam', 'haloperidol', 'chlorpromazine'];
+
+/* ---------- Case Rounds: "A Symphony by Morning" (lithium) ----------
+ * Fictional patient. Every clinical claim is written from primary sources
+ * (guidelines, FDA labeling, original studies) listed in CR_REFS.
+ */
+const CR_REFS = {
+  vadod: { short: 'VA/DoD Bipolar CPG 2023', full: 'VA/DoD Clinical Practice Guideline for the Management of Bipolar Disorder (2023). Synopsis: Ostacher MJ et al., J Clin Psychiatry 2025;86(1):24cs15546.', url: 'https://www.healthquality.va.gov/guidelines/MH/bd/' },
+  canmat: { short: 'CANMAT/ISBD 2018', full: 'Yatham LN et al. Canadian Network for Mood and Anxiety Treatments (CANMAT) and International Society for Bipolar Disorders (ISBD) 2018 guidelines for the management of patients with bipolar disorder. Bipolar Disord 2018;20:97–170.', url: 'https://doi.org/10.1111/bdi.12609' },
+  label: { short: 'Lithium FDA label', full: 'Lithium carbonate prescribing information, US FDA (revised 2022).', url: 'https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/017812s036,018421s035,018558s030lbl.pdf' },
+  isbdmon: { short: 'ISBD safety monitoring 2009', full: 'Ng F et al. The ISBD consensus guidelines for the safety monitoring of bipolar disorder treatments. Bipolar Disord 2009;11:559–95.', url: 'https://doi.org/10.1111/j.1399-5618.2009.00737.x' },
+  nolen: { short: 'ISBD/IGSLi 2019', full: 'Nolen WA et al. What is the optimal serum level for lithium in the maintenance treatment of bipolar disorder? ISBD/IGSLi Task Force. Bipolar Disord 2019;21:394–409.', url: 'https://doi.org/10.1111/bdi.12805' },
+  cipriani: { short: 'Cipriani 2011', full: 'Cipriani A et al. Comparative efficacy and acceptability of antimanic drugs in acute mania: a multiple-treatments meta-analysis. Lancet 2011;378:1306–15.', url: 'https://doi.org/10.1016/S0140-6736(11)60873-8' },
+  extrip: { short: 'EXTRIP 2015', full: 'Decker BS et al. Extracorporeal treatment for lithium poisoning: systematic review and recommendations from the EXTRIP workgroup. Clin J Am Soc Nephrol 2015;10:875–87.', url: 'https://doi.org/10.2215/CJN.10021014' },
+  patorno: { short: 'Patorno 2017', full: 'Patorno E et al. Lithium use in pregnancy and the risk of cardiac malformations. N Engl J Med 2017;376:2245–54.', url: 'https://doi.org/10.1056/NEJMoa1612222' },
+  viguera: { short: 'Viguera 2000', full: 'Viguera AC et al. Risk of recurrence of bipolar disorder in pregnant and nonpregnant women after discontinuing lithium maintenance. Am J Psychiatry 2000;157:179–84.', url: 'https://doi.org/10.1176/appi.ajp.157.2.179' },
+  ada: { short: 'ADA/APA 2004', full: 'American Diabetes Association, American Psychiatric Association et al. Consensus development conference on antipsychotic drugs and obesity and diabetes. Diabetes Care 2004;27:596–601.', url: 'https://doi.org/10.2337/diacare.27.2.596' },
+  dsm: { short: 'DSM-5-TR', full: 'American Psychiatric Association. Diagnostic and Statistical Manual of Mental Disorders, 5th edition, text revision (2022): bipolar I disorder criteria.' },
+  ncqa: { short: 'NCQA HEDIS FUH', full: 'NCQA HEDIS measure: Follow-Up After Hospitalization for Mental Illness (FUH), 7-day and 30-day rates.', url: 'https://www.ncqa.org/report-cards/health-plans/state-of-health-care-quality-report/follow-up-after-hospitalization-for-mental-illness-fuh/' },
+  chung: { short: 'Chung 2017', full: 'Chung DT et al. Suicide rates after discharge from psychiatric facilities: a systematic review and meta-analysis. JAMA Psychiatry 2017;74:694–702.', url: 'https://doi.org/10.1001/jamapsychiatry.2017.1044' },
+  ata: { short: 'ATA hypothyroidism 2014', full: 'Jonklaas J et al. Guidelines for the treatment of hypothyroidism (American Thyroid Association). Thyroid 2014;24:1670–1751.', url: 'https://doi.org/10.1089/thy.2014.0028' },
+  uspstf: { short: 'USPSTF 2023', full: 'US Preventive Services Task Force. Folic acid supplementation to prevent neural tube defects: reaffirmation recommendation statement. JAMA 2023;330:454–459.', url: 'https://doi.org/10.1001/jama.2023.12876' },
+  bairdg: { short: 'Baird-Gunning 2017', full: 'Baird-Gunning J et al. Lithium poisoning. J Intensive Care Med 2017;32:249–263.', url: 'https://doi.org/10.1177/0885066616651582' },
+};
+
+/* Lithium steady-state 12-hour trough for each "dose step" (no doses are modelled). */
+function crLiLevel(st, outpatient) {
+  const d = st.liDose;
+  if (!d || d <= 0) return 0;
+  const map = { 1: 0.6, 2: 0.9, 3: 1.2, 4: 1.5, 5: 1.8 };
+  let v = map[Math.min(5, Math.round(d))] || 0.6;
+  if (outpatient && d === 2) v = 0.8;
+  if (st.flags.restartLow && outpatient) v = 0.7;
+  return v;
+}
+const crFmt = v => (Math.round(v * 10) / 10).toFixed(1);
+
+/* the antipsychotic that is actually being taken, if any */
+function crAP(st) {
+  return Object.keys(st.meds).find(id => st.meds[id].status === 'active' && CR_GROUPS.antimanicAP.includes(id) && id !== st.flags.apRefused) || null;
+}
+/* she will not take olanzapine again (30-lb weight gain at 22) */
+const crRefuses = id => id === 'olanzapine' || id === 'olz_sam';
+const crName = id => (CR_BY_ID[id] ? CR_BY_ID[id].name : id);
+/* drug name for use mid-sentence: generic names are lower case */
+const crDrug = id => { const n = crName(id); return /^[A-Z][a-z]/.test(n) ? n.charAt(0).toLowerCase() + n.slice(1) : n; };
+
+/* Drug-specific pharm checks, asked the first time a drug is put on the order sheet. */
+const CR_CHECKS = {
+  lithium: { q: 'Lithium is not a receptor drug. Which intracellular targets best explain its action?', options: ['Inositol monophosphatase and GSK-3β inhibition', 'D2 receptor antagonism', 'GABA-A positive allosteric modulation', 'Voltage-gated sodium channel blockade'], correct: 0, why: 'Lithium inhibits inositol monophosphatase (depleting inositol for phosphoinositide signaling) and glycogen synthase kinase-3β. It binds no neurotransmitter receptor, which is why it has none of the antipsychotics’ receptor side effects — and none of their speed.' },
+  quetiapine: { q: 'Quetiapine’s sedation and much of its weight gain come mainly from which receptor?', options: ['H1 antagonism', 'D2 antagonism', '5-HT1A partial agonism'], correct: 0, why: 'Quetiapine is a potent H1 antagonist (sedation, appetite) and an α1 antagonist (orthostasis). It binds D2 loosely and leaves quickly, so EPS and prolactin elevation are uncommon.' },
+  aripiprazole: { q: 'What does aripiprazole do at the D2 receptor?', options: ['Partial agonist', 'Full antagonist', 'Inverse agonist'], correct: 0, why: 'Aripiprazole is a D2 (and 5-HT1A) partial agonist. Prolactin and weight effects are low, but akathisia is common — and easily mistaken for ongoing mania.' },
+  risperidone: { q: 'Why can risperidone cause amenorrhea and galactorrhea?', options: ['D2 blockade in the tuberoinfundibular pathway raises prolactin', 'H1 blockade raises prolactin', 'α1 blockade suppresses ovulation'], correct: 0, why: 'Dopamine tonically inhibits prolactin release. Risperidone (and its metabolite paliperidone) block pituitary D2 receptors that sit outside the blood–brain barrier, so prolactin rises more than with most SGAs — relevant in a 28-year-old woman.' },
+  olanzapine: { q: 'Which receptor actions are most linked to olanzapine’s weight gain?', options: ['H1 and 5-HT2C antagonism', 'D2 and D3 antagonism', 'M1 agonism'], correct: 0, why: 'Olanzapine blocks H1 and 5-HT2C strongly, driving appetite and weight gain. She already stopped it once for gaining weight.' },
+  haloperidol: { q: 'In a young adult starting haloperidol, which early adverse effect is most likely within the first days?', options: ['Acute dystonia', 'Tardive dyskinesia', 'Agranulocytosis'], correct: 0, why: 'High-potency D2 blockade causes acute dystonia in the first days, especially in young people. Tardive dyskinesia takes months; agranulocytosis is clozapine’s problem.' },
+  asenapine: { q: 'How is asenapine taken?', options: ['Sublingually, with no food or drink for 10 minutes', 'Swallowed with a 500-calorie meal', 'As a monthly injection only'], correct: 0, why: 'Asenapine has very low oral bioavailability, so it is dissolved under the tongue. (The 500-calorie meal rule is ziprasidone’s.)' },
+  cariprazine: { q: 'What sets cariprazine apart at dopamine receptors?', options: ['D3-preferring D2/D3 partial agonist', 'Pure D1 antagonist', 'D2 full agonist'], correct: 0, why: 'Cariprazine is a D2/D3 partial agonist with higher affinity for D3, and long-lived active metabolites.' },
+  ziprasidone: { q: 'What does ziprasidone need for adequate absorption?', options: ['A meal of about 500 calories', 'An empty stomach', 'Grapefruit juice'], correct: 0, why: 'Ziprasidone absorption roughly doubles with food; it should be taken with a meal of about 500 calories.' },
+  paliperidone: { q: 'Paliperidone is the active metabolite of which drug?', options: ['Risperidone', 'Haloperidol', 'Aripiprazole'], correct: 0, why: 'Paliperidone is 9-hydroxyrisperidone. It is renally cleared, so dose it to kidney function.' },
+  divalproex: { q: 'Which fetal risk makes valproate a poor choice for a woman who could become pregnant?', options: ['Neural tube defects and lower childhood IQ', 'Ebstein’s anomaly only', 'No meaningful fetal risk'], correct: 0, why: 'Valproate carries the highest malformation risk of the mood stabilizers (including neural tube defects) and is linked to lower IQ and autism in exposed children.' },
+  propranolol: { q: 'Propranolol helps lithium tremor and akathisia because it is…', options: ['A non-selective β-blocker that crosses the blood–brain barrier', 'A dopamine agonist', 'An anticholinergic'], correct: 0, why: 'Lipophilic, non-selective β-blockade damps the peripheral and central drive behind both tremor and akathisia. Anticholinergics such as benztropine do little for either.' },
+  levothyroxine: { q: 'How does lithium usually cause hypothyroidism?', options: ['It inhibits release of thyroid hormone from the gland', 'It triggers TSH-receptor-blocking antibodies', 'It destroys the pituitary thyrotrophs'], correct: 0, why: 'Lithium is concentrated in the thyroid and inhibits thyroid hormone release (and iodine uptake). Treat with levothyroxine and keep the lithium that is working.' },
+};
+
+
+const CR_LABS3 = { id: 'labs3', prompt: 'Labs to draw before the month-3 visit (choose all)', type: 'many', options: [
+  ['li', 'Lithium level (12-hour trough)'], ['cr', 'Creatinine / eGFR'], ['tsh', 'TSH'], ['ca', 'Calcium'], ['ua', 'Urinalysis'],
+  ['metab', 'Weight, fasting glucose or A1c, and lipids (antipsychotic 12-week check)'], ['cbc', 'CBC'], ['lfts', 'Liver panel'], ['vpa', 'Valproate level'],
+] };
+function crScoreLabs3(st, X) {
+  const L = X.planSet('labs3');
+  st.flags.labs3 = L;
+  X.ess(L.includes('li'), 'Planned a lithium level.', 'Check regularly until stable, then every 3–6 months in the first year (practice varies).', ['canmat', 'isbdmon'], true);
+  X.ess(L.includes('cr'), 'Planned creatinine/eGFR.', 'Renal function every few months in the first 6 months, then every 6–12 months.', ['canmat', 'isbdmon']);
+  X.ess(L.includes('tsh'), 'Planned TSH.', 'Thyroid function once or twice in the first 6 months, then every 6–12 months (the label: baseline, 3 months, then every 6–12 months). Hypothyroidism is common on lithium, especially in women.', ['label', 'canmat', 'isbdmon']);
+  if (L.includes('ca')) X.log('good', 'Planned calcium.', 'Recommended yearly on lithium (hyperparathyroidism); fine to include.', ['isbdmon']);
+  if (L.includes('ua')) X.log('ok', 'Planned urinalysis.', 'Reasonable renal monitoring.', ['isbdmon']);
+  if (crAP(st)) X.ess(L.includes('metab'), 'Planned the 12-week antipsychotic metabolic check.', 'Weight at 4, 8 and 12 weeks; fasting glucose and lipids at 12 weeks (ADA/APA).', ['ada']);
+  if (L.includes('cbc')) X.log('low', 'Planned a CBC.', 'Not needed for lithium monitoring.', ['isbdmon']);
+  if (L.includes('lfts')) X.log('low', 'Planned a liver panel.', 'Lithium isn’t hepatically metabolized; not routinely needed here.', ['isbdmon']);
+  if (L.includes('vpa')) X.log('low', 'Planned a valproate level.', 'She isn’t taking valproate.', []);
+}
+
+/* adding an antipsychotic after inadequate response to lithium: CANMAT and VA/DoD differ */
+function crScoreAddedAP(X, id) {
+  const vaCombo = ['haloperidol', 'asenapine', 'quetiapine', 'olanzapine', 'risperidone'];
+  const vaAgainst = ['aripiprazole', 'paliperidone', 'ziprasidone'];
+  if (vaCombo.includes(id)) X.log('good', 'Added ' + crDrug(id) + ' for persistent psychotic mania.', 'Five days in, still psychotic and barely sleeping: add an antipsychotic. VA/DoD lists lithium plus haloperidol, asenapine, quetiapine, olanzapine or risperidone after an unsatisfactory response, and CANMAT\u2019s first-line combinations include quetiapine, risperidone and asenapine.' + (id === 'haloperidol' ? ' Haloperidol brings more EPS.' : ''), ['vadod', 'canmat'], true);
+  else if (vaAgainst.includes(id)) X.log('ok', 'Added ' + crDrug(id) + ' for persistent psychotic mania.', 'Guidelines disagree here. ' + (id === 'aripiprazole' ? 'CANMAT lists lithium plus aripiprazole as a first-line combination, but ' : '') + 'VA/DoD suggests against adding aripiprazole, paliperidone or ziprasidone after an unsatisfactory response to lithium; its preferred additions are haloperidol, asenapine, quetiapine, olanzapine or risperidone.', ['vadod', 'canmat'], true);
+  else X.log('ok', 'Added ' + crDrug(id) + ' for persistent psychotic mania.', 'Adding an antipsychotic is right, but this agent isn\u2019t among the guideline-preferred combination partners (quetiapine, risperidone, asenapine, haloperidol).', ['vadod', 'canmat'], true);
+}
+
+/* outpatient: maintenance troughs belong around 0.6-0.8 (ISBD/IGSLi) to 0.8-1.0 (label) */
+function crScoreOutpatientLevel(st, X) {
+  const lv = crLiLevel(st, true);
+  if (X.act('lithium') === 'increase') X.log('bad', 'Raised lithium during remission.', 'She is well at a trough of ' + crFmt(lv) + ' mEq/L. Maintenance targets are 0.60\u20130.80 (ISBD/IGSLi), or 0.8\u20131.0 per the label; pushing higher adds toxicity risk without benefit.', ['nolen', 'label']);
+  else if (lv > 1.0) {
+    if (X.act('lithium') === 'decrease') X.log('good', 'Lowered lithium toward the maintenance range.', 'A trough of ' + crFmt(lv) + ' is above maintenance targets (0.60\u20130.80 ISBD/IGSLi; 0.8\u20131.0 label) now that she is in remission.', ['nolen', 'label'], true);
+    else X.log('miss', 'Left the trough at ' + crFmt(lv) + ' mEq/L in remission.', 'Above maintenance targets (0.60\u20130.80 ISBD/IGSLi; 0.8\u20131.0 label). Lower the dose once the acute episode has resolved.', ['nolen', 'label'], true);
+  }
+}
+
+const CASE_LITHIUM = {
+  id: 'lithium',
+  title: 'A Symphony by Morning',
+  patient: 'Dana Whitfield, 28',
+  tagline: 'A music teacher brought in by her sister, sleeping two hours a night and certain the symphony wants her. Treat her mania with lithium and keep her well for six months.',
+  topics: ['Acute mania', 'Lithium start & levels', 'Interactions & toxicity', 'Thyroid & renal monitoring', 'Pregnancy planning'],
+  start: 'office',
+  chips: [
+    ['office', 'Office'], ['admit', 'Admission'], ['day5', 'Day 5'], ['discharge', 'Discharge'],
+    ['clinic2', 'Week 2'], ['month3', 'Month 3'], ['month6', 'Month 6'],
+  ],
+  chipOf: { day10: 'day5', clinic2tox: 'clinic2', ed: 'clinic2', month4: 'month3' },
+
+  // why each essential question / exam item matters (shown in the debrief)
+  why: {
+    sleep: 'Decreased need for sleep is a cardinal manic symptom and among the earliest relapse signals.',
+    si: 'Every psychiatric evaluation needs a suicide risk assessment; mixed features and post-manic depression raise risk.',
+    hi: 'Irritability and aggression are common in mania, and violence risk shapes disposition.',
+    psych: 'Psychotic features make the episode severe, rule out hypomania, and shape both disposition and the medication plan.',
+    prior: 'Past episodes and past treatments, including why they were stopped, guide diagnosis and drug choice.',
+    subs: 'Substances can cause or mimic mania and change the plan.',
+    meds: 'Over-the-counter NSAIDs matter for lithium: they raise levels.',
+    lmp: 'Pregnancy status and contraception shape every medication choice for a 28-year-old woman.',
+    lmp2: 'Pregnancy status and contraception shape every medication choice for a 28-year-old woman.',
+    s_danger: 'Collateral is essential in mania because insight is poor, and dangerousness drives disposition.',
+    speech: 'Pressured speech documents mania.', tp: 'Flight of ideas documents mania.',
+    tc: 'Delusional content documents psychotic features and screens for SI/HI.', insight: 'Absent insight bears directly on whether she can accept voluntary care.',
+    risk: 'Admission requires a documented suicide and violence risk assessment to set the observation level.',
+    sleep5: 'Sleep is the most sensitive marker of manic improvement.', psych5: 'Track psychosis to judge whether the antipsychotic is working.',
+    si5: 'Re-screen as mania lifts; depression and mixed states can emerge.',
+    tremor: 'Distinguish expected fine tremor from the coarse tremor, ataxia and dysarthria of toxicity.',
+    eps: 'Antipsychotics cause akathisia and EPS that are easily mistaken for agitation.',
+    sleep10: 'Sleep tracks manic improvement.', si10: 'Re-screen for suicidality during treatment.',
+    sidc: 'Suicide risk peaks in the weeks after psychiatric discharge; assess before every discharge.',
+    pain: 'She uses NSAIDs; you need to know before you teach.',
+    psychdc: 'Document resolution of psychosis and improving insight before discharge.',
+    sleep2: 'Sleep change is the earliest relapse signal.', si2: 'The post-discharge period is high risk.',
+    adh2: 'Nonadherence is the commonest cause of relapse and of erratic lithium levels.',
+    tdose: 'Dosing through illness is how chronic toxicity builds.', tmeds: 'NSAIDs are a classic cause of lithium toxicity.',
+    tgi: 'Volume loss raises lithium levels.', tod: 'An acute or acute-on-chronic ingestion changes management and the risk assessment.',
+    tneuro: 'Coarse tremor, ataxia and dysarthria are signs of toxicity.',
+    eneuro: 'Serial neurologic exams track toxicity and decide on dialysis (decreased consciousness or seizures).',
+    m3mood: 'Characterize the low mood before treating it.', m3si: 'Screen for suicidality in any depressive presentation.',
+    m3ros: 'Screen for hypothyroid symptoms on lithium before calling it depression.', phq: 'Measure the depression so you can track response.',
+    m4si: 'Screen for suicidality in any depressive presentation.', m6plan: 'Know her timeline so the plan comes before conception.',
+  },
+
+  init(st) {
+    st.flags = {};
+    st.liDose = 0;
+    st.labs = { li: [], cr: [], tsh: [], wt: [] };
+  },
+
+  scenes: {
+    /* ======================================================== OFFICE */
+    office: {
+      when: 'Day 0 · 10:40', setting: 'Outpatient psychiatry', title: 'New patient visit',
+      budget: 45, orders: false,
+      intro: () => [
+        'Dana Whitfield, 28, a middle-school music teacher, is here because her older sister Megan drove her. Megan booked the appointment; Dana did not.',
+        'Dana is in a sequined jacket over pajama pants, humming, and stands up twice before you sit down. "I don’t know why we’re here. I’ve never felt better in my life."',
+        'Megan, quietly: "She hasn’t slept in a week and she’s scaring me."',
+      ],
+      vitals: () => ({ HR: '104', BP: '134/86', T: '37.0 °C', SpO2: '99%' }),
+      meters: () => [['Mania', 9], ['Psychosis', 6], ['Sleep', 1, '2–3 h'], ['Insight', 1]],
+      interview: () => [
+        { id: 'open', who: 'Dana', q: 'What’s been going on lately?', a: '"Everything is happening. I’m writing a symphony — four movements in six days. My students are going to perform it. Maybe the national orchestra. Probably the national orchestra."', tag: 'use' },
+        { id: 'sleep', who: 'Dana', q: 'How much have you been sleeping?', a: '"Two hours? Three? I don’t need it. I lie down and the music just keeps going, so I get up and write it."', tag: 'ess', note: 'Sleeping 2–3 h a night for about a week; not tired' },
+        { id: 'si', who: 'Dana', q: 'Any thoughts of hurting or killing yourself?', a: '"God, no. I’ve never been happier."', tag: 'ess', note: 'Denies suicidal ideation' },
+        { id: 'hi', who: 'Dana', q: 'Any thoughts of hurting anyone, or fights with anyone?', a: '"My landlord is an idiot and I told him so. Loudly. In the hallway. At four in the morning. I’d never hurt anybody."', tag: 'ess', note: 'Verbal altercation with landlord; denies homicidal ideation' },
+        { id: 'psych', who: 'Dana', q: 'Have you noticed anything unusual — messages meant for you, special abilities?', a: '"The classical station has been playing my pieces back to me, encoded. The conductor is telling me I’m meant to lead the orchestra. That’s why it has to be done by morning."', tag: 'ess', note: 'Grandiose and referential delusions (radio, conductor)' },
+        { id: 'prior', who: 'Dana', q: 'Has anything like this happened before? Any treatment?', a: '"At 22. They called it mania and kept me in the hospital ten days. They put me on olanzapine and I gained thirty pounds, so I stopped it. At 25 I was depressed for most of a year — I didn’t take anything for that."', tag: 'ess', note: 'Manic episode at 22 (hospitalized); depressive episode at 25. Stopped olanzapine after 30-lb weight gain', set: { knowOlz: true } },
+        { id: 'subs', who: 'Dana', q: 'Alcohol, cannabis, stimulants or any other drugs?', a: '"A glass of wine sometimes. Nothing else. I don’t need anything — that’s the point."', tag: 'ess', note: 'Reports occasional wine; denies drugs' },
+        { id: 'meds', who: 'Dana', q: 'Do you take any medicines, prescribed or over the counter?', a: '"Nothing. Well — ibuprofen for cramps. A lot, that week of the month."', tag: 'ess', note: 'Takes ibuprofen regularly for menstrual cramps', set: { knowIbu: true } },
+        { id: 'lmp', who: 'Dana', q: 'When was your last period? Could you be pregnant? Any contraception?', a: '"About two weeks ago. My boyfriend and I use condoms. Mostly."', tag: 'ess', note: 'LMP ~2 weeks ago; condoms “mostly”', set: { knowContra: true } },
+        { id: 'fam', who: 'Dana', q: 'Does anyone in your family have mood problems?', a: '"My mom has bipolar too. Lithium. She’s been fine for twenty years on it."', tag: 'use', note: 'Mother: bipolar disorder, sustained response to lithium', set: { knowMom: true } },
+        { id: 'spend', who: 'Dana', q: 'Any big purchases or new projects?', a: '"I put eight thousand dollars on a card for a recording studio. Worth every cent."', tag: 'use', note: '$8,000 impulsive spending' },
+        { id: 'drive', who: 'Dana', q: 'How has your driving been?', a: '"Fast! The highway was empty. Mostly."', tag: 'use' },
+        { id: 'neuroros', who: 'Dana', q: 'Any headaches, head injury, seizures, weakness or numbness?', a: '"No, no, no and no."', tag: 'use', note: 'No neurologic symptoms or head injury' },
+        { id: 'thyroid', who: 'Dana', q: 'Any heat intolerance, palpitations or weight loss?', a: '"I’m warm because I’m alive. Weight’s the same."', tag: 'use' },
+        { id: 'child', who: 'Dana', q: 'What was your childhood like?', a: '"Music camp every summer. Happy. Why?"', tag: 'low' },
+        { id: 'hobby', who: 'Dana', q: 'What do you do for fun?', a: '"This! Composing! Have you been listening?"', tag: 'low' },
+        { id: 's_change', who: 'Megan (sister)', q: 'What have you noticed change this week?', a: '"She’s up all night moving furniture and calling people at 3 a.m. She talks so fast I can’t follow her. She quit eating dinner."', tag: 'use' },
+        { id: 's_danger', who: 'Megan (sister)', q: 'Has she done anything dangerous?', a: '"Saturday she drove my boys home from practice at ninety-five on the highway. She left the stove on twice. I’m terrified she’s going to kill someone."', tag: 'ess', note: 'Collateral: drove 95 mph with nephews in the car; left stove on twice' },
+        { id: 's_meds', who: 'Megan (sister)', q: 'Is she taking anything at home?', a: '"Just Advil. She goes through a bottle a month for cramps."', tag: 'use', note: 'Collateral: heavy ibuprofen use for cramps', set: { knowIbu: true } },
+        { id: 's_hosp', who: 'Megan (sister)', q: 'How did the last hospitalization go?', a: '"She refused to go. The police had to bring her in on a hold. She thanked us afterward."', tag: 'use' },
+      ],
+      assess: () => [
+        { id: 'appear', label: 'Appearance & behavior', find: 'Sequined jacket over pajamas, heavy makeup. Psychomotor agitation: paces, drums on the desk.', tag: 'use', cost: 1 },
+        { id: 'speech', label: 'Speech', find: 'Rapid, loud, pressured and hard to interrupt.', tag: 'ess', cost: 1 },
+        { id: 'tp', label: 'Thought process', find: 'Flight of ideas with clang associations ("score, more, encore, the shore").', tag: 'ess', cost: 1 },
+        { id: 'tc', label: 'Thought content', find: 'Grandiose delusion that she is destined to lead the national orchestra; ideas of reference about the radio. No suicidal or homicidal ideation.', tag: 'ess', cost: 2 },
+        { id: 'percept', label: 'Perception', find: 'Denies hallucinations; not responding to internal stimuli.', tag: 'use', cost: 1 },
+        { id: 'cog', label: 'Orientation & attention', find: 'Oriented to person, place and date. Distractible, but attention adequate for the interview.', tag: 'use', cost: 2 },
+        { id: 'insight', label: 'Insight & judgment', find: 'Insight absent ("there’s nothing wrong with me"); judgment severely impaired.', tag: 'ess', cost: 1 },
+        { id: 'neuro', label: 'Focused neurologic exam', find: 'No focal deficits, no tremor, normal gait.', tag: 'use', cost: 3 },
+      ],
+      plan: () => [
+        { id: 'dx', prompt: 'Working diagnosis', type: 'one', options: [
+          ['bp1', 'Bipolar I disorder, current episode manic, severe, with mood-congruent psychotic features'],
+          ['bp2', 'Bipolar II disorder, current episode hypomanic'],
+          ['schaff', 'Schizoaffective disorder, bipolar type'],
+          ['subst', 'Substance/medication-induced bipolar and related disorder'],
+        ] },
+        { id: 'dispo', prompt: 'Disposition', type: 'one', options: [
+          ['admit', 'Inpatient psychiatric admission'],
+          ['iop', 'Intensive outpatient program, starting next week'],
+          ['homemed', 'Start an antimanic medication today and see her in 1 week'],
+          ['homesis', 'Home with her sister tonight; recheck tomorrow'],
+        ] },
+        { id: 'refuse', prompt: 'You recommend admission. Dana stands up: "Absolutely not. I have a symphony to finish by morning."', type: 'one', show: p => p.dispo === 'admit', options: [
+          ['petition', 'Initiate an emergency psychiatric evaluation (involuntary hold) and arrange safe transport to the ED'],
+          ['leave', 'Respect her refusal; she leaves with her sister'],
+          ['drive', 'Let her drive home and call her tomorrow to reconsider'],
+        ] },
+      ],
+      evaluate(st, X) {
+        X.interviewScore();
+        X.assessScore();
+        if (X.plan('dx') === 'bp1') X.log('good', 'Diagnosed bipolar I, manic episode, severe, with psychotic features.', 'A week of elevated mood and energy with decreased need for sleep, pressured speech, flight of ideas, grandiosity and dangerous spending and driving is a manic episode. Her delusions make this episode mania, not hypomania, by definition, and her hospitalized manic episode at 22 had already established bipolar I.', ['dsm'], true);
+        else if (X.plan('dx') === 'subst') X.log('miss', 'Called it substance-induced before any toxicology.', 'Substances must be excluded (that is what the urine drug screen is for), but nothing here points to them, and she has a prior manic episode with no reported substance use. The diagnosis is bipolar I, current episode manic, severe, with psychotic features.', ['dsm'], true);
+        else X.log('miss', 'Diagnosis: ' + X.planLabel('dx') + '.', X.plan('dx') === 'bp2' ? 'Hypomania cannot include psychosis or need hospitalization. Her delusions make this episode mania by definition, and her hospitalized episode at 22 already established bipolar I.' : 'Schizoaffective disorder needs psychosis for at least 2 weeks without a mood episode. Her psychosis occurs only inside mood episodes: bipolar I with psychotic features.', ['dsm'], true);
+
+        const d = X.plan('dispo'), r = X.plan('refuse');
+        if (d === 'admit' && r === 'petition') {
+          X.log('good', 'Recommended inpatient admission.', 'Psychotic mania with no insight, no sleep and dangerous behavior (95 mph with children in the car) needs a level of care that can keep her safe while treatment takes effect. Deciding whether the patient needs immediate evaluation or hospitalization is an early step in the VA/DoD algorithm.', ['vadod'], true);
+          X.log('good', 'Used an emergency evaluation when she refused.', 'Criteria vary by state, but they generally require a mental illness plus danger to self or others (most states also include grave disability). Her driving and lack of insight meet that bar.', [], true);
+          X.say('Dana shouts that you are "jealous of genius," then sits in the back of the ambulance humming. Megan follows in her car.');
+          return { next: 'admit' };
+        }
+        const crash = 'At 02:10 a state trooper stops Dana doing 104 mph on the interstate with the windows down, singing. No one is hurt. She is brought to the ED on an emergency petition.';
+        return {
+          next: 'admit',
+          critical: {
+            title: 'Psychotic mania sent home',
+            narrative: crash,
+            why: 'She is psychotic, has no insight, hasn’t slept in a week, and drove 95 mph with children in the car. Outpatient care can’t keep her safe through the 1–2 weeks antimanic treatment takes. She needed inpatient admission, through an emergency evaluation once she refused.',
+            refs: ['vadod', 'canmat'],
+            log: (d === 'admit') ? 'Let her leave after she refused admission.' : 'Chose outpatient care for severe psychotic mania.',
+            correct: s => { s.flags.byPolice = true; return 'admit'; },
+          },
+        };
+      },
+    },
+
+    /* ======================================================== ADMISSION */
+    admit: {
+      when: 'Day 0 · 16:30', setting: 'Emergency dept → inpatient unit', title: 'Admission orders',
+      budget: 20, orders: true,
+      intro: st => [
+        st.flags.byPolice ? 'Dana arrives in the ED overnight with a trooper. She is unhurt, furious and singing.' : 'Dana arrives by ambulance. She paces the hallway singing scales and tries to direct the triage nurses in a round.',
+        st.flags.knowOlz ? 'She will take pills "if they help me sleep — but not olanzapine, it made me huge."' : 'She agrees to take "something to sleep," then turns back to her notebook.',
+        'The inpatient unit will take her once you have written admission orders: labs, medications and when to check them.',
+      ],
+      vitals: () => ({ HR: '102', BP: '130/84', T: '37.1 °C', SpO2: '99%' }),
+      meters: () => [['Mania', 9], ['Psychosis', 6], ['Sleep', 1, '2–3 h'], ['Insight', 1]],
+      interview: st => [
+        { id: 'allergy', who: 'Dana', q: 'Any medication allergies?', a: '"None. I’m allergic to boredom."', tag: 'use' },
+        { id: 'lmp2', who: 'Dana', q: 'When was your last period? Any chance you’re pregnant?', a: '"Two weeks ago. Condoms. Mostly."', tag: st.flags.knowContra ? 'low' : 'ess', note: 'LMP ~2 weeks ago; condoms “mostly”', set: { knowContra: true } },
+        { id: 'meds2', who: 'Dana', q: 'What have you taken this week, including over the counter?', a: '"Ibuprofen. For cramps. That’s it."', tag: 'use', note: 'Takes ibuprofen regularly for menstrual cramps', set: { knowIbu: true } },
+        { id: 'prior2', who: 'Dana', q: 'What has been tried for your mood before, and how did it go?', a: '"Olanzapine, at 22. Thirty pounds. Never again."', tag: st.flags.knowOlz ? 'low' : 'use', note: 'Stopped olanzapine after 30-lb weight gain', set: { knowOlz: true } },
+        { id: 'take', who: 'Dana', q: 'Will you take medication while you’re here?', a: '"If it lets me sleep. And if it’s not olanzapine."', tag: 'use', set: { knowOlz: true } },
+      ],
+      assess: () => [
+        { id: 'risk', label: 'Suicide & violence risk screen', find: 'No suicidal ideation, plan or history of attempts. Irritable but not threatening. Elopement risk: high.', tag: 'ess', cost: 2 },
+        { id: 'weightA', label: 'Weight, BMI & waist', find: '64 kg, BMI 23.5, waist 76 cm.', tag: 'use', cost: 1, set: { weightDone: true } },
+        { id: 'neuroA', label: 'Baseline neurologic exam', find: 'No tremor, normal gait and reflexes.', tag: 'use', cost: 2 },
+        { id: 'agit', label: 'Agitation check', find: 'Restless and loud, but redirectable. Accepts oral medication; no emergency medication needed now.', tag: 'use', cost: 1 },
+      ],
+      plan: () => [
+        { id: 'lvlday', prompt: 'First lithium level: when?', type: 'one', options: [
+          ['d1', 'Tomorrow morning'], ['d3', 'Day 3'], ['d5', 'Day 5'], ['d10', 'At discharge (about day 10)'], ['none', 'No level needed while she is inpatient'],
+        ] },
+        { id: 'lvltime', prompt: 'Drawn how long after a dose?', type: 'one', options: [
+          ['trough', '12 hours after the last dose (morning trough, before the morning dose)'],
+          ['peak', '2 hours after the morning dose'],
+          ['any', 'Any time — whenever the lab comes by'],
+        ] },
+      ],
+      pimp: { q: 'How long until lithium’s antimanic effect is usually evident at a therapeutic level?', options: ['A few hours', 'About 1–2 weeks', '4–6 weeks', '3 months'], correct: 1, why: 'Antimanic agents separate from placebo within about a week, and some response is expected within 1–2 weeks. Lithium needs several days just to reach steady state, which is why a faster-acting antipsychotic is often added for severe or psychotic mania.', refs: ['canmat'] },
+      intercepts(st, X) {
+        const out = [];
+        const ad = X.startedAny(CR_GROUPS.antidepressant);
+        if (ad) out.push({ key: 'ad', from: 'Pharmacy', text: crDrug(ad) + ' was ordered during an active manic episode. Both CANMAT/ISBD and VA/DoD advise stopping antidepressants in mania.' });
+        const ter = X.startedAny(CR_GROUPS.teratogenAED);
+        if (ter) out.push({ key: 'terat', from: 'Pharmacy', text: crDrug(ter) + ' was ordered for a 28-year-old who can become pregnant. VA/DoD 2023 recommends against valproate, carbamazepine and topiramate in people of childbearing potential.' });
+        if (X.started('lithium') && !X.has('bmp') && !X.has('cmp')) out.push({ key: 'renal', from: 'Pharmacy', text: 'Lithium was ordered with no baseline creatinine or eGFR. It is cleared almost entirely by the kidneys.' });
+        const ns = X.startedAny(CR_GROUPS.nsaid.concat(CR_GROUPS.liRaiser));
+        if (ns && X.started('lithium')) out.push({ key: 'nsaid', from: 'Pharmacy', text: crDrug(ns) + ' with lithium: this combination reduces renal lithium clearance and raises levels.' });
+        return out;
+      },
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        // ---- labs
+        const renal = X.has('bmp') || X.has('cmp');
+        X.ess(renal, 'Baseline creatinine/eGFR (BMP or CMP).', 'Lithium is renally cleared; renal function before the first dose is required and anchors every later creatinine.', ['label', 'isbdmon']);
+        X.ess(X.has('tsh'), 'Baseline TSH.', 'Lithium causes hypothyroidism. A baseline TSH lets you tell a lithium effect from pre-existing disease, and thyroid disease can also drive mood symptoms.', ['label', 'isbdmon']);
+        X.ess(X.has('cmp') || X.has('calcium'), 'Baseline calcium.', 'Long-term lithium is associated with hyperparathyroidism and hypercalcemia; get a baseline.', ['label', 'isbdmon']);
+        X.ess(X.has('uhcg') || X.has('shcg'), 'Pregnancy test.', 'She is 28, uses condoms "mostly," and you are about to start a medication with fetal cardiac risk. A pregnancy test belongs in the baseline workup.', ['isbdmon', 'patorno']);
+        X.ess(X.has('uds'), 'Urine drug screen.', 'Stimulants and other substances can cause or worsen mania; bipolar I requires that the episode is not attributable to a substance.', ['dsm', 'canmat']);
+        X.ess(X.has('cbc'), 'CBC.', 'Part of the general baseline workup for anyone starting bipolar medications (CANMAT Table 23).', ['canmat', 'isbdmon']);
+        const apStart = X.startedAny(CR_GROUPS.antimanicAP);
+        if (apStart) {
+          X.ess((X.has('a1c') || X.has('fglucose')) && X.has('lipids') && (X.has('weight') || st.flags.weightDone), 'Metabolic baseline for the antipsychotic (weight, glucose or A1c, lipids).', 'Before starting a second-generation antipsychotic, record weight/BMI and waist, blood pressure, fasting glucose and lipids. The ADA/APA consensus then rechecks weight at 4, 8 and 12 weeks and glucose and lipids at 12 weeks.', ['ada']);
+        }
+        if (X.has('ecg')) X.log('ok', 'ECG ordered.', 'Reasonable, but not required at 28 with no cardiac history: ECG before lithium is advised mainly for people over 40 or with cardiac risk factors.', ['canmat', 'isbdmon']);
+        if (X.has('ua')) X.log('ok', 'Urinalysis ordered.', 'A reasonable renal baseline before lithium.', ['isbdmon']);
+        const lowv = { mri: 'MRI brain', ct: 'CT head', eeg: 'EEG', lp: 'Lumbar puncture', cerulo: 'Ceruloplasmin', ana: 'ANA', cortisol: 'Cortisol', ammonia: 'Ammonia', lilevel: 'Lithium level (she isn’t taking it yet)', vpalevel: 'Valproate level', cbzlevel: 'Carbamazepine level', troponin: 'Troponin', bcx: 'Blood cultures', ucx: 'Urine culture', clozlevel: 'Clozapine level', pth: 'PTH', vitd: 'Vitamin D', lipase: 'Lipase' };
+        Object.keys(lowv).forEach(id => { if (X.has(id)) X.log('low', 'Low-value: ' + lowv[id] + '.', 'A recurrence of known bipolar I with a normal neurologic exam and no atypical features (late onset, focal signs, delirium) doesn’t call for this.', []); });
+
+        // ---- medications
+        const li = X.started('lithium');
+        let ap = apStart;
+        if (crRefuses(ap)) {
+          if (st.flags.knowOlz) X.log('bad', 'Ordered olanzapine after she told you it caused a 30-lb weight gain.', 'She refuses the first dose. Acceptability matters: choose an agent she will take, such as quetiapine, aripiprazole or risperidone in combination with lithium.', ['canmat']);
+          else X.log('miss', 'Ordered olanzapine without asking about past trials.', 'She refuses the first dose: it caused a 30-lb weight gain at 22. Asking what was tried before, and how it went, would have told you.', ['canmat']);
+          st.flags.apRefused = ap; ap = null;
+        }
+        if (X.started('clozapine')) X.log('bad', 'Started clozapine.', 'Clozapine is reserved for treatment-resistant illness and needs ANC monitoring; it isn’t a first-episode or first-relapse choice for mania.', ['canmat']);
+        const terat = X.startedAny(CR_GROUPS.teratogenAED);
+        if (terat) X.log('bad', 'Started ' + crDrug(terat) + ' in a woman of childbearing potential.', 'VA/DoD 2023 strongly recommends against valproate, carbamazepine and topiramate in people who can become pregnant (teratogenicity, and carbamazepine also defeats hormonal contraception).', ['vadod']);
+        const coverage = li || ap || X.started('divalproex') || X.started('carbamazepine');
+        if (li && ap) {
+          if (CR_GROUPS.sgaCombo.includes(ap)) X.log('good', 'Started lithium plus ' + crDrug(ap) + '.', 'For severe mania with psychosis, an antipsychotic plus lithium is a first-line combination (CANMAT: quetiapine, aripiprazole, risperidone or asenapine with lithium or divalproex). The antipsychotic works within days while lithium builds, and lithium is the long-term anchor. Her mother’s lithium response is a point in its favor.', ['canmat', 'cipriani'], true);
+          else if (CR_GROUPS.fga.includes(ap)) X.log('ok', 'Started lithium plus ' + crDrug(ap) + '.', 'Effective (haloperidol was among the most effective antimanic drugs in Cipriani 2011, and VA/DoD lists lithium + haloperidol as a combination), but it carries more EPS. A second-generation agent with maintenance data is usually preferred.', ['cipriani', 'vadod'], true);
+          else X.log('ok', 'Started lithium plus ' + crDrug(ap) + '.', 'A defensible combination. CANMAT’s first-line combinations pair lithium with quetiapine, aripiprazole, risperidone or asenapine.', ['canmat'], true);
+        } else if (li) {
+          X.log('ok', 'Started lithium alone.', 'Lithium monotherapy is first-line, but with psychosis and 2–3 hours of sleep she needs something that works in days, not weeks. Most clinicians add an antipsychotic for severe psychotic mania.', ['canmat', 'vadod'], true);
+          st.flags.liMono = true;
+        } else if (ap) {
+          X.log('ok', 'Started ' + crDrug(ap) + ' without lithium.', 'Quetiapine and several SGAs are first-line monotherapy, so this is a valid choice. In this case the team adds lithium on day 1: her mother’s sustained response and lithium’s maintenance record make it the long-term anchor.', ['vadod', 'canmat'], true);
+          st.flags.teamLi = true;
+        }
+        if (X.startedAny(CR_GROUPS.noAntimanic.filter(x => x !== 'topiramate'))) X.log('bad', 'Started ' + crDrug(X.startedAny(CR_GROUPS.noAntimanic)) + ' for acute mania.', 'Lamotrigine, gabapentin and topiramate did not beat placebo in acute mania (Cipriani 2011), and VA/DoD suggests against lamotrigine and topiramate for it. Oxcarbazepine has weak evidence.', ['cipriani', 'vadod']);
+        const ad = X.startedAny(CR_GROUPS.antidepressant);
+        const bz = X.startedAny(CR_GROUPS.benzo);
+        if (bz) X.log('ok', 'Added ' + crDrug(bz) + '.', 'A benzodiazepine is a reasonable short-term adjunct for agitation and sleep while antimanic treatment takes hold.', ['canmat']);
+        const nsx = X.startedAny(CR_GROUPS.nsaid.concat(CR_GROUPS.liRaiser));
+        if (nsx && (li || st.flags.teamLi)) X.log('bad', 'Ordered ' + crDrug(nsx) + ' alongside lithium.', 'NSAIDs reduce renal blood flow and lithium clearance; ACE inhibitors, ARBs and thiazides also raise levels. For cramps, use acetaminophen.', ['label']);
+        ['levothyroxine', 'metformin', 'liothyronine', 'methimazole', 'stimulant'].forEach(id => { if (X.started(id)) X.log('low', 'Started ' + crDrug(id) + '.', 'Not indicated by anything in her history or labs.', []); });
+        if (X.started('methylphenidate') || X.started('amphetamine') || X.started('modafinil')) X.log('bad', 'Started a stimulant during mania.', 'Stimulants can worsen mania and psychosis.', ['canmat']);
+
+        // ---- level timing
+        const day = X.plan('lvlday'), when = X.plan('lvltime');
+        st.flags.lvlday = day; st.flags.lvltime = when;
+        if (day === 'd5') X.log('good', 'First level on day 5.', 'Lithium’s half-life is about 18–36 hours, so steady state takes roughly 3–7 days. The label allows a first level after 3 days, and CANMAT draws levels about 5 days after the last titration.', ['label', 'canmat'], true);
+        else if (day === 'd3') X.log('good', 'First level on day 3.', 'The FDA label says to check a level after 3 days, then regularly until she is stable. It is close to steady state; many clinicians wait until day 5.', ['label'], true);
+        else if (day === 'd1') X.log('miss', 'First level tomorrow.', 'A level after one or two doses is far from steady state (about 5 days) and can’t guide dosing. Check after 3–5 days.', ['label'], true);
+        else X.log('miss', 'No lithium level until discharge or later.', 'During acute treatment, check levels within the first week and after every dose change, until levels and the clinical picture are stable.', ['label', 'isbdmon'], true);
+        if (when === 'trough') X.log('good', 'Level drawn as a 12-hour trough.', 'Reference ranges (0.8–1.2 mEq/L acute) are defined for a level drawn 12 hours after the last dose.', ['label'], true);
+        else if (when === 'peak') { X.log('bad', 'Level drawn 2 hours after a dose.', 'That captures the absorption peak, which runs well above the 12-hour trough the ranges are built on. You’ll get a misleadingly high number.', ['label']); st.flags.peak = true; }
+        else X.log('miss', 'Level drawn at random times.', 'A level is only interpretable as a 12-hour trough. Random timing makes trends meaningless.', ['label'], true);
+
+        if (!coverage) {
+          return { next: 'day5', critical: {
+            title: 'No antimanic treatment',
+            narrative: 'Overnight Dana sleeps 40 minutes and spends the rest of the night conducting in the dayroom. By morning she has thrown a chair.',
+            why: 'Psychotic mania needs an antimanic agent from day 0: lithium or quetiapine (VA/DoD first-line), ideally lithium plus an SGA for severe psychotic mania (CANMAT).',
+            refs: ['vadod', 'canmat'],
+            log: 'Admitted psychotic mania without an antimanic medication.',
+            correct: s => { s.meds.lithium = { status: 'active', since: 'Day 1' }; s.meds.quetiapine = { status: 'active', since: 'Day 1' }; s.liDose = 1; return 'day5'; },
+          } };
+        }
+        if (ad) {
+          return { next: 'day5', critical: {
+            title: 'Antidepressant during mania',
+            narrative: 'Dana takes the ' + crDrug(ad) + '. By day 2 she has slept less, is more irritable, and is shouting at the nurses about the symphony.',
+            why: 'Any antidepressant should be stopped in a manic episode; antidepressants can worsen mania and mixed features.',
+            refs: ['canmat', 'vadod'],
+            log: 'Started ' + crDrug(ad) + ' during mania.',
+            correct: s => { delete s.meds[ad]; return 'day5'; },
+          } };
+        }
+        return { next: 'day5' };
+      },
+      results: (st, X) => {
+        const r = [];
+        if (X.has('bmp')) r.push(['BMP', 'Na 139 · K 4.1 · creatinine 0.8 mg/dL · eGFR >90']);
+        if (X.has('cmp')) r.push(['CMP', 'Na 139 · creatinine 0.8 · eGFR >90 · Ca 9.4 · LFTs normal']);
+        if (X.has('calcium') && !X.has('cmp')) r.push(['Calcium', '9.4 mg/dL']);
+        if (X.has('tsh')) r.push(['TSH', '2.1 mIU/L']);
+        if (X.has('ft4')) r.push(['Free T4', '1.2 ng/dL']);
+        if (X.has('cbc')) r.push(['CBC', 'Normal']);
+        if (X.has('uhcg')) r.push(['Urine hCG', 'Negative']);
+        if (X.has('shcg')) r.push(['Serum hCG', '<5 mIU/mL (negative)']);
+        if (X.has('uds')) r.push(['Urine drug screen', 'Negative']);
+        if (X.has('etoh')) r.push(['Blood alcohol', 'Undetectable']);
+        if (X.has('ua')) r.push(['Urinalysis', 'Normal, no protein']);
+        if (X.has('a1c')) r.push(['Hemoglobin A1c', '5.1%']);
+        if (X.has('fglucose')) r.push(['Fasting glucose', '86 mg/dL']);
+        if (X.has('lipids')) r.push(['Lipids', 'LDL 98 · HDL 58 · TG 82']);
+        if (X.has('ecg')) r.push(['ECG', 'Sinus tachycardia 102, QTc 418 ms, otherwise normal']);
+        if (X.has('weight')) r.push(['Weight', '64 kg · BMI 23.5 · waist 76 cm']);
+        if (X.has('prolactin')) r.push(['Prolactin', '12 ng/mL']);
+        if (X.has('mri') || X.has('ct')) r.push([X.has('mri') ? 'MRI brain' : 'CT head', 'Normal']);
+        if (X.has('eeg')) r.push(['EEG', 'No epileptiform activity']);
+        if (X.has('lp')) r.push(['Lumbar puncture', 'Normal CSF (Dana pulled out the IV afterward)']);
+        if (X.has('lilevel')) r.push(['Lithium level', 'Undetectable — she has not taken any yet']);
+        if (X.has('bmp') || X.has('cmp')) X.trend('cr', 'Day 0', 0.8);
+        if (X.has('tsh')) X.trend('tsh', 'Day 0', 2.1);
+        if (X.has('weight') || st.flags.weightDone) X.trend('wt', 'Day 0', 64);
+        return r;
+      },
+    },
+
+    /* ======================================================== DAY 5 */
+    day5: {
+      when: 'Day 5 · 08:30', setting: 'Inpatient unit', title: 'Morning rounds',
+      budget: 26, orders: true,
+      intro(st) {
+        const ap = crAP(st);
+        const p = [];
+        if (ap) p.push('Dana slept about five hours last night. Her speech is still fast but she lets you finish sentences. She still believes the conductor is waiting for her, but she has stopped asking staff to call the radio station.');
+        else p.push('Dana slept under three hours again and paced the hall most of the night. She is still convinced the radio is broadcasting her work and has written "OPUS 1" on her arm.');
+        if (st.flags.teamLi) p.push('(The team added lithium on day 1.)');
+        if (st.flags.peak) p.push('This morning’s lithium level is back: 1.4 mEq/L, drawn 2 hours after her 08:00 dose.');
+        else {
+          p.push('This morning’s lithium level is back: 0.6 mEq/L, a 12-hour trough.');
+          if (st.flags.lvlday === 'd1') p.push('(The day-1 level was 0.3, before steady state, so it could not guide dosing.)');
+          if (st.flags.lvlday === 'd10' || st.flags.lvlday === 'none') p.push('(No level had been ordered. The night nurse drew a trough under unit protocol.)');
+        }
+        return p;
+      },
+      vitals: st => ({ HR: '88', BP: st.meds.quetiapine ? '112/70' : '118/74', T: '36.9 °C', SpO2: '99%' }),
+      meters: st => crAP(st) ? [['Mania', 6], ['Psychosis', 4], ['Sleep', 4, '5 h'], ['Insight', 3]] : [['Mania', 8], ['Psychosis', 6], ['Sleep', 2, '<3 h'], ['Insight', 1]],
+      onEnter(st) {
+        if (!st.flags.peak) st.labs.li.push({ t: 'Day 5', v: 0.6 });
+        else st.labs.li.push({ t: 'Day 5 (2-h peak)', v: 1.4, peak: true });
+      },
+      interview: st => [
+        { id: 'feel', who: 'Dana', q: 'How are you feeling today?', a: crAP(st) ? '"Calmer. Annoyed. The music is quieter, which I hate."' : '"I’m losing time in here. The orchestra can’t wait forever."', tag: 'use' },
+        { id: 'sleep5', who: 'Dana', q: 'How are you sleeping?', a: crAP(st) ? '"Five hours. It felt like a coma."' : '"I don’t. I write."', tag: 'ess' },
+        { id: 'psych5', who: 'Dana', q: 'Is the radio still sending you messages?', a: crAP(st) ? '"Less. Maybe I was reading into it. Maybe."' : '"Every hour on the hour."', tag: 'ess' },
+        { id: 'si5', who: 'Dana', q: 'Any thoughts of hurting yourself?', a: '"No."', tag: 'ess' },
+        { id: 'se5', who: 'Dana', q: 'Any side effects bothering you?', a: '"My hands shake when I hold my coffee. I’m thirsty all the time and up twice a night to pee. A little queasy after the morning pills."', tag: 'use' },
+      ],
+      assess: st => {
+        const a = [
+          { id: 'tremor', label: 'Tremor & cerebellar exam', find: 'Fine, symmetric postural tremor of both hands. No ataxia, dysarthria or clonus.', tag: 'ess', cost: 2 },
+          { id: 'gi', label: 'GI symptoms', find: 'Mild nausea after the morning dose; no vomiting or diarrhea.', tag: 'use', cost: 1 },
+          { id: 'thirst', label: 'Thirst & urine output', find: 'Drinking about 3 L a day; nocturia twice a night.', tag: 'use', cost: 1 },
+          { id: 'cog5', label: 'Orientation & attention', find: 'Fully oriented; attention better than on admission.', tag: 'use', cost: 1 },
+          { id: 'eps', label: 'Akathisia / EPS exam', find: st.meds.aripiprazole ? 'She can’t stay seated: crosses and uncrosses her legs, shifts her weight standing, describes an inner "jittery" feeling that started two days after aripiprazole. No rigidity.' : (st.meds.haloperidol && !st.meds.benztropine ? 'Cogwheel rigidity at both wrists. On day 2 the night team gave diphenhydramine for a sustained neck twist.' : 'No akathisia, rigidity or abnormal movements.'), tag: (st.meds.aripiprazole || st.meds.haloperidol) ? 'ess' : 'use', cost: 2, set: st.meds.aripiprazole ? { sawAkathisia: true } : (st.meds.haloperidol ? { sawEps: true } : null) },
+          { id: 'ortho', label: 'Orthostatic vitals', find: st.meds.quetiapine ? 'Lying 116/72 → standing 100/64, HR 84 → 102; lightheaded on standing.' : 'No orthostatic change.', tag: 'use', cost: 1 },
+        ];
+        return a;
+      },
+      plan: st => {
+        const p = [
+          { id: 'next', prompt: 'Next lithium level', type: 'one', options: [
+            ['5d', 'About 5 days after any dose change, as a 12-hour trough'], ['tom', 'Tomorrow morning'], ['dc', 'No more levels until after discharge'],
+          ] },
+        ];
+        if (st.flags.sawAkathisia || st.assessed.includes('eps') && st.meds.aripiprazole) p.unshift({ id: 'restless', prompt: 'Her restlessness is most likely…', type: 'one', options: [
+          ['akath', 'Akathisia from aripiprazole'], ['mania', 'Persistent mania'], ['anx', 'Anxiety about being in hospital'],
+        ] });
+        return p;
+      },
+      pimp: { q: 'You raise the lithium dose today. Roughly when will a trough reflect the new steady state?', options: ['Tomorrow', 'In about 5 days', 'In about 3 weeks'], correct: 1, why: 'Steady state takes about 4–5 half-lives. With a half-life of 18–36 hours that is roughly 3–7 days, so by convention a trough is drawn about 5 days after every change.', refs: ['label', 'canmat'] },
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        const inc = X.act('lithium') === 'increase', dec = X.act('lithium') === 'decrease', stop = X.act('lithium') === 'stop' || X.act('lithium') === 'hold';
+        if (st.flags.peak) {
+          if (X.has('lilevel')) X.log('good', 'Repeated the level as a 12-hour trough.', 'A 2-hour post-dose level is a peak and can’t be compared with the 0.8–1.2 mEq/L acute range. The repeat trough is 0.6.', ['label'], true);
+          else X.log('miss', 'Didn’t repeat the 2-hour level as a trough.', 'Dosing decisions need a 12-hour trough.', ['label'], true);
+          if (dec) X.log('bad', 'Lowered lithium based on a 2-hour peak.', 'The true trough was 0.6, already below target. Lowering it leaves her undertreated.', ['label']);
+          if (inc && !X.has('lilevel')) X.log('miss', 'Raised lithium without an interpretable level.', 'It turned out right (the trough was 0.6), but only by luck.', ['label']);
+          if (inc && X.has('lilevel')) X.log('good', 'Increased lithium once the trough came back at 0.6.', 'Below the acute target of 0.8–1.2 mEq/L.', ['label', 'canmat']);
+        } else {
+          if (inc) X.log('good', 'Increased lithium.', 'A trough of 0.6 mEq/L is below the acute-mania target of 0.8–1.2, and she is still manic. Her tremor is mild and expected.', ['label'], true);
+          else if (dec) X.log('bad', 'Decreased lithium at a level of 0.6.', 'She is below the acute target and still manic. Fine tremor, thirst and mild nausea are expected early effects, not toxicity.', ['label']);
+          else if (!stop) X.log('miss', 'Left lithium unchanged at 0.6.', 'Acute mania targets 0.8–1.2 mEq/L. 0.6 is at most a maintenance level (ISBD/IGSLi 0.60–0.80), and she isn’t better yet.', ['canmat', 'nolen'], true);
+        }
+        if (stop) {
+          return { next: 'day10', critical: {
+            title: 'Lithium stopped mid-mania',
+            narrative: 'Dana is relieved to be off "the shaky pill." Two days later she is sleeping three hours again.',
+            why: 'Fine postural tremor, thirst, polyuria and mild nausea are common early, dose-related effects at therapeutic levels, not toxicity. Toxicity looks different: coarse tremor, ataxia, dysarthria, confusion, vomiting and diarrhea. The level is 0.6, below target. Keep lithium; reassure her, and use propranolol if the tremor really bothers her.',
+            refs: ['label'],
+            log: 'Stopped lithium because of expected early side effects.',
+            correct: s => { s.meds.lithium = { status: 'active', since: 'Day 6' }; s.liDose = 2; return 'day10'; },
+          } };
+        }
+        // antipsychotic coverage
+        const had = crAP(st);
+        const newAp = X.startedAny(CR_GROUPS.antimanicAP);
+        if (!had) {
+          if (newAp && !crRefuses(newAp)) crScoreAddedAP(X, newAp);
+          else if (newAp) { st.flags.apRefused = newAp; X.log('miss', 'Added olanzapine; she refuses it.', 'It caused a 30-lb weight gain at 22. Pick an agent she will take.', ['canmat'], true); }
+          else X.log('miss', 'No antipsychotic despite persistent psychosis.', 'Lithium alone is slow; after five days of psychosis and almost no sleep, add an antipsychotic (CANMAT first-line combination).', ['canmat'], true);
+        }
+        // akathisia / EPS
+        if (st.meds.aripiprazole) {
+          if (!X.assessed('eps')) X.log('miss', 'Didn’t examine for akathisia on aripiprazole.', 'Akathisia is common with aripiprazole and looks like persistent manic restlessness. Missing it leads to raising the dose, which makes it worse.', [], true);
+          else {
+            const r = X.plan('restless');
+            if (r === 'akath') X.log('good', 'Recognized akathisia.', 'Inner restlessness with constant leg movement that began after aripiprazole is akathisia, not mania.', [], true);
+            else X.log('miss', 'Read akathisia as ' + (r === 'mania' ? 'mania' : 'anxiety') + '.', 'Inner restlessness with constant leg movement that started after aripiprazole is akathisia.', [], true);
+            if (X.started('propranolol') || X.act('aripiprazole') === 'decrease' || X.act('aripiprazole') === 'stop' || X.started('quetiapine') || X.started('risperidone')) X.log('good', 'Treated the akathisia.', 'Lowering or switching the antipsychotic, or adding propranolol, are the usual first steps.', [], true);
+            else X.log('miss', 'Didn’t treat the akathisia.', 'Lower or switch the antipsychotic, or add propranolol.', [], true);
+            if (X.act('aripiprazole') === 'increase') X.log('bad', 'Raised aripiprazole.', 'More drug, more akathisia.', []);
+          }
+        }
+        if (st.meds.haloperidol) {
+          if (X.assessed('eps') && (X.started('benztropine') || X.act('haloperidol') === 'stop' || X.startedAny(CR_GROUPS.sgaCombo))) X.log('good', 'Addressed haloperidol EPS.', 'Add an anticholinergic or switch to a second-generation agent.', [], true);
+          else X.log('miss', 'Missed or left haloperidol EPS untreated.', 'She has rigidity and had acute dystonia; add benztropine or switch to an SGA.', [], true);
+        }
+        if (X.started('benztropine') && !st.meds.haloperidol) X.log('low', 'Started benztropine.', 'Anticholinergics don’t treat lithium tremor or akathisia well, and they add side effects.', []);
+        if (X.started('propranolol') && !st.meds.aripiprazole) X.log('ok', 'Started propranolol for tremor.', 'Reasonable if the tremor bothers her; mild fine tremor often needs only reassurance and avoiding excess caffeine.', []);
+        const n = X.plan('next');
+        if (n === '5d') X.log('good', 'Next trough about 5 days after the change.', 'Check levels after every dose change, once the new steady state is reached.', ['label'], true);
+        else if (n === 'tom') X.log('miss', 'Next level tomorrow.', 'Tomorrow’s level won’t reflect the new dose; steady state takes about 5 days.', ['label'], true);
+        else X.log('bad', 'No level until after discharge.', 'Check after every dose change until she is stable on a known level.', ['label', 'isbdmon']);
+        return { next: null }; // decided in after()
+      },
+      after(st) {
+        const ready = !!crAP(st) && st.liDose >= 2 && st.meds.lithium && st.meds.lithium.status === 'active';
+        return ready ? 'discharge' : 'day10';
+      },
+      results: (st, X) => {
+        const r = [];
+        if (st.flags.peak && X.has('lilevel')) { r.push(['Lithium (12-h trough)', '0.6 mEq/L', 'lo']); X.trend('li', 'Day 5 trough', 0.6); }
+        if (X.has('bmp') || X.has('cmp')) { r.push(['Creatinine', '0.8 mg/dL']); X.trend('cr', 'Day 5', 0.8); }
+        if (X.has('tsh')) r.push(['TSH', '2.3 mIU/L']);
+        return r;
+      },
+    },
+
+    /* ======================================================== DAY 10 (not ready) */
+    day10: {
+      when: 'Day 10 · 08:30', setting: 'Inpatient unit', title: 'Not ready yet',
+      budget: 16, orders: true,
+      intro(st) {
+        const lvl = crLiLevel(st);
+        return [
+          'The nurses say Dana is still up most nights, and she walked out of group therapy twice yesterday to "rehearse."',
+          'Lithium trough today: ' + crFmt(lvl) + ' mEq/L.' + (crAP(st) ? '' : ' She is not on an antipsychotic.'),
+          'The attending: "We’re ten days in. What are we changing?"',
+        ];
+      },
+      onEnter(st) { st.labs.li.push({ t: 'Day 10', v: crLiLevel(st) }); },
+      vitals: () => ({ HR: '90', BP: '120/76', T: '36.8 °C', SpO2: '99%' }),
+      meters: () => [['Mania', 7], ['Psychosis', 5], ['Sleep', 3, '3–4 h'], ['Insight', 2]],
+      interview: () => [
+        { id: 'sleep10', who: 'Dana', q: 'How did you sleep?', a: '"Three hours. Maybe four."', tag: 'ess' },
+        { id: 'si10', who: 'Dana', q: 'Any thoughts of hurting yourself?', a: '"No."', tag: 'ess' },
+      ],
+      assess: () => [
+        { id: 'tremor10', label: 'Tremor & cerebellar exam', find: 'Fine postural tremor; no ataxia or dysarthria.', tag: 'use', cost: 2 },
+      ],
+      plan: () => [
+        { id: 'next', prompt: 'Next lithium level', type: 'one', options: [['5d', 'About 5 days after any dose change, as a 12-hour trough'], ['tom', 'Tomorrow morning'], ['dc', 'No more levels until after discharge']] },
+      ],
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        let fixed = true;
+        if (st.liDose < 2) {
+          if (X.act('lithium') === 'increase') X.log('good', 'Raised lithium toward the acute target.', 'Acute target 0.8–1.2 mEq/L.', ['label'], true);
+          else { fixed = false; X.log('miss', 'Lithium still below target on day 10.', 'Acute target 0.8–1.2 mEq/L.', ['label'], true); }
+        }
+        if (!crAP(st)) {
+          const a = X.startedAny(CR_GROUPS.antimanicAP);
+          if (a && !crRefuses(a)) crScoreAddedAP(X, a);
+          else { fixed = false; X.log('miss', 'Still no antipsychotic on day 10.', 'Persistent psychotic mania: add an antipsychotic to lithium.', ['canmat'], true); }
+        }
+        if (X.plan('next') === '5d') X.log('good', 'Trough about 5 days after the change.', 'Steady state is about 5 days.', ['label'], true);
+        else X.log('miss', 'Level timing after the change.', 'Recheck a trough about 5 days after each change.', ['label'], true);
+        st.flags.extended = true;
+        if (!fixed) return { next: 'discharge', critical: {
+          title: 'Two weeks of undertreated mania',
+          narrative: 'Day 14: Dana has slept a total of 20 hours in four nights. The unit calls a staff assist when she tries to leave through a fire door.',
+          why: 'Mania that isn’t improving after 1–2 weeks calls for optimizing: raise lithium into the 0.8–1.2 range and add or switch antipsychotics. CANMAT expects some response within 1–2 weeks of an adequate dose.',
+          refs: ['canmat', 'label'],
+          log: 'Left inadequate treatment unchanged on day 10.',
+          correct: s => { s.liDose = Math.max(2, s.liDose); if (!s.meds.lithium) s.meds.lithium = { status: 'active', since: 'Day 14' }; s.meds.lithium.status = 'active'; if (!crAP(s)) s.meds.quetiapine = { status: 'active', since: 'Day 14' }; return 'discharge'; },
+        } };
+        return { next: 'discharge' };
+      },
+    },
+
+    /* ======================================================== DISCHARGE */
+    discharge: {
+      when: st => st.flags.extended ? 'Day 15 · 10:00' : 'Day 10 · 10:00', setting: 'Inpatient unit', title: 'Discharge planning',
+      budget: 30, orders: true,
+      intro(st) {
+        const lvl = crLiLevel(st);
+        return [
+          'Dana slept seven hours last night. She hasn’t mentioned the radio in three days, and this morning she said, quietly, "I’m really embarrassed about the credit card."',
+          'Lithium trough: ' + crFmt(lvl) + ' mEq/L. Megan will stay with her for the first week home.',
+          'Write the discharge plan: medications, what she needs to know, and when you will see her.',
+        ];
+      },
+      onEnter(st) { st.labs.li.push({ t: st.flags.extended ? 'Day 15' : 'Day 10', v: crLiLevel(st) }); },
+      vitals: () => ({ HR: '76', BP: '116/72', T: '36.8 °C', SpO2: '99%' }),
+      meters: () => [['Mania', 2], ['Psychosis', 0], ['Sleep', 7, '7 h'], ['Insight', 7]],
+      interview: st => [
+        { id: 'sidc', who: 'Dana', q: 'Any thoughts of hurting or killing yourself now that things are slowing down?', a: '"No. Embarrassed, not hopeless. I want to get back to my kids at school."', tag: 'ess' },
+        { id: 'adher', who: 'Dana', q: 'How do you feel about staying on these medications?', a: '"I’ll take the lithium. Mom swears by it. I don’t love the shaky hands."', tag: 'use' },
+        { id: 'pain', who: 'Dana', q: 'What do you take at home for pain or cramps?', a: '"Ibuprofen. Six hundred, three or four times a day for a few days every month. Is that a problem?"', tag: st.flags.knowIbu ? 'use' : 'ess', note: 'Ibuprofen 600 mg 3–4×/day during menses', set: { knowIbu: true } },
+        { id: 'contra', who: 'Dana', q: 'Are you sexually active? What do you use for contraception?', a: '"Condoms. Mostly. I’ve thought about an IUD."', tag: 'use', set: { knowContra: true } },
+        { id: 'home', who: 'Megan (sister)', q: 'What’s the plan for the first week at home?', a: '"I’m staying with her. I’ll hold the car keys until you say otherwise."', tag: 'use' },
+        { id: 'relapse', who: 'Dana', q: 'What early warning signs would tell you you’re getting sick again?', a: '"Sleeping less and not feeling tired. Composing at 3 a.m. Spending."', tag: 'use' },
+      ],
+      assess: st => [
+        { id: 'psychdc', label: 'Mental status exam', find: 'Euthymic, linear, no delusions; insight partial and improving.', tag: 'ess', cost: 2 },
+        { id: 'tremordc', label: 'Tremor & cerebellar exam', find: st.liDose >= 3 ? 'Fine tremor, more noticeable than last week; no ataxia.' : 'Fine postural tremor; no ataxia.', tag: 'use', cost: 2 },
+        { id: 'wtdc', label: 'Weight', find: '65 kg (+1 kg since admission).', tag: 'use', cost: 1, set: { wt10: true } },
+      ],
+      plan: st => [
+        { id: 'counsel', prompt: 'Discharge teaching (choose all you will cover)', type: 'many', options: [
+          ['nsaid', 'Avoid ibuprofen, naproxen and other NSAIDs; use acetaminophen for cramps'],
+          ['sick', 'If vomiting, diarrhea, fever or unable to drink: hold lithium and call'],
+          ['tox', 'Warning signs of toxicity: coarse tremor, unsteadiness, slurred speech, confusion'],
+          ['nostop', 'Don’t stop lithium suddenly; relapse risk rises after abrupt stops'],
+          ['others', 'Tell every prescriber you take lithium (ACE inhibitors, ARBs and diuretics raise levels)'],
+          ['salt', 'Keep salt and fluid intake steady; no crash diets'],
+          ['dairy', 'Avoid dairy products with lithium'],
+          ['double', 'If you miss a dose, double the next one'],
+          ['stopwell', 'You can stop once you have felt well for a month'],
+        ] },
+        { id: 'contraplan', prompt: 'Contraception', type: 'one', options: [
+          ['refer', 'Discuss pregnancy planning; offer a referral for an IUD or implant'],
+          ['none', 'No change needed; lithium doesn’t interact with contraception'],
+          ['never', 'Tell her she can never become pregnant while taking lithium'],
+        ] },
+        { id: 'fu', prompt: 'First outpatient psychiatry visit', type: 'one', options: [['7d', 'Within 7 days of discharge'], ['30d', 'In about 1 month'], ['3m', 'In 3 months']] },
+        { id: 'lvl', prompt: 'First outpatient lithium level', type: 'one', options: [['1w', 'About 1 week after discharge'], ['1m', 'At 1 month'], ['3m', 'At 3 months']] },
+      ],
+      pimp: { q: 'Ibuprofen raises lithium levels mainly by…', options: ['Reducing prostaglandin-dependent renal blood flow and lithium clearance', 'Inhibiting CYP3A4 metabolism of lithium', 'Displacing lithium from plasma proteins'], correct: 0, why: 'Lithium isn’t metabolized or protein-bound; the kidneys clear it unchanged. NSAIDs reduce renal blood flow and lithium clearance, so levels climb, sometimes into the toxic range.', refs: ['label'] },
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        const liStop = ['stop', 'hold'].includes(X.act('lithium'));
+        const ap = crAP(st);
+        const apStop = ap && ['stop', 'hold'].includes(X.act(ap));
+        if (liStop) X.log('bad', 'Stopped lithium at discharge.', 'She responded to it, it is a first-line maintenance agent (VA/DoD strong recommendation), and her mother has had 20 years of response.', ['vadod']);
+        else if (apStop) X.log('miss', 'Stopped ' + crDrug(ap) + ' at discharge.', 'CANMAT advises continuing the regimen that produced the acute response, and lithium plus quetiapine or aripiprazole is a first-line maintenance combination. Stopping the antipsychotic days after psychosis cleared raises early-relapse risk.', ['canmat', 'vadod'], true);
+        else X.log('good', 'Continued the regimen that worked.', 'Continue the acute regimen into maintenance. CANMAT’s first-line maintenance options include lithium, and lithium plus quetiapine or aripiprazole; VA/DoD strongly recommends lithium or quetiapine to prevent mania.', ['canmat', 'vadod'], true);
+        if (X.act('lithium') === 'increase' && st.liDose >= 2) X.log('low', 'Raised lithium at discharge.', 'Her trough is already in range and she is in remission; there is no reason to push the level higher.', ['nolen']);
+        const c = X.planSet('counsel');
+        X.ess(c.includes('nsaid'), 'Counseled: avoid NSAIDs, use acetaminophen.', 'She takes ibuprofen 600 mg several times a day every month. NSAIDs reduce lithium clearance and raise levels.', ['label']);
+        X.ess(c.includes('sick'), 'Counseled: hold lithium and call when sick or dehydrated.', 'Vomiting, diarrhea, fever and poor intake cause sodium and volume loss, so the kidneys reabsorb more lithium.', ['label']);
+        X.ess(c.includes('tox'), 'Taught the signs of toxicity.', 'The label lists early toxicity signs (diarrhea, vomiting, tremor, drowsiness, weakness, poor coordination). Patients who know them seek care early.', ['label']);
+        X.ess(c.includes('nostop'), 'Counseled: don’t stop lithium abruptly.', 'Recurrence risk is greater after rapid than gradual discontinuation.', ['viguera']);
+        if (c.includes('others')) X.log('good', 'Told her to flag lithium to every prescriber.', 'ACE inhibitors, ARBs, thiazides and NSAIDs all raise lithium levels.', ['label']);
+        if (c.includes('salt')) X.log('good', 'Counseled steady salt and fluid intake.', 'Sodium restriction raises lithium levels; big swings in intake change clearance.', ['label']);
+        if (c.includes('dairy')) X.log('low', 'Taught "avoid dairy."', 'No such interaction; it adds a rule she doesn’t need.', []);
+        if (c.includes('double')) X.log('bad', 'Taught "double the next dose."', 'Never double up a lithium dose; it risks a toxic peak. If she misses a dose she shouldn’t make it up; she should call for instructions (FDA Medication Guide).', ['label']);
+        if (c.includes('stopwell')) X.log('bad', 'Taught that she can stop after a month of feeling well.', 'Bipolar I with two manic episodes needs maintenance treatment, and stopping lithium carries a high recurrence risk.', ['vadod', 'viguera']);
+        const cp = X.plan('contraplan');
+        if (cp === 'refer') X.log('good', 'Raised pregnancy planning and offered highly effective contraception.', 'She uses condoms "mostly." Lithium carries a modest first-trimester cardiac risk (Patorno 2017), so pregnancies should be planned with her psychiatrist.', ['patorno', 'vadod'], true);
+        else if (cp === 'none') X.log('miss', 'No contraception discussion.', 'Lithium doesn’t weaken contraception, but the issue is an unplanned first-trimester exposure. She uses condoms "mostly."', ['patorno'], true);
+        else X.log('bad', 'Told her she can never be pregnant on lithium.', 'Overstated. The absolute cardiac malformation risk was 2.4% versus 1.2% unexposed (Patorno 2017), and VA/DoD supports continuing lithium in pregnancy through shared decision-making.', ['patorno', 'vadod']);
+        const fu = X.plan('fu');
+        if (fu === '7d') X.log('good', 'Follow-up within 7 days.', 'Suicide risk is highest in the first weeks after psychiatric discharge (Chung 2017), and 7-day follow-up after psychiatric hospitalization is a national quality measure (HEDIS FUH).', ['chung', 'ncqa'], true);
+        else X.log(fu === '30d' ? 'miss' : 'bad', 'First visit ' + (fu === '30d' ? 'in a month' : 'in 3 months') + '.', 'See her within 7 days of discharge (HEDIS FUH). The weeks after discharge are high-risk for relapse and suicide.', ['ncqa'], fu === '30d');
+        const lv = X.plan('lvl');
+        if (lv === '1w') X.log('good', 'Level about a week after discharge.', 'Diet, fluids, activity and adherence all change at home. The label calls for rechecking after changes in intake, activity or co-medications until she is stable.', ['label'], true);
+        else X.log(lv === '1m' ? 'miss' : 'bad', 'First outpatient level ' + (lv === '1m' ? 'at a month' : 'at 3 months') + '.', 'Recheck within about a week of a change in setting, and regularly until stable.', ['label', 'isbdmon'], lv === '1m');
+        st.flags.counsel = c; st.flags.iud = cp === 'refer';
+        st.flags.lvl1w = lv === '1w';
+        if (!c.includes('nsaid')) return { next: 'clinic2tox' };
+        return { next: 'clinic2' };
+      },
+      results: (st, X) => {
+        const r = [];
+        if (X.has('bmp') || X.has('cmp')) { r.push(['Creatinine', '0.8 mg/dL']); X.trend('cr', 'Discharge', 0.8); }
+        if (X.has('lilevel')) r.push(['Lithium', crFmt(crLiLevel(st)) + ' mEq/L']);
+        if (st.flags.wt10 || X.has('weight')) X.trend('wt', 'Discharge', 65);
+        return r;
+      },
+    },
+
+    /* ======================================================== WEEK 2 (well) */
+    clinic2: {
+      when: 'Week 2 after discharge', setting: 'Outpatient clinic', title: 'First follow-up',
+      budget: 24, orders: true,
+      intro(st) {
+        const sick = !(st.flags.counsel || []).includes('sick');
+        const p = ['Dana is back teaching three mornings a week. She is sleeping 7–8 hours and brought a thank-you card for the unit nurses.'];
+        p.push(sick ? 'She mentions a stomach bug last week: two days of vomiting. She kept taking every lithium dose "because you said never to stop it." Her week-1 level was 1.2 mEq/L, drawn on the second day of the bug; she felt "wobbly" for a day.'
+          : 'She had cramps last week and took acetaminophen "like you said."');
+        p.push(st.flags.lvl1w ? 'Week-1 lithium trough: ' + (sick ? '1.2' : crFmt(crLiLevel(st, true))) + ' mEq/L.' : 'No lithium level has been drawn since discharge.');
+        return p;
+      },
+      onEnter(st) {
+        const sick = !(st.flags.counsel || []).includes('sick');
+        if (st.flags.lvl1w) st.labs.li.push({ t: 'Week 1', v: sick ? 1.2 : crLiLevel(st, true) });
+      },
+      vitals: () => ({ HR: '74', BP: '114/70', T: '36.7 °C', SpO2: '99%' }),
+      meters: () => [['Mania', 1], ['Psychosis', 0], ['Sleep', 8, '7–8 h'], ['Mood', 6]],
+      interview: st => [
+        { id: 'mood2', who: 'Dana', q: 'How has your mood been?', a: '"Flat-ish. Normal, I guess. I miss the music being loud, honestly."', tag: 'use' },
+        { id: 'sleep2', who: 'Dana', q: 'How are you sleeping?', a: '"Seven or eight hours. Sometimes nine."', tag: 'ess' },
+        { id: 'si2', who: 'Dana', q: 'Any thoughts of hurting yourself?', a: '"No."', tag: 'ess' },
+        { id: 'adh2', who: 'Dana', q: 'Have you missed any doses?', a: '"One, maybe. Megan counts the pills."', tag: 'ess' },
+        { id: 'se2', who: 'Dana', q: 'Any side effects?', a: '"Shaky when I’m tired. Thirsty. Up once a night to pee."', tag: 'use' },
+        { id: 'contra2', who: 'Dana', q: 'Did you get to the contraception appointment?', a: st.flags.iud ? '"IUD went in last Thursday. Ow, but done."' : '"Didn’t know I needed one."', tag: 'use', set: st.flags.iud ? { iudIn: true } : null },
+        { id: 'warn2', who: 'Dana', q: 'Any early warning signs: less sleep, racing thoughts, spending?', a: '"None. Megan would tell you."', tag: 'use' },
+      ],
+      assess: () => [
+        { id: 'tremor2', label: 'Tremor & cerebellar exam', find: 'Fine postural tremor; no ataxia.', tag: 'use', cost: 2 },
+        { id: 'wt2', label: 'Weight', find: '66 kg (+2 kg since admission).', tag: 'use', cost: 1, set: { wt2: true } },
+        { id: 'mse2', label: 'Mental status exam', find: 'Euthymic to mildly flat; linear; no psychosis.', tag: 'use', cost: 2 },
+      ],
+      plan: st => [
+        CR_LABS3,
+        { id: 'next2', prompt: 'Next visit', type: 'one', options: [['6w', 'In 4–6 weeks'], ['3m', 'In 3 months'], ['6m', 'In 6 months']] },
+      ],
+      pimp: { q: 'Lithium-induced nephrogenic diabetes insipidus is classically treated with which drug?', options: ['Amiloride', 'Furosemide', 'Desmopressin'], correct: 0, why: 'Lithium enters collecting-duct cells through ENaC channels and downregulates aquaporin-2. Amiloride blocks ENaC and limits that entry. (Thiazides also reduce polyuria, but they raise lithium levels.)', refs: ['label'] },
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        const sick = !(st.flags.counsel || []).includes('sick');
+        if (sick) X.log('note', 'The stomach bug raised her level to 1.2.', 'Without "hold lithium when you can’t keep fluids down" teaching, she kept dosing through two days of vomiting. Lucky this time.', ['label']);
+        if (['stop', 'hold'].includes(X.act('lithium'))) X.log('bad', 'Stopped lithium at week 2.', 'She is in early remission on it.', ['vadod']);
+        crScoreOutpatientLevel(st, X);
+        if (X.startedAny(CR_GROUPS.antidepressant)) X.log('bad', 'Started an antidepressant for "flat" mood.', 'Mild flatness two weeks after mania is common. VA/DoD finds insufficient evidence for antidepressants in acute bipolar depression, and they can destabilize mood.', ['vadod']);
+        crScoreLabs3(st, X);
+        const nx = X.plan('next2');
+        if (nx === '6w') X.log('good', 'Next visit in 4–6 weeks.', 'Early remission after a psychotic manic episode warrants close follow-up.', ['vadod'], true);
+        else if (nx === '3m') X.log('ok', 'Next visit in 3 months.', 'A bit long this soon after a hospitalization; 4–6 weeks is more typical.', [], true);
+        else X.log('bad', 'Next visit in 6 months.', 'Far too long in the first months after a psychotic manic episode.', []);
+
+        return { next: 'month3' };
+      },
+      results: (st, X) => {
+        const r = [];
+        if (X.has('lilevel')) { r.push(['Lithium', crFmt(crLiLevel(st, true)) + ' mEq/L']); if (!st.flags.lvl1w) X.trend('li', 'Week 2', crLiLevel(st, true)); }
+        if (X.has('bmp') || X.has('cmp')) { r.push(['Creatinine', '0.8 mg/dL']); X.trend('cr', 'Week 2', 0.8); }
+        if (X.has('tsh')) { r.push(['TSH', '3.9 mIU/L']); X.trend('tsh', 'Week 2', 3.9); }
+        if (st.flags.wt2 || X.has('weight')) X.trend('wt', 'Week 2', 66);
+        return r;
+      },
+    },
+
+    /* ======================================================== WEEK 2 (toxic) */
+    clinic2tox: {
+      when: 'Week 2 after discharge', setting: 'Outpatient clinic', title: 'First follow-up',
+      budget: 20, orders: true,
+      onEnter(st) { st.meds.ibuprofen = { status: 'active', since: 'Home (OTC)', home: true }; },
+      intro: () => [
+        'Megan walks Dana in by the elbow. "She’s not right. She’s wobbly, and her hands are shaking so much she spilled coffee down her shirt."',
+        'Dana is pale and slow to answer. She says she has had three days of diarrhea and nausea.',
+      ],
+      vitals: () => ({ HR: '58', BP: '104/64', T: '37.2 °C', SpO2: '98%' }),
+      meters: () => [['Mania', 1], ['Psychosis', 0], ['Sleep', 6, 'fitful'], ['Mood', 4]],
+      interview: () => [
+        { id: 'tdose', who: 'Dana', q: 'Have you been taking your lithium as prescribed?', a: '"Every dose. Even when I was sick. You said never to stop it."', tag: 'ess' },
+        { id: 'tmeds', who: 'Dana', q: 'Any other medicines or painkillers in the last week?', a: '"Ibuprofen. Six hundred, three or four times a day. My period was awful."', tag: 'ess', note: 'Took ibuprofen 600 mg 3–4×/day for ~5 days', set: { knowIbu: true } },
+        { id: 'tgi', who: 'Dana', q: 'Vomiting or diarrhea? Able to drink?', a: '"Diarrhea for three days. I can’t keep much down."', tag: 'ess' },
+        { id: 'tod', who: 'Dana', q: 'Did you take any extra lithium, on purpose or by accident?', a: '"No. God, no."', tag: 'ess' },
+        { id: 'tconf', who: 'Megan (sister)', q: 'Has she been confused?', a: '"Slower. She asked me the same question twice this morning."', tag: 'use' },
+      ],
+      assess: () => [
+        { id: 'tneuro', label: 'Neurologic exam', find: 'Coarse tremor of both hands, wide-based unsteady gait, mild dysarthria. No clonus. Oriented but slowed.', tag: 'ess', cost: 3 },
+        { id: 'tvol', label: 'Volume status', find: 'Dry mucous membranes; orthostatic dizziness.', tag: 'use', cost: 1 },
+      ],
+      plan: () => [
+        { id: 'tdispo', prompt: 'What now?', type: 'one', options: [
+          ['ed', 'Send her to the ED now for a stat lithium level, BMP and ECG'],
+          ['hold', 'Hold tonight’s dose and recheck a level next week'],
+          ['lower', 'Lower the lithium dose and see her in 2 weeks'],
+          ['prop', 'Add propranolol for the tremor; continue lithium'],
+        ] },
+      ],
+      pimp: { q: 'Which pattern points to lithium toxicity rather than expected side effects?', options: ['Coarse tremor, ataxia, dysarthria, vomiting/diarrhea, slowed thinking', 'Fine postural tremor, thirst, mild nausea after doses', 'Weight gain and acne'], correct: 0, why: 'Fine tremor, polyuria and mild nausea are common at therapeutic levels. Coarse tremor, cerebellar signs, GI losses and confusion are toxicity until proven otherwise.', refs: ['label'] },
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        if (X.plan('tdispo') === 'ed') {
+          X.log('good', 'Recognized possible lithium toxicity and sent her to the ED.', 'Coarse tremor, ataxia, dysarthria and GI losses in someone on lithium plus an NSAID need a stat level, electrolytes, creatinine and an ECG, today.', ['label'], true);
+          return { next: 'ed' };
+        }
+        return { next: 'ed', critical: {
+          title: 'Lithium toxicity sent home',
+          narrative: 'Two days later Megan finds Dana confused and vomiting on the bathroom floor. EMS brings her in.',
+          why: 'Ibuprofen, diarrhea and volume loss on lithium, with coarse tremor, ataxia and dysarthria, is lithium toxicity until a stat level proves otherwise. That isn’t an outpatient problem.',
+          refs: ['label', 'extrip'],
+          log: 'Managed probable lithium toxicity as an outpatient.',
+          correct: s => { s.flags.lateTox = true; return 'ed'; },
+        } };
+      },
+    },
+
+    /* ======================================================== ED (toxicity) */
+    ed: {
+      when: 'Week 2 · ED', setting: 'Emergency department', title: 'Lithium toxicity',
+      budget: 14, orders: true,
+      onEnter(st) {
+        st.meds.ibuprofen = st.meds.ibuprofen || { status: 'active', since: 'Home (OTC)', home: true };
+        const late = st.flags.lateTox;
+        st.labs.li.push({ t: 'Week 2 ED', v: late ? 2.9 : 2.1 });
+        st.labs.cr.push({ t: 'Week 2 ED', v: late ? 1.9 : 1.5 });
+      },
+      intro: st => st.flags.lateTox ? [
+        'Dana is confused, disoriented to date and place, and has a coarse tremor and myoclonic jerks. Her last lithium dose was about 14 hours ago.',
+        'Stat results: lithium 2.9 mEq/L · creatinine 1.9 mg/dL (baseline 0.8) · Na 137 · ECG: sinus bradycardia 54, QTc 462 ms, diffuse T-wave flattening.',
+      ] : [
+        'Dana is oriented but slowed, with a coarse tremor and an unsteady gait. Her last lithium dose was about 14 hours ago.',
+        'Stat results: lithium 2.1 mEq/L · creatinine 1.5 mg/dL (baseline 0.8) · Na 137 · ECG: sinus bradycardia 56, QTc 452 ms, T-wave flattening.',
+      ],
+      vitals: st => ({ HR: st.flags.lateTox ? '54' : '56', BP: '102/62', T: '37.2 °C', SpO2: '98%' }),
+      meters: st => [['Toxicity', st.flags.lateTox ? 8 : 6], ['Confusion', st.flags.lateTox ? 6 : 2], ['Volume', 3, 'dry']],
+      interview: () => [
+        { id: 'elast', who: 'Dana', q: 'When was your last lithium dose?', a: '"Last night, around nine."', tag: 'use' },
+        { id: 'eod', who: 'Dana', q: 'Any chance you took extra?', a: '"No."', tag: 'use' },
+      ],
+      assess: () => [
+        { id: 'eneuro', label: 'Serial neurologic exam', find: 'Coarse tremor, ataxia, dysarthria; no seizures.', tag: 'ess', cost: 2 },
+      ],
+      plan: () => [
+        { id: 'serial', prompt: 'Repeat levels', type: 'one', options: [
+          ['q4', 'Lithium level and BMP every 4–6 hours until clearly falling and under 1.0'],
+          ['am', 'Recheck tomorrow morning'], ['none', 'No repeat needed; the cause is clear'],
+        ] },
+        { id: 'restart', prompt: 'Once she recovers', type: 'one', options: [
+          ['lower', 'Restart lithium at a lower dose once the level is <1.0 and creatinine is near baseline; trough 5 days later'],
+          ['same', 'Resume the previous dose tomorrow'],
+          ['switch', 'Stop lithium for good and switch to divalproex'],
+        ] },
+        CR_LABS3,
+      ],
+      pimp: { q: 'Under EXTRIP, which finding would make extracorporeal removal (hemodialysis) recommended regardless of the level?', options: ['Decreased level of consciousness, seizures or life-threatening dysrhythmia', 'Any coarse tremor', 'A level above 2.0 mEq/L alone'], correct: 0, why: 'EXTRIP recommends ECTR for impaired kidney function with a level >4.0, or for decreased consciousness, seizures or life-threatening dysrhythmias at any level. It suggests ECTR for a level >5.0, significant confusion, or an expected >36 hours to fall below 1.0.', refs: ['extrip'] },
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        const late = st.flags.lateTox;
+        X.ess(['hold', 'stop'].includes(X.act('lithium')), 'Held lithium.', 'First step in any lithium toxicity.', ['label', 'extrip']);
+        X.ess(['hold', 'stop'].includes(X.act('ibuprofen')), 'Stopped the ibuprofen.', 'The NSAID reduced lithium clearance, together with volume loss from diarrhea.', ['label']);
+        X.ess(X.started('ns') || X.started('lr'), 'IV isotonic fluids.', 'Restoring volume restores renal lithium clearance. (Watch sodium, and watch for lithium-induced nephrogenic DI.)', ['label', 'extrip']);
+        X.ess(X.plan('serial') === 'q4', 'Serial lithium levels and BMP.', 'Levels must be followed until clearly falling and below 1.0; redistribution out of tissue can cause rebound.', ['extrip']);
+        X.ess(X.has('tele') || X.has('ecg'), 'Cardiac monitoring.', 'Bradycardia, QT prolongation and T-wave changes occur in toxicity.', ['label']);
+        if (late) {
+          if (X.has('nephro') || X.has('hd')) X.log('good', 'Involved nephrology for extracorporeal removal.', 'Significant confusion with impaired kidney function: EXTRIP suggests extracorporeal treatment (hemodialysis preferred).', ['extrip'], true);
+          else X.log('miss', 'No nephrology or dialysis discussion.', 'She is significantly confused with an AKI: EXTRIP suggests extracorporeal treatment.', ['extrip'], true);
+        } else {
+          if (X.has('nephro')) X.log('ok', 'Consulted nephrology.', 'Reasonable with an AKI. She doesn’t meet EXTRIP criteria now, but with impaired kidneys the “expected >36 hours to fall below 1.0” criterion has to be judged from the serial levels.', ['extrip']);
+          if (X.has('hd')) X.log('low', 'Ordered hemodialysis.', 'Not indicated yet: level <4.0, alert, no seizures or dysrhythmia. Start fluids, follow serial levels, and reassess (EXTRIP also suggests dialysis if the level is expected to take >36 hours to fall below 1.0).', ['extrip']);
+        }
+        if (X.has('tox')) X.log('ok', 'Called medical toxicology / poison center.', 'Helpful for managing poisoning and for the dialysis decision.', ['extrip']);
+        if (X.started('charcoal')) X.log('bad', 'Gave activated charcoal.', 'Charcoal doesn’t bind lithium, and this is chronic toxicity, not an ingestion. It adds aspiration risk in a slowed patient.', ['bairdg']);
+        if (X.started('wbi')) X.log('bad', 'Ordered whole-bowel irrigation.', 'Considered only for large acute ingestions of sustained-release lithium. This is chronic toxicity.', ['bairdg']);
+        if (X.started('furosemide') || X.started('hctz')) X.log('bad', 'Gave a diuretic.', 'Forced diuresis doesn’t help; diuretic-induced sodium loss reduces lithium clearance further.', ['label']);
+        if (X.started('sps')) X.log('low', 'Gave sodium polystyrene sulfonate.', 'It can bind lithium in theory, but it isn’t standard care and causes hypokalemia.', ['bairdg']);
+        const rs = X.plan('restart');
+        if (rs === 'lower') X.log('good', 'Restart lower once recovered, with a trough 5 days later.', 'She has done well on lithium. With the cause removed, a lower dose with a maintenance target of 0.6–0.8 is reasonable.', ['nolen'], true);
+        else if (rs === 'same') X.log('miss', 'Resume the old dose tomorrow.', 'Wait until the level is below 1.0 and creatinine has recovered, then restart lower and recheck.', ['label'], true);
+        else X.log('bad', 'Switch to divalproex.', 'Valproate is strongly recommended against in people of childbearing potential (VA/DoD). The toxicity had a fixable cause.', ['vadod']);
+        crScoreLabs3(st, X);
+        st.flags.tox = true; st.flags.restartLow = true;
+        st.liDose = 2;
+        st.flags.counsel = (st.flags.counsel || []).concat(['nsaid']);
+        X.say(late ? 'Dana has one session of hemodialysis. Her level falls to 0.9 by the next morning, with no rebound on repeat checks. By day 3 she is lucid and embarrassed again.' : 'With fluids, her level falls to 1.7 at 6 hours, 1.2 the next morning and 0.8 by day 2, with no rebound; creatinine is 0.9 by 48 hours. She goes home on day 3 on a lower lithium dose, with a firm rule: acetaminophen, never ibuprofen.');
+        return { next: 'month3' };
+      },
+      after(st) { delete st.meds.ibuprofen; st.meds.lithium = { status: 'active', since: 'Week 2 (restarted lower)' }; if (st.meds.divalproex) delete st.meds.divalproex; if (!st.flags.lateTox) st.labs.li.push({ t: 'ED next AM', v: 1.2 }); st.labs.li.push({ t: 'ED day 2', v: st.flags.lateTox ? 0.9 : 0.8 }); st.labs.cr.push({ t: 'ED +48 h', v: 0.9 }); return 'month3'; },
+    },
+
+    /* ======================================================== MONTH 3 */
+    month3: {
+      when: 'Month 3', setting: 'Outpatient clinic', title: 'Maintenance visit',
+      budget: 24, orders: true,
+      onEnter(st) {
+        const L = st.flags.labs3 || ['li', 'cr', 'tsh'];
+        const tox = st.flags.tox;
+        if (L.includes('li')) st.labs.li.push({ t: 'Month 3', v: crLiLevel(st, true) });
+        if (L.includes('cr')) st.labs.cr.push({ t: 'Month 3', v: tox ? 0.9 : 0.8 });
+        if (L.includes('tsh')) { st.labs.tsh.push({ t: 'Month 3', v: 11.4 }); st.flags.tshKnown = true; }
+        st.labs.wt.push({ t: 'Month 3', v: crAP(st) && ['quetiapine', 'olanzapine', 'risperidone'].includes(crAP(st)) ? 67 : 65.5 });
+      },
+      intro(st) {
+        const L = st.flags.labs3 || ['li', 'cr', 'tsh'];
+        const p = [
+          'Dana has been free of mania for two months and is back teaching full time. But she says she is "dragging": sleeping ten hours, always cold, seven pounds heavier, and the joy has gone out of her lessons.',
+          'Megan, on speakerphone: "She’s not manic. She’s just… dim."',
+        ];
+        const res = [];
+        if (L.includes('li')) res.push('lithium ' + crFmt(crLiLevel(st, true)));
+        if (L.includes('cr')) res.push('creatinine ' + (st.flags.tox ? '0.9' : '0.8'));
+        if (L.includes('tsh')) res.push('TSH 11.4 mIU/L (high)');
+        if (L.includes('ca')) res.push('calcium 9.7');
+        if (L.includes('metab') && crAP(st)) res.push('A1c 5.4%, triglycerides 168, LDL 116');
+        p.push(res.length ? 'Pre-visit labs: ' + res.join(' · ') + '.' : 'No labs were ordered before this visit.');
+        return p;
+      },
+      vitals: () => ({ HR: '62', BP: '118/76', T: '36.4 °C', SpO2: '99%', Wt: '67 kg' }),
+      meters: () => [['Mania', 0], ['Psychosis', 0], ['Sleep', 10, '10 h'], ['Mood', 3]],
+      interview: () => [
+        { id: 'm3mood', who: 'Dana', q: 'Tell me about your mood.', a: '"Grey. Not hopeless. Just no color."', tag: 'ess' },
+        { id: 'm3si', who: 'Dana', q: 'Any thoughts of hurting yourself, or that life isn’t worth living?', a: '"No. Tired, not that."', tag: 'ess' },
+        { id: 'm3ros', who: 'Dana', q: 'Feeling cold, constipated, dry skin, hair changes, heavier periods?', a: '"All of it. My hair is coming out in the shower. I’m wearing a sweater in June."', tag: 'ess', note: 'Cold intolerance, constipation, dry skin, hair loss' },
+        { id: 'm3adh', who: 'Dana', q: 'Are you taking everything as prescribed?', a: '"Every night. Megan still checks."', tag: 'use' },
+        { id: 'm3warn', who: 'Dana', q: 'Any decreased need for sleep, racing thoughts or spending?', a: '"The opposite. I’d kill for some racing thoughts."', tag: 'use' },
+      ],
+      assess: () => [
+        { id: 'phq', label: 'PHQ-9', find: 'Score 11 (moderate): fatigue, hypersomnia, anhedonia, poor concentration. Item 9 = 0.', tag: 'ess', cost: 2 },
+        { id: 'thyex', label: 'Thyroid-focused exam', find: 'Dry skin, slow relaxation phase of the ankle reflexes, no goiter.', tag: 'use', cost: 2 },
+        { id: 'wt3', label: 'Weight', find: '67 kg (+3 kg since admission).', tag: 'use', cost: 1 },
+      ],
+      plan: st => st.flags.tshKnown ? [
+        { id: 'recheck', optional: true, prompt: 'If you start levothyroxine, recheck TSH in…', type: 'one', options: [['6w', '6–8 weeks'], ['1w', '1 week'], ['6m', '6 months']] },
+      ] : [],
+      pimp: { q: 'How does lithium most often cause hypothyroidism?', options: ['It inhibits release of thyroid hormone (and iodine uptake) in the gland', 'It triggers TSH-receptor-blocking antibodies', 'It suppresses pituitary TSH secretion'], correct: 0, why: 'Lithium is concentrated in the thyroid and inhibits hormone release. TSH rises, which is why TSH, not free T4 alone, is the monitoring test.', refs: ['label', 'isbdmon'] },
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        crScoreOutpatientLevel(st, X);
+        const liStop = ['stop', 'hold'].includes(X.act('lithium'));
+        const ad = X.startedAny(CR_GROUPS.antidepressant);
+        if (!(st.flags.labs3 || []).includes('tsh')) X.log('note', 'No TSH had been planned.', 'Hypothyroidism develops in a substantial minority of people on lithium, more often women, and can look exactly like bipolar depression.', ['isbdmon']);
+        if (st.flags.tshKnown) {
+          X.ess(X.started('levothyroxine'), 'Started levothyroxine.', 'TSH 11.4 with cold intolerance, weight gain, hair loss, hypersomnia and low mood is lithium-associated hypothyroidism. Treat the thyroid and keep the lithium that is working.', ['isbdmon', 'label']);
+          const rc = X.plan('recheck');
+          if (X.started('levothyroxine')) {
+            if (rc === '6w') X.log('good', 'TSH recheck in 6–8 weeks.', 'TSH takes several weeks to reflect a levothyroxine change; ATA advises rechecking 4–8 weeks after starting or adjusting.', ['ata'], true);
+            else X.log('miss', 'TSH recheck ' + (rc === '1w' ? 'in 1 week' : 'in 6 months') + '.', 'TSH needs about 6–8 weeks to settle after a dose change.', [], true);
+          }
+        } else {
+          if (X.has('tsh') || X.has('ft4')) { X.log('good', 'Checked thyroid function before treating "depression."', 'Fatigue, cold intolerance, weight gain and hypersomnia on lithium: check TSH first.', ['isbdmon'], true); st.flags.tshPending = true; }
+          else X.log('miss', 'Didn’t check thyroid function.', 'Classic hypothyroid symptoms on lithium. TSH is the first test.', ['isbdmon'], true);
+          if (X.started('levothyroxine')) X.log('bad', 'Started levothyroxine without a TSH.', 'Confirm the diagnosis first.', []);
+        }
+        if (ad) X.log('bad', 'Started ' + crDrug(ad) + '.', 'VA/DoD finds insufficient evidence for antidepressants in acute bipolar depression, and here the depression has a medical cause. Treat the thyroid.', ['vadod']);
+        if (X.started('lamotrigine')) X.log('low', 'Added lamotrigine.', 'Lamotrigine has a role in bipolar depression (VA/DoD suggests it with lithium or quetiapine), but find and fix the thyroid first.', ['vadod']);
+        if (liStop) return { next: st.flags.tshPending ? 'month4' : 'month6', critical: {
+          title: 'Lithium stopped in early remission',
+          narrative: 'Five weeks later Megan calls: Dana hasn’t slept in three nights, quit her job by email at 3 a.m., and booked a flight to Vienna "to meet the Philharmonic."',
+          why: 'Her "depression" was hypothyroidism, which is treatable without losing the lithium. Stopping lithium, especially abruptly, carries a high recurrence risk (52–58% within 40 weeks in Viguera 2000, versus 21% in the year before on lithium).',
+          refs: ['viguera', 'vadod'],
+          log: 'Stopped lithium for low energy.',
+          correct: s => { s.meds.lithium = { status: 'active', since: 'Month 4' }; s.flags.relapse = true; if (s.flags.tshKnown && !s.meds.levothyroxine) s.meds.levothyroxine = { status: 'active', since: 'Month 4' }; return s.flags.tshPending ? 'month4' : 'month6'; },
+        } };
+        return { next: st.flags.tshKnown ? 'month6' : 'month4' };
+      },
+      results: (st, X) => {
+        const r = [];
+        if (!st.flags.tshKnown && X.has('tsh')) r.push(['TSH', '11.4 mIU/L (high)', 'hi']);
+        if (!st.flags.tshKnown && X.has('ft4')) r.push(['Free T4', '0.7 ng/dL (low)', 'lo']);
+        if (st.flags.tshKnown && X.has('ft4')) r.push(['Free T4', '0.7 ng/dL (low)', 'lo']);
+        if (X.has('lilevel') && !(st.flags.labs3 || []).includes('li')) { r.push(['Lithium', crFmt(crLiLevel(st, true)) + ' mEq/L']); X.trend('li', 'Month 3', crLiLevel(st, true)); }
+        if (!st.flags.tshKnown && X.has('tsh')) X.trend('tsh', 'Month 3', 11.4);
+        return r;
+      },
+    },
+
+    /* ======================================================== MONTH 4 (late thyroid) */
+    month4: {
+      when: 'Month 4', setting: 'Outpatient clinic', title: 'Still dragging',
+      budget: 18, orders: true,
+      onEnter(st) { if (st.flags.tshPending) { st.labs.tsh.push({ t: 'Month 4', v: 13.6 }); } },
+      intro: st => st.flags.tshPending ? [
+        'The thyroid labs are back: TSH 13.6 mIU/L, free T4 0.7 ng/dL (low).',
+        'Dana: "I fell asleep in my car at lunch. Twice."',
+      ] : [
+        'Dana is worse: PHQ-9 is 14 now. She falls asleep in her car at lunch and has stopped playing piano at home.',
+        'Megan: "Is this just what lithium does to her?"',
+      ],
+      vitals: () => ({ HR: '58', BP: '120/80', T: '36.3 °C', SpO2: '99%', Wt: '68 kg' }),
+      meters: () => [['Mania', 0], ['Psychosis', 0], ['Sleep', 10, '10–11 h'], ['Mood', 2]],
+      interview: () => [
+        { id: 'm4si', who: 'Dana', q: 'Any thoughts of hurting yourself?', a: '"No. I just want to feel like me."', tag: 'ess' },
+        { id: 'm4ros', who: 'Dana', q: 'Cold, constipated, dry skin, hair loss?', a: '"Yes, yes, yes and yes."', tag: 'use' },
+      ],
+      assess: () => [{ id: 'phq4', label: 'PHQ-9', find: 'Score 14. Item 9 = 0.', tag: 'use', cost: 2 }],
+      plan: () => [{ id: 'recheck', optional: true, prompt: 'If you start levothyroxine, recheck TSH in…', type: 'one', options: [['6w', '6–8 weeks'], ['1w', '1 week'], ['6m', '6 months']] }],
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        if (!st.flags.tshPending) {
+          if (X.has('tsh')) X.log('good', 'Finally checked TSH.', 'It comes back 13.6, with free T4 low.', ['isbdmon'], true);
+          else X.log('miss', 'Still no TSH.', 'Classic hypothyroid picture on lithium.', ['isbdmon'], true);
+        }
+        const levo = X.started('levothyroxine') || st.meds.levothyroxine;
+        if (X.startedAny(CR_GROUPS.antidepressant)) X.log('bad', 'Started an antidepressant.', 'Treat the hypothyroidism; VA/DoD finds insufficient evidence for antidepressants in acute bipolar depression.', ['vadod']);
+        if (['stop', 'hold'].includes(X.act('lithium'))) X.log('bad', 'Stopped lithium.', 'Treat the thyroid and keep the lithium.', ['viguera']);
+        if (st.flags.tshPending && levo) {
+          X.log('good', 'Started levothyroxine.', 'Overt hypothyroidism on lithium: treat it and continue lithium.', ['isbdmon', 'label'], true);
+          if (X.plan('recheck') === '6w') X.log('good', 'TSH recheck in 6–8 weeks.', 'Time for TSH to reach a new steady state (ATA: 4–8 weeks).', ['ata'], true); else X.log('miss', 'TSH recheck timing.', 'Recheck 4–8 weeks after starting or changing levothyroxine (ATA).', ['ata'], true);
+          return { next: 'month6' };
+        }
+        return { next: 'month6', critical: {
+          title: 'Hypothyroidism left untreated',
+          narrative: 'Month 5: PHQ-9 is 17. Dana takes a leave from school.',
+          why: 'Lithium-associated hypothyroidism (high TSH, low free T4, classic symptoms) is common and fully treatable with levothyroxine while lithium continues. Untreated, it mimics, and worsens, bipolar depression.',
+          refs: ['isbdmon', 'label'],
+          log: 'Didn’t check for or treat lithium-associated hypothyroidism.',
+          correct: s => { s.meds.levothyroxine = { status: 'active', since: 'Month 5' }; s.labs.tsh.push({ t: 'Month 5', v: 13.6 }); return 'month6'; },
+        } };
+      },
+      results: (st, X) => (!st.flags.tshPending && X.has('tsh')) ? (X.trend('tsh', 'Month 4', 13.6), [['TSH', '13.6 mIU/L (high)', 'hi'], ['Free T4', '0.7 ng/dL (low)', 'lo']]) : [],
+    },
+
+    /* ======================================================== MONTH 6 */
+    month6: {
+      when: 'Month 6', setting: 'Outpatient clinic', title: 'A question about the future',
+      budget: 22, orders: true,
+      onEnter(st) {
+        st.labs.li.push({ t: 'Month 6', v: crLiLevel(st, true) });
+        if (st.meds.levothyroxine) st.labs.tsh.push({ t: 'Month 6', v: 2.4 });
+      },
+      intro: st => [
+        st.meds.levothyroxine ? 'On levothyroxine Dana feels like herself: sleeping eight hours, PHQ-9 of 3, conducting the school spring concert next month.' : 'Dana is stable and back at work.',
+        st.flags.relapse ? 'She is a month past the relapse that followed stopping lithium and is firmly back on it.' : 'Six months without a mood episode.',
+        '"Ben and I want to start trying for a baby, maybe next year. Should I stop the lithium? My mom stopped hers when she was pregnant with me, and she got really sick afterward."',
+      ],
+      vitals: () => ({ HR: '70', BP: '116/72', T: '36.7 °C', SpO2: '99%', Wt: '66 kg' }),
+      meters: () => [['Mania', 0], ['Psychosis', 0], ['Sleep', 8, '8 h'], ['Mood', 7]],
+      interview: st => [
+        { id: 'm6plan', who: 'Dana', q: 'What are you hoping for, and when?', a: '"A baby in a year or so. I want to do it right."', tag: 'ess' },
+        { id: 'm6hist', who: 'Dana', q: 'Let’s count your episodes. How many have you had?', a: '"Two manias, both psychotic. One long depression."', tag: 'use' },
+        { id: 'm6contra', who: 'Dana', q: 'What are you using for contraception right now?', a: st.flags.iud ? '"The IUD. It stays until we decide."' : '"Condoms."', tag: 'use' },
+        { id: 'm6fear', who: 'Dana', q: 'What worries you most?', a: '"Hurting the baby. Or getting sick after, like Mom."', tag: 'use' },
+      ],
+      assess: () => [{ id: 'mse6', label: 'Mental status exam', find: 'Euthymic, bright, linear, insightful.', tag: 'use', cost: 2 }],
+      plan: st => [
+        { id: 'preg', prompt: 'Your recommendation', type: 'one', options: [
+          ['continue', 'Plan, through shared decision-making, to continue lithium at the lowest effective dose into pregnancy, with perinatal psychiatry, OB, more frequent levels and a delivery plan'],
+          ['stopnow', 'Stop lithium now so it is out of her system before she conceives'],
+          ['vpa', 'Switch to valproate before she conceives; it’s safer in pregnancy'],
+          ['nothing', 'Lithium is fine in pregnancy; no extra planning needed'],
+        ] },
+        { id: 'ifstop', prompt: 'If, after discussion, she chooses to come off lithium:', type: 'one', options: [
+          ['taper', 'Taper gradually over at least 2–4 weeks, with close follow-up'], ['abrupt', 'Stopping all at once is fine'],
+        ] },
+        { id: 'prep', prompt: 'Preconception plan (choose all)', type: 'many', options: [
+          ['perinatal', 'Refer to perinatal psychiatry and loop in OB before she tries to conceive'],
+          ['echo', 'If she conceives on lithium: fetal echocardiogram at 16–20 weeks'],
+          ['levels', 'Plan more frequent lithium levels in pregnancy and adjust around delivery'],
+          ['folic', 'Start a daily folic acid supplement'],
+          ['ssri', 'Start an SSRI now to prevent postpartum depression'],
+        ] },
+      ],
+      pimp: { q: 'In Patorno 2017 (1.3 million pregnancies), first-trimester lithium exposure raised the cardiac malformation rate from about 1.2% to about…', options: ['2.4%', '10%', '25%'], correct: 0, why: 'Cardiac malformations: 2.41% exposed vs 1.15% unexposed (adjusted RR 1.65). Risk was dose-related (RR 3.22 above 900 mg/day). Real, but far smaller than the old registry estimates.', refs: ['patorno'] },
+      evaluate(st, X) {
+        X.interviewScore(); X.assessScore();
+        const p = X.plan('preg');
+        if (p === 'continue') X.log('good', 'Shared decision to continue lithium with a perinatal plan.', 'VA/DoD 2023 suggests continuing lithium at the lowest effective dose, with psychoeducation and shared decision-making. The cardiac risk is modest and dose-related (Patorno 2017), while stopping carries a high recurrence risk, especially postpartum (Viguera 2000).', ['vadod', 'patorno', 'viguera'], true);
+        else if (p === 'stopnow') X.log('bad', 'Stop lithium now.', 'After lithium discontinuation, recurrence within 40 weeks was 52% in pregnant and 58% in non-pregnant women, versus 21% in the prior year on lithium, and among women still well at 40 weeks, postpartum recurrence reached 70% (versus 24% in non-pregnant women). With two psychotic manias, that is a big risk to take preemptively.', ['viguera']);
+        else if (p !== 'vpa') X.log('miss', '"No extra planning."', 'Lithium in pregnancy needs a plan: fetal echo after first-trimester exposure, more frequent levels as clearance rises, and dose adjustment around delivery.', ['label', 'patorno'], true);
+        const s = X.plan('ifstop');
+        if (s === 'taper') X.log('good', 'If stopping, taper gradually.', 'Recurrence risk was higher after rapid (1–14 day) than gradual discontinuation.', ['viguera'], true);
+        else X.log('bad', 'Abrupt discontinuation.', 'Rapid discontinuation carries a higher recurrence risk.', ['viguera']);
+        const pr = X.planSet('prep');
+        X.ess(pr.includes('perinatal'), 'Perinatal psychiatry and OB before conception.', 'Coordinated preconception planning is the core of VA/DoD’s shared decision-making approach.', ['vadod']);
+        X.ess(pr.includes('echo'), 'Fetal echocardiogram if exposed.', 'The lithium label advises considering fetal echocardiography at 16–20 weeks after first-trimester exposure.', ['label']);
+        X.ess(pr.includes('levels'), 'Planned closer levels and a delivery plan.', 'Lithium clearance rises in pregnancy and falls abruptly after delivery; the label advises lowering or holding the dose 2–3 days before delivery.', ['label']);
+        if (pr.includes('folic')) X.log('good', 'Folic acid before conception.', 'USPSTF recommends 0.4–0.8 mg daily for anyone planning or capable of pregnancy.', ['uspstf']);
+        if (pr.includes('ssri')) X.log('bad', 'Prophylactic SSRI.', 'No indication now. CANMAT doesn’t recommend long-term antidepressant use in bipolar I, and antidepressants risk destabilizing mood.', ['canmat']);
+        if (p === 'vpa') return { next: 'end', critical: {
+          title: 'Valproate for a planned pregnancy',
+          narrative: 'The pharmacist refuses to fill it without a pregnancy-prevention discussion, and calls you.',
+          why: 'Valproate is the mood stabilizer to avoid most in pregnancy (neural tube defects, lower IQ, autism). VA/DoD strongly recommends against it in people of childbearing potential. Lithium, with planning, is the better-supported option.',
+          refs: ['vadod', 'patorno'],
+          log: 'Switched to valproate for pregnancy planning.',
+          correct: () => 'end',
+        } };
+        return { next: 'end' };
+      },
+    },
+  },
+};
+
+/* ======================= CASE ROUNDS =======================
+ * One patient, many visits. Interview and exam on a visit clock, orders from
+ * the full formulary, follow-up timing, consequences that carry forward, an
+ * attending who steps in when things go off the rails, and a debrief that
+ * cites the guidelines and data behind every call.
+ */
+const CASE = (function () {
+  const $ = id => document.getElementById(id);
+  function h(tag, props) {
+    const n = document.createElement(tag);
+    if (props) for (const k in props) {
+      const v = props[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = v;
+      else if (k === 'text') n.textContent = v;
+      else if (k.slice(0, 2) === 'on') n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? '' : v);
+    }
+    for (let i = 2; i < arguments.length; i++) add(n, arguments[i]);
+    return n;
+  }
+  function add(n, c) {
+    if (c == null || c === false) return;
+    if (Array.isArray(c)) { c.forEach(x => add(n, x)); return; }
+    n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  const clone = o => JSON.parse(JSON.stringify(o));
+
+  const CASES = [CASE_LITHIUM];
+  const PTS = { good: 10, ok: 4, low: -2, miss: -6, bad: -12, critical: -25, caught: -3, note: 0 };
+  const KIND_LABEL = { good: 'Right call', ok: 'Acceptable', low: 'Low value', miss: 'Missed', bad: 'Error', critical: 'Critical', caught: 'Caught', note: 'Note' };
+
+  const view = $('caseView'), menuEl = $('crMenu'), playEl = $('crPlay'), debEl = $('crDebrief');
+  const modal = $('crModal'), modalCard = $('crModalCard'), menuLink = $('crMenuLink');
+
+  menuLink.addEventListener('click', () => renderMenu());
+  let C = null, st = null, snap = null, tab = 'interview', filter = 'all', query = '', rewinds = [], flash = '';
+
+  /* ---------------- menu ---------------- */
+  function renderMenu() {
+    menuEl.hidden = false; playEl.hidden = true; debEl.hidden = true; menuLink.hidden = true;
+    const list = $('crCases');
+    list.innerHTML = '';
+    CASES.forEach(cs => {
+      list.append(h('article', { class: 'cr-casecard' },
+        h('div', { class: 'cr-kicker', text: 'Case 1 · ' + cs.patient }),
+        h('h2', { text: cs.title }),
+        h('p', { text: cs.tagline }),
+        h('div', { class: 'cr-tags' }, cs.topics.map(t => h('span', { class: 'cr-tag', text: t }))),
+        h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: () => startCase(cs) }, 'Start case')));
+    });
+    list.append(h('article', { class: 'cr-casecard cr-soon' },
+      h('div', { class: 'cr-kicker', text: 'More cases' }),
+      h('h2', { text: 'In the works' }),
+      h('p', { text: 'Each new case reuses the same formulary and lab catalog.' })));
+  }
+
+  /* ---------------- start / scenes ---------------- */
+  function startCase(cs) {
+    C = cs; rewinds = [];
+    st = { scene: null, minutes: 0, asked: [], assessed: [], transcript: [], findings: [], cart: [], plan: {}, meds: {}, flags: {}, notes: [], labs: {}, log: [], checks: {}, pimps: {}, intercepts: {}, liDose: 0, visited: [] };
+    C.init(st);
+    menuEl.hidden = true; debEl.hidden = true; playEl.hidden = false; menuLink.hidden = false;
+    enterScene(C.start);
+  }
+  const S = () => C.scenes[st.scene];
+  const val = (f, ...a) => typeof f === 'function' ? f(...a) : f;
+
+  function enterScene(id) {
+    if (id === 'end') { showDebrief(); return; }
+    st.scene = id;
+    const sc = S();
+    st.minutes = sc.budget || 20; st.asked = []; st.assessed = []; st.transcript = []; st.findings = [];
+    st.cart = []; st.plan = {}; st.intercepts = {};
+    st.visited.push(id);
+    if (sc.onEnter) sc.onEnter(st);
+    snap = clone(st);
+    tab = sc.interview ? 'interview' : 'assess';
+    flash = '';
+    render();
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------------- rendering ---------------- */
+  function render() {
+    renderHead(); renderSide(); renderScene(); renderTabs(); renderPanel(); renderRight();
+  }
+
+  function renderHead() {
+    const sc = S();
+    const head = $('crHead'); head.innerHTML = '';
+    const cur = (C.chipOf && C.chipOf[st.scene]) || st.scene;
+    const curIdx = C.chips.findIndex(c => c[0] === cur);
+    head.append(
+      h('div', { class: 'cr-head-id' },
+        h('div', { class: 'cr-head-name', text: C.patient }),
+        h('div', { class: 'cr-head-sub' }, h('span', { class: 'cr-badge', text: sc.setting }), ' ', val(sc.when, st), ' · ', sc.title)),
+      h('ol', { class: 'cr-chips', 'aria-label': 'Case timeline' }, C.chips.map((c, i) =>
+        h('li', { class: 'cr-chip' + (i < curIdx ? ' done' : '') + (i === curIdx ? ' now' : ''), 'aria-current': i === curIdx ? 'step' : null, text: c[1] }))),
+      h('div', { class: 'cr-head-score' }, scoreChips()));
+  }
+  function tally() {
+    const t = { ess: 0, essHit: 0, err: 0, low: 0, pts: 0 };
+    st.log.forEach(e => {
+      t.pts += e.pts;
+      if (e.ess) { t.ess++; if (e.kind === 'good' || e.kind === 'ok') t.essHit++; }
+      if (e.kind === 'bad' || e.kind === 'critical') t.err++;
+      if (e.kind === 'low') t.low++;
+    });
+    return t;
+  }
+  function scoreChips() {
+    const t = tally();
+    return [
+      h('span', { class: 'cr-score' }, h('b', { text: t.essHit + '/' + t.ess }), ' essentials'),
+      h('span', { class: 'cr-score' + (t.err ? ' warn' : '') }, h('b', { text: String(t.err) }), ' errors'),
+    ];
+  }
+
+  function meter(label, v, text) {
+    const pct = Math.max(0, Math.min(10, v)) * 10;
+    return h('div', { class: 'cr-meter' },
+      h('div', { class: 'cr-meter-top' }, h('span', { text: label }), h('span', { class: 'cr-meter-val', text: text || (v + '/10') })),
+      h('div', { class: 'cr-meter-bar' }, h('i', { style: 'width:' + pct + '%' })));
+  }
+
+  function renderSide() {
+    const sc = S(), side = $('crSide');
+    side.innerHTML = '';
+    const v = sc.vitals ? sc.vitals(st) : {};
+    side.append(h('section', { class: 'cr-card' },
+      h('h3', { text: 'Vitals' }),
+      h('dl', { class: 'cr-vitals' }, Object.keys(v).map(k => [h('dt', { text: k }), h('dd', { text: v[k] })]))));
+    if (sc.meters) side.append(h('section', { class: 'cr-card' }, h('h3', { text: 'How she is' }), sc.meters(st).map(m => meter(m[0], m[1], m[2]))));
+    const meds = Object.keys(st.meds);
+    side.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Active medications' }),
+      meds.length ? h('ul', { class: 'cr-medlist' }, meds.map(id => {
+        const m = st.meds[id];
+        let label = crName(id);
+        if (id === 'lithium' && st.liDose > 1) label += ' (dose ↑' + (st.liDose - 1) + ')';
+        const refused = st.flags.apRefused === id;
+        return h('li', { class: m.status === 'held' || refused ? 'held' : '' }, h('span', { text: label }), h('small', { text: refused ? 'refused' : m.status === 'held' ? 'held' : (m.home ? 'home, OTC' : 'since ' + m.since) }));
+      })) : h('p', { class: 'cr-dim', text: 'None.' })));
+    side.append(h('section', { class: 'cr-card' }, h('h3', { text: 'What you know' }),
+      st.notes.length ? h('ul', { class: 'cr-notes' }, st.notes.map(n => h('li', { text: n }))) : h('p', { class: 'cr-dim', text: 'Facts you learn from the interview collect here.' })));
+  }
+
+  function renderScene() {
+    const sc = S(), box = $('crScene');
+    box.innerHTML = '';
+    box.append(h('h2', { class: 'cr-scene-title', text: sc.title }));
+    sc.intro(st).forEach(p => box.append(h('p', { text: p })));
+  }
+
+  const TABS = [['interview', 'Interview'], ['assess', 'Exam & assess'], ['orders', 'Orders'], ['plan', 'Plan']];
+  function renderTabs() {
+    const sc = S(), bar = $('crTabs');
+    bar.innerHTML = '';
+    TABS.forEach(([id, label]) => {
+      if (id === 'interview' && !sc.interview) return;
+      const count = id === 'orders' ? st.cart.length : 0;
+      bar.append(h('button', { type: 'button', role: 'tab', class: 'cr-tab' + (tab === id ? ' on' : ''), 'aria-selected': tab === id ? 'true' : 'false', onclick: () => { tab = id; renderTabs(); renderPanel(); } },
+        label, count ? h('span', { class: 'cr-count', text: String(count) }) : null));
+    });
+    bar.append(h('div', { class: 'cr-clock', title: 'Visit time left for interview and exam' }, h('b', { text: st.minutes + ' min' }), ' left'));
+  }
+
+  function renderPanel() {
+    const p = $('crPanel'); p.innerHTML = '';
+    if (tab === 'interview') panelInterview(p);
+    else if (tab === 'assess') panelAssess(p);
+    else if (tab === 'orders') panelOrders(p);
+    else panelPlan(p);
+  }
+
+  function spend(cost) { if (st.minutes < cost) return false; st.minutes -= cost; return true; }
+  function learn(item) {
+    if (item.note && !st.notes.includes(item.note)) st.notes.push(item.note);
+    if (item.set) Object.assign(st.flags, item.set);
+  }
+
+  function panelInterview(p) {
+    const sc = S(), items = sc.interview(st);
+    const groups = {};
+    items.forEach(it => { (groups[it.who] = groups[it.who] || []).push(it); });
+    p.append(h('p', { class: 'cr-help', text: 'Each question takes 3 minutes of the visit. You cannot ask everything.' }));
+    Object.keys(groups).forEach(who => {
+      p.append(h('h3', { class: 'cr-sub', text: 'Ask ' + who }));
+      p.append(h('div', { class: 'cr-qgrid' }, groups[who].map(it => {
+        const done = st.asked.includes(it.id);
+        return h('button', { type: 'button', class: 'cr-q' + (done ? ' done' : ''), disabled: done || st.minutes < 3 ? true : null,
+          onclick: () => { if (!spend(3)) return; st.asked.push(it.id); learn(it); st.transcript.push({ who, q: it.q, a: it.a }); renderTabs(); renderSide(); renderPanel(); } },
+          h('span', { text: it.q }), h('small', { text: done ? 'asked' : '3 min' }));
+      })));
+    });
+    if (st.transcript.length) {
+      p.append(h('h3', { class: 'cr-sub', text: 'Transcript' }));
+      p.append(h('div', { class: 'cr-transcript' }, st.transcript.slice().reverse().map(t =>
+        h('div', { class: 'cr-tx' }, h('div', { class: 'cr-tx-q', text: 'You: ' + t.q }), h('div', { class: 'cr-tx-a' }, h('b', { text: t.who.split(' ')[0] + ': ' }), t.a)))));
+    }
+  }
+
+  function panelAssess(p) {
+    const sc = S(), items = sc.assess ? sc.assess(st) : [];
+    p.append(h('p', { class: 'cr-help', text: 'Examinations and symptom checks also use visit time. What you don’t check stays hidden.' }));
+    p.append(h('div', { class: 'cr-qgrid' }, items.map(it => {
+      const done = st.assessed.includes(it.id);
+      return h('button', { type: 'button', class: 'cr-q' + (done ? ' done' : ''), disabled: done || st.minutes < it.cost ? true : null,
+        onclick: () => { if (!spend(it.cost)) return; st.assessed.push(it.id); learn(it); st.findings.push({ label: it.label, find: it.find }); renderTabs(); renderSide(); renderPanel(); } },
+        h('span', { text: it.label }), h('small', { text: done ? 'done' : it.cost + ' min' }));
+    })));
+    if (st.findings.length) {
+      p.append(h('h3', { class: 'cr-sub', text: 'Findings' }));
+      p.append(h('dl', { class: 'cr-findings' }, st.findings.map(f => [h('dt', { text: f.label }), h('dd', { text: f.find })])));
+    }
+  }
+
+  /* ---------------- orders ---------------- */
+  const FILTERS = [['all', 'All'], ['psych', 'Psych meds'], ['medicine', 'Medicine meds'], ['lab', 'Labs'], ['test', 'ECG, imaging & bedside'], ['consult', 'Consults & procedures']];
+  function inCart(id) { return st.cart.find(c => c.id === id); }
+  function setCart(id, action) {
+    const ex = inCart(id);
+    if (ex && ex.action === action) { st.cart = st.cart.filter(c => c !== ex); }
+    else if (ex) ex.action = action;
+    else st.cart.push({ id, action });
+    if (action === 'start' && CR_CHECKS[id] && !(id in st.checks) && inCart(id)) askCheck(id);
+    renderTabs(); renderPanel(); renderRight();
+  }
+
+  function panelOrders(p) {
+    const sc = S();
+    if (!sc.orders) { p.append(h('p', { class: 'cr-help', text: 'You can’t write orders from the office. Decide her disposition in Plan; orders open once she is in the hospital.' })); return; }
+    p.append(h('p', { class: 'cr-help', text: 'The full formulary and lab catalog, every time. Search or filter. Active medications can be increased, decreased, held or stopped; untouched ones continue.' }));
+    const active = Object.keys(st.meds);
+    if (active.length) {
+      p.append(h('h3', { class: 'cr-sub', text: 'Current medications' }));
+      p.append(h('div', { class: 'cr-olist' }, active.map(id => medRow(id, true))));
+    }
+    const search = h('input', { type: 'search', class: 'cr-search', id: 'crSearch', placeholder: 'Search all ' + CR_CATALOG.length + ' drugs, labs, tests and consults', value: query, 'aria-label': 'Search orders',
+      oninput: e => { query = e.target.value; drawList(); } });
+    p.append(h('div', { class: 'cr-orderbar' }, search,
+      h('div', { class: 'cr-filters', role: 'group', 'aria-label': 'Filter' }, FILTERS.map(([id, label]) =>
+        h('button', { type: 'button', class: 'cr-filter' + (filter === id ? ' on' : ''), 'aria-pressed': filter === id ? 'true' : 'false', onclick: () => { filter = id; renderPanel(); const s = $('crSearch'); if (s) s.focus(); } }, label)))));
+    const listBox = h('div', { class: 'cr-olist cr-catalog', id: 'crCatalog' });
+    p.append(listBox);
+    function drawList() {
+      listBox.innerHTML = '';
+      const q = query.trim().toLowerCase();
+      const items = CR_CATALOG.filter(it => (filter === 'all' || it.cat === filter) && (!q || it.name.toLowerCase().includes(q) || it.sub.toLowerCase().includes(q)) && !(it.kind === 'med' && st.meds[it.id]));
+      if (!items.length) { listBox.append(h('p', { class: 'cr-dim', text: 'Nothing matches.' })); return; }
+      let lastSub = '';
+      items.forEach(it => {
+        if (it.sub !== lastSub && !q) { listBox.append(h('div', { class: 'cr-ogroup', text: it.sub })); lastSub = it.sub; }
+        listBox.append(it.kind === 'med' ? medRow(it.id, false) : testRow(it));
+      });
+    }
+    drawList();
+  }
+  function medRow(id, active) {
+    const it = CR_BY_ID[id] || { name: id, sub: '' };
+    const c = inCart(id);
+    const btn = (action, label) => h('button', { type: 'button', class: 'cr-act' + (c && c.action === action ? ' on' : ''), 'aria-pressed': c && c.action === action ? 'true' : 'false', onclick: () => setCart(id, action) }, label);
+    const held = active && st.meds[id].status === 'held';
+    return h('div', { class: 'cr-orow' },
+      h('div', { class: 'cr-oname' }, h('span', { text: it.name }), h('small', { text: active ? (held ? 'held' : 'active') : it.sub })),
+      h('div', { class: 'cr-oacts' }, active ? (held ? [btn('resume', 'Resume'), btn('stop', 'Stop')] : [btn('increase', 'Increase'), btn('decrease', 'Decrease'), btn('hold', 'Hold'), btn('stop', 'Stop')]) : btn('start', 'Start')));
+  }
+  function testRow(it) {
+    const c = inCart(it.id);
+    return h('div', { class: 'cr-orow' },
+      h('div', { class: 'cr-oname' }, h('span', { text: it.name }), h('small', { text: it.sub })),
+      h('div', { class: 'cr-oacts' }, h('button', { type: 'button', class: 'cr-act' + (c ? ' on' : ''), 'aria-pressed': c ? 'true' : 'false', onclick: () => setCart(it.id, 'order') }, it.kind === 'consult' ? 'Request' : 'Order')));
+  }
+
+  /* ---------------- plan ---------------- */
+  function planGroups() { const sc = S(); return (sc.plan ? sc.plan(st) : []).filter(g => !g.show || g.show(st.plan)); }
+  function panelPlan(p) {
+    const sc = S();
+    if (sc.pimp) p.append(pimpCard(sc.pimp));
+    const groups = planGroups();
+    if (!groups.length) p.append(h('p', { class: 'cr-help', text: 'No separate plan decisions this visit. Your orders are the plan.' }));
+    groups.forEach(g => {
+      const fs = h('fieldset', { class: 'cr-group' }, h('legend', { text: g.prompt }));
+      g.options.forEach(([oid, label]) => {
+        const name = 'cr-' + g.id;
+        const checked = g.type === 'many' ? (st.plan[g.id] || []).includes(oid) : st.plan[g.id] === oid;
+        const input = h('input', { type: g.type === 'many' ? 'checkbox' : 'radio', name, value: oid, checked: checked ? true : null,
+          onchange: e => {
+            if (g.type === 'many') {
+              const set = new Set(st.plan[g.id] || []);
+              if (e.target.checked) set.add(oid); else set.delete(oid);
+              st.plan[g.id] = Array.from(set);
+            } else st.plan[g.id] = oid;
+            if (g.id === 'dispo') renderPanel();
+          } });
+        fs.append(h('label', { class: 'cr-opt' }, input, h('span', { text: label })));
+      });
+      p.append(fs);
+    });
+  }
+  function pimpCard(pm) {
+    const key = st.scene;
+    const ans = st.pimps[key];
+    const card = h('section', { class: 'cr-pimp' }, h('div', { class: 'cr-kicker', text: 'The attending asks' }), h('p', { class: 'cr-pimp-q', text: pm.q }));
+    const row = h('div', { class: 'cr-pimp-opts' });
+    pm.options.forEach((o, i) => {
+      let cls = 'cr-btn';
+      if (ans != null) { if (i === pm.correct) cls += ' right'; else if (i === ans) cls += ' wrong'; }
+      row.append(h('button', { type: 'button', class: cls, disabled: ans != null ? true : null, onclick: () => { st.pimps[key] = i; renderPanel(); } }, o));
+    });
+    card.append(row);
+    if (ans != null) card.append(h('p', { class: 'cr-pimp-why' }, h('b', { text: ans === pm.correct ? 'Right. ' : 'Not quite. ' }), pm.why));
+    else card.append(h('p', { class: 'cr-dim', text: 'Optional: scored separately, and it doesn’t stop the clock.' }));
+    return card;
+  }
+
+  /* ---------------- right column ---------------- */
+  function renderRight() {
+    const r = $('crRight'); r.innerHTML = '';
+    r.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Lithium levels' }), liChart()));
+    const rows = [['Creatinine', 'cr', 'mg/dL'], ['TSH', 'tsh', 'mIU/L'], ['Weight', 'wt', 'kg']].filter(x => (st.labs[x[1]] || []).length);
+    if (rows.length) r.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Other trends' }),
+      rows.map(([label, k, unit]) => h('div', { class: 'cr-trend' }, h('div', { class: 'cr-trend-l', text: label + ' (' + unit + ')' }),
+        h('div', { class: 'cr-trend-v' }, st.labs[k].map(pt => h('span', { title: pt.t, text: pt.t + ': ' + pt.v })))))));
+    const sheet = h('section', { class: 'cr-card cr-sheet' }, h('h3', { text: 'Order sheet' }));
+    if (!st.cart.length) sheet.append(h('p', { class: 'cr-dim', text: 'No new orders.' }));
+    else sheet.append(h('ul', { class: 'cr-cart' }, st.cart.map(c => h('li', null,
+      h('span', { text: (c.action === 'order' ? '' : c.action[0].toUpperCase() + c.action.slice(1) + ' ') + crName(c.id) }),
+      h('button', { type: 'button', class: 'cr-x', 'aria-label': 'Remove ' + crName(c.id), onclick: () => { st.cart = st.cart.filter(x => x !== c); renderTabs(); renderPanel(); renderRight(); } }, '×')))));
+    if (flash) sheet.append(h('p', { class: 'cr-flash', role: 'alert', text: flash }));
+    sheet.append(h('button', { type: 'button', class: 'cr-btn cr-primary cr-sign', onclick: sign }, S().orders ? 'Sign & continue' : 'Finish visit'));
+    r.append(sheet);
+  }
+
+  function liChart() {
+    const pts = (st.labs.li || []);
+    const W = 280, H = 150, L = 30, R = 8, T = 10, B = 26, max = 3;
+    const y = v => T + (H - T - B) * (1 - Math.min(v, max) / max);
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const s = (tag, attrs, text) => { const n = document.createElementNS(svgNS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (text != null) n.textContent = text; return n; };
+    const svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, class: 'cr-chart', role: 'img', 'aria-label': pts.length ? 'Lithium levels: ' + pts.map(p => p.t + ' ' + p.v).join(', ') : 'No lithium levels yet' });
+    svg.append(s('rect', { x: L, y: y(1.2), width: W - L - R, height: y(0.6) - y(1.2), class: 'band' }));
+    svg.append(s('line', { x1: L, x2: W - R, y1: y(1.5), y2: y(1.5), class: 'tox' }));
+    [0, 1, 2, 3].forEach(v => { svg.append(s('text', { x: L - 6, y: y(v) + 4, class: 'ax', 'text-anchor': 'end' }, String(v))); });
+    svg.append(s('text', { x: W - R, y: y(1.5) - 4, class: 'ax toxl', 'text-anchor': 'end' }, 'toxic ≥ 1.5'));
+    svg.append(s('text', { x: L + 4, y: y(0.6) - 4, class: 'ax bandl' }, '0.6–1.2'));
+    if (pts.length) {
+      const n = pts.length, x = i => n === 1 ? (L + W - R) / 2 : L + 12 + i * ((W - L - R - 24) / (n - 1));
+      const real = pts.map((p, i) => [x(i), y(p.v), p]);
+      const path = real.filter(r => !r[2].peak).map((r, i) => (i ? 'L' : 'M') + r[0] + ' ' + r[1]).join(' ');
+      if (path) svg.append(s('path', { d: path, class: 'line' }));
+      real.forEach(([cx, cy, p]) => {
+        svg.append(s('circle', { cx, cy, r: 4, class: 'dot' + (p.v >= 1.5 ? ' hot' : '') + (p.peak ? ' peak' : '') }));
+        svg.append(s('text', { x: cx, y: cy - 8, class: 'val', 'text-anchor': 'middle' }, String(p.v)));
+      });
+      svg.append(s('text', { x: x(0), y: H - 8, class: 'ax', 'text-anchor': 'start' }, pts[0].t));
+      if (n > 1) svg.append(s('text', { x: x(n - 1), y: H - 8, class: 'ax', 'text-anchor': 'end' }, pts[n - 1].t));
+    } else svg.append(s('text', { x: (W + L) / 2, y: y(0.25), class: 'ax', 'text-anchor': 'middle' }, 'No levels yet'));
+    return h('div', { class: 'cr-chartwrap' }, svg);
+  }
+
+  /* ---------------- pharm checks ---------------- */
+  function askCheck(id) {
+    const ck = CR_CHECKS[id];
+    let answered = null;
+    function draw() {
+      modalCard.innerHTML = '';
+      modalCard.append(h('div', { class: 'cr-kicker', text: 'Pharm check · ' + crName(id) }), h('h2', { id: 'crModalTitle', text: ck.q }));
+      const row = h('div', { class: 'cr-pimp-opts col' });
+      ck.options.forEach((o, i) => {
+        let cls = 'cr-btn';
+        if (answered != null) { if (i === ck.correct) cls += ' right'; else if (i === answered) cls += ' wrong'; }
+        row.append(h('button', { type: 'button', class: cls, disabled: answered != null ? true : null, onclick: () => { answered = i; st.checks[id] = i === ck.correct; draw(); } }, o));
+      });
+      modalCard.append(row);
+      if (answered != null) {
+        modalCard.append(h('p', { class: 'cr-pimp-why' }, h('b', { text: answered === ck.correct ? 'Right. ' : 'Not quite. ' }), ck.why));
+        modalCard.append(h('div', { class: 'cr-modal-actions' }, h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: closeModal }, 'Back to orders')));
+      } else modalCard.append(h('div', { class: 'cr-modal-actions' }, h('button', { type: 'button', class: 'cr-btn', onclick: () => { st.checks[id] = null; closeModal(); } }, 'Skip')));
+    }
+    draw(); openModal();
+  }
+
+  let lastFocus = null;
+  function openModal() { lastFocus = document.activeElement; modal.hidden = false; const b = modalCard.querySelector('button:not([disabled])'); if (b) b.focus(); }
+  function closeModal() { modal.hidden = true; if (lastFocus && lastFocus.focus && document.body.contains(lastFocus)) lastFocus.focus(); }
+
+  /* ---------------- signing ---------------- */
+  function makeX(sc) {
+    const entries = [], said = [];
+    const X = {
+      has: id => st.cart.some(c => c.id === id && c.action === 'order'),
+      started: id => st.cart.some(c => c.id === id && c.action === 'start'),
+      startedAny: list => { const c = st.cart.find(c => c.action === 'start' && list.includes(c.id)); return c ? c.id : null; },
+      act: id => { const c = inCart(id); return c ? c.action : null; },
+      plan: id => st.plan[id],
+      planSet: id => st.plan[id] || [],
+      planLabel: id => { const g = (sc.plan ? sc.plan(st) : []).find(g => g.id === id); const o = g && g.options.find(o => o[0] === st.plan[id]); return o ? o[1] : ''; },
+      asked: id => st.asked.includes(id),
+      assessed: id => st.assessed.includes(id),
+      log: (kind, text, why, refs, ess) => entries.push({ kind, text, why, refs: refs || [], ess: !!ess }),
+      ess: (cond, text, why, refs) => entries.push({ kind: cond ? 'good' : 'miss', text: cond ? text : 'Missed: ' + (/^[A-Z][a-z]/.test(text) ? text.charAt(0).toLowerCase() + text.slice(1) : text), why, refs: refs || [], ess: true }),
+      say: t => said.push(t),
+      trend: (k, t, v) => { (st.labs[k] = st.labs[k] || []).push({ t, v }); },
+      interviewScore() { scoreItems(sc.interview ? sc.interview(st) : [], st.asked, 'Asked', 'Didn’t ask', it => it.q); },
+      assessScore() { scoreItems(sc.assess ? sc.assess(st) : [], st.assessed, 'Checked', 'Didn’t check', it => it.label); },
+    };
+    function scoreItems(items, done, yes, no, lab) {
+      const extras = [], lows = [];
+      items.forEach(it => {
+        const d = done.includes(it.id);
+        if (it.tag === 'ess') entries.push({ kind: d ? 'good' : 'miss', text: (d ? yes : no) + ': ' + lab(it), why: (C.why && C.why[it.id]) || 'Essential at this visit.', refs: [], ess: true, small: true });
+        else if (it.tag === 'low' && d) lows.push(lab(it));
+        else if (it.tag === 'use' && d) extras.push(lab(it));
+      });
+      if (lows.length) entries.push({ kind: 'low', text: 'Low-yield: ' + lows.join(' · '), why: 'Reasonable questions on another day, but they cost visit time you needed elsewhere.', refs: [] });
+      if (extras.length >= 2) entries.push({ kind: 'ok', text: 'Useful extras: ' + extras.join(' · '), why: 'Good supporting history and exam.', refs: [] });
+    }
+    X._entries = entries; X._said = said;
+    return X;
+  }
+
+  function sign() {
+    const sc = S();
+    flash = '';
+    const missing = planGroups().filter(g => g.type === 'one' && !g.optional && !st.plan[g.id]);
+    if (missing.length) { flash = 'Finish the Plan first: ' + missing.map(g => g.prompt.replace(/[.:?…]+$/, '')).join('; ') + '.'; tab = 'plan'; renderTabs(); renderPanel(); renderRight(); return; }
+    // pharmacy / nursing intercepts
+    if (sc.intercepts) {
+      const X0 = makeX(sc);
+      const pend = sc.intercepts(st, X0).filter(ic => !st.intercepts[ic.key]);
+      if (pend.length) { showIntercept(pend[0]); return; }
+    }
+    const X = makeX(sc);
+    const res = sc.evaluate(st, X) || {};
+    Object.keys(st.intercepts).forEach(k => { const ic = st.intercepts[k]; if (ic.revised) X._entries.push({ kind: 'caught', text: 'Pharmacy caught: ' + ic.text, why: 'You fixed it before it reached the patient. Good recovery, but the order should not have been written.', refs: [] }); });
+    if (sc.pimp && st.pimps[st.scene] != null) st.pimpLog = (st.pimpLog || []).concat([{ scene: st.scene, ok: st.pimps[st.scene] === sc.pimp.correct, q: sc.pimp.q }]);
+    if (res.critical) { showCritical(res, X); return; }
+    const bad = X._entries.filter(e => e.kind === 'bad').length;
+    if (bad >= 3) { showRough(res, X, bad); return; }
+    commit(res, X);
+  }
+
+  function showIntercept(ic) {
+    modalCard.innerHTML = '';
+    modalCard.append(h('div', { class: 'cr-kicker warn', text: ic.from + ' is calling' }), h('h2', { id: 'crModalTitle', text: 'Before these orders go through…' }), h('p', { text: ic.text }),
+      h('div', { class: 'cr-modal-actions' },
+        h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: () => { st.intercepts[ic.key] = { revised: true, text: ic.text }; closeModal(); tab = 'orders'; renderTabs(); renderPanel(); renderRight(); } }, 'Revise my orders'),
+        h('button', { type: 'button', class: 'cr-btn', onclick: () => { st.intercepts[ic.key] = { revised: false, text: ic.text }; closeModal(); sign(); } }, 'Proceed as written')));
+    openModal();
+  }
+
+  function stamp(entries) {
+    const when = val(S().when, st);
+    entries.forEach(e => { e.scene = st.scene; e.when = when; e.title = S().title; e.pts = PTS[e.kind] != null ? PTS[e.kind] + (e.kind === 'good' && !e.ess ? -4 : 0) : 0; if (e.small && e.kind === 'good') e.pts = 4; if (e.small && e.kind === 'miss') e.pts = -4; });
+    return entries;
+  }
+
+  function applyCart() {
+    const when = val(S().when, st).split(' · ')[0];
+    st.cart.forEach(c => {
+      const it = CR_BY_ID[c.id];
+      if (!it || it.kind !== 'med') return;
+      if (c.action === 'start') { st.meds[c.id] = { status: 'active', since: when }; if (c.id === 'lithium') st.liDose = Math.max(1, st.liDose); }
+      else if (c.action === 'stop') { delete st.meds[c.id]; if (c.id === 'lithium') st.liDose = 0; }
+      else if (c.action === 'hold') { if (st.meds[c.id]) st.meds[c.id].status = 'held'; }
+      else if (c.action === 'resume') { if (st.meds[c.id]) st.meds[c.id].status = 'active'; }
+      else if (c.action === 'increase') { if (c.id === 'lithium') st.liDose += 1; }
+      else if (c.action === 'decrease') { if (c.id === 'lithium') st.liDose = Math.max(0.5, st.liDose - 1); }
+    });
+    if (st.flags.teamLi && !st.meds.lithium) { st.meds.lithium = { status: 'active', since: 'Day 1' }; st.liDose = 1; }
+  }
+
+  function commit(res, X, extraEntries) {
+    const sc = S();
+    const results = sc.results ? sc.results(st, X) : [];
+    const entries = stamp(X._entries.concat(extraEntries || []));
+    st.log.push(...entries);
+    applyCart();
+    let next = res.next;
+    if (sc.after) { const a = sc.after(st); if (a) next = a; }
+    showOutcome(X._said, results, next, res.extraNarr);
+  }
+
+  function showOutcome(said, results, next, extra) {
+    modalCard.innerHTML = '';
+    modalCard.append(h('div', { class: 'cr-kicker', text: 'Orders signed' }), h('h2', { id: 'crModalTitle', text: next === 'end' ? 'Case complete' : 'What happens next' }));
+    (extra || []).forEach(t => modalCard.append(h('p', { text: t })));
+    said.forEach(t => modalCard.append(h('p', { text: t })));
+    if (results.length) modalCard.append(h('h3', { class: 'cr-sub', text: 'Results' }), h('table', { class: 'cr-results' }, h('tbody', null, results.map(r => h('tr', { class: r[2] || '' }, h('th', { scope: 'row', text: r[0] }), h('td', { text: r[1] }))))));
+    if (!said.length && !results.length && !(extra || []).length) modalCard.append(h('p', { class: 'cr-dim', text: 'The clock moves forward.' }));
+    const nsc = C.scenes[next];
+    modalCard.append(h('div', { class: 'cr-modal-actions' }, h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: () => { closeModal(); enterScene(next); } },
+      next === 'end' ? 'See the debrief' : 'Go to: ' + val(nsc.when, st) + ' · ' + nsc.title)));
+    openModal();
+  }
+
+  function attendingCard(title, why, refs) {
+    return h('section', { class: 'cr-attending' }, h('div', { class: 'cr-kicker', text: 'Attending review' }), h('h3', { text: title }), h('p', { text: why }),
+      refs && refs.length ? h('p', { class: 'cr-refline' }, 'Evidence: ', refLinks(refs)) : null);
+  }
+
+  function showCritical(res, X) {
+    const cr = res.critical;
+    modalCard.innerHTML = '';
+    modalCard.append(h('div', { class: 'cr-kicker bad', text: 'Consequence' }), h('h2', { id: 'crModalTitle', text: cr.title }), h('p', { class: 'cr-conseq', text: cr.narrative }),
+      attendingCard('Here’s what should have happened', cr.why, cr.refs),
+      h('p', { class: 'cr-dim', text: 'Rewind to the start of this visit and try again, or let the attending fix it and carry on with the error on your record.' }),
+      h('div', { class: 'cr-modal-actions' },
+        h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: () => { rewinds.push({ when: val(S().when, st), title: cr.title, log: cr.log }); st = clone(snap); closeModal(); tab = S().interview ? 'interview' : 'assess'; flash = ''; render(); } }, 'Rewind this visit'),
+        h('button', { type: 'button', class: 'cr-btn', onclick: () => {
+          const sc = S();
+          const results = sc.results ? sc.results(st, X) : [];
+          const entries = stamp(X._entries.concat([{ kind: 'critical', text: cr.log, why: cr.why, refs: cr.refs || [] }]));
+          st.log.push(...entries);
+          applyCart();
+          const next = cr.correct ? cr.correct(st) : res.next;
+          closeModal();
+          showOutcome(X._said, results, next, ['The attending takes over: ' + cr.log.replace(/\.$/, '') + ' is corrected.']);
+        } }, 'Accept the correction')));
+    openModal();
+  }
+
+  function showRough(res, X, n) {
+    modalCard.innerHTML = '';
+    modalCard.append(h('div', { class: 'cr-kicker warn', text: 'Attending review' }), h('h2', { id: 'crModalTitle', text: 'A rough visit: ' + n + ' errors' }),
+      h('ul', { class: 'cr-roughlist' }, X._entries.filter(e => e.kind === 'bad').map(e => h('li', null, h('b', { text: e.text + ' ' }), e.why))),
+      h('p', { class: 'cr-dim', text: 'You can redo this visit, or keep going and live with the results.' }),
+      h('div', { class: 'cr-modal-actions' },
+        h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: () => { rewinds.push({ when: val(S().when, st), title: 'Rough visit (' + n + ' errors)', log: 'Redid the visit after attending review.' }); st = clone(snap); closeModal(); render(); } }, 'Redo this visit'),
+        h('button', { type: 'button', class: 'cr-btn', onclick: () => { closeModal(); commit(res, X); } }, 'Keep going')));
+    openModal();
+  }
+
+  /* ---------------- debrief ---------------- */
+  function refLinks(keys) {
+    const out = [];
+    keys.forEach((k, i) => {
+      const r = CR_REFS[k]; if (!r) return;
+      if (i) out.push(', ');
+      out.push(r.url ? h('a', { href: r.url, target: '_blank', rel: 'noopener', text: r.short }) : h('span', { text: r.short }));
+    });
+    return out;
+  }
+
+  function showDebrief() {
+    playEl.hidden = true; debEl.hidden = false; debEl.innerHTML = '';
+    const t = tally();
+    const checks = Object.keys(st.checks).filter(k => st.checks[k] != null);
+    const ckRight = checks.filter(k => st.checks[k]).length;
+    const pimps = st.pimpLog || [];
+    const pimpRight = pimps.filter(p => p.ok).length;
+    const pct = t.ess ? Math.round(100 * t.essHit / t.ess) : 0;
+    const grade = t.err === 0 && pct >= 90 ? 'Attending-level' : (t.err <= 1 && pct >= 75 ? 'Solid senior resident' : (pct >= 60 ? 'Getting there' : 'Back to the books'));
+    debEl.append(h('div', { class: 'titlebar' }, h('h1', { text: 'Debrief' }), h('p', { text: C.title + ' · ' + C.patient })));
+    debEl.append(h('div', { class: 'cr-stats' },
+      stat(pct + '%', 'essential actions', t.essHit + ' of ' + t.ess),
+      stat(String(t.err), 'errors', 'including criticals'),
+      stat(String(t.low), 'low-value choices', 'wasted time or tests'),
+      stat(ckRight + '/' + checks.length, 'pharm checks', 'drug questions'),
+      stat(pimpRight + '/' + pimps.length, 'attending questions', 'on rounds'),
+      stat(String(rewinds.length), 'rewinds', 'visits redone')));
+    debEl.append(h('p', { class: 'cr-grade' }, 'Overall: ', h('b', { text: grade }), ' · ' + t.pts + ' points'));
+    if (rewinds.length) debEl.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Rewound visits' }), h('ul', { class: 'cr-roughlist' }, rewinds.map(r => h('li', null, h('b', { text: r.when + ': ' + r.title + '. ' }), r.log)))));
+
+    const filt = h('div', { class: 'cr-filters', role: 'group', 'aria-label': 'Show' });
+    let showKinds = 'all';
+    const body = h('div', { class: 'cr-deblist' });
+    [['all', 'Everything'], ['wrong', 'Misses & errors'], ['right', 'Right calls']].forEach(([id, label]) =>
+      filt.append(h('button', { type: 'button', class: 'cr-filter' + (id === 'all' ? ' on' : ''), 'aria-pressed': id === 'all' ? 'true' : 'false', onclick: e => {
+        showKinds = id; filt.querySelectorAll('button').forEach(b => { b.classList.toggle('on', b === e.currentTarget); b.setAttribute('aria-pressed', b === e.currentTarget ? 'true' : 'false'); }); draw(); } }, label)));
+    debEl.append(h('div', { class: 'cr-debhead' }, h('h2', { text: 'Every decision, with the evidence' }), filt), body);
+    function draw() {
+      body.innerHTML = '';
+      const byScene = [];
+      st.log.forEach(e => {
+        if (showKinds === 'wrong' && !['miss', 'bad', 'critical', 'low', 'caught'].includes(e.kind)) return;
+        if (showKinds === 'right' && !['good', 'ok'].includes(e.kind)) return;
+        let g = byScene.find(g => g.key === e.when + e.title);
+        if (!g) { g = { key: e.when + e.title, when: e.when, title: e.title, items: [] }; byScene.push(g); }
+        g.items.push(e);
+      });
+      if (!byScene.length) body.append(h('p', { class: 'cr-dim', text: 'Nothing in this view.' }));
+      byScene.forEach(g => {
+        // fold the routine "asked / checked" essentials into one line per visit
+        const small = g.items.filter(e => e.small && e.kind === 'good');
+        if (small.length > 1) {
+          const at = g.items.indexOf(small[0]);
+          g.items = g.items.filter(e => !small.includes(e));
+          g.items.splice(at, 0, { kind: 'good', text: 'Covered the essentials (' + small.length + '): ' + small.map(e => e.text.replace(/^(Asked|Checked): /, '')).join(' · '), why: 'The history and exam this visit needed.', refs: [] });
+        }
+        body.append(h('section', { class: 'cr-debscene' }, h('h3', null, h('span', { class: 'cr-badge', text: g.when }), ' ', g.title),
+          h('ul', null, g.items.map(e => h('li', { class: 'cr-deb ' + e.kind },
+            h('span', { class: 'cr-kind', text: KIND_LABEL[e.kind] }),
+            h('div', null, h('div', { class: 'cr-deb-t', text: e.text }), e.why ? h('div', { class: 'cr-deb-w', text: e.why }) : null,
+              e.refs && e.refs.length ? h('div', { class: 'cr-refline' }, refLinks(e.refs)) : null))))));
+      });
+    }
+    draw();
+    const used = new Set(); st.log.forEach(e => (e.refs || []).forEach(r => used.add(r)));
+    debEl.append(h('section', { class: 'cr-card cr-refs' }, h('h3', { text: 'Sources' }),
+      h('ol', null, Object.keys(CR_REFS).filter(k => used.has(k)).map(k => h('li', null, CR_REFS[k].full + ' ', CR_REFS[k].url ? h('a', { href: CR_REFS[k].url, target: '_blank', rel: 'noopener', text: 'Link' }) : null)))));
+    debEl.append(h('p', { class: 'cr-dim cr-disclaimer', text: 'Educational simulation with a fictional patient. Doses are intentionally not modelled. Not a substitute for clinical judgment or current local guidance.' }));
+    debEl.append(h('div', { class: 'cr-modal-actions center' },
+      h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: () => startCase(C) }, 'Play again'),
+      h('button', { type: 'button', class: 'cr-btn', onclick: renderMenu }, 'Case list')));
+    window.scrollTo(0, 0);
+  }
+  function stat(big, label, sub) { return h('div', { class: 'cr-stat' }, h('b', { text: big }), h('span', { text: label }), h('small', { text: sub })); }
+
+  modal.addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    const f = Array.from(modalCard.querySelectorAll('button:not([disabled]), a[href], input'));
+    if (!f.length) return;
+    if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+  });
+
+  return {
+    open() {
+      view.hidden = false;
+      document.documentElement.classList.add('case-active');
+      if (!st) renderMenu();
+      else if (!playEl.hidden) render();
+    },
+    close() {
+      if (!view) return;
+      view.hidden = true; modal.hidden = true;
+      document.documentElement.classList.remove('case-active');
+    },
+    menu: renderMenu,
+    // exposed for testing and content audits
+    _test: { get st() { return st; }, set st(v) { st = v; }, startCase, enterScene, sign, setCart, CASES, render },
+  };
+})();
+
+
 function route() {
   const id = decodeURIComponent(location.hash.replace(/^#/, ''));
   C4.close();   // reopened below if this hash is a Connect Four game
   RLAB.close(); // likewise — reopened below if this hash is the Receptor Lab
   SLAB.close(); // and the Signal Lab
   ARENA.close(); // and the Wizard Arena
+  CASE.close(); // and Case Rounds
 
   // A phone joining the wizard game: #play-ABCD
   if (/^play(-|$)/i.test(id)) {
@@ -15510,6 +17620,18 @@ function route() {
   overlay.classList.remove('active');
   currentClueEl = null;
   currentKey = null;
+
+  if (extra && extra.id === 'case-rounds') {
+    current = null;
+    hubView.hidden = true;
+    gameView.hidden = true;
+    wizardView.hidden = true;
+    WIZ.close();
+    document.title = extra.title;
+    CASE.open();
+    window.scrollTo(0, 0);
+    return;
+  }
 
   if (extra && extra.id === 'signal-lab') {
     current = null;
@@ -15565,7 +17687,7 @@ function route() {
     gameView.hidden = true;
     hubView.hidden = false;
     // #games, or a hash naming a parked game, opens the games list; anything
-    // else (including an empty hash) is the five-tile home page.
+    // else (including an empty hash) is the six-tile home page.
     const toList = id === GAMES_LIST_ID || GAMES.some(g => g.id === id);
     renderHub(toList ? 'games' : 'home');
     document.title = toList ? 'Jeopardy & Learning Games — ' + HUB_TITLE : HUB_TITLE;

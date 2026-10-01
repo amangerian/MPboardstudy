@@ -1,10 +1,10 @@
 # Board Study Games
 
 A small collection of browser-based review games for psychiatry / internal
-medicine residents and med students. The landing page has five tiles: **Jeopardy
+medicine residents and med students. The landing page has six tiles: **Jeopardy
 & Learning Games** (which opens a list of every Jeopardy board and the Connect Four
 game, playable ones first and *coming soon* ones below), plus Wizard's Escape,
-Receptor Lab, Wizard Arena and Signal Lab. The games list has its own link,
+Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its own link,
 `…/MPboardstudy/#games`.
 
 **▶️ Play: https://amangerian.github.io/MPboardstudy/**
@@ -38,6 +38,7 @@ Receptor Lab, Wizard Arena and Signal Lab. The games list has its own link,
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
+| Case Rounds | Case simulation, solo | Case 1, *A Symphony by Morning*: psychotic mania in a 28-year-old woman, from the office through admission, lithium levels, discharge teaching, an NSAID toxicity branch, lithium hypothyroidism and preconception planning, with an evidence-cited debrief |
 
 The eleven *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
@@ -233,6 +234,40 @@ alternate throws, whoever lands it in the window scores it, first to 3). The
 music and sound effects are an original chiptune generated with the Web Audio
 API — no audio files — and the mute setting is remembered on the device. Keys
 are `1`–`4` to throw and Space to skip text.
+
+**Case Rounds** is a CCS-style case simulation in its own clinical-chart palette
+(scoped to `#caseView` and the `.caserounds` hub card). One fictional patient is
+followed across visits: office, admission, inpatient day 5, discharge, week 2,
+month 3 and month 6. Each visit has a clock: interview questions cost 3 minutes,
+exam items 1–3, so you cannot ask everything, and what you skip stays hidden
+(skip the medication history and you never learn about her ibuprofen). Orders
+come from the whole catalog every time (170 drugs, labs, tests and consults,
+searchable and filterable); medications are started, increased, decreased, held
+or stopped, and doses are deliberately not modelled. Plan decisions cover
+disposition, level timing, discharge teaching and follow-up.
+
+Choices carry forward. A level drawn 2 hours after a dose comes back as a
+misleading peak. Skipping NSAID teaching leads to lithium toxicity and an ED
+visit at week 2. No TSH on the monitoring labs means a hypothyroid "depression"
+at month 3 that tempts an SSRI. Aripiprazole brings akathisia that looks like
+mania. Pharmacy calls before certain orders go through (valproate in a woman
+who can become pregnant, an antidepressant in mania, an NSAID with lithium,
+lithium with no baseline creatinine) and lets you revise them. A critical error,
+or three errors in one visit, brings an attending review: rewind to the start of
+that visit, or accept the correction and carry on with it on your record.
+Starting certain drugs asks a pharm check (receptor or mechanism), and each visit
+has an optional question on rounds. The debrief lists every decision as a right
+call, acceptable, low value, missed, error or critical, with the reasoning and
+links to the guidelines and studies behind it (VA/DoD 2023, CANMAT/ISBD 2018,
+the FDA lithium label, ISBD 2009 safety monitoring, ISBD/IGSLi 2019, EXTRIP,
+Patorno 2017, Viguera 2000, Cipriani 2011, ADA/APA 2004 and others).
+
+The content lives in `CASE_LITHIUM` (scenes with their interview, exam, plan,
+`evaluate` and `results` functions), `CR_CATALOG` (the shared order catalog),
+`CR_CHECKS` (pharm checks) and `CR_REFS` (sources); the engine is `CASE`. New
+cases reuse the catalog and engine. The case was checked by a separate
+fact-checking pass before release. Nothing is saved; a run lasts as long as the
+page is open.
 
 **Wizard's Escape** is a haunted-castle escape: each room's exit is blocked by
 three identical pieces of furniture, each labelled with a candidate answer, and
