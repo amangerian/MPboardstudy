@@ -1,8 +1,11 @@
 # Board Study Games
 
 A small collection of browser-based review games for psychiatry / internal
-medicine residents and med students. The landing page lists every game; picking
-one opens its board.
+medicine residents and med students. The landing page has five tiles: **Jeopardy
+& Learning Games** (which opens a list of every Jeopardy board and the Connect Four
+game, playable ones first and *coming soon* ones below), plus Wizard's Escape,
+Receptor Lab, Wizard Arena and Signal Lab. The games list has its own link,
+`…/MPboardstudy/#games`.
 
 **▶️ Play: https://amangerian.github.io/MPboardstudy/**
 
@@ -18,10 +21,10 @@ one opens its board.
 | Depression Treatment Jeopardy | Jeopardy, 5 × 5 | ECT/TMS/esketamine, treatment resistance, maintenance, DOD/VA guidelines, psychotherapies |
 | NCD Jeopardy: Diagnosis & Management | Jeopardy, 5 × 5 · *coming soon* | Diagnostic criteria and domains, cognitive assessment tools, the dementia work-up, safety and driving, agitation and psychosis |
 | NCD Jeopardy: Etiologies | Jeopardy, 6 × 5 · *coming soon* | Alzheimer's, Lewy body and Parkinson's, vascular, frontotemporal, infectious and prion, Huntington's/NPH/TBI |
-| Development Through the Life Cycle | Jeopardy, 6 × 5 · *coming soon* | Infant milestones, toddler to preschool, Piaget/Freud/Erikson, attachment and play, puberty, aging and menopause |
-| Sexuality, Gender & Dissociation | Jeopardy, 6 × 5 · *coming soon* | Sexual dysfunctions and their treatment, paraphilic and pedophilic disorders, gender dysphoria, dissociative disorders |
+| Development Through the Life Cycle | Jeopardy, 6 × 5 · *coming soon* | Infant and toddler milestones, Piaget/Freud/Erikson, attachment research, puberty and adolescence, late life and geriatric pharmacology |
+| Sexuality, Gender & Dissociation | Jeopardy, 6 × 5 · *coming soon* | DSM-5-TR sexual dysfunctions and their treatment, paraphilic and pedophilic disorders, gender dysphoria and its care, dissociative disorders |
 | Antipsychotic Jeopardy | Jeopardy, 7 × 5 | FGAs, SGAs and newer agents, clozapine, long-acting injectables, movement side effects, phases of care, name-the-drug receptor binding profiles (picture clues) |
-| Antipsychotic Pharmacology | Connect Four, 5 × 5 or 7 × 6 | Receptor mechanisms, FGA potency, LAIs, CYP interactions, EPS management, clozapine monitoring (15 of the 25 questions also appear in Wizard's Escape) |
+| Antipsychotic Pharmacology | Connect Four, 5 × 5 or 7 × 6 | Receptor mechanisms, FGA potency, LAIs, CYP interactions, EPS management, clozapine monitoring (16 of the 25 questions also appear in Wizard's Escape) |
 | Wizard's Escape | Speed round, 1–4 players | Any categories you pick — it reuses the Jeopardy questions |
 | The Last Decade Jeopardy | Jeopardy, 6 × 5 + Final | New antipsychotics, rapid-acting antidepressants, the anti-amyloid era, DSM-5-TR changes, the opioid landscape, new wake/sleep/ADHD agents |
 | Child & Adolescent Disorders | Jeopardy, 6 × 5 + Final | Autism and social communication disorder, intellectual disability and its genetic syndromes, ADHD, ODD/conduct disorder/DMDD, elimination and feeding disorders, attachment disorders and childhood anxiety |
@@ -31,16 +34,19 @@ one opens its board.
 | Bipolar Disorder Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Mania vs. hypomania, bipolar II and specifiers, lithium, anticonvulsant mood stabilizers, FDA-approved treatment choices, secondary mania |
 | Forensics, Ethics & Biostatistics | Jeopardy, 6 × 5 · *coming soon* | Landmark cases, insanity and malpractice, consent and capacity, statistics, test validity, study design and bias |
 | Psychiatric Genetics Jeopardy | Jeopardy, 6 × 5 · *coming soon* | GWAS and polygenic scores, epigenetics, heritability, repeat-expansion syndromes, pharmacogenomics, gene–disorder links |
+| Sleep-Wake Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Sleep stages and testing, insomnia and CBT-I, hypnotics, narcolepsy, sleep apnea and circadian disorders, parasomnias and restless legs |
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
 
-The ten *coming soon* boards are finished and wizard-ready — every clue carries
+The eleven *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
 `comingSoon: true`, so no card is clickable and none of their categories reach
-Wizard's Escape yet. Deleting that one line on a game switches it fully on. The six newest (substance use,
-anxiety & OCD, personality, bipolar, forensics/ethics/biostatistics and genetics) were
-built from the ABPN blueprint gap analysis and checked by a separate fact-checking pass.
+Wizard's Escape yet. Deleting that one line on a game switches it fully on. The
+substance use, anxiety & OCD, personality, bipolar, forensics/ethics/biostatistics,
+genetics and sleep boards were built from the ABPN blueprint gap analysis; those and
+the rewritten development and sexuality/gender/dissociation boards were each checked
+by a separate fact-checking pass.
 
 **Receptor Lab** is the odd one out — no clues, no teams, no buzzer, and its own
 cauldron-lit palette instead of the navy and gold. You get an empty cell and a
@@ -376,8 +382,8 @@ Games that aren't Jeopardy boards (like Wizard's Escape) go in the `EXTRAS`
 array instead, and also need their own view markup and a branch in `route()`.
 
 To park a game without losing it, add `comingSoon: true` to its entry. Its card
-greys out and stops being a link, a direct `#hash` to it lands on the hub
-instead, and its categories drop out of Wizard's Escape — while all of its clues
+greys out, stops being a link and moves to the *Coming soon* section of the games
+list; a direct `#hash` to it lands on that list instead, and its categories drop out of Wizard's Escape — while all of its clues
 stay in the file. Deleting that one line brings it straight back.
 
 Everything below the arrays is the shared engine code, so a fix there applies to
@@ -511,6 +517,25 @@ each can go down once, one after another, the way it happens when two teams buzz
 and miss — but a correct answer closes the clue. Team names are editable, and teams can be added or
 removed mid-game. Stepping back to the hub and returning keeps a game in
 progress — scores and used tiles survive until the page is reloaded.
+
+## Content and sources
+
+The site is public, so everything on it is written to be safe to share:
+
+- **Own words, primary sources.** Clues and answers are written from scratch and
+  checked against primary sources — DSM-5-TR, FDA labels, practice guidelines and
+  the original studies. Commercial board-review books and question banks are used
+  only as a map of what's high-yield, never as text to adapt.
+- **No borrowed questions.** Don't reword a review book's practice questions or case
+  vignettes (its patient details, numbers or scenario) into clues. Test the concept
+  with a fresh clue instead.
+- **No borrowed structure.** Don't build a board by walking one lecture's slides in
+  order; mix sources and choose the facts independently.
+- **Images need a license.** Only use images you made, public-domain images, or
+  openly licensed ones (for example CC BY) with the credit shown on the clue. Not
+  from review books, and not from sites whose terms forbid reuse on websites.
+- **Name primary sources, not review products.** Code comments and credits cite
+  guidelines, labels and papers — not the review course a fact was first seen in.
 
 ## Notes
 
