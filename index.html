@@ -3147,7 +3147,7 @@
         <div class="buzz-hostlink">Host console (shows answers): <span id="buzzHostUrl"></span></div>
       </div>
       <div class="buzz-controls">
-        <button class="reset-board-btn" id="buzzBigBtn">Show join screen</button>
+        <button class="reset-board-btn" id="buzzShowJoinBtn">Show join screen</button>
         <button class="reset-board-btn buzz-toggle" id="buzzToggleBtn" aria-pressed="true">Buzzers on</button>
         <button class="reset-board-btn" id="buzzCloseBtn">Close room</button>
       </div>
@@ -6497,7 +6497,10 @@ const BUZZ = (function () {
   }
 
   startBtn.addEventListener('click', openRoom);
-  document.getElementById('buzzBigBtn').addEventListener('click', () => {
+  // The host's "Show join screen" button. It must not share an id with the
+  // phone's big buzz button (#buzzBigBtn), or the phone code picks up this
+  // hidden host button and its own button never arms.
+  document.getElementById('buzzShowJoinBtn').addEventListener('click', () => {
     if (!host.code) return;
     JOIN.show('Join the buzzer', host.code, joinLink(host.code), playersEl.textContent);
   });
