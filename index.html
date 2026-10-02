@@ -3317,6 +3317,7 @@
     .cr-kind { justify-self: start; }
     .cr-orow { padding: 8px 10px; }
   }
+  .cr-modal-card .cr-pimp { margin: 18px 0 0; }
 </style>
 </head>
 <body>
@@ -5826,7 +5827,7 @@ const EXTRAS = [
     kind: "Case simulation \u00b7 solo",
     caserounds: true,
     blurb: "One patient from the first office visit to six months later. Interview on a clock, examine, order from the whole formulary, decide when to check levels and when to see her again. What you skip comes back; go off the rails and the attending steps in. The debrief cites the guidelines and data behind every call.",
-    tags: ["Case 1: lithium for acute mania", "Levels, interactions & toxicity", "Thyroid, renal & pregnancy planning", "Evidence-cited debrief"]
+    tags: ["Interview on a clock", "Full formulary every time", "Consequences carry forward", "Evidence-cited debrief"]
   }
 ];
 
@@ -15913,6 +15914,7 @@ const crFmt = v => (Math.round(v * 10) / 10).toFixed(1);
 function crAP(st) {
   return Object.keys(st.meds).find(id => st.meds[id].status === 'active' && CR_GROUPS.antimanicAP.includes(id) && id !== st.flags.apRefused) || null;
 }
+const crInCart = (st, id, action) => st.cart.some(c => c.id === id && c.action === action);
 /* she will not take olanzapine again (30-lb weight gain at 22) */
 const crRefuses = id => id === 'olanzapine' || id === 'olz_sam';
 const crName = id => (CR_BY_ID[id] ? CR_BY_ID[id].name : id);
@@ -15978,8 +15980,7 @@ const CASE_LITHIUM = {
   id: 'lithium',
   title: 'A Symphony by Morning',
   patient: 'Dana Whitfield, 28',
-  tagline: 'A music teacher brought in by her sister, sleeping two hours a night and certain the symphony wants her. Treat her mania with lithium and keep her well for six months.',
-  topics: ['Acute mania', 'Lithium start & levels', 'Interactions & toxicity', 'Thyroid & renal monitoring', 'Pregnancy planning'],
+  tagline: 'A 28-year-old music teacher is brought to your office by her older sister. "She hasn’t slept in a week, and she’s scaring me."',
   start: 'office',
   chips: [
     ['office', 'Office'], ['admit', 'Admission'], ['day5', 'Day 5'], ['discharge', 'Discharge'],
@@ -16031,14 +16032,13 @@ const CASE_LITHIUM = {
     /* ======================================================== OFFICE */
     office: {
       when: 'Day 0 · 10:40', setting: 'Outpatient psychiatry', title: 'New patient visit',
-      budget: 45, orders: false,
+      budget: 39, orders: false,
       intro: () => [
         'Dana Whitfield, 28, a middle-school music teacher, is here because her older sister Megan drove her. Megan booked the appointment; Dana did not.',
         'Dana is in a sequined jacket over pajama pants, humming, and stands up twice before you sit down. "I don’t know why we’re here. I’ve never felt better in my life."',
         'Megan, quietly: "She hasn’t slept in a week and she’s scaring me."',
       ],
       vitals: () => ({ HR: '104', BP: '134/86', T: '37.0 °C', SpO2: '99%' }),
-      meters: () => [['Mania', 9], ['Psychosis', 6], ['Sleep', 1, '2–3 h'], ['Insight', 1]],
       interview: () => [
         { id: 'open', who: 'Dana', q: 'What’s been going on lately?', a: '"Everything is happening. I’m writing a symphony — four movements in six days. My students are going to perform it. Maybe the national orchestra. Probably the national orchestra."', tag: 'use' },
         { id: 'sleep', who: 'Dana', q: 'How much have you been sleeping?', a: '"Two hours? Three? I don’t need it. I lie down and the music just keeps going, so I get up and write it."', tag: 'ess', note: 'Sleeping 2–3 h a night for about a week; not tired' },
@@ -16050,15 +16050,9 @@ const CASE_LITHIUM = {
         { id: 'meds', who: 'Dana', q: 'Do you take any medicines, prescribed or over the counter?', a: '"Nothing. Well — ibuprofen for cramps. A lot, that week of the month."', tag: 'ess', note: 'Takes ibuprofen regularly for menstrual cramps', set: { knowIbu: true } },
         { id: 'lmp', who: 'Dana', q: 'When was your last period? Could you be pregnant? Any contraception?', a: '"About two weeks ago. My boyfriend and I use condoms. Mostly."', tag: 'ess', note: 'LMP ~2 weeks ago; condoms “mostly”', set: { knowContra: true } },
         { id: 'fam', who: 'Dana', q: 'Does anyone in your family have mood problems?', a: '"My mom has bipolar too. Lithium. She’s been fine for twenty years on it."', tag: 'use', note: 'Mother: bipolar disorder, sustained response to lithium', set: { knowMom: true } },
-        { id: 'spend', who: 'Dana', q: 'Any big purchases or new projects?', a: '"I put eight thousand dollars on a card for a recording studio. Worth every cent."', tag: 'use', note: '$8,000 impulsive spending' },
-        { id: 'drive', who: 'Dana', q: 'How has your driving been?', a: '"Fast! The highway was empty. Mostly."', tag: 'use' },
         { id: 'neuroros', who: 'Dana', q: 'Any headaches, head injury, seizures, weakness or numbness?', a: '"No, no, no and no."', tag: 'use', note: 'No neurologic symptoms or head injury' },
-        { id: 'thyroid', who: 'Dana', q: 'Any heat intolerance, palpitations or weight loss?', a: '"I’m warm because I’m alive. Weight’s the same."', tag: 'use' },
-        { id: 'child', who: 'Dana', q: 'What was your childhood like?', a: '"Music camp every summer. Happy. Why?"', tag: 'low' },
-        { id: 'hobby', who: 'Dana', q: 'What do you do for fun?', a: '"This! Composing! Have you been listening?"', tag: 'low' },
         { id: 's_change', who: 'Megan (sister)', q: 'What have you noticed change this week?', a: '"She’s up all night moving furniture and calling people at 3 a.m. She talks so fast I can’t follow her. She quit eating dinner."', tag: 'use' },
         { id: 's_danger', who: 'Megan (sister)', q: 'Has she done anything dangerous?', a: '"Saturday she drove my boys home from practice at ninety-five on the highway. She left the stove on twice. I’m terrified she’s going to kill someone."', tag: 'ess', note: 'Collateral: drove 95 mph with nephews in the car; left stove on twice' },
-        { id: 's_meds', who: 'Megan (sister)', q: 'Is she taking anything at home?', a: '"Just Advil. She goes through a bottle a month for cramps."', tag: 'use', note: 'Collateral: heavy ibuprofen use for cramps', set: { knowIbu: true } },
         { id: 's_hosp', who: 'Megan (sister)', q: 'How did the last hospitalization go?', a: '"She refused to go. The police had to bring her in on a hold. She thanked us afterward."', tag: 'use' },
       ],
       assess: () => [
@@ -16121,7 +16115,7 @@ const CASE_LITHIUM = {
 
     /* ======================================================== ADMISSION */
     admit: {
-      when: 'Day 0 · 16:30', setting: 'Emergency dept → inpatient unit', title: 'Admission orders',
+      when: 'Day 0 · 16:30', setting: 'Emergency department', title: 'Admission',
       budget: 20, orders: true,
       intro: st => [
         st.flags.byPolice ? 'Dana arrives in the ED overnight with a trooper. She is unhurt, furious and singing.' : 'Dana arrives by ambulance. She paces the hallway singing scales and tries to direct the triage nurses in a round.',
@@ -16129,7 +16123,6 @@ const CASE_LITHIUM = {
         'The inpatient unit will take her once you have written admission orders: labs, medications and when to check them.',
       ],
       vitals: () => ({ HR: '102', BP: '130/84', T: '37.1 °C', SpO2: '99%' }),
-      meters: () => [['Mania', 9], ['Psychosis', 6], ['Sleep', 1, '2–3 h'], ['Insight', 1]],
       interview: st => [
         { id: 'allergy', who: 'Dana', q: 'Any medication allergies?', a: '"None. I’m allergic to boredom."', tag: 'use' },
         { id: 'lmp2', who: 'Dana', q: 'When was your last period? Any chance you’re pregnant?', a: '"Two weeks ago. Condoms. Mostly."', tag: st.flags.knowContra ? 'low' : 'ess', note: 'LMP ~2 weeks ago; condoms “mostly”', set: { knowContra: true } },
@@ -16144,10 +16137,10 @@ const CASE_LITHIUM = {
         { id: 'agit', label: 'Agitation check', find: 'Restless and loud, but redirectable. Accepts oral medication; no emergency medication needed now.', tag: 'use', cost: 1 },
       ],
       plan: () => [
-        { id: 'lvlday', prompt: 'First lithium level: when?', type: 'one', options: [
+        { id: 'lvlday', prompt: 'First lithium level: when?', type: 'one', show: (p, st) => crInCart(st, 'lithium', 'start'), options: [
           ['d1', 'Tomorrow morning'], ['d3', 'Day 3'], ['d5', 'Day 5'], ['d10', 'At discharge (about day 10)'], ['none', 'No level needed while she is inpatient'],
         ] },
-        { id: 'lvltime', prompt: 'Drawn how long after a dose?', type: 'one', options: [
+        { id: 'lvltime', prompt: 'First lithium level: drawn how long after a dose?', type: 'one', show: (p, st) => crInCart(st, 'lithium', 'start'), options: [
           ['trough', '12 hours after the last dose (morning trough, before the morning dose)'],
           ['peak', '2 hours after the morning dose'],
           ['any', 'Any time — whenever the lab comes by'],
@@ -16217,13 +16210,15 @@ const CASE_LITHIUM = {
         if (X.started('methylphenidate') || X.started('amphetamine') || X.started('modafinil')) X.log('bad', 'Started a stimulant during mania.', 'Stimulants can worsen mania and psychosis.', ['canmat']);
 
         // ---- level timing
-        const day = X.plan('lvlday'), when = X.plan('lvltime');
+        const day = li ? X.plan('lvlday') : 'none', when = li ? X.plan('lvltime') : 'trough';
         st.flags.lvlday = day; st.flags.lvltime = when;
-        if (day === 'd5') X.log('good', 'First level on day 5.', 'Lithium’s half-life is about 18–36 hours, so steady state takes roughly 3–7 days. The label allows a first level after 3 days, and CANMAT draws levels about 5 days after the last titration.', ['label', 'canmat'], true);
+        if (!li) { /* the team starts lithium; unit protocol sets the timing */ }
+        else if (day === 'd5') X.log('good', 'First level on day 5.', 'Lithium’s half-life is about 18–36 hours, so steady state takes roughly 3–7 days. The label allows a first level after 3 days, and CANMAT draws levels about 5 days after the last titration.', ['label', 'canmat'], true);
         else if (day === 'd3') X.log('good', 'First level on day 3.', 'The FDA label says to check a level after 3 days, then regularly until she is stable. It is close to steady state; many clinicians wait until day 5.', ['label'], true);
         else if (day === 'd1') X.log('miss', 'First level tomorrow.', 'A level after one or two doses is far from steady state (about 5 days) and can’t guide dosing. Check after 3–5 days.', ['label'], true);
         else X.log('miss', 'No lithium level until discharge or later.', 'During acute treatment, check levels within the first week and after every dose change, until levels and the clinical picture are stable.', ['label', 'isbdmon'], true);
-        if (when === 'trough') X.log('good', 'Level drawn as a 12-hour trough.', 'Reference ranges (0.8–1.2 mEq/L acute) are defined for a level drawn 12 hours after the last dose.', ['label'], true);
+        if (!li) { /* see above */ }
+        else if (when === 'trough') X.log('good', 'Level drawn as a 12-hour trough.', 'Reference ranges (0.8–1.2 mEq/L acute) are defined for a level drawn 12 hours after the last dose.', ['label'], true);
         else if (when === 'peak') { X.log('bad', 'Level drawn 2 hours after a dose.', 'That captures the absorption peak, which runs well above the 12-hour trough the ranges are built on. You’ll get a misleadingly high number.', ['label']); st.flags.peak = true; }
         else X.log('miss', 'Level drawn at random times.', 'A level is only interpretable as a 12-hour trough. Random timing makes trends meaningless.', ['label'], true);
 
@@ -16298,7 +16293,6 @@ const CASE_LITHIUM = {
         return p;
       },
       vitals: st => ({ HR: '88', BP: st.meds.quetiapine ? '112/70' : '118/74', T: '36.9 °C', SpO2: '99%' }),
-      meters: st => crAP(st) ? [['Mania', 6], ['Psychosis', 4], ['Sleep', 4, '5 h'], ['Insight', 3]] : [['Mania', 8], ['Psychosis', 6], ['Sleep', 2, '<3 h'], ['Insight', 1]],
       onEnter(st) {
         if (!st.flags.peak) st.labs.li.push({ t: 'Day 5', v: 0.6 });
         else st.labs.li.push({ t: 'Day 5 (2-h peak)', v: 1.4, peak: true });
@@ -16404,7 +16398,7 @@ const CASE_LITHIUM = {
 
     /* ======================================================== DAY 10 (not ready) */
     day10: {
-      when: 'Day 10 · 08:30', setting: 'Inpatient unit', title: 'Not ready yet',
+      when: 'Day 10 · 08:30', setting: 'Inpatient unit', title: 'Morning rounds',
       budget: 16, orders: true,
       intro(st) {
         const lvl = crLiLevel(st);
@@ -16416,7 +16410,6 @@ const CASE_LITHIUM = {
       },
       onEnter(st) { st.labs.li.push({ t: 'Day 10', v: crLiLevel(st) }); },
       vitals: () => ({ HR: '90', BP: '120/76', T: '36.8 °C', SpO2: '99%' }),
-      meters: () => [['Mania', 7], ['Psychosis', 5], ['Sleep', 3, '3–4 h'], ['Insight', 2]],
       interview: () => [
         { id: 'sleep10', who: 'Dana', q: 'How did you sleep?', a: '"Three hours. Maybe four."', tag: 'ess' },
         { id: 'si10', who: 'Dana', q: 'Any thoughts of hurting yourself?', a: '"No."', tag: 'ess' },
@@ -16468,7 +16461,6 @@ const CASE_LITHIUM = {
       },
       onEnter(st) { st.labs.li.push({ t: st.flags.extended ? 'Day 15' : 'Day 10', v: crLiLevel(st) }); },
       vitals: () => ({ HR: '76', BP: '116/72', T: '36.8 °C', SpO2: '99%' }),
-      meters: () => [['Mania', 2], ['Psychosis', 0], ['Sleep', 7, '7 h'], ['Insight', 7]],
       interview: st => [
         { id: 'sidc', who: 'Dana', q: 'Any thoughts of hurting or killing yourself now that things are slowing down?', a: '"No. Embarrassed, not hopeless. I want to get back to my kids at school."', tag: 'ess' },
         { id: 'adher', who: 'Dana', q: 'How do you feel about staying on these medications?', a: '"I’ll take the lithium. Mom swears by it. I don’t love the shaky hands."', tag: 'use' },
@@ -16563,7 +16555,6 @@ const CASE_LITHIUM = {
         if (st.flags.lvl1w) st.labs.li.push({ t: 'Week 1', v: sick ? 1.2 : crLiLevel(st, true) });
       },
       vitals: () => ({ HR: '74', BP: '114/70', T: '36.7 °C', SpO2: '99%' }),
-      meters: () => [['Mania', 1], ['Psychosis', 0], ['Sleep', 8, '7–8 h'], ['Mood', 6]],
       interview: st => [
         { id: 'mood2', who: 'Dana', q: 'How has your mood been?', a: '"Flat-ish. Normal, I guess. I miss the music being loud, honestly."', tag: 'use' },
         { id: 'sleep2', who: 'Dana', q: 'How are you sleeping?', a: '"Seven or eight hours. Sometimes nine."', tag: 'ess' },
@@ -16618,7 +16609,6 @@ const CASE_LITHIUM = {
         'Dana is pale and slow to answer. She says she has had three days of diarrhea and nausea.',
       ],
       vitals: () => ({ HR: '58', BP: '104/64', T: '37.2 °C', SpO2: '98%' }),
-      meters: () => [['Mania', 1], ['Psychosis', 0], ['Sleep', 6, 'fitful'], ['Mood', 4]],
       interview: () => [
         { id: 'tdose', who: 'Dana', q: 'Have you been taking your lithium as prescribed?', a: '"Every dose. Even when I was sick. You said never to stop it."', tag: 'ess' },
         { id: 'tmeds', who: 'Dana', q: 'Any other medicines or painkillers in the last week?', a: '"Ibuprofen. Six hundred, three or four times a day. My period was awful."', tag: 'ess', note: 'Took ibuprofen 600 mg 3–4×/day for ~5 days', set: { knowIbu: true } },
@@ -16658,7 +16648,7 @@ const CASE_LITHIUM = {
 
     /* ======================================================== ED (toxicity) */
     ed: {
-      when: 'Week 2 · ED', setting: 'Emergency department', title: 'Lithium toxicity',
+      when: 'Week 2 · ED', setting: 'Emergency department', title: 'ED evaluation',
       budget: 14, orders: true,
       onEnter(st) {
         st.meds.ibuprofen = st.meds.ibuprofen || { status: 'active', since: 'Home (OTC)', home: true };
@@ -16674,7 +16664,6 @@ const CASE_LITHIUM = {
         'Stat results: lithium 2.1 mEq/L · creatinine 1.5 mg/dL (baseline 0.8) · Na 137 · ECG: sinus bradycardia 56, QTc 452 ms, T-wave flattening.',
       ],
       vitals: st => ({ HR: st.flags.lateTox ? '54' : '56', BP: '102/62', T: '37.2 °C', SpO2: '98%' }),
-      meters: st => [['Toxicity', st.flags.lateTox ? 8 : 6], ['Confusion', st.flags.lateTox ? 6 : 2], ['Volume', 3, 'dry']],
       interview: () => [
         { id: 'elast', who: 'Dana', q: 'When was your last lithium dose?', a: '"Last night, around nine."', tag: 'use' },
         { id: 'eod', who: 'Dana', q: 'Any chance you took extra?', a: '"No."', tag: 'use' },
@@ -16757,7 +16746,6 @@ const CASE_LITHIUM = {
         return p;
       },
       vitals: () => ({ HR: '62', BP: '118/76', T: '36.4 °C', SpO2: '99%', Wt: '67 kg' }),
-      meters: () => [['Mania', 0], ['Psychosis', 0], ['Sleep', 10, '10 h'], ['Mood', 3]],
       interview: () => [
         { id: 'm3mood', who: 'Dana', q: 'Tell me about your mood.', a: '"Grey. Not hopeless. Just no color."', tag: 'ess' },
         { id: 'm3si', who: 'Dana', q: 'Any thoughts of hurting yourself, or that life isn’t worth living?', a: '"No. Tired, not that."', tag: 'ess' },
@@ -16771,7 +16759,7 @@ const CASE_LITHIUM = {
         { id: 'wt3', label: 'Weight', find: '67 kg (+3 kg since admission).', tag: 'use', cost: 1 },
       ],
       plan: st => st.flags.tshKnown ? [
-        { id: 'recheck', optional: true, prompt: 'If you start levothyroxine, recheck TSH in…', type: 'one', options: [['6w', '6–8 weeks'], ['1w', '1 week'], ['6m', '6 months']] },
+        { id: 'recheck', optional: true, show: (p, st) => crInCart(st, 'levothyroxine', 'start'), prompt: 'If you start levothyroxine, recheck TSH in…', type: 'one', options: [['6w', '6–8 weeks'], ['1w', '1 week'], ['6m', '6 months']] },
       ] : [],
       pimp: { q: 'How does lithium most often cause hypothyroidism?', options: ['It inhibits release of thyroid hormone (and iodine uptake) in the gland', 'It triggers TSH-receptor-blocking antibodies', 'It suppresses pituitary TSH secretion'], correct: 0, why: 'Lithium is concentrated in the thyroid and inhibits hormone release. TSH rises, which is why TSH, not free T4 alone, is the monitoring test.', refs: ['label', 'isbdmon'] },
       evaluate(st, X) {
@@ -16817,7 +16805,7 @@ const CASE_LITHIUM = {
 
     /* ======================================================== MONTH 4 (late thyroid) */
     month4: {
-      when: 'Month 4', setting: 'Outpatient clinic', title: 'Still dragging',
+      when: 'Month 4', setting: 'Outpatient clinic', title: 'Follow-up visit',
       budget: 18, orders: true,
       onEnter(st) { if (st.flags.tshPending) { st.labs.tsh.push({ t: 'Month 4', v: 13.6 }); } },
       intro: st => st.flags.tshPending ? [
@@ -16828,13 +16816,12 @@ const CASE_LITHIUM = {
         'Megan: "Is this just what lithium does to her?"',
       ],
       vitals: () => ({ HR: '58', BP: '120/80', T: '36.3 °C', SpO2: '99%', Wt: '68 kg' }),
-      meters: () => [['Mania', 0], ['Psychosis', 0], ['Sleep', 10, '10–11 h'], ['Mood', 2]],
       interview: () => [
         { id: 'm4si', who: 'Dana', q: 'Any thoughts of hurting yourself?', a: '"No. I just want to feel like me."', tag: 'ess' },
         { id: 'm4ros', who: 'Dana', q: 'Cold, constipated, dry skin, hair loss?', a: '"Yes, yes, yes and yes."', tag: 'use' },
       ],
       assess: () => [{ id: 'phq4', label: 'PHQ-9', find: 'Score 14. Item 9 = 0.', tag: 'use', cost: 2 }],
-      plan: () => [{ id: 'recheck', optional: true, prompt: 'If you start levothyroxine, recheck TSH in…', type: 'one', options: [['6w', '6–8 weeks'], ['1w', '1 week'], ['6m', '6 months']] }],
+      plan: () => [{ id: 'recheck', optional: true, show: (p, st) => crInCart(st, 'levothyroxine', 'start'), prompt: 'If you start levothyroxine, recheck TSH in…', type: 'one', options: [['6w', '6–8 weeks'], ['1w', '1 week'], ['6m', '6 months']] }],
       evaluate(st, X) {
         X.interviewScore(); X.assessScore();
         if (!st.flags.tshPending) {
@@ -16863,7 +16850,7 @@ const CASE_LITHIUM = {
 
     /* ======================================================== MONTH 6 */
     month6: {
-      when: 'Month 6', setting: 'Outpatient clinic', title: 'A question about the future',
+      when: 'Month 6', setting: 'Outpatient clinic', title: 'Maintenance visit',
       budget: 22, orders: true,
       onEnter(st) {
         st.labs.li.push({ t: 'Month 6', v: crLiLevel(st, true) });
@@ -16875,7 +16862,6 @@ const CASE_LITHIUM = {
         '"Ben and I want to start trying for a baby, maybe next year. Should I stop the lithium? My mom stopped hers when she was pregnant with me, and she got really sick afterward."',
       ],
       vitals: () => ({ HR: '70', BP: '116/72', T: '36.7 °C', SpO2: '99%', Wt: '66 kg' }),
-      meters: () => [['Mania', 0], ['Psychosis', 0], ['Sleep', 8, '8 h'], ['Mood', 7]],
       interview: st => [
         { id: 'm6plan', who: 'Dana', q: 'What are you hoping for, and when?', a: '"A baby in a year or so. I want to do it right."', tag: 'ess' },
         { id: 'm6hist', who: 'Dana', q: 'Let’s count your episodes. How many have you had?', a: '"Two manias, both psychotic. One long depression."', tag: 'use' },
@@ -16979,7 +16965,6 @@ const CASE = (function () {
         h('div', { class: 'cr-kicker', text: 'Case 1 · ' + cs.patient }),
         h('h2', { text: cs.title }),
         h('p', { text: cs.tagline }),
-        h('div', { class: 'cr-tags' }, cs.topics.map(t => h('span', { class: 'cr-tag', text: t }))),
         h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: () => startCase(cs) }, 'Start case')));
     });
     list.append(h('article', { class: 'cr-casecard cr-soon' },
@@ -17022,14 +17007,17 @@ const CASE = (function () {
   function renderHead() {
     const sc = S();
     const head = $('crHead'); head.innerHTML = '';
-    const cur = (C.chipOf && C.chipOf[st.scene]) || st.scene;
-    const curIdx = C.chips.findIndex(c => c[0] === cur);
+    // Only the visits that have happened. Showing the road ahead would give away the plan.
+    const chipLabel = id => { const sc = C.scenes[id]; return val(sc.when, st).split(' \u00b7 ')[0]; };
+    const seen = [];
+    st.visited.forEach(id => { const lab = chipLabel(id); if (seen[seen.length - 1] !== lab) seen.push(lab); });
+    const curIdx = seen.length - 1;
     head.append(
       h('div', { class: 'cr-head-id' },
         h('div', { class: 'cr-head-name', text: C.patient }),
         h('div', { class: 'cr-head-sub' }, h('span', { class: 'cr-badge', text: sc.setting }), ' ', val(sc.when, st), ' · ', sc.title)),
-      h('ol', { class: 'cr-chips', 'aria-label': 'Case timeline' }, C.chips.map((c, i) =>
-        h('li', { class: 'cr-chip' + (i < curIdx ? ' done' : '') + (i === curIdx ? ' now' : ''), 'aria-current': i === curIdx ? 'step' : null, text: c[1] }))),
+      h('ol', { class: 'cr-chips', 'aria-label': 'Visits so far' }, seen.map((lab, i) =>
+        h('li', { class: 'cr-chip' + (i < curIdx ? ' done' : ' now'), 'aria-current': i === curIdx ? 'step' : null, text: lab }))),
       h('div', { class: 'cr-head-score' }, scoreChips()));
   }
   function tally() {
@@ -17064,7 +17052,6 @@ const CASE = (function () {
     side.append(h('section', { class: 'cr-card' },
       h('h3', { text: 'Vitals' }),
       h('dl', { class: 'cr-vitals' }, Object.keys(v).map(k => [h('dt', { text: k }), h('dd', { text: v[k] })]))));
-    if (sc.meters) side.append(h('section', { class: 'cr-card' }, h('h3', { text: 'How she is' }), sc.meters(st).map(m => meter(m[0], m[1], m[2]))));
     const meds = Object.keys(st.meds);
     side.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Active medications' }),
       meds.length ? h('ul', { class: 'cr-medlist' }, meds.map(id => {
@@ -17206,12 +17193,11 @@ const CASE = (function () {
   }
 
   /* ---------------- plan ---------------- */
-  function planGroups() { const sc = S(); return (sc.plan ? sc.plan(st) : []).filter(g => !g.show || g.show(st.plan)); }
+  function planGroups() { const sc = S(); return (sc.plan ? sc.plan(st) : []).filter(g => !g.show || g.show(st.plan, st)); }
   function panelPlan(p) {
     const sc = S();
-    if (sc.pimp) p.append(pimpCard(sc.pimp));
     const groups = planGroups();
-    if (!groups.length) p.append(h('p', { class: 'cr-help', text: 'No separate plan decisions this visit. Your orders are the plan.' }));
+    if (!groups.length) p.append(h('p', { class: 'cr-help', text: 'Nothing to decide here yet. Plan questions appear when your orders call for them.' }));
     groups.forEach(g => {
       const fs = h('fieldset', { class: 'cr-group' }, h('legend', { text: g.prompt }));
       g.options.forEach(([oid, label]) => {
@@ -17231,28 +17217,39 @@ const CASE = (function () {
       p.append(fs);
     });
   }
-  function pimpCard(pm) {
-    const key = st.scene;
-    const ans = st.pimps[key];
-    const card = h('section', { class: 'cr-pimp' }, h('div', { class: 'cr-kicker', text: 'The attending asks' }), h('p', { class: 'cr-pimp-q', text: pm.q }));
-    const row = h('div', { class: 'cr-pimp-opts' });
-    pm.options.forEach((o, i) => {
-      let cls = 'cr-btn';
-      if (ans != null) { if (i === pm.correct) cls += ' right'; else if (i === ans) cls += ' wrong'; }
-      row.append(h('button', { type: 'button', class: cls, disabled: ans != null ? true : null, onclick: () => { st.pimps[key] = i; renderPanel(); } }, o));
-    });
-    card.append(row);
-    if (ans != null) card.append(h('p', { class: 'cr-pimp-why' }, h('b', { text: ans === pm.correct ? 'Right. ' : 'Not quite. ' }), pm.why));
-    else card.append(h('p', { class: 'cr-dim', text: 'Optional: scored separately, and it doesn’t stop the clock.' }));
+  // The attending's question comes after the orders are signed, so it can't tip off the decision.
+  function pimpCard(pm, key) {
+    const card = h('section', { class: 'cr-pimp' });
+    function draw() {
+      card.innerHTML = '';
+      const ans = st.pimps[key];
+      card.append(h('div', { class: 'cr-kicker', text: 'On rounds, the attending asks' }), h('p', { class: 'cr-pimp-q', text: pm.q }));
+      const row = h('div', { class: 'cr-pimp-opts' });
+      pm.options.forEach((o, i) => {
+        let cls = 'cr-btn';
+        if (ans != null) { if (i === pm.correct) cls += ' right'; else if (i === ans) cls += ' wrong'; }
+        row.append(h('button', { type: 'button', class: cls, disabled: ans != null ? true : null, onclick: () => {
+          st.pimps[key] = i;
+          st.pimpLog = (st.pimpLog || []).concat([{ scene: key, ok: i === pm.correct, q: pm.q }]);
+          draw();
+          const next = modalCard.querySelector('.cr-modal-actions .cr-primary'); if (next) next.focus();
+        } }, o));
+      });
+      card.append(row);
+      if (ans != null) card.append(h('p', { class: 'cr-pimp-why' }, h('b', { text: ans === pm.correct ? 'Right. ' : 'Not quite. ' }), pm.why,
+        pm.refs && pm.refs.length ? h('span', { class: 'cr-refline' }, ' ', refLinks(pm.refs)) : null));
+      else card.append(h('p', { class: 'cr-dim', text: 'Optional, and scored separately.' }));
+    }
+    draw();
     return card;
   }
 
   /* ---------------- right column ---------------- */
   function renderRight() {
     const r = $('crRight'); r.innerHTML = '';
-    r.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Lithium levels' }), liChart()));
+    if ((st.labs.li || []).length) r.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Lithium (mEq/L)' }), liChart()));
     const rows = [['Creatinine', 'cr', 'mg/dL'], ['TSH', 'tsh', 'mIU/L'], ['Weight', 'wt', 'kg']].filter(x => (st.labs[x[1]] || []).length);
-    if (rows.length) r.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Other trends' }),
+    if (rows.length) r.append(h('section', { class: 'cr-card' }, h('h3', { text: 'Results over time' }),
       rows.map(([label, k, unit]) => h('div', { class: 'cr-trend' }, h('div', { class: 'cr-trend-l', text: label + ' (' + unit + ')' }),
         h('div', { class: 'cr-trend-v' }, st.labs[k].map(pt => h('span', { title: pt.t, text: pt.t + ': ' + pt.v })))))));
     const sheet = h('section', { class: 'cr-card cr-sheet' }, h('h3', { text: 'Order sheet' }));
@@ -17315,7 +17312,7 @@ const CASE = (function () {
   }
 
   let lastFocus = null;
-  function openModal() { lastFocus = document.activeElement; modal.hidden = false; const b = modalCard.querySelector('button:not([disabled])'); if (b) b.focus(); }
+  function openModal() { lastFocus = document.activeElement; modal.hidden = false; const b = modalCard.querySelector('.cr-modal-actions .cr-primary') || modalCard.querySelector('button:not([disabled])'); if (b) b.focus(); }
   function closeModal() { modal.hidden = true; if (lastFocus && lastFocus.focus && document.body.contains(lastFocus)) lastFocus.focus(); }
 
   /* ---------------- signing ---------------- */
@@ -17367,7 +17364,6 @@ const CASE = (function () {
     const X = makeX(sc);
     const res = sc.evaluate(st, X) || {};
     Object.keys(st.intercepts).forEach(k => { const ic = st.intercepts[k]; if (ic.revised) X._entries.push({ kind: 'caught', text: 'Pharmacy caught: ' + ic.text, why: 'You fixed it before it reached the patient. Good recovery, but the order should not have been written.', refs: [] }); });
-    if (sc.pimp && st.pimps[st.scene] != null) st.pimpLog = (st.pimpLog || []).concat([{ scene: st.scene, ok: st.pimps[st.scene] === sc.pimp.correct, q: sc.pimp.q }]);
     if (res.critical) { showCritical(res, X); return; }
     const bad = X._entries.filter(e => e.kind === 'bad').length;
     if (bad >= 3) { showRough(res, X, bad); return; }
@@ -17422,6 +17418,8 @@ const CASE = (function () {
     said.forEach(t => modalCard.append(h('p', { text: t })));
     if (results.length) modalCard.append(h('h3', { class: 'cr-sub', text: 'Results' }), h('table', { class: 'cr-results' }, h('tbody', null, results.map(r => h('tr', { class: r[2] || '' }, h('th', { scope: 'row', text: r[0] }), h('td', { text: r[1] }))))));
     if (!said.length && !results.length && !(extra || []).length) modalCard.append(h('p', { class: 'cr-dim', text: 'The clock moves forward.' }));
+    const cur = S();
+    if (cur.pimp && st.pimps[st.scene] == null) modalCard.append(pimpCard(cur.pimp, st.scene));
     const nsc = C.scenes[next];
     modalCard.append(h('div', { class: 'cr-modal-actions' }, h('button', { type: 'button', class: 'cr-btn cr-primary', onclick: () => { closeModal(); enterScene(next); } },
       next === 'end' ? 'See the debrief' : 'Go to: ' + val(nsc.when, st) + ' · ' + nsc.title)));

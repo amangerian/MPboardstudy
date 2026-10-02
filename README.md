@@ -38,7 +38,7 @@ Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its o
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
-| Case Rounds | Case simulation, solo | Case 1, *A Symphony by Morning*: psychotic mania in a 28-year-old woman, from the office through admission, lithium levels, discharge teaching, an NSAID toxicity branch, lithium hypothyroidism and preconception planning, with an evidence-cited debrief |
+| Case Rounds | Case simulation, solo | One patient across visits: interview on a clock, examine, order from the full formulary, set follow-up, live with the consequences; evidence-cited debrief. Case 1: a 28-year-old brought in by her sister |
 
 The eleven *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
@@ -235,10 +235,13 @@ music and sound effects are an original chiptune generated with the Web Audio
 API — no audio files — and the mute setting is remembered on the device. Keys
 are `1`–`4` to throw and Space to skip text.
 
-**Case Rounds** is a CCS-style case simulation in its own clinical-chart palette
+**Case Rounds** (spoilers for case 1 in this paragraph and the next) is a CCS-style case simulation in its own clinical-chart palette
 (scoped to `#caseView` and the `.caserounds` hub card). One fictional patient is
 followed across visits: office, admission, inpatient day 5, discharge, week 2,
-month 3 and month 6. Each visit has a clock: interview questions cost 3 minutes,
+month 3 and month 6. Nothing on screen gives the plan away: the timeline shows
+only the visits that have happened, there is no symptom meter, results appear
+only once ordered, plan questions appear only when the orders call for them, and
+the attending's question on rounds comes after you sign. Each visit has a clock: interview questions cost 3 minutes,
 exam items 1–3, so you cannot ask everything, and what you skip stays hidden
 (skip the medication history and you never learn about her ibuprofen). Orders
 come from the whole catalog every time (170 drugs, labs, tests and consults,
@@ -255,8 +258,8 @@ who can become pregnant, an antidepressant in mania, an NSAID with lithium,
 lithium with no baseline creatinine) and lets you revise them. A critical error,
 or three errors in one visit, brings an attending review: rewind to the start of
 that visit, or accept the correction and carry on with it on your record.
-Starting certain drugs asks a pharm check (receptor or mechanism), and each visit
-has an optional question on rounds. The debrief lists every decision as a right
+Starting certain drugs asks a pharm check (receptor or mechanism), and after
+signing, most visits end with an optional question from the attending. The debrief lists every decision as a right
 call, acceptable, low value, missed, error or critical, with the reasoning and
 links to the guidelines and studies behind it (VA/DoD 2023, CANMAT/ISBD 2018,
 the FDA lithium label, ISBD 2009 safety monitoring, ISBD/IGSLi 2019, EXTRIP,
