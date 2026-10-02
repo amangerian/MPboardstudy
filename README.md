@@ -237,40 +237,54 @@ are `1`–`4` to throw and Space to skip text.
 
 **Case Rounds** (spoilers for case 1 in this paragraph and the next) is a CCS-style case simulation in its own clinical-chart palette
 (scoped to `#caseView` and the `.caserounds` hub card). One fictional patient is
-followed across visits: office, admission, inpatient day 5, discharge, week 2,
-month 3 and month 6. Nothing on screen gives the plan away: the timeline shows
-only the visits that have happened, there is no symptom meter, results appear
-only once ordered, plan questions appear only when the orders call for them, and
-the attending's question on rounds comes after you sign. Each visit has a clock: interview questions cost 3 minutes,
-exam items 1–3, so you cannot ask everything, and what you skip stays hidden
-(skip the medication history and you never learn about her ibuprofen). Orders
-come from the whole catalog every time (170 drugs, labs, tests and consults,
-searchable and filterable); medications are started, increased, decreased, held
-or stopped, and doses are deliberately not modelled. Plan decisions cover
-disposition, level timing, discharge teaching and follow-up.
+followed across visits: office, admission, inpatient rounds, discharge, clinic
+follow-ups and a month-6 pregnancy-planning visit, with branches (an ED visit and a
+medicine-floor consult) that only happen if earlier choices lead there. The design
+rule is a **blank slate**: every visit shows the same menus, so nothing on screen
+points at the right move. The interview is one constant bank of questions (to the
+patient and to her sister), the exam one constant list, the scales the same twelve
+every time (YMRS, C-SSRS, PHQ-9, GAD-7, Rapid Mood Screener, MDQ, PANSS, BARS,
+SAS, AIMS, MoCA, AUDIT-C), the assessment a full DSM-5-TR template (diagnosis,
+episode, severity/course, psychotic features, specifiers, problem list) and the
+plan a fixed set of dispositions, follow-up intervals and counseling points that
+includes plausible wrong ones. There is no symptom meter, no counter, no pharmacy
+call that stops a bad order, and the timeline shows only visits that have happened.
+Each visit has a clock (questions 3 minutes, exam items 1–3, scales 1–10), so you
+cannot do everything. Orders come from the whole catalog every time (170 drugs,
+labs, tests and consults, searchable by name, abbreviation or brand); medications
+are started, increased, decreased, held or stopped, and doses are deliberately not
+modelled. Outpatient visits write orders too. A lab can be ordered more than once
+(one now, one in five days), each with its own timing — now, every 4–6 h, tomorrow,
+day 3, day 5, a week, or before the next visit — and drug levels are drawn as a
+12-hour trough, a 2-hour peak or a random level. In the hospital and ED a lab timed
+now can be **drawn now** and its result read before you sign. Every test ordered
+returns a result.
 
-Choices carry forward. A level drawn 2 hours after a dose comes back as a
-misleading peak. Skipping NSAID teaching leads to lithium toxicity and an ED
-visit at week 2. No TSH on the monitoring labs means a hypothyroid "depression"
-at month 3 that tempts an SSRI. Aripiprazole brings akathisia that looks like
-mania. Pharmacy calls before certain orders go through (valproate in a woman
-who can become pregnant, an antidepressant in mania, an NSAID with lithium,
-lithium with no baseline creatinine) and lets you revise them. A critical error,
-or three errors in one visit, brings an attending review: rewind to the start of
-that visit, or accept the correction and carry on with it on your record.
-Starting certain drugs asks a pharm check (receptor or mechanism), and after
-signing, most visits end with an optional question from the attending. The debrief lists every decision as a right
-call, acceptable, low value, missed, error or critical, with the reasoning and
-links to the guidelines and studies behind it (VA/DoD 2023, CANMAT/ISBD 2018,
+Choices carry forward, and feedback waits. Nothing is graded until the debrief,
+except that a critical error brings an attending review (rewind the visit, or
+accept the correction and carry on with it on your record) and three errors in one
+visit offer a redo. A level drawn 2 hours after a dose comes back as a misleading
+peak. A drug the patient refuses is never given. Skipping NSAID and sick-day
+teaching leads to lithium toxicity and an ED visit; leaving lithium off afterwards
+leads to relapse. No TSH on the monitoring labs means a hypothyroid "depression"
+that tempts an antidepressant. Aripiprazole brings akathisia that looks like
+mania. Knowledge questions — a pharm check for each new drug and the attending's
+question — appear only after you sign. The debrief opens with **Key lessons** (the
+costliest misses), marks which items were essential, and lists every decision as a
+right call, acceptable, low value, missed, error or critical, with the reasoning
+and links to the guidelines and studies behind it (VA/DoD 2023, CANMAT/ISBD 2018,
 the FDA lithium label, ISBD 2009 safety monitoring, ISBD/IGSLi 2019, EXTRIP,
-Patorno 2017, Viguera 2000, Cipriani 2011, ADA/APA 2004 and others).
+Patorno 2017, Viguera 2000, Chung 2017, ADA/APA 2004 and others).
 
-The content lives in `CASE_LITHIUM` (scenes with their interview, exam, plan,
-`evaluate` and `results` functions), `CR_CATALOG` (the shared order catalog),
-`CR_CHECKS` (pharm checks) and `CR_REFS` (sources); the engine is `CASE`. New
-cases reuse the catalog and engine. The case was checked by a separate
-fact-checking pass before release. Nothing is saved; a run lasts as long as the
-page is open.
+The content lives in `CASE_LITHIUM` (scenes with their intro, `ess` essentials,
+`evaluate` and plan questions), `CR_ASK`/`CR_EXAM` (the constant interview and exam
+banks, with visit-specific answers in `crAnswer`/`crFinding`), `CR_CATALOG` and
+`CR_SYN` (the order catalog and its search aliases), `CR_CHECKS` (pharm checks) and
+`CR_REFS` (sources); the engine is `CASE`. New cases reuse the catalog, banks and
+engine. The case was playtested by simulated learners at several skill levels —
+from deliberately all-wrong to attending — and its scoring was revised from their
+actual decision logs; the content was fact-checked before release. Nothing is
+saved; a run lasts as long as the page is open.
 
 **Wizard's Escape** is a haunted-castle escape: each room's exit is blocked by
 three identical pieces of furniture, each labelled with a candidate answer, and
