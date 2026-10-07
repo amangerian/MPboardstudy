@@ -34,18 +34,19 @@ Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its o
 | Bipolar Disorder Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Mania vs. hypomania, bipolar II and specifiers, lithium, anticonvulsant mood stabilizers, FDA-approved treatment choices, secondary mania |
 | Forensics, Ethics & Biostatistics | Jeopardy, 6 × 5 · *coming soon* | Landmark cases, insanity and malpractice, consent and capacity, statistics, test validity, study design and bias |
 | Psychiatric Genetics Jeopardy | Jeopardy, 6 × 5 · *coming soon* | GWAS and polygenic scores, epigenetics, heritability, repeat-expansion syndromes, pharmacogenomics, gene–disorder links |
-| Sleep-Wake Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Sleep stages and testing, insomnia and CBT-I, hypnotics, narcolepsy, sleep apnea and circadian disorders, parasomnias and restless legs |
+| Sleep-Wake Jeopardy | Jeopardy, 6 × 5 | Sleep stages and testing, insomnia and CBT-I, hypnotics, narcolepsy, sleep apnea and circadian disorders, parasomnias and restless legs |
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
-| Case Rounds | Case simulation, solo | One patient across visits: interview on a clock, examine, order from the full formulary, set follow-up, live with the consequences; evidence-cited debrief. Case 1: a 28-year-old brought in by her sister |
+| Case Rounds *(beta)* | Case simulation, solo | One patient across visits in five chapters: interview on a clock, examine, order from the full formulary, set follow-up, live with the consequences; a review with teaching points after each chapter and an evidence-cited debrief. Case 1: a 28-year-old brought in by her sister |
 
-The eleven *coming soon* boards are finished and wizard-ready — every clue carries
+The ten *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
 `comingSoon: true`, so no card is clickable and none of their categories reach
 Wizard's Escape yet. Deleting that one line on a game switches it fully on. The
 substance use, anxiety & OCD, personality, bipolar, forensics/ethics/biostatistics,
-genetics and sleep boards were built from the ABPN blueprint gap analysis; those and
+genetics and sleep boards were built from the ABPN blueprint gap analysis (the sleep
+board is now live, after a second fact-check in October 2026); those and
 the rewritten development and sexuality/gender/dissociation boards were each checked
 by a separate fact-checking pass.
 
@@ -241,26 +242,28 @@ followed across visits: office, admission, inpatient rounds, discharge, clinic
 follow-ups and a month-6 pregnancy-planning visit, with branches (an ED visit and a
 medicine-floor consult) that only happen if earlier choices lead there. The design
 rule is a **blank slate**: every visit shows the same menus, so nothing on screen
-points at the right move. The interview is one constant bank of questions (to the
-patient and to her sister), the exam one constant list, the scales the same twelve
-every time (YMRS, C-SSRS, PHQ-9, GAD-7, Rapid Mood Screener, MDQ, PANSS, BARS,
-SAS, AIMS, MoCA, AUDIT-C), the assessment a full DSM-5-TR template (diagnosis,
-episode, severity/course, psychotic features, specifiers, problem list) and the
-plan a fixed set of dispositions, follow-up intervals and counseling points that
-includes plausible wrong ones. There is no symptom meter, no counter, no pharmacy
-call that stops a bad order, and the timeline shows only visits that have happened.
-Each visit has a clock (questions 3 minutes, exam items 1–3, scales 1–10), so you
-cannot do everything. Orders come from the whole catalog every time (170 drugs,
+points at the right move. The menus were cut down on 3 October 2026 to keep the choices manageable: the
+interview is 12 grouped questions (10 to the patient, 2 to her sister), the exam five items (three grouped
+mental status exam items, a neuro and motor exam, a physical exam), and six rating scales (YMRS, C-SSRS,
+PHQ-9, MDQ, a combined BARS/SAS/AIMS movement rating, MoCA) on one "Exam & scales" tab. The
+assessment asks only for the diagnosis, the current episode and psychotic features (severity and the
+other specifiers are gone), plus a ten-item problem list. The plan has a fixed set of dispositions, four
+follow-up intervals and twelve counseling points, including plausible wrong ones.
+There is no symptom meter and the timeline shows only visits that have happened.
+Each visit has a clock (questions 3 minutes, exam items 1–3, scales 2–5), so you
+cannot do everything; an answer or finding appears inside the tile you clicked. Orders come from the whole catalog every time (170 drugs,
 labs, tests and consults, searchable by name, abbreviation or brand); medications
 are started, increased, decreased, held or stopped, and doses are deliberately not
-modelled. Outpatient visits write orders too. A lab can be ordered more than once
-(one now, one in five days), each with its own timing — now, every 4–6 h, tomorrow,
-day 3, day 5, a week, or before the next visit — and drug levels are drawn as a
-12-hour trough, a 2-hour peak or a random level. In the hospital and ED a lab timed
-now can be **drawn now** and its result read before you sign. Every test ordered
-returns a result.
+modelled. A lab can be ordered more than once, each timed now, every 4–6 h, in 5 days, or before the
+next visit, and drug levels are drawn as a 12-hour trough or 2 hours after a dose.
+In the hospital and ED a lab timed now can be **drawn now** and its result read before you sign.
 
-Choices carry forward, and feedback waits. Nothing is graded until the debrief,
+The case is split into **five chapters** (acute psychotic mania; inpatient titration and discharge;
+lithium safety; maintenance; planning a pregnancy). When a chapter ends, a review page shows that
+chapter's essential-action count, every miss and error with its reasoning and sources, the right calls,
+and four to six teaching points, before the next chapter starts.
+
+Choices carry forward. Within a chapter nothing is graded,
 except that a critical error brings an attending review (rewind the visit, or
 accept the correction and carry on with it on your record) and three errors in one
 visit offer a redo. A level drawn 2 hours after a dose comes back as a misleading
