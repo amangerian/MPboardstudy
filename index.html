@@ -922,6 +922,10 @@
     font-size: 11px; font-weight: 700; cursor: pointer;
     text-decoration: underline; letter-spacing: 1px; padding: 0;
   }
+  .cat-bulk { flex-wrap: wrap; }
+  .cat-bulk-btns { display: inline-flex; gap: 14px; }
+  .cat-bulk-btns button { white-space: nowrap; }
+  .cat-group-head button:disabled { color: #5b4a94; cursor: default; text-decoration: none; }
   .cat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .cat-chip {
     display: inline-flex; align-items: center; gap: 8px;
@@ -3650,8 +3654,8 @@
     </div>
 
     <div class="rl-modes" role="group" aria-label="Mode">
-      <button type="button" id="rlModeGauntlet" aria-pressed="true">Gauntlet</button>
       <button type="button" id="rlModeSurvival" aria-pressed="false">Survival</button>
+      <button type="button" id="rlModeGauntlet" aria-pressed="true">Gauntlet</button>
       <button type="button" id="rlModeFree" aria-pressed="false">Free play</button>
       <button type="button" id="rlModeGuided" aria-pressed="false">Guided brewing</button>
     </div>
@@ -3987,8 +3991,8 @@
     </div>
 
     <div class="ar-seg" role="group" aria-label="Mode">
-      <button type="button" id="arModeFree" aria-pressed="true">Free play</button>
       <button type="button" id="arModeSurv" aria-pressed="false">Survival</button>
+      <button type="button" id="arModeFree" aria-pressed="true">Free play</button>
       <button type="button" id="arModeDuel" aria-pressed="false">Two-wizard duel</button>
     </div>
     <p class="ar-note" id="arModeNote"></p>
@@ -4164,9 +4168,9 @@
         <div>
           <h3>Wizards</h3>
           <div class="seg" id="wizMode">
+            <button type="button" data-mode="survival" aria-pressed="false">Survival<span class="seg-note">Three lives, clear the deck</span></button>
             <button type="button" data-mode="1" aria-pressed="true">One wizard<span class="seg-note">Escape for score</span></button>
             <button type="button" data-mode="2" aria-pressed="false">Two wizards<span class="seg-note">Split screen race</span></button>
-            <button type="button" data-mode="survival" aria-pressed="false">Survival<span class="seg-note">Three lives, clear the deck</span></button>
           </div>
           <div class="wizroom" id="wizRoomPanel" style="margin-top:12px">
             <button class="reset-board-btn" id="wizRoomBtn" style="margin:0">Play from phones</button>
@@ -4217,7 +4221,7 @@
 
     <div class="wiz-panel">
       <h3>Spellbook</h3>
-      <p class="sub">Pick the categories your questions come from. They are drawn from every Jeopardy game on this site, so anything added there shows up here too.</p>
+      <p class="sub">Pick the games your questions come from. Every Jeopardy game on this site is here, so anything added there shows up here too.</p>
       <div id="wizCats"></div>
       <button class="wiz-start" id="wizStart">Enter the castle</button>
       <div class="wiz-note" id="wizSetupNote"></div>
@@ -5873,7 +5877,7 @@ const EXTRAS = [
     kind: "Arcade · 1–4 wizards",
     arcane: true,
     blurb: "Blast your way out of a haunted castle. Three identical hiding places block every exit — pick the right answer to shatter one and move on. The faster you answer, the stronger the spell.",
-    tags: ["Speed round", "Split-screen race", "Survival for up to four", "Uses every game's questions"]
+    tags: ["Survival for up to four", "Speed round", "Split-screen race", "Uses every game's questions"]
   },
   {
     id: "receptor-lab",
@@ -5881,7 +5885,7 @@ const EXTRAS = [
     kind: "Drag & drop \u00b7 solo",
     lab: true,
     blurb: "Two shelves, antipsychotics and antidepressants. A drug name over an empty cauldron. Click in every receptor it acts on, say whether it blocks, partially activates, activates or inverts each one, and size the circle to the binding strength. Lock in and your brew is set beside the real one, Ki values and all. Or start in guided brewing, where the teaching paragraph goes up first with the receptors cut out of it and you answer your way back into it.",
-    tags: ["Psychopharm", "19 antipsychotics \u00b7 25 antidepressants \u00b7 2 hidden MAOIs", "Guided walkthroughs", "Gauntlet \u00b7 Survival \u00b7 Free play"]
+    tags: ["Psychopharm", "19 antipsychotics \u00b7 25 antidepressants \u00b7 2 hidden MAOIs", "Guided walkthroughs", "Survival \u00b7 Gauntlet \u00b7 Free play"]
   },
   {
     id: "wizard-arena",
@@ -5889,7 +5893,7 @@ const EXTRAS = [
     kind: "Battle \u00b7 solo or duel",
     arena: true,
     blurb: "A wild medication appears with its level too weak or too strong. Throw a real co-medication at it \u2014 an inhibitor or inducer of the enzyme that clears it \u2014 to push the level back into the therapeutic window. Strong ones move it two notches, moderate one, weak ones barely flicker. Wrong enzyme and nothing happens; wrong direction and it hits back.",
-    tags: ["CYP1A2 \u00b7 2C19 \u00b7 2D6 \u00b7 3A4", "Lithium, valproate & lamotrigine twists", "32 medications", "Free play \u00b7 Survival \u00b7 Duel", "Chiptune"]
+    tags: ["CYP1A2 \u00b7 2C19 \u00b7 2D6 \u00b7 3A4", "Lithium, valproate & lamotrigine twists", "32 medications", "Survival \u00b7 Free play \u00b7 Duel", "Chiptune"]
   },
   {
     id: "signal-lab",
@@ -8008,65 +8012,72 @@ const WIZ = (function () {
   lbRefreshEl.addEventListener('click', lbLoad);
 
   // ---------- setup screen ----------
-  function renderCats() {
-    catsEl.innerHTML = '';
+  // One chip per game: a game is in or out as a whole. Underneath, `selected`
+  // still holds category keys, so the pool, the saved scores and the "all
+  // categories" badge work exactly as before.
+  function gamesForPicker() {
     const byGame = new Map();
     allCategories().forEach(c => {
-      if (!byGame.has(c.gameId)) byGame.set(c.gameId, { title: c.gameTitle, items: [] });
-      byGame.get(c.gameId).items.push(c);
+      if (!byGame.has(c.gameId)) byGame.set(c.gameId, { id: c.gameId, title: c.gameTitle, keys: [], n: 0 });
+      const g = byGame.get(c.gameId);
+      g.keys.push(c.key);
+      g.n += roomClues(c.cat).filter(cl => !wizOf(cl).image).length;
     });
+    return [...byGame.values()];
+  }
 
-    byGame.forEach(group => {
-      const wrap = document.createElement('div');
-      wrap.className = 'cat-group';
+  function renderCats() {
+    catsEl.innerHTML = '';
+    const games = gamesForPicker();
+    const gameOn = g => g.keys.every(k => selected.has(k));
 
-      const head = document.createElement('div');
-      head.className = 'cat-group-head';
-      const name = document.createElement('span');
-      name.textContent = group.title;
-      const toggle = document.createElement('button');
-      toggle.type = 'button';
-      const allOn = () => group.items.every(c => selected.has(c.key));
-      toggle.textContent = allOn() ? 'Clear all' : 'Select all';
-      toggle.onclick = () => {
-        const turnOff = allOn();
-        group.items.forEach(c => turnOff ? selected.delete(c.key) : selected.add(c.key));
+    const bulk = document.createElement('div');
+    bulk.className = 'cat-group-head cat-bulk';
+    const count = document.createElement('span');
+    const onCount = games.filter(gameOn).length;
+    count.textContent = `${onCount} of ${games.length} games selected`;
+    const btns = document.createElement('span');
+    btns.className = 'cat-bulk-btns';
+    const allBtn = document.createElement('button');
+    allBtn.type = 'button';
+    allBtn.textContent = 'Select all';
+    allBtn.disabled = onCount === games.length;
+    allBtn.onclick = () => { games.forEach(g => g.keys.forEach(k => selected.add(k))); renderCats(); refreshStart(); };
+    const noneBtn = document.createElement('button');
+    noneBtn.type = 'button';
+    noneBtn.textContent = 'Deselect all';
+    noneBtn.disabled = selected.size === 0;
+    noneBtn.onclick = () => { selected.clear(); renderCats(); refreshStart(); };
+    btns.append(allBtn, noneBtn);
+    bulk.append(count, btns);
+
+    const chips = document.createElement('div');
+    chips.className = 'cat-chips';
+    games.forEach(g => {
+      const on = gameOn(g);
+      const chip = document.createElement('label');
+      chip.className = 'cat-chip' + (on ? ' on' : '');
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.checked = on;
+      box.onchange = () => {
+        g.keys.forEach(k => box.checked ? selected.add(k) : selected.delete(k));
         renderCats();
         refreshStart();
       };
-      head.append(name, toggle);
 
-      const chips = document.createElement('div');
-      chips.className = 'cat-chips';
-      group.items.forEach(c => {
-        const on = selected.has(c.key);
-        const chip = document.createElement('label');
-        chip.className = 'cat-chip' + (on ? ' on' : '');
+      const label = document.createElement('span');
+      label.textContent = g.title;
+      const n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = g.n;
 
-        const box = document.createElement('input');
-        box.type = 'checkbox';
-        box.checked = on;
-        box.onchange = () => {
-          box.checked ? selected.add(c.key) : selected.delete(c.key);
-          chip.classList.toggle('on', box.checked);
-          const t = head.querySelector('button');
-          t.textContent = group.items.every(x => selected.has(x.key)) ? 'Clear all' : 'Select all';
-          refreshStart();
-        };
-
-        const label = document.createElement('span');
-        label.textContent = c.cat.name;
-        const n = document.createElement('span');
-        n.className = 'n';
-        n.textContent = roomClues(c.cat).filter(cl => !wizOf(cl).image).length;
-
-        chip.append(box, label, n);
-        chips.appendChild(chip);
-      });
-
-      wrap.append(head, chips);
-      catsEl.appendChild(wrap);
+      chip.append(box, label, n);
+      chips.appendChild(chip);
     });
+
+    catsEl.append(bulk, chips);
   }
 
   // How many rooms the castle can actually be. A two-wizard race needs enough
@@ -8083,11 +8094,11 @@ const WIZ = (function () {
     if (!selected.size) {
       startBtn.disabled = true;
       noteEl.className = 'wiz-note warn';
-      noteEl.textContent = 'Pick at least one category.';
+      noteEl.textContent = 'Pick at least one game.';
     } else if (n < 3) {
       startBtn.disabled = true;
       noteEl.className = 'wiz-note warn';
-      noteEl.textContent = 'Those categories do not have enough distinct answers to build rooms. Add another.';
+      noteEl.textContent = 'Those games do not have enough distinct answers to build rooms. Add another.';
     } else {
       startBtn.disabled = false;
       noteEl.className = 'wiz-note';
@@ -8095,7 +8106,7 @@ const WIZ = (function () {
         const seated = net.code ? seatList().filter(p => p.slot >= 0).length : 0;
         noteEl.textContent = seated > 1
           ? `${seated} wizards seated. They all run the same ${n} rooms together — three lives each, and a wizard drops out of the line when the third one goes. Clear all ${n} for a full clear.`
-          : `${n} questions available, asked once each — clear all ${n} without running out of lives and it is a full clear. More categories, higher ceiling.`;
+          : `${n} questions available, asked once each — clear all ${n} without running out of lives and it is a full clear. More games, higher ceiling.`;
         return;
       }
       const rooms = roomsFor(n);
@@ -8733,7 +8744,7 @@ const WIZ = (function () {
     run = {
       variant: 'survival',
       questions: pool.slice(),
-      // The ceiling for this run: more categories selected, more rooms on offer.
+      // The ceiling for this run: more games selected, more rooms on offer.
       poolSize: pool.length,
       cleared: false,
       total: 0,

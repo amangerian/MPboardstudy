@@ -352,7 +352,9 @@ scores are per-browser, so a different computer, browser, or a private window
 starts empty, and clearing site data erases them.
 
 It has no questions of its own: it draws them from the Jeopardy games above, so
-adding a Jeopardy game puts its categories in the wizard's picker automatically.
+adding a Jeopardy game puts it in the wizard's picker automatically. The picker
+works by whole game — tick the games you want (each shows its question count), or
+use **Select all** / **Deselect all**; every category in a ticked game is included.
 Clues whose question is a picture (`image`) are shown on the board but kept out
 of the wizard game for now. Two other optional fields control how a clue plays
 there — `short`, a compact label for when the real answer is a paragraph, and
