@@ -31,7 +31,7 @@ Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its o
 | Substance Use Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Use disorder criteria, alcohol withdrawal and biomarkers, medications for alcohol use disorder, opioids, stimulants/cannabis/club drugs, sedatives, tobacco and stages of change |
 | Anxiety & OCD Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Panic and agoraphobia, GAD and phobias, anxiolytics, OCD, OC-related disorders, separation anxiety and cultural syndromes |
 | Personality Disorders Jeopardy | Jeopardy, 6 × 5 · *coming soon* | General criteria, clusters A, B and C, defense mechanisms, DBT/TFP/MBT/GPM |
-| Bipolar Disorder Jeopardy | Jeopardy, 6 × 5 · *coming soon* | Mania vs. hypomania, bipolar II and specifiers, lithium, anticonvulsant mood stabilizers, FDA-approved treatment choices, secondary mania |
+| Bipolar Disorder Jeopardy | Jeopardy, 6 × 5 | Mania vs. hypomania, bipolar II and specifiers, lithium, anticonvulsant mood stabilizers, FDA-approved treatment choices, secondary mania |
 | Forensics, Ethics & Biostatistics | Jeopardy, 6 × 5 · *coming soon* | Landmark cases, insanity and malpractice, consent and capacity, statistics, test validity, study design and bias |
 | Psychiatric Genetics Jeopardy | Jeopardy, 6 × 5 · *coming soon* | GWAS and polygenic scores, epigenetics, heritability, repeat-expansion syndromes, pharmacogenomics, gene–disorder links |
 | Sleep-Wake Jeopardy | Jeopardy, 6 × 5 | Sleep stages and testing, insomnia and CBT-I, hypnotics, narcolepsy, sleep apnea and circadian disorders, parasomnias and restless legs |
@@ -40,13 +40,14 @@ Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its o
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
 | Case Rounds *(beta)* | Case simulation, solo | One patient across visits in five chapters: interview on a clock, examine, order from the full formulary, set follow-up, live with the consequences; a review with teaching points after each chapter and an evidence-cited debrief. Case 1: a 28-year-old brought in by her sister |
 
-The ten *coming soon* boards are finished and wizard-ready — every clue carries
+The nine *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
 `comingSoon: true`, so no card is clickable and none of their categories reach
 Wizard's Escape yet. Deleting that one line on a game switches it fully on. The
 substance use, anxiety & OCD, personality, bipolar, forensics/ethics/biostatistics,
 genetics and sleep boards were built from the ABPN blueprint gap analysis (the sleep
-board is now live, after a second fact-check in October 2026); those and
+board is now live, after a second fact-check in October 2026, and the bipolar board
+went live later that month); those and
 the rewritten development and sexuality/gender/dissociation boards were each checked
 by a separate fact-checking pass.
 
