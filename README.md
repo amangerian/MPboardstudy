@@ -482,7 +482,17 @@ a phone only ever says "seat 2 chose the third one". **In shared survival each
 phone also shows the room's question, its category and room number, and the
 three answer labels on the buttons**, in the same order as the furniture, so
 players can read and answer from their own phone. Only the labels travel —
-never which one is right; each phone still learns that from its own result. It works for all three modes: a solo run, a
+never which one is right; each phone still learns that from its own result.
+A phone keeps saying *That was it* until the next room once its pick clears,
+says *Room over* when the clock ends a room, and in survival says *Out of lives*
+(with its buttons off) once that player's third life goes, rather than offering
+buttons the screen would ignore.
+
+To keep the phones in step with the screen, each new room is announced in one
+write (it used to be two back to back), and that write is sent just ahead of
+the screen drawing the room, by about the time a write takes to land, which the
+screen measures as it plays. A tap that beats the screen is held and counted the
+moment the room appears. It works for all three modes: a solo run, a
 two-wizard race with both rooms on the screen, and survival for up to four.
 Whoever is not on a phone keeps the keyboard; with every seat taken the screen
 stops accepting answers of its own.

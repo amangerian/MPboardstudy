@@ -527,6 +527,8 @@
   .pad-status.miss { color: #ff8f8f; font-weight: 700; }
   .pad-buttons { display: flex; flex-direction: column; gap: 12px; }
   .pad-btn {
+    touch-action: manipulation;   /* a quick second tap is a tap, not a zoom */
+    -webkit-tap-highlight-color: transparent;
     width: 100%; min-height: clamp(84px, 19vh, 150px);
     border-radius: 16px;
     border: 3px solid #3d2f6b;
@@ -1287,7 +1289,10 @@
   .scene .web.r { right: 0; transform: scaleX(-1); }
   .scene .web svg { width: 100%; height: auto; display: block; }
 
-  .scene .wizard { position: absolute; left: 1%; bottom: 3%; height: 34%; z-index: 5; }
+  /* Decoration only. Without pointer-events: none the corner wizard sits over
+     the left-hand piece on tablets and wide two-player screens and swallows
+     clicks aimed at it. */
+  .scene .wizard { position: absolute; left: 1%; bottom: 3%; height: 34%; z-index: 5; pointer-events: none; }
   .scene .wizard svg { height: 100%; width: auto; display: block; }
   .staff-arm { transform-origin: 62% 55%; transition: transform .18s ease; }
   /* Scoped to the lone wizard in the corner: without it, every wizard in a
@@ -1322,16 +1327,19 @@
     display: flex; flex-direction: column; align-items: center;
     justify-content: flex-end; gap: 6px;
     font-family: Arial, sans-serif;
-    transition: transform .14s ease, filter .14s ease;
+    touch-action: manipulation;   /* no double-tap zoom eating a quick second tap */
+    -webkit-tap-highlight-color: transparent;
   }
   .furni .art {
     flex: 1 1 auto; min-height: 0; min-width: 0; width: 100%;
     display: flex; align-items: flex-end; justify-content: center;
     filter: drop-shadow(0 8px 10px rgba(0,0,0,.6));
+    transition: transform .14s ease, filter .14s ease;
   }
   .furni .art svg { height: 100%; width: auto; max-width: 100%; display: block; }
-  .furni:hover:not(:disabled) { transform: translateY(-5px); }
-  .furni:hover:not(:disabled) .art { filter: drop-shadow(0 10px 14px rgba(124,240,216,.4)); }
+  @media (hover: hover) {
+    .furni:hover:not(:disabled) .art { transform: translateY(-5px); filter: drop-shadow(0 10px 14px rgba(124,240,216,.4)); }
+  }
   .furni:focus-visible { outline: none; }
   .furni:focus-visible .label { border-color: var(--arcane); box-shadow: 0 0 0 2px rgba(124,240,216,.5); }
 
@@ -8948,7 +8956,16 @@ const WIZ = (function () {
   // created, leaving every phone to report "no room" for a code it could see.
   const netCheck = r => { if (!r.ok) throw new Error(String(r.status)); return r; };
   const netPut = (path, data) => fetch(netUrl(path), { method: 'PUT', body: JSON.stringify(data) }).then(netCheck);
-  const netPatch = (path, data) => fetch(netUrl(path), { method: 'PATCH', body: JSON.stringify(data) }).then(netCheck);
+  // Every PATCH is timed, so the screen knows roughly how long a write takes to
+  // land and can send the next room's arming write that much ahead of time.
+  const netPatch = (path, data) => {
+    const t0 = performance.now();
+    return fetch(netUrl(path), { method: 'PATCH', body: JSON.stringify(data) }).then(netCheck).then(r => {
+      const took = performance.now() - t0;
+      net.rtt = net.rtt ? net.rtt * 0.7 + took * 0.3 : took;
+      return r;
+    });
+  };
   const netDel = path => fetch(netUrl(path), { method: 'DELETE' }).then(netCheck);
 
   const DENIED = 'The database refused that write. Its security rules have not been '
@@ -8974,7 +8991,8 @@ const WIZ = (function () {
   const roomNoteEl = document.getElementById('wizRoomNote');
   const roomCloseEl = document.getElementById('wizRoomClose');
 
-  const net = { code: null, stream: null, seats: {}, roundHandled: -1 };
+  const net = { code: null, stream: null, seats: {}, roundHandled: -1, mirror: {}, rtt: 0 };
+  const MAX_LEAD = 300;   // ms the arming write may be sent ahead of the screen
 
   const seatCapacity = () => (variant === 'survival' ? MAX_COVEN : mode);
 
@@ -9058,13 +9076,13 @@ const WIZ = (function () {
       roomPanel.hidden = true; roomLive.hidden = false;
       renderSeats();
       net.stream = new EventSource(netUrl('/rooms/' + code));
-      let mirror = {};
+      net.mirror = {};
       const onEvent = kind => e => {
         let msg; try { msg = JSON.parse(e.data); } catch (err) { return; }
         if (!msg) return;
-        mirror = netApply(mirror, kind, msg.path, msg.data);
-        assignSeats(mirror.players);
-        applyPicks(mirror.picks);
+        net.mirror = netApply(net.mirror, kind, msg.path, msg.data);
+        assignSeats(net.mirror.players);
+        applyPicks(net.mirror.picks);
       };
       net.stream.addEventListener('put', onEvent('put'));
       net.stream.addEventListener('patch', onEvent('patch'));
@@ -9077,23 +9095,23 @@ const WIZ = (function () {
   }
 
   function netApply(root, event, path, data) {
-    if (path === '/') {
-      if (event === 'put') return data === null ? {} : data;
-      Object.keys(data || {}).forEach(k => { root[k] = data[k]; });
-      return root;
-    }
-    const parts = path.split('/').filter(Boolean);
-    let node = root;
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (typeof node[parts[i]] !== 'object' || node[parts[i]] === null) node[parts[i]] = {};
-      node = node[parts[i]];
-    }
-    const last = parts[parts.length - 1];
-    if (event === 'patch') {
-      if (typeof node[last] !== 'object' || node[last] === null) node[last] = {};
-      Object.keys(data || {}).forEach(k => { node[last][k] = data[k]; });
-    } else if (data === null) { delete node[last]; }
-    else { node[last] = data; }
+    // Firebase streams a multi-path update as one 'patch' whose keys can be
+    // paths ("wiz/round"), and a null anywhere means delete.
+    const segs = x => String(x || '').split('/').filter(Boolean);
+    const place = (obj, at, val) => {
+      if (!at.length) return val === null || typeof val !== 'object' ? {} : val;
+      let node = obj;
+      for (let i = 0; i < at.length - 1; i++) {
+        if (typeof node[at[i]] !== 'object' || node[at[i]] === null) node[at[i]] = {};
+        node = node[at[i]];
+      }
+      if (val === null) delete node[at[at.length - 1]]; else node[at[at.length - 1]] = val;
+      return obj;
+    };
+    const base = segs(path);
+    if (typeof root !== 'object' || root === null) root = {};
+    if (event === 'put') return place(root, base, data);
+    Object.keys(data || {}).forEach(k => { root = place(root, base.concat(segs(k)), data[k]); });
     return root;
   }
 
@@ -9101,7 +9119,7 @@ const WIZ = (function () {
     if (!net.code) return;
     const code = net.code;
     if (net.stream) { net.stream.close(); net.stream = null; }
-    net.code = null; net.seats = {};
+    net.code = null; net.seats = {}; net.mirror = {};
     roomPanel.hidden = false; roomLive.hidden = true;
     document.getElementById('wizRoomQr').innerHTML = '';
     JOIN.hide();
@@ -9116,30 +9134,59 @@ const WIZ = (function () {
   // right; the phone still learns that from its own result. A race keeps the
   // phones as plain 1-2-3 pads (the fields are cleared), since there the race
   // is reading the big screen.
-  function netArmRoom() {
+  //
+  // One multi-path write clears the old picks and opens the new room together.
+  // It used to be a DELETE and then a PATCH, one after the other, which put two
+  // full round trips between the screen showing a room and the phones waking up.
+  function netArmRoom(idx, order) {
     if (!net.code || !run) return;
-    const round = { n: run.idx, open: true, cat: null, prompt: null, opts: null, pic: null, of: null };
-    const q = run.questions[run.idx];
-    const pane = run.panes[0];
-    if (run.variant === 'survival' && q && pane) {
+    const round = { n: idx, r: run.startedAt, open: true, cat: null, prompt: null, opts: null, pic: null, of: null, out: null };
+    const q = run.questions[idx];
+    if (run.variant === 'survival') {
+      round.out = run.wizards.filter(w => w.out && w.slot >= 0).map(w => w.slot);
+    }
+    if (run.variant === 'survival' && q) {
       round.cat = String(q.category || '').slice(0, 120);
       round.prompt = String(q.prompt || '').slice(0, 600);
-      round.opts = pane.buttons.map(b => String(q.options[b.optIdx] || '').slice(0, 80));
+      round.opts = order.map(o => String(q.options[o] || '').slice(0, 80));
       round.of = run.poolSize || null;
       if (q.image) round.pic = true;
     }
-    netDel('/rooms/' + net.code + '/picks')
-      .then(() => netPatch('/rooms/' + net.code + '/wiz/round', round))
-      .catch(netTrouble);
+    run.armedIdx = idx;
+    netPatch('/rooms/' + net.code, { 'picks': null, 'wiz/round': round }).catch(netTrouble);
   }
-  function netLockRoom() {
+
+  // The next room is already decided while the last one's spell plays out, so
+  // its arming write can leave a little early — about the time a write takes to
+  // land — and the phones wake up with the screen rather than a beat behind it.
+  // A tap that reaches the screen in that window waits in the mirror and is
+  // applied the moment the room is drawn.
+  function prearmNext(delay) {
+    if (!net.code || !run) return;
+    const lead = Math.min(MAX_LEAD, delay, Math.round((net.rtt || 0) / 2));
+    if (lead < 20) return;
+    const at = run.idx;
+    setTimeout(() => {
+      if (!run || run.idx !== at) return;
+      const next = at + 1;
+      if (next >= run.questions.length) return;
+      run.preOrder = { idx: next, order: shuffle([0, 1, 2]) };
+      netArmRoom(next, run.preOrder.order);
+    }, delay - lead);
+  }
+  function netLockRoom(okSlot, outSlots) {
     if (!net.code) return;
-    netPatch('/rooms/' + net.code + '/wiz/round', { open: false }).catch(netTrouble);
+    const upd = { 'wiz/round/open': false };
+    if (okSlot != null && okSlot >= 0) upd['wiz/result/s' + okSlot] = 'right:' + Date.now();
+    (outSlots || []).forEach(sl => { upd['wiz/result/s' + sl] = 'out:' + Date.now(); });
+    netPatch('/rooms/' + net.code, upd).catch(netTrouble);
   }
   // Let a phone know how its own pick went.
-  function netResult(slot, ok) {
+  // A result is 'right', 'wrong', or 'out' — a wrong pick that cost the last
+  // life, so the phone stops offering buttons that the screen will ignore.
+  function netResult(slot, ok, out) {
     if (!net.code) return;
-    netPatch('/rooms/' + net.code + '/wiz/result', { ['s' + slot]: (ok ? 'right' : 'wrong') + ':' + Date.now() })
+    netPatch('/rooms/' + net.code + '/wiz/result', { ['s' + slot]: (out ? 'out' : ok ? 'right' : 'wrong') + ':' + Date.now() })
       .catch(netTrouble);
   }
 
@@ -9332,7 +9379,8 @@ const WIZ = (function () {
     }
     const q = run.questions[run.idx];
     const type = FURNITURE[run.idx % FURNITURE.length];
-    const order = shuffle([0, 1, 2]);
+    // If the phones were armed early, the furniture must match what they show.
+    const order = run.preOrder && run.preOrder.idx === run.idx ? run.preOrder.order : shuffle([0, 1, 2]);
 
     run.resolved = false;
     run.roomStart = performance.now();
@@ -9401,7 +9449,8 @@ const WIZ = (function () {
     });
 
     startPowerLoop();
-    netArmRoom();
+    if (run.armedIdx !== run.idx) netArmRoom(run.idx, order);
+    if (net.code) applyPicks(net.mirror.picks);   // taps that beat the screen here
   }
 
   function startPowerLoop() {
@@ -9603,7 +9652,6 @@ const WIZ = (function () {
     } else {
       w.wrongs.add(optIdx);
       logMiss(w, q.options[optIdx]);
-      if (w.slot >= 0) netResult(w.slot, false);
       // A miss gives just as much away as a hit — it tells everyone else which
       // piece to rule out. Marking the piece dead is only honest when one wizard
       // is playing; with a coven the others have not tried it yet.
@@ -9615,6 +9663,7 @@ const WIZ = (function () {
         castSoft(pane, w, false);
       }
       covenLoseLife(w);
+      if (w.slot >= 0) netResult(w.slot, false, w.out);
     }
 
     renderCoven();
@@ -9635,12 +9684,14 @@ const WIZ = (function () {
     powerTrack.classList.remove('hot');
     const pane = run.panes[0];
 
+    const knockedOut = [];
     if (timedOut) {
       liveWizards().forEach(w => {
         if (w.done) return;
         w.done = true;
         logMiss(w, null);
         covenLoseLife(w);
+        if (w.out && w.slot >= 0) knockedOut.push(w.slot);
       });
       pane.el.scene.classList.add('flash-bad');
       setTimeout(() => { if (run) pane.el.scene.classList.remove('flash-bad'); }, 700);
@@ -9651,6 +9702,8 @@ const WIZ = (function () {
     renderCoven();
 
     const over = !liveWizards().length;
+    netLockRoom(null, knockedOut);
+    if (!over) prearmNext(RESOLVE_PAUSE + (timedOut ? 400 : 0));
     if (over) {
       pane.el.scene.classList.add('dimmed');
       const v = document.createElement('div');
@@ -9692,8 +9745,7 @@ const WIZ = (function () {
   function resolve(winnerIdx, btn) {
     run.resolved = true;
     cancelAnimationFrame(rafId);
-    netResult(winnerIdx, true);
-    netLockRoom();
+    netLockRoom(winnerIdx);
 
     const winner = run.panes[winnerIdx];
     const clean = winner.wrongs.size === 0;
@@ -9732,6 +9784,7 @@ const WIZ = (function () {
       pane.el.scene.appendChild(v);
     });
 
+    if (run.variant === 'survival' || winner.rooms < run.total) prearmNext(RESOLVE_PAUSE);
     setTimeout(() => {
       if (!run) return;
       if (run.variant !== 'survival' && winner.rooms >= run.total) { finish(winnerIdx); return; }
@@ -10545,7 +10598,7 @@ const PAD = (function () {
   }
 
   const NAME_KEY = 'bsg.buzz.name.v1';
-  const me = { code: null, id: null, name: '', slot: -1, stream: null, round: -1, picked: false, lastResult: '', seatTimer: 0 };
+  const me = { code: null, id: null, name: '', slot: -1, stream: null, round: -1, picked: false, lastResult: '', seatTimer: 0, cleared: false, outRound: null };
 
   function paint(open) {
     buttons.forEach(b => {
@@ -10566,14 +10619,32 @@ const PAD = (function () {
       seatEl.textContent = me.slot >= 0 ? 'Seat ' + (me.slot + 1) : 'No seat free';
     }
     const round = wiz.round || {};
-    if (round.n !== me.round) {
-      me.round = round.n; me.picked = false;
+    const key = (round.r || 0) + ':' + round.n;
+    if (key !== me.roundKey) {
+      me.roundKey = key;
+      me.round = round.n; me.picked = false; me.cleared = false; me.outRound = null;
       buttons.forEach(b => b.classList.remove('chosen', 'right', 'wrong'));
     }
     paintClue(round);
 
     // outcome of this seat's own pick, published by the screen
     const res = (wiz.result || {})['s' + me.slot];
+    // Out of lives: from a wrong pick or the clock. Arriving unprompted is fine.
+    if (res && res !== me.lastResult && res.indexOf('out') === 0) {
+      me.lastResult = res;
+      me.outRound = me.round;
+      const chosen = buttons.find(b => b.classList.contains('chosen'));
+      if (chosen) { chosen.classList.remove('chosen'); chosen.classList.add('wrong'); }
+    }
+    const isOut = me.slot >= 0 && (me.outRound === me.round ||
+      (Array.isArray(round.out) && round.out.indexOf(me.slot) >= 0));
+    if (isOut) {
+      statusEl.className = 'pad-status miss';
+      statusEl.textContent = 'Out of lives — the others play on.';
+      me.picked = true;
+      paint(false);
+      return;
+    }
     if (res && res !== me.lastResult && me.picked) {
       me.lastResult = res;
       const ok = res.indexOf('right') === 0;
@@ -10584,6 +10655,7 @@ const PAD = (function () {
       }
       statusEl.className = 'pad-status ' + (ok ? 'hit' : 'miss');
       if (ok) {
+        me.cleared = true;
         statusEl.textContent = 'That was it.';
         paint(false);
         return;
@@ -10595,6 +10667,15 @@ const PAD = (function () {
       return;
     }
 
+    // Any later update in the same room (the lock, another player's pick) used
+    // to knock this back to "Sent — watch the screen", which reads as though
+    // the tap never landed.
+    if (me.cleared) {
+      statusEl.className = 'pad-status hit';
+      statusEl.textContent = 'That was it — next room coming.';
+      paint(false);
+      return;
+    }
     if (me.slot < 0) {
       statusEl.className = 'pad-status';
       statusEl.textContent = 'That game is full — every seat is taken. You are next in line if someone leaves.';
@@ -10611,7 +10692,7 @@ const PAD = (function () {
       paint(false);
     } else {
       statusEl.className = 'pad-status';
-      statusEl.textContent = 'Waiting for the next room…';
+      statusEl.textContent = round.n >= 0 ? 'Room over — next one coming.' : 'Waiting for the next room…';
       paint(false);
     }
   }
@@ -10671,23 +10752,23 @@ const PAD = (function () {
   }
 
   function apply(root, event, path, data) {
-    if (path === '/') {
-      if (event === 'put') return data === null ? {} : data;
-      Object.keys(data || {}).forEach(k => { root[k] = data[k]; });
-      return root;
-    }
-    const parts = path.split('/').filter(Boolean);
-    let node = root;
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (typeof node[parts[i]] !== 'object' || node[parts[i]] === null) node[parts[i]] = {};
-      node = node[parts[i]];
-    }
-    const last = parts[parts.length - 1];
-    if (event === 'patch') {
-      if (typeof node[last] !== 'object' || node[last] === null) node[last] = {};
-      Object.keys(data || {}).forEach(k => { node[last][k] = data[k]; });
-    } else if (data === null) { delete node[last]; }
-    else { node[last] = data; }
+    // Firebase streams a multi-path update as one 'patch' whose keys can be
+    // paths ("wiz/round"), and a null anywhere means delete.
+    const segs = x => String(x || '').split('/').filter(Boolean);
+    const place = (obj, at, val) => {
+      if (!at.length) return val === null || typeof val !== 'object' ? {} : val;
+      let node = obj;
+      for (let i = 0; i < at.length - 1; i++) {
+        if (typeof node[at[i]] !== 'object' || node[at[i]] === null) node[at[i]] = {};
+        node = node[at[i]];
+      }
+      if (val === null) delete node[at[at.length - 1]]; else node[at[at.length - 1]] = val;
+      return obj;
+    };
+    const base = segs(path);
+    if (typeof root !== 'object' || root === null) root = {};
+    if (event === 'put') return place(root, base, data);
+    Object.keys(data || {}).forEach(k => { root = place(root, base.concat(segs(k)), data[k]); });
     return root;
   }
 
@@ -10695,7 +10776,7 @@ const PAD = (function () {
     clearTimeout(me.seatTimer);
     if (me.stream) { me.stream.close(); me.stream = null; }
     if (me.code && me.id) del('/rooms/' + me.code + '/players/' + me.id);
-    me.code = null; me.id = null; me.slot = -1; me.picked = false; me.round = -1;
+    me.code = null; me.id = null; me.slot = -1; me.picked = false; me.round = -1; me.cleared = false; me.outRound = null; me.roundKey = null;
     paintClue({});
     playPane.hidden = true; joinPane.hidden = false;
     note.className = 'wiz-note';
