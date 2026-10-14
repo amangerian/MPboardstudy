@@ -301,6 +301,18 @@ but only the first to answer correctly gets through that room, and the first one
 out of the castle wins (the loser is left behind in a lit castle window). Keys
 are `1 2 3` solo, `A S D` and `J K L` for two players.
 
+**Castle music.** The setup screen has a *Castle music* row with four original
+tracks — *Tiptoe Hall* (sneaky staccato, haunted-mansion style), *Ghostly Waltz*
+(a music box in 3/4), *Crypt Organ* (slow pipe organ, wind and a wailing
+theremin) and *Creeping Strings* (chromatic pizzicato over a heartbeat) — plus
+*Off* and a volume slider. Clicking a track previews it (click it again to stop
+the preview); the chosen track plays through every run. During play a *Music on*
+button sits beside *Abandon run*, and `M` toggles it. In survival the music
+speeds up when spell power drops into the red. Leaving Wizard's Escape stops it.
+Like Wizard Arena's chiptune, it is synthesised live with the Web Audio API
+(`MUSIC` in `index.html`) — no audio files — and the track, volume and mute
+setting are remembered on the device.
+
 A two-wizard race needs more questions than a solo run — only one wizard clears
 a room per question — so with a small category selection the castle shrinks to a
 size the question pool can actually finish.
@@ -465,9 +477,12 @@ console looks the text up in its own copy of the page.
 
 **Wizard's Escape uses the same rooms.** "Play from phones" on its setup screen
 opens one; players join at the same kind of link and get three big numbered
-buttons. The answers stay on the big screen and never travel over the network —
-a phone only ever says "seat 2 chose the third one" — which keeps everyone
-looking up at the shared game. It works for all three modes: a solo run, a
+buttons. In a solo run or a two-wizard race the labels stay on the big screen —
+a phone only ever says "seat 2 chose the third one". **In shared survival each
+phone also shows the room's question, its category and room number, and the
+three answer labels on the buttons**, in the same order as the furniture, so
+players can read and answer from their own phone. Only the labels travel —
+never which one is right; each phone still learns that from its own result. It works for all three modes: a solo run, a
 two-wizard race with both rooms on the screen, and survival for up to four.
 Whoever is not on a phone keeps the keyboard; with every seat taken the screen
 stops accepting answers of its own.

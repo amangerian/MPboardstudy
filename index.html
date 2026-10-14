@@ -548,6 +548,31 @@
   .pad-btn.right { border-color: var(--correct); color: #bfffdd; background: linear-gradient(180deg, #17603c, #0c3a24); }
   .pad-btn.wrong { border-color: var(--wrong); color: #ffc9c9; background: linear-gradient(180deg, #6b1f1f, #3a1212); }
   .pad-hint { text-align: center; font-size: 12px; color: var(--muted-dim); margin: 14px 0 16px; line-height: 1.5; }
+  /* shared survival: the room's question rides along on every phone */
+  .pad-clue {
+    border: 1px solid #3d2f6b; border-radius: 14px;
+    background: rgba(10,6,26,.65); padding: 12px 14px; margin: 0 0 12px;
+  }
+  .pad-clue-cat {
+    display: flex; justify-content: space-between; gap: 10px;
+    font-size: 10.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted-dim);
+    margin-bottom: 6px;
+  }
+  .pad-clue-text { font-size: clamp(15px, 4.4vw, 19px); line-height: 1.4; color: #f1ecff; }
+  .pad-buttons.labelled { gap: 10px; }
+  .pad-buttons.labelled .pad-btn {
+    min-height: clamp(64px, 12vh, 110px);
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 16px; text-align: left;
+  }
+  .pad-buttons.labelled .pad-num {
+    flex: 0 0 auto; font-size: clamp(24px, 7vw, 34px); opacity: .75;
+  }
+  .pad-label {
+    font-family: Arial, sans-serif; font-weight: 700;
+    font-size: clamp(16px, 4.8vw, 22px); line-height: 1.25;
+  }
+  .pad-label:empty { display: none; }
   #padPlayPane .reset-board-btn { display: block; margin: 0 auto; }
 
   /* ---------- wizard: phones panel on the setup screen ---------- */
@@ -911,6 +936,16 @@
   .seg .seg-note { display: block; font-size: 11px; font-weight: 400; color: #a99ccd; margin-top: 3px; }
   .seg button[aria-pressed="true"] .seg-note { color: #cfe9e2; }
 
+  /* castle music picker */
+  .wiz-music { margin-top: 22px; }
+  .wiz-music .seg button { flex: 1 1 140px; text-align: left; }
+  .wiz-music .seg button[data-track="off"] { flex: 0 1 auto; text-align: center; }
+  .music-ctrl { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; color: #a99ccd; }
+  .music-ctrl label { display: flex; align-items: center; gap: 8px; letter-spacing: 1px; text-transform: uppercase; font-size: 10.5px; }
+  .music-ctrl input[type=range] { width: 140px; accent-color: var(--arcane); }
+  .music-now { font-size: 12px; color: #a99ccd; }
+  .music-now b { color: var(--arcane); font-weight: 700; }
+
   .cat-group { margin-top: 14px; }
   .cat-group-head {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -1080,6 +1115,8 @@
     font-family: Arial, sans-serif;
   }
   .wiz-flee:hover { border-color: var(--ember); color: var(--ember); }
+  .wiz-mute { min-width: 92px; }
+  .wiz-mute:hover { border-color: var(--arcane); color: #fff; }
 
   .power-wrap { flex: 1 1 220px; min-width: 180px; }
   .power-label {
@@ -3877,13 +3914,17 @@
       <span id="padName"></span>
       <span class="buzz-room-tag" id="padSeat"></span>
     </div>
+    <div class="pad-clue" id="padClue" hidden>
+      <div class="pad-clue-cat"><span id="padClueCat"></span><span id="padClueRoom"></span></div>
+      <div class="pad-clue-text" id="padClueText"></div>
+    </div>
     <div class="pad-status" id="padStatus">Waiting for the screen…</div>
     <div class="pad-buttons" id="padButtons">
-      <button class="pad-btn" data-choice="0" disabled><span class="pad-num">1</span></button>
-      <button class="pad-btn" data-choice="1" disabled><span class="pad-num">2</span></button>
-      <button class="pad-btn" data-choice="2" disabled><span class="pad-num">3</span></button>
+      <button class="pad-btn" data-choice="0" disabled><span class="pad-num">1</span><span class="pad-label"></span></button>
+      <button class="pad-btn" data-choice="1" disabled><span class="pad-num">2</span><span class="pad-label"></span></button>
+      <button class="pad-btn" data-choice="2" disabled><span class="pad-num">3</span><span class="pad-label"></span></button>
     </div>
-    <div class="pad-hint">Read the room on the big screen — tap the number underneath the piece you want.</div>
+    <div class="pad-hint" id="padHint">Read the room on the big screen — tap the number underneath the piece you want.</div>
     <button class="reset-board-btn" id="padLeaveBtn">Leave seat</button>
   </div>
 </div>
@@ -4174,7 +4215,7 @@
           </div>
           <div class="wizroom" id="wizRoomPanel" style="margin-top:12px">
             <button class="reset-board-btn" id="wizRoomBtn" style="margin:0">Play from phones</button>
-            <span class="buzzer-blurb" id="wizRoomBlurb">Optional. Opens a room so players tap 1, 2 or 3 on their own phone instead of sharing a keyboard. In survival, everyone who joins runs together.</span>
+            <span class="buzzer-blurb" id="wizRoomBlurb">Optional. Opens a room so players tap 1, 2 or 3 on their own phone instead of sharing a keyboard. In survival, everyone who joins runs together and sees each question and its answers on their own phone.</span>
             <span class="wizroom-note" id="wizRoomNote" hidden></span>
           </div>
           <div class="wizroom" id="wizRoomLive" hidden style="margin-top:12px">
@@ -4217,6 +4258,15 @@
           </div>
         </div>
       </div>
+
+      <div class="wiz-music">
+        <h3>Castle music</h3>
+        <div class="seg" id="wizMusic"></div>
+        <div class="music-ctrl">
+          <label>Volume <input type="range" id="wizMusicVol" min="0" max="1" step="0.05" aria-label="Music volume"></label>
+          <span class="music-now" id="wizMusicNow"></span>
+        </div>
+      </div>
     </div>
 
     <div class="wiz-panel">
@@ -4250,6 +4300,7 @@
   <div id="wizPlay" hidden>
     <div class="wiz-topbar">
       <button class="wiz-flee" id="wizFlee">&larr; Abandon run</button>
+      <button class="wiz-flee wiz-mute" id="wizMute" type="button" aria-pressed="false">Music on</button>
       <div class="power-wrap">
         <div class="power-label"><span>Spell power</span><span id="wizPowerNum">100%</span></div>
         <div class="power-track" id="wizPowerTrack"><div class="power-fill" id="wizPowerFill"></div></div>
@@ -4264,7 +4315,7 @@
     <div class="wiz-panel" id="wizResultBody"></div>
   </div>
 
-  <footer class="hint">Keys &nbsp;&bull;&nbsp; one wizard: 1 2 3 &nbsp;&bull;&nbsp; two wizards: A S D and J K L &nbsp;&bull;&nbsp; survival: whoever is not on a phone</footer>
+  <footer class="hint">Keys &nbsp;&bull;&nbsp; one wizard: 1 2 3 &nbsp;&bull;&nbsp; two wizards: A S D and J K L &nbsp;&bull;&nbsp; survival: whoever is not on a phone &nbsp;&bull;&nbsp; M: music on/off</footer>
 </div>
 
 <!-- ===================== CLUE MODAL ===================== -->
@@ -7623,6 +7674,478 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// ---------------- WIZARD'S ESCAPE: CASTLE MUSIC ----------------
+// Background music for the castle, synthesised live with the Web Audio API so
+// the site stays one file with no audio downloads. Every track here is an
+// original composition — the brief was "spooky but playful", haunted-mansion
+// style, without borrowing anyone's melody.
+//
+// Each track is a little step sequencer: a tempo, a grid, and a few voices.
+// A voice is one instrument plus one entry per step: a MIDI note, an array of
+// notes (a chord), or null for silence. Voices marked `hold` sustain each note
+// until their next one; the rest are struck and decay on their own.
+//
+// Browsers only allow sound after a click or key press, so nothing plays until
+// the player picks a track or enters the castle.
+const MUSIC = (function () {
+  const PICK_KEY = 'bsg.wiz.music.v1';
+  const MUTE_KEY = 'bsg.wiz.music.mute.v1';
+  const VOL_KEY = 'bsg.wiz.music.vol.v1';
+  const LOOKAHEAD = 0.15;   // seconds of notes scheduled ahead of the clock
+  const TICK_MS = 30;
+  const URGENT = 1.2;       // tempo multiplier when survival power runs low
+
+  // ---- the tracks ----
+  // Helpers so the scores below read bar by bar.
+  const bars = (...b) => [].concat(...b);
+  const rep = (pattern, n) => bars(...Array.from({ length: n }, () => pattern));
+
+  const TRACKS = [
+    {
+      id: 'tiptoe',
+      name: 'Tiptoe Hall',
+      note: 'Sneaky staccato, haunted-mansion style',
+      bpm: 116, perBeat: 2,          // eighth notes
+      voices: [
+        { inst: 'tuba', vel: 0.55, notes: bars(
+          [38, null, 45, null, 38, null, 45, 44],     // Dm
+          [38, null, 45, null, 38, null, 41, 40],     // Dm
+          [34, null, 41, null, 34, null, 41, 40],     // Bb
+          [33, null, 40, null, 33, null, 37, 36],     // A
+          [38, null, 45, null, 38, null, 45, 44],     // Dm
+          [31, null, 38, null, 31, null, 38, 37],     // Gm
+          [39, null, 46, null, 39, null, 46, 45],     // Eb
+          [33, null, 40, null, 43, null, 37, null])   // A7
+        },
+        { inst: 'pluck', vel: 0.16, notes: bars(
+          [null, null, [62,65,69], null, null, null, [62,65,69], null],
+          [null, null, [62,65,69], null, null, null, [62,65,69], null],
+          [null, null, [62,65,70], null, null, null, [62,65,70], null],
+          [null, null, [61,64,69], null, null, null, [61,64,69], null],
+          [null, null, [62,65,69], null, null, null, [62,65,69], null],
+          [null, null, [62,67,70], null, null, null, [62,67,70], null],
+          [null, null, [63,67,70], null, null, null, [63,67,70], null],
+          [null, null, [61,67,69], null, null, null, [61,67,69], null])
+        },
+        { inst: 'celesta', vel: 0.32, notes: bars(
+          [74, null, 77, 76, 74, null, 69, null],
+          [70, 69, 68, 69, null, null, null, null],
+          [74, null, 77, 76, 74, null, 70, null],
+          [73, null, 76, null, 79, 77, 76, 73],
+          [81, null, 77, null, 74, null, 81, 80],
+          [79, null, 74, null, 70, null, 79, 78],
+          [77, 75, 74, 75, 79, null, 75, null],
+          [73, 74, 76, 77, 79, null, 81, null])
+        },
+      ],
+    },
+    {
+      id: 'waltz',
+      name: 'Ghostly Waltz',
+      note: 'A music box in an empty ballroom',
+      bpm: 138, perBeat: 1, beatsPerBar: 3,   // quarter notes, 3/4
+      voices: [
+        { inst: 'pluck', vel: 0.42, notes: bars(
+          [45, null, null], [45, null, null], [40, null, null], [40, null, null],
+          [38, null, null], [45, null, null], [35, null, null], [40, null, null],
+          [45, null, null], [45, null, null], [41, null, null], [41, null, null],
+          [38, null, null], [45, null, null], [40, null, null], [45, null, null])
+        },
+        { inst: 'pluck', vel: 0.12, notes: bars(
+          [null, [60,64], [60,64]], [null, [60,64], [60,64]], [null, [59,64], [59,64]], [null, [59,62], [59,62]],
+          [null, [62,65], [62,65]], [null, [60,64], [60,64]], [null, [59,62], [59,62]], [null, [59,64], [59,64]],
+          [null, [60,64], [60,64]], [null, [60,64], [60,64]], [null, [60,65], [60,65]], [null, [60,65], [60,65]],
+          [null, [62,65], [62,65]], [null, [60,64], [60,64]], [null, [59,62], [59,62]], [null, [60,64], [60,64]])
+        },
+        { inst: 'organ', vel: 0.07, hold: true, notes: bars(
+          [[57,64], null, null], rep([null, null, null], 1), [[56,64], null, null], [null, null, null],
+          [[57,62], null, null], [[57,64], null, null], [[56,62], null, null], [[56,64], null, null],
+          [[57,64], null, null], [null, null, null], [[57,65], null, null], [null, null, null],
+          [[57,62], null, null], [[57,64], null, null], [[56,62], null, null], [[57,64], null, null])
+        },
+        { inst: 'celesta', vel: 0.36, notes: bars(
+          [76, 77, 76], [72, null, 69], [71, 72, 71], [68, null, 64],
+          [74, 76, 77], [76, 72, 69], [71, 74, 77], [76, null, null],
+          [76, 77, 76], [81, null, 76], [77, 79, 81], [84, null, 81],
+          [77, 74, 77], [76, 72, 69], [68, 71, 74], [69, null, null])
+        },
+      ],
+    },
+    {
+      id: 'crypt',
+      name: 'Crypt Organ',
+      note: 'Slow pipe organ, wind and a wailing ghost',
+      bpm: 64, perBeat: 1,
+      wind: true,
+      voices: [
+        { inst: 'organ', vel: 0.11, hold: true, notes: bars(
+          [[48,60,63,67], null, null, null], [[44,60,63,68], null, null, null],
+          [[41,60,65,68], null, null, null], [[43,59,62,67], null, null, null],
+          [[48,60,63,67], null, null, null], [[49,61,65,68], null, null, null],
+          [[43,59,65,67], null, null, null], [[48,60,63,67], null, null, null])
+        },
+        { inst: 'pedal', vel: 0.3, hold: true, notes: bars(
+          [36, null, null, null], [32, null, null, null], [29, null, null, null], [31, null, null, null],
+          [36, null, null, null], [37, null, null, null], [31, null, null, null], [36, null, null, null])
+        },
+        { inst: 'theremin', vel: 0.13, hold: true, notes: bars(
+          [75, null, 74, null], [72, null, null, 68],
+          [72, null, 77, null], [74, null, 71, null],
+          [79, null, 78, null], [77, null, 73, null],
+          [71, 74, 77, 79], [72, null, null, null])
+        },
+      ],
+    },
+    {
+      id: 'creep',
+      name: 'Creeping Strings',
+      note: 'Chromatic pizzicato, something is following you',
+      bpm: 100, perBeat: 2,
+      voices: [
+        { inst: 'pluck', vel: 0.5, notes: bars(
+          rep([40, 41, 40, 47, 40, 41, 40, 46], 2),
+          rep([41, 42, 41, 48, 41, 42, 41, 47], 2),
+          rep([40, 41, 40, 47, 40, 41, 40, 46], 2),
+          [43, 44, 43, 50, 43, 44, 43, 49],
+          [42, 43, 42, 49, 47, 46, 45, 44])
+        },
+        { inst: 'thud', vel: 0.5, notes: rep([40, null, null, 40, null, null, null, null], 8) },
+        { inst: 'strings', vel: 0.075, hold: true, notes: bars(
+          [[71, 76], null, null, null, null, null, null, null], rep(Array(8).fill(null), 1),
+          [[72, 77], null, null, null, null, null, null, null], rep(Array(8).fill(null), 1),
+          [[71, 76], null, null, null, null, null, null, null], [null, null, null, null, [70, 75], null, null, null],
+          [[71, 74], null, null, null, null, null, null, null], [null, null, null, null, [70, 73], null, null, null])
+        },
+        { inst: 'celesta', vel: 0.2, notes: bars(
+          rep(Array(8).fill(null), 3), [null, null, null, null, null, 88, null, 87],
+          rep(Array(8).fill(null), 3), [null, null, 83, null, 82, null, 81, null])
+        },
+      ],
+    },
+  ];
+
+  // Work out how long each held note lasts: until that voice's next note.
+  TRACKS.forEach(t => {
+    t.len = Math.max(...t.voices.map(v => v.notes.length));
+    t.voices.forEach(v => {
+      while (v.notes.length < t.len) v.notes.push(null);
+      v.dur = v.notes.map((n, i) => {
+        if (n == null) return 0;
+        let d = 1;
+        while (d < t.len && v.notes[(i + d) % t.len] == null) d++;
+        return d;
+      });
+    });
+  });
+
+  // ---- state ----
+  let ctx = null, master = null, dry = null, wet = null, windNode = null;
+  let trackId = load(PICK_KEY, 'tiptoe');
+  let muted = load(MUTE_KEY, '0') === '1';
+  let volume = Math.min(1, Math.max(0, parseFloat(load(VOL_KEY, '0.6')) || 0.6));
+  let playing = false, timer = 0, step = 0, nextAt = 0, urgent = false;
+  let lastTheremin = 0;
+  const listeners = [];
+
+  if (!TRACKS.some(t => t.id === trackId) && trackId !== 'off') trackId = 'tiptoe';
+
+  function load(key, fallback) {
+    try { const v = localStorage.getItem(key); return v == null ? fallback : v; }
+    catch (e) { return fallback; }
+  }
+  function save(key, val) { try { localStorage.setItem(key, val); } catch (e) { /* fine */ } }
+  const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+  const track = () => TRACKS.find(t => t.id === trackId) || null;
+  const level = () => (muted ? 0 : 0.42 * volume * volume);
+
+  function ensureCtx() {
+    if (ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    try { ctx = new AC(); } catch (e) { return false; }
+    master = ctx.createGain();
+    master.gain.value = level();
+    // A gentle limiter so stacked chords never clip.
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -14; comp.ratio.value = 6;
+    master.connect(comp); comp.connect(ctx.destination);
+    dry = ctx.createGain(); dry.gain.value = 0.8; dry.connect(master);
+    // A long dark hall reverb, built from decaying noise.
+    const verb = ctx.createConvolver();
+    const secs = 2.8, rate = ctx.sampleRate, n = Math.floor(secs * rate);
+    const ir = ctx.createBuffer(2, n, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = ir.getChannelData(ch);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.6);
+    }
+    verb.buffer = ir;
+    const tone = ctx.createBiquadFilter();
+    tone.type = 'lowpass'; tone.frequency.value = 3200;
+    wet = ctx.createGain(); wet.gain.value = 0.38;
+    wet.connect(tone); tone.connect(verb); verb.connect(master);
+    return true;
+  }
+
+  // Every note goes to the dry bus and, a little, into the reverb.
+  function out(node, send) {
+    node.connect(dry);
+    const s = ctx.createGain(); s.gain.value = send == null ? 1 : send;
+    node.connect(s); s.connect(wet);
+  }
+
+  function env(t, peak, attack, hold, release) {
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(peak, t + attack);
+    if (hold > 0) g.gain.setValueAtTime(peak, t + attack + hold);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + attack + Math.max(0, hold) + release);
+    return g;
+  }
+  function osc(type, f, t, stop) {
+    const o = ctx.createOscillator();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    o.start(t); o.stop(stop);
+    return o;
+  }
+
+  // ---- instruments ----
+  const INST = {
+    // Bell-like: a sine with a quiet, faster-fading partial two octaves up.
+    celesta(t, m, v) {
+      const f = hz(m);
+      const g = env(t, v, 0.004, 0, 1.3);
+      osc('sine', f, t, t + 1.4).connect(g);
+      const g2 = env(t, v * 0.28, 0.002, 0, 0.35);
+      osc('sine', f * 4, t, t + 0.4).connect(g2);
+      g2.connect(g);
+      out(g, 0.9);
+    },
+    // Plucked / pizzicato: bright attack that dulls as it fades.
+    pluck(t, m, v) {
+      const f = hz(m);
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass'; lp.Q.value = 1.5;
+      lp.frequency.setValueAtTime(Math.min(9000, f * 6), t);
+      lp.frequency.exponentialRampToValueAtTime(Math.max(120, f * 1.2), t + 0.3);
+      const g = env(t, v, 0.003, 0, m < 50 ? 0.45 : 0.3);
+      const a = osc('triangle', f, t, t + 0.6), b = osc('sawtooth', f, t, t + 0.6);
+      const bg = ctx.createGain(); bg.gain.value = 0.35;
+      a.connect(lp); b.connect(bg); bg.connect(lp); lp.connect(g);
+      out(g, 0.6);
+    },
+    // A short, round brass-ish bass for the tiptoe oom-pah.
+    tuba(t, m, v) {
+      const f = hz(m);
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass'; lp.frequency.value = 520; lp.Q.value = 2;
+      const g = env(t, v, 0.012, 0.05, 0.22);
+      const a = osc('square', f, t, t + 0.35);
+      const sub = osc('sine', f, t, t + 0.35);
+      const ag = ctx.createGain(); ag.gain.value = 0.45;
+      a.connect(ag); ag.connect(lp); sub.connect(lp); lp.connect(g);
+      out(g, 0.25);
+    },
+    // Pipe organ: stacked harmonics with a slow wobble.
+    organ(t, m, v, dur) {
+      const f = hz(m);
+      const g = env(t, v, 0.08, Math.max(0.05, dur - 0.1), 0.35);
+      const trem = ctx.createGain(); trem.gain.value = 1;
+      const lfo = osc('sine', 5.2, t, t + dur + 0.5);
+      const depth = ctx.createGain(); depth.gain.value = 0.12;
+      lfo.connect(depth); depth.connect(trem.gain);
+      [[1, 1], [2, 0.5], [3, 0.22], [4, 0.16]].forEach(([mult, amp]) => {
+        const p = osc(mult === 1 ? 'triangle' : 'sine', f * mult, t, t + dur + 0.5);
+        const pg = ctx.createGain(); pg.gain.value = amp;
+        p.connect(pg); pg.connect(trem);
+      });
+      trem.connect(g);
+      out(g, 1.1);
+    },
+    // Deep organ pedal, felt more than heard.
+    pedal(t, m, v, dur) {
+      const f = hz(m);
+      const g = env(t, v, 0.15, Math.max(0.05, dur - 0.2), 0.5);
+      osc('sine', f, t, t + dur + 0.7).connect(g);
+      const h = osc('triangle', f * 2, t, t + dur + 0.7);
+      const hg = ctx.createGain(); hg.gain.value = 0.25;
+      h.connect(hg); hg.connect(g);
+      out(g, 0.5);
+    },
+    // Gliding, wavering ghost voice.
+    theremin(t, m, v, dur) {
+      const f = hz(m);
+      const from = lastTheremin || f;
+      lastTheremin = f;
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(from, t);
+      o.frequency.exponentialRampToValueAtTime(f, t + 0.22);
+      const vib = osc('sine', 5.6, t, t + dur + 0.6);
+      const vd = ctx.createGain(); vd.gain.value = f * 0.014;
+      vib.connect(vd); vd.connect(o.frequency);
+      const g = env(t, v, 0.14, Math.max(0.05, dur - 0.25), 0.4);
+      o.connect(g); o.start(t); o.stop(t + dur + 0.6);
+      out(g, 1.3);
+    },
+    // Thin tremolo strings, held.
+    strings(t, m, v, dur) {
+      const f = hz(m);
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass'; lp.frequency.value = 2200;
+      const g = env(t, v, 0.6, Math.max(0.05, dur - 0.7), 0.6);
+      const trem = ctx.createGain(); trem.gain.value = 1;
+      const lfo = osc('sine', 7, t, t + dur + 0.7);
+      const ld = ctx.createGain(); ld.gain.value = 0.3;
+      lfo.connect(ld); ld.connect(trem.gain);
+      [-6, 6].forEach(c => {
+        const s = osc('sawtooth', f, t, t + dur + 0.7);
+        s.detune.value = c;
+        s.connect(lp);
+      });
+      lp.connect(trem); trem.connect(g);
+      out(g, 1.2);
+    },
+    // A soft low heartbeat thump.
+    thud(t, m, v) {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(95, t);
+      o.frequency.exponentialRampToValueAtTime(42, t + 0.18);
+      const g = env(t, v, 0.005, 0, 0.32);
+      o.connect(g); o.start(t); o.stop(t + 0.4);
+      out(g, 0.15);
+    },
+  };
+
+  // A bed of moaning wind under the crypt track.
+  function startWind() {
+    if (windNode || !ctx) return;
+    const n = ctx.sampleRate * 2;
+    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.Q.value = 9; bp.frequency.value = 520;
+    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.09;
+    const ld = ctx.createGain(); ld.gain.value = 260;
+    lfo.connect(ld); ld.connect(bp.frequency);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.09, ctx.currentTime + 3);
+    src.connect(bp); bp.connect(g); out(g, 0.8);
+    src.start(); lfo.start();
+    windNode = { src, lfo, g };
+  }
+  function stopWind() {
+    if (!windNode) return;
+    const w = windNode; windNode = null;
+    const t = ctx.currentTime;
+    w.g.gain.cancelScheduledValues(t);
+    w.g.gain.setValueAtTime(w.g.gain.value, t);
+    w.g.gain.linearRampToValueAtTime(0.0001, t + 0.6);
+    w.src.stop(t + 0.7); w.lfo.stop(t + 0.7);
+  }
+
+  // ---- the sequencer ----
+  function stepLength(t) {
+    return 60 / (t.bpm * (urgent ? URGENT : 1)) / t.perBeat;
+  }
+  function schedule() {
+    const t = track();
+    if (!t || !ctx) return;
+    while (nextAt < ctx.currentTime + LOOKAHEAD) {
+      const len = stepLength(t);
+      t.voices.forEach(v => {
+        const n = v.notes[step];
+        if (n == null) return;
+        const dur = v.dur[step] * len;
+        (Array.isArray(n) ? n : [n]).forEach(m => INST[v.inst](nextAt, m, v.vel, dur));
+      });
+      nextAt += len;
+      step = (step + 1) % t.len;
+    }
+  }
+
+  function start() {
+    if (playing || muted || trackId === 'off') return;
+    if (!ensureCtx()) return;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    const t = track();
+    if (!t) return;
+    playing = true;
+    step = 0; lastTheremin = 0;
+    nextAt = ctx.currentTime + 0.08;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(0.0001, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(level(), ctx.currentTime + 0.6);
+    if (t.wind) startWind();
+    schedule();
+    timer = setInterval(schedule, TICK_MS);
+    notify();
+  }
+
+  function stop() {
+    if (!playing) return;
+    playing = false;
+    clearInterval(timer); timer = 0;
+    if (ctx) {
+      const now = ctx.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now);
+      master.gain.linearRampToValueAtTime(0.0001, now + 0.35);
+    }
+    stopWind();
+    notify();
+  }
+
+  function notify() { listeners.forEach(fn => { try { fn(); } catch (e) { /* ignore */ } }); }
+
+  // Stop scheduling while the tab is hidden, so a backgrounded phone or laptop
+  // does not wake up to a burst of stacked-up notes.
+  document.addEventListener('visibilitychange', () => {
+    if (!ctx) return;
+    if (document.hidden) ctx.suspend().catch(() => {});
+    else if (playing) {
+      ctx.resume().then(() => { nextAt = Math.max(nextAt, ctx.currentTime + 0.05); }).catch(() => {});
+    }
+  });
+
+  return {
+    tracks: TRACKS.map(t => ({ id: t.id, name: t.name, note: t.note })),
+    get track() { return trackId; },
+    get muted() { return muted; },
+    get playing() { return playing; },
+    get volume() { return volume; },
+    // Choosing a track is a click, so it can start straight away as a preview.
+    select(id) {
+      trackId = id === 'off' || TRACKS.some(t => t.id === id) ? id : 'tiptoe';
+      save(PICK_KEY, trackId);
+      stop();
+      if (trackId === 'off') { notify(); return; }
+      if (muted) { muted = false; save(MUTE_KEY, '0'); }
+      start();
+    },
+    play: start,
+    stop: stop,
+    toggleMute() {
+      muted = !muted;
+      save(MUTE_KEY, muted ? '1' : '0');
+      if (muted) stop(); else start();
+      notify();
+    },
+    setVolume(v) {
+      volume = Math.min(1, Math.max(0, v));
+      save(VOL_KEY, String(volume));
+      if (ctx && playing) master.gain.setTargetAtTime(level(), ctx.currentTime, 0.05);
+    },
+    // Survival squeezes the tempo when spell power gets low.
+    setUrgent(on) { urgent = !!on; },
+    onChange(fn) { listeners.push(fn); },
+  };
+})();
+
 // ---------------- WIZARD'S ESCAPE ----------------
 // A speed round built on top of the Jeopardy question banks. Each room shows one
 // clue and three identical pieces of furniture, one per candidate answer; the
@@ -8587,10 +9110,26 @@ const WIZ = (function () {
   }
 
   // Tell the phones a new room is live, and what each seat can press.
+  // In shared survival the room's question and the three labels go with it, in
+  // the same left-to-right order as the furniture, so a player can read and
+  // answer from their own phone. Only the labels travel — never which one is
+  // right; the phone still learns that from its own result. A race keeps the
+  // phones as plain 1-2-3 pads (the fields are cleared), since there the race
+  // is reading the big screen.
   function netArmRoom() {
     if (!net.code || !run) return;
+    const round = { n: run.idx, open: true, cat: null, prompt: null, opts: null, pic: null, of: null };
+    const q = run.questions[run.idx];
+    const pane = run.panes[0];
+    if (run.variant === 'survival' && q && pane) {
+      round.cat = String(q.category || '').slice(0, 120);
+      round.prompt = String(q.prompt || '').slice(0, 600);
+      round.opts = pane.buttons.map(b => String(q.options[b.optIdx] || '').slice(0, 80));
+      round.of = run.poolSize || null;
+      if (q.image) round.pic = true;
+    }
     netDel('/rooms/' + net.code + '/picks')
-      .then(() => netPatch('/rooms/' + net.code + '/wiz/round', { n: run.idx, open: true }))
+      .then(() => netPatch('/rooms/' + net.code + '/wiz/round', round))
       .catch(netTrouble);
   }
   function netLockRoom() {
@@ -8613,6 +9152,7 @@ const WIZ = (function () {
 
   // ---------- run ----------
   function buildPanes() {
+    MUSIC.play();      // a run always starts from a click, so audio is allowed
     stageEl.className = 'wiz-stage' + (mode === 2 ? ' two' : '');
     stageEl.innerHTML = '';
     run.panes.forEach((pane, i) => {
@@ -8872,6 +9412,7 @@ const WIZ = (function () {
       powerFill.style.transform = `scaleX(${p})`;
       powerNum.textContent = Math.round(p * 100) + '%';
       powerTrack.classList.toggle('hot', run.variant === 'survival' && p < 0.34);
+      MUSIC.setUrgent(run.variant === 'survival' && p < 0.34);
       if (run.variant === 'survival' && p <= 0) { covenEndRoom(true); return; }
       rafId = requestAnimationFrame(tick);
     };
@@ -9448,6 +9989,7 @@ const WIZ = (function () {
 
   function finish(winnerIdx, ranOut) {
     cancelAnimationFrame(rafId);
+    MUSIC.setUrgent(false);
     const seconds = Math.round((Date.now() - run.startedAt) / 1000);
     const panes = run.panes;
     const rooms = run.total;
@@ -9640,6 +10182,7 @@ const WIZ = (function () {
   // table: deepest wins, and score settles a tie on rooms. A solo survival run
   // goes back through the ordinary result screen it always used.
   function finishCoven() {
+    MUSIC.setUrgent(false);
     if (run.wizards.length === 1) {
       run.panes[0].score = run.wizards[0].score;
       run.panes[0].rooms = run.wizards[0].rooms;
@@ -9829,6 +10372,7 @@ const WIZ = (function () {
   // Abandoning is not a result, so nothing is saved.
   function abandon() {
     cancelAnimationFrame(rafId);
+    MUSIC.setUrgent(false);
     netLockRoom();          // the phones are still armed for a room that just ended
     run = null;
     playEl.hidden = true;
@@ -9842,8 +10386,65 @@ const WIZ = (function () {
   fleeBtn.onclick = abandon;
   startBtn.onclick = start;
 
+  // ---------- castle music ----------
+  const musicSeg = document.getElementById('wizMusic');
+  const musicVol = document.getElementById('wizMusicVol');
+  const musicNow = document.getElementById('wizMusicNow');
+  const muteBtn = document.getElementById('wizMute');
+  [...MUSIC.tracks, { id: 'off', name: 'Off', note: '' }].forEach(t => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.dataset.track = t.id;
+    b.textContent = t.name;
+    if (t.note) {
+      const n = document.createElement('span');
+      n.className = 'seg-note';
+      n.textContent = t.note;
+      b.appendChild(n);
+    }
+    b.addEventListener('click', () => {
+      // Clicking the track that is already playing stops the preview.
+      if (t.id === MUSIC.track && MUSIC.playing) MUSIC.stop();
+      else MUSIC.select(t.id);
+    });
+    musicSeg.appendChild(b);
+  });
+  musicVol.value = MUSIC.volume;
+  musicVol.addEventListener('input', () => MUSIC.setVolume(parseFloat(musicVol.value)));
+  muteBtn.addEventListener('click', () => {
+    if (MUSIC.track === 'off') return;
+    MUSIC.toggleMute();
+  });
+  function paintMusic() {
+    [...musicSeg.children].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.track === MUSIC.track)));
+    const t = MUSIC.tracks.find(x => x.id === MUSIC.track);
+    musicNow.textContent = '';
+    if (!t) musicNow.textContent = 'No music.';
+    else if (MUSIC.playing) {
+      const b = document.createElement('b');
+      b.textContent = '\u266A ' + t.name;
+      musicNow.append(b, ' playing — click it again to stop the preview.');
+    } else musicNow.textContent = MUSIC.muted
+      ? t.name + ' is muted. Pick a track to unmute.'
+      : t.name + ' starts when you enter the castle. Click it to preview.';
+    const on = !MUSIC.muted;
+    muteBtn.textContent = MUSIC.track === 'off' ? 'Music off' : on ? 'Music on' : 'Music muted';
+    muteBtn.setAttribute('aria-pressed', String(!on));
+    muteBtn.hidden = MUSIC.track === 'off';
+  }
+  MUSIC.onChange(paintMusic);
+  paintMusic();
+
   document.addEventListener('keydown', e => {
-    if (view.hidden || !run || run.resolved) return;
+    if (view.hidden) return;
+    if (e.key.toLowerCase() === 'm' && !e.metaKey && !e.ctrlKey && !e.altKey
+        && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')
+        && MUSIC.track !== 'off') {
+      e.preventDefault();
+      MUSIC.toggleMute();
+      return;
+    }
+    if (!run || run.resolved) return;
     const k = e.key.toLowerCase();
     for (let pi = 0; pi < run.panes.length; pi++) {
       const keys = mode === 2 ? KEYS[pi + 1] : KEYS[0];
@@ -9885,6 +10486,8 @@ const WIZ = (function () {
       cancelAnimationFrame(rafId);
       run = null;
       closeNetRoom();
+      MUSIC.setUrgent(false);
+      MUSIC.stop();
     },
     // The Jeopardy celebration borrows the wizard for its dancers, rather than
     // keeping a second copy of the same drawing.
@@ -9893,8 +10496,9 @@ const WIZ = (function () {
 })();
 
 // ---------------- WIZARD PHONE CONTROLLER ----------------
-// Three numbered buttons and nothing else. The phone never learns the answers —
-// the labels live on the big screen, which is the point of playing together.
+// Three numbered buttons. In shared survival the screen also sends the room's
+// question and the three labels (never which is right), so each player can read
+// and answer from their own phone; in a race the labels stay on the big screen.
 const PAD = (function () {
   const DB = 'https://mp-board-study-default-rtdb.firebaseio.com';
   const url = path => DB + path + '.json';
@@ -9914,6 +10518,31 @@ const PAD = (function () {
   const statusEl = document.getElementById('padStatus');
   const buttons = [...document.querySelectorAll('.pad-btn')];
   const leaveBtn = document.getElementById('padLeaveBtn');
+  const clueBox = document.getElementById('padClue');
+  const clueCat = document.getElementById('padClueCat');
+  const clueRoom = document.getElementById('padClueRoom');
+  const clueText = document.getElementById('padClueText');
+  const buttonsBox = document.getElementById('padButtons');
+  const hintEl = document.getElementById('padHint');
+  const HINT_PLAIN = hintEl.textContent;
+  const HINT_LABELLED = 'Same three answers as the furniture on the big screen, in the same order.';
+
+  // Show the room's question and the answer labels when the screen sends them.
+  function paintClue(round) {
+    const opts = Array.isArray(round.opts) ? round.opts : null;
+    const has = !!(round.prompt && opts && opts.length === 3 && me.slot >= 0);
+    clueBox.hidden = !has;
+    buttonsBox.classList.toggle('labelled', has);
+    hintEl.textContent = has ? HINT_LABELLED : HINT_PLAIN;
+    if (has) {
+      clueCat.textContent = round.cat || '';
+      clueRoom.textContent = 'Room ' + (round.n + 1) + (round.of ? ' / ' + round.of : '');
+      clueText.textContent = round.prompt + (round.pic ? ' (picture on the big screen)' : '');
+    }
+    buttons.forEach((b, i) => {
+      b.querySelector('.pad-label').textContent = has ? String(opts[i] || '') : '';
+    });
+  }
 
   const NAME_KEY = 'bsg.buzz.name.v1';
   const me = { code: null, id: null, name: '', slot: -1, stream: null, round: -1, picked: false, lastResult: '', seatTimer: 0 };
@@ -9941,6 +10570,7 @@ const PAD = (function () {
       me.round = round.n; me.picked = false;
       buttons.forEach(b => b.classList.remove('chosen', 'right', 'wrong'));
     }
+    paintClue(round);
 
     // outcome of this seat's own pick, published by the screen
     const res = (wiz.result || {})['s' + me.slot];
@@ -10066,6 +10696,7 @@ const PAD = (function () {
     if (me.stream) { me.stream.close(); me.stream = null; }
     if (me.code && me.id) del('/rooms/' + me.code + '/players/' + me.id);
     me.code = null; me.id = null; me.slot = -1; me.picked = false; me.round = -1;
+    paintClue({});
     playPane.hidden = true; joinPane.hidden = false;
     note.className = 'wiz-note';
     note.textContent = msg || '';
