@@ -463,11 +463,64 @@ effect on the page.
 
 ## Phone buzzers
 
-Under every board there's **Open buzzer room**. It shows a 4-letter code and a
+Under every board there's **Play from phones**. It shows a 4-letter code and a
 join link; players open the site on their phones, enter the code and a name, and
-get one big buzzer. Opening a clue arms every phone, the first press wins, and
-the clue card lists who buzzed in order with the gap behind the leader. Revealing
-the answer or closing the clue locks them again.
+**pick a team** from the teams on the scoreboard (renaming, adding or removing a
+team updates every phone; **Switch team** on the phone moves someone). The room
+panel lists who is on which team.
+
+**How phones answer** is set on the room panel, between clues:
+
+- **Buzz in** — one big buzzer per phone. Opening a clue arms every phone, the
+  first press wins, and the clue card lists who buzzed in order (with their team)
+  and the gap behind the leader. Revealing the answer or closing the clue locks
+  them again.
+- **Type the answer**, with a **30 sec / 45 sec / 1 min** clock. See below.
+
+Both settings are remembered on the host's computer, and both are locked while a
+clue is open.
+
+### Type the answer
+
+Opening a clue puts the question, its category and value on every phone, and a
+countdown on the phones and in the corner of the big screen (red for the last ten
+seconds). Phones time the clue from the moment the server opened it, so the
+screen and phones agree to within about a second, and someone joining mid-clue
+gets the time that is left, not a fresh clock.
+
+- **One answer per team.** Every phone on a team edits the same answer; what one
+  person types appears on their teammates' phones (with "Ana is typing for your
+  team"), and if two people type at once the team settles on whichever reached
+  the server last. Anyone on the team can press **Lock in for the team** (or
+  Enter), which fixes it for everyone on that team.
+- **The big screen never shows what anyone typed until the reveal** — just a chip
+  per team: Waiting, Typing…, or Locked ✓, and "2 of 3 teams locked in".
+- **Answering ends** when the clock runs out, when every team with a phone has
+  locked in ("All in"), or when the host presses **Close answers now**. Revealing
+  the answer also closes it.
+- **A team that never pressed Lock still gets judged** on whatever was in its box
+  at the bell — drafts are saved as people type, and keystrokes that land in the
+  second and a half after the bell are still taken. These show as "(not locked)".
+
+**Reveal Answer** then lays every team's answer out on the big screen for the
+judge, **grouped**: answers that match once case, accents, punctuation, spacing,
+a leading "What is…" and a leading "the/a/an" are ignored go on one card, with
+the spelling most of the group used as its heading and any team's different
+wording shown beside its name. Spelling itself is not forgiven — "sertralin" is
+its own card, so the judge decides. Teams that sent nothing share a "No answer"
+card.
+
+- **Correct +value** on a card awards every team on it; **Not correct** awards
+  nothing. Pressing either again undoes it.
+- **✕ Remove** on a team takes it out of a group to be judged on its own (for
+  when the grouping is wrong); **Put back in group** returns it.
+- **No points are ever taken away in this mode.** The award row under the cards
+  shows one **+value** toggle per team in step with the cards, so a team that
+  answered out loud can still be given its points, and nothing scores twice.
+
+After the judge rules, each phone shows the correct response and "Your team gets
++400!" or "Not this time." The host console (below) shows every team's answer
+live as it is typed, with who locked it.
 
 A **host console** runs alongside it: the room panel shows a second link
 (`#host-<code>`) that opens a phone-sized view of whichever clue is live —
@@ -514,13 +567,14 @@ localhost, produces an address no phone can reach — so in that case the QR and
 the join link point at the published site instead. The room lives in the shared
 database, so a phone joining through the published copy lands in the same room.
 
-**Buzzers on / off** switches the whole thing off mid-game — the board then plays
+**Buzzers on / off** (it reads **Answers on / off** in type mode) switches the whole thing off mid-game — the board then plays
 exactly as it did before, scoring by team buttons as usual. With no room open,
 nothing about the game changes at all.
 
 Rooms are held in a Firebase Realtime Database (project `mp-board-study`), talked
 to over its REST API and server-sent events so the page needs no library and
-stays one file. A room holds only names, timestamps and which clue is live, and
+stays one file. A room holds only names, teams, timestamps, which clue is live and
+(in type mode) each team's typed answer and the judge's verdicts, and
 **Close room** deletes it. The database URL is the `DB` constant in the buzzer
 section of `index.html`.
 
@@ -583,7 +637,8 @@ the project inside it.
 
 ## Playing
 
-Click a tile to show the clue, then **Reveal Answer** (or press Space). A clock
+Click a tile to show the clue, then **Reveal Answer** (or press Space). In
+type-the-answer mode the clock is the countdown described above; otherwise a clock
 starts the moment a tile is opened but stays hidden for the first 30 seconds, so
 a team gets half a minute to think before it appears in the corner and counts up.
 It freezes when the answer is revealed, leaving the elapsed time on screen while
@@ -597,7 +652,8 @@ only used up once its answer has been revealed, so opening one by mistake and
 pressing Esc leaves it on the board. Each clue scores once; the pick highlights
 and **Undo** steps back through them. Several teams can be scored on one clue —
 each can go down once, one after another, the way it happens when two teams buzz
-and miss — but a correct answer closes the clue. Team names are editable, and teams can be added or
+and miss — but a correct answer closes the clue. (Type-the-answer mode is
+different: several teams can be right on one clue, and nobody loses points.) Team names are editable, and teams can be added or
 removed mid-game. Stepping back to the hub and returning keeps a game in
 progress — scores and used tiles survive until the page is reloaded.
 

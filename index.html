@@ -517,6 +517,144 @@
   .buzz-queue-list .gap { margin-left: auto; font-size: 12px; opacity: .7; }
   .buzz-queue-empty { text-align: center; color: var(--muted-dim); font-size: 13px; }
 
+
+  /* ---------- type-the-answer mode ---------- */
+  .buzz-mode { display: flex; flex-direction: column; gap: 6px; min-width: 210px; }
+  .buzz-seg { display: inline-flex; border: 1px solid #4a52ff; border-radius: 8px; overflow: hidden; }
+  .buzz-seg button {
+    background: transparent; border: none; color: var(--muted-dim);
+    font: 700 12px Arial, sans-serif; letter-spacing: 1px; text-transform: uppercase;
+    padding: 8px 12px; cursor: pointer;
+  }
+  .buzz-seg button + button { border-left: 1px solid #4a52ff; }
+  .buzz-seg button[aria-pressed="true"] { background: #1a22b8; color: var(--gold); }
+  .buzz-seg button:hover:not(:disabled) { color: var(--gold); }
+  .buzz-seg button:disabled { opacity: .45; cursor: not-allowed; }
+  .buzz-mode-note { font-size: 11.5px; color: var(--muted-dim); max-width: 34ch; line-height: 1.45; }
+
+  .clue-timer.countdown { opacity: 1; transform: none; }
+  .clue-timer.urgent { color: #ff8f8f; }
+  .clue-timer.over { color: var(--muted); letter-spacing: .5px; }
+
+  /* while phones type: who is in, but never what they wrote */
+  .type-live { margin-top: 20px; }
+  .type-live-head {
+    font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+  }
+  .type-live-teams { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .type-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid #4a52ff; border-radius: 20px; padding: 6px 14px;
+    background: rgba(6,10,77,.7); font-size: 14px; color: #e6e9ff;
+  }
+  .type-chip small { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted-dim); }
+  .type-chip.locked { border-color: var(--correct); }
+  .type-chip.locked small { color: #7bffb0; }
+  .type-chip.typing small { color: var(--gold); }
+  .type-live .btn-close {
+    margin-top: 14px; border-radius: 8px; padding: 9px 18px; cursor: pointer;
+    font: 700 12.5px Arial, sans-serif; letter-spacing: .5px; text-transform: uppercase;
+  }
+
+  /* after the reveal: one card per distinct answer */
+  .type-judge { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; text-align: left; }
+  .tj-group {
+    border: 1px solid #4a52ff; border-radius: 12px; padding: 12px 14px;
+    background: rgba(6,10,77,.7);
+  }
+  .tj-group.right { border-color: var(--correct); background: rgba(31,174,90,.14); }
+  .tj-group.nope { border-color: #7a4a4a; opacity: .82; }
+  .tj-group.blank { border-style: dashed; opacity: .7; }
+  .tj-top { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .tj-text {
+    font-family: Georgia, serif; font-weight: 700; font-size: clamp(17px, 2.4vw, 22px);
+    color: #fff; flex: 1 1 200px; overflow-wrap: anywhere;
+  }
+  .tj-group.blank .tj-text { font-style: italic; color: var(--muted); font-weight: 400; }
+  .tj-count { font-size: 12px; color: var(--muted-dim); letter-spacing: 1px; text-transform: uppercase; }
+  .tj-members { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tj-member {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid #2a3080; border-radius: 16px; padding: 3px 4px 3px 10px;
+    font-size: 13px; color: var(--muted);
+  }
+  .tj-member b { color: var(--gold); font-weight: 700; }
+  .tj-member i { font-style: normal; color: #e6e9ff; }
+  .tj-member.solo { padding-right: 10px; }
+  .tj-split, .tj-rejoin {
+    background: none; border: 1px solid transparent; border-radius: 12px;
+    color: var(--muted-dim); cursor: pointer; font-size: 11px; font-weight: 700;
+    letter-spacing: .5px; padding: 2px 8px;
+  }
+  .tj-split:hover { color: #ffb0b0; border-color: #7a4a4a; }
+  .tj-rejoin { margin-left: auto; }
+  .tj-rejoin:hover { color: var(--gold); border-color: var(--gold); }
+  .tj-acts { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .tj-acts button {
+    background: var(--board-navy-deep); border: 1px solid #4a52ff; color: var(--white);
+    border-radius: 20px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .tj-acts button.yes { border-color: var(--correct); color: #7bffb0; }
+  .tj-acts button.yes[aria-pressed="true"] { background: var(--correct); color: #05210f; }
+  .tj-acts button.no { border-color: #7a4a4a; color: #ffb0b0; }
+  .tj-acts button.no[aria-pressed="true"] { background: #6b2a2a; color: #fff; }
+  .tj-note { font-size: 12px; color: var(--muted-dim); text-align: center; }
+
+  /* the phone in type mode */
+  .buzz-team-line {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; color: var(--gold); font-weight: 700; margin: -6px 0 14px;
+  }
+  .buzz-team-pick { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+  .buzz-team-pick button {
+    width: 100%; min-height: 58px; border-radius: 12px;
+    border: 2px solid #4a52ff; background: linear-gradient(180deg, var(--tile-blue-light), var(--tile-blue));
+    color: var(--gold); font: 900 clamp(18px, 5vw, 22px) Georgia, serif; letter-spacing: .5px;
+    text-transform: uppercase; cursor: pointer; touch-action: manipulation;
+  }
+  .buzz-team-pick button small {
+    display: block; font: 400 12px Arial, sans-serif; letter-spacing: 0;
+    text-transform: none; color: var(--muted); margin-top: 2px;
+  }
+  .type-card {
+    border: 1px solid #2a3080; border-radius: 14px; background: rgba(6,10,77,.65);
+    padding: 12px 14px; margin-bottom: 12px;
+  }
+  .type-card .pad-clue-cat { color: var(--muted-dim); }
+  .type-card .pad-clue-text { color: #f1f2ff; font-family: Georgia, serif; }
+  .type-card .clue-image { max-height: 30vh; margin-top: 10px; }
+  .type-clock {
+    text-align: center; font: 900 clamp(34px, 11vw, 52px) Georgia, serif; color: var(--gold);
+    margin: 4px 0 10px; text-shadow: 0 3px 0 var(--text-shadow-c);
+  }
+  .type-clock.urgent { color: #ff8f8f; }
+  .type-clock.over { color: var(--muted); font-size: clamp(22px, 7vw, 30px); }
+  .type-input {
+    width: 100%; font-size: 20px; padding: 14px 14px; border-radius: 10px;
+    border: 2px solid #4a52ff; background: var(--board-navy-deep); color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  .type-input:focus { outline: none; border-color: var(--gold); }
+  .type-input:disabled { opacity: .7; }
+  .type-lock { margin-top: 12px; }
+  .type-status { text-align: center; font-size: 15px; color: var(--muted); margin: 14px 0 16px; min-height: 1.3em; line-height: 1.45; }
+  .type-status b { color: var(--gold); }
+  .type-status.ok { color: #7bffb0; }
+  .type-result {
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; text-align: center;
+    border: 1px solid #2a3080; background: rgba(6,10,77,.65); line-height: 1.5;
+  }
+  .type-result .k { font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted-dim); }
+  .type-result .ans { font-family: Georgia, serif; font-weight: 700; font-size: 18px; color: var(--gold); margin: 4px 0 8px; }
+  .type-result .verdict { font-weight: 700; font-size: 17px; }
+  .type-result .verdict.yes { color: #7bffb0; }
+  .type-result .verdict.no { color: #ffb0b0; }
+  .host-teams { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .host-teams div { font-size: 13.5px; color: var(--muted); }
+  .host-teams b { color: var(--gold); }
+  .host-teams i { font-style: normal; color: #f0eaff; }
+
   /* ---------- wizard phone controller ---------- */
   .pad-status {
     text-align: center; font-size: clamp(15px, 4.2vw, 20px);
@@ -3479,8 +3617,8 @@
 
   <div class="buzzer-panel" id="buzzerPanel">
     <div class="buzzer-idle" id="buzzerIdle">
-      <button class="reset-board-btn buzz-start" id="buzzStartBtn">Open buzzer room</button>
-      <span class="buzzer-blurb">Players buzz in from their phones. The board plays exactly as it does now until you open one.</span>
+      <button class="reset-board-btn buzz-start" id="buzzStartBtn">Play from phones</button>
+      <span class="buzzer-blurb">Players join a team on their phones, then either buzz in or type their team's answer. The board plays exactly as it does now until you open a room.</span>
     </div>
     <div class="buzzer-live" id="buzzerLive" hidden>
       <div class="buzz-code-block">
@@ -3497,6 +3635,19 @@
         <div class="buzz-players" id="buzzPlayers">No one has joined yet</div>
         <div class="buzz-hostlink">Host console (shows answers): <span id="buzzHostUrl"></span></div>
       </div>
+      <div class="buzz-mode" id="buzzModeBlock">
+        <div class="buzz-label">How phones answer</div>
+        <div class="buzz-seg" id="buzzModeSeg" role="group" aria-label="How phones answer">
+          <button type="button" data-mode="buzz" aria-pressed="true">Buzz in</button>
+          <button type="button" data-mode="type" aria-pressed="false">Type the answer</button>
+        </div>
+        <div class="buzz-seg" id="buzzSecsSeg" role="group" aria-label="Time to answer" hidden>
+          <button type="button" data-secs="30" aria-pressed="false">30 sec</button>
+          <button type="button" data-secs="45" aria-pressed="false">45 sec</button>
+          <button type="button" data-secs="60" aria-pressed="false">1 min</button>
+        </div>
+        <div class="buzz-mode-note" id="buzzModeNote"></div>
+      </div>
       <div class="buzz-controls">
         <button class="reset-board-btn" id="buzzShowJoinBtn">Show join screen</button>
         <button class="reset-board-btn buzz-toggle" id="buzzToggleBtn" aria-pressed="true">Buzzers on</button>
@@ -3512,7 +3663,7 @@
             title="Downloads a .apkg you can open straight into Anki — it lands in its own deck, images included.">Download Anki deck (.apkg)</button>
   </div>
 
-  <footer class="hint">Click a tile to reveal the clue &nbsp;&bull;&nbsp; phrase your response as a question &nbsp;&bull;&nbsp; award points to the team that answers correctly</footer>
+  <footer class="hint">Click a tile to reveal the clue &nbsp;&bull;&nbsp; phrase your response as a question &nbsp;&bull;&nbsp; award points to the team that answers correctly &nbsp;&bull;&nbsp; type-the-answer mode never takes points away</footer>
 </div>
 
 <!-- ===================== CONNECT FOUR VIEW ===================== -->
@@ -3969,6 +4120,7 @@
         <div class="host-answer-label">Answer</div>
         <div class="host-answer" id="hostAnswer"></div>
         <div class="host-buzz" id="hostBuzz"></div>
+        <div class="host-teams" id="hostTeams" hidden></div>
       </div>
     </div>
     <button class="reset-board-btn" id="hostLeaveBtn">Leave console</button>
@@ -4003,8 +4155,38 @@
       <span id="buzzPlayerName"></span>
       <span class="buzz-room-tag" id="buzzRoomTag"></span>
     </div>
-    <button class="buzz-big" id="buzzBigBtn" disabled>Waiting…</button>
-    <div class="buzz-status" id="buzzStatus">Waiting for the host to open a clue</div>
+    <div class="buzz-team-line" id="buzzTeamLine" hidden>
+      <span id="buzzTeamName"></span>
+      <button type="button" class="link-btn" id="buzzTeamSwitch">Switch team</button>
+    </div>
+
+    <div id="buzzTeamPane" hidden>
+      <div class="buzz-status">Pick your team</div>
+      <div class="buzz-team-pick" id="buzzTeamPick"></div>
+    </div>
+
+    <div id="buzzBuzzPane" hidden>
+      <button class="buzz-big" id="buzzBigBtn" disabled>Waiting…</button>
+      <div class="buzz-status" id="buzzStatus">Waiting for the host to open a clue</div>
+    </div>
+
+    <div id="buzzTypePane" hidden>
+      <div class="type-card" id="typeCard" hidden>
+        <div class="pad-clue-cat"><span id="typeCardCat"></span><span id="typeCardVal"></span></div>
+        <div class="pad-clue-text" id="typeCardText"></div>
+        <img class="clue-image" id="typeCardImg" alt="Image for this clue" hidden>
+      </div>
+      <div class="type-clock" id="typeClock" hidden></div>
+      <div id="typeEntry" hidden>
+        <input class="type-input" id="typeInput" maxlength="80" autocomplete="off" autocorrect="off"
+               autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="Your team's answer"
+               aria-label="Your team's answer">
+        <button class="wiz-start type-lock" id="typeLockBtn" disabled>Lock in for the team</button>
+      </div>
+      <div class="type-status" id="typeStatus">Waiting for the host to open a clue</div>
+      <div class="type-result" id="typeResult" hidden></div>
+    </div>
+
     <button class="reset-board-btn" id="buzzLeaveBtn">Leave room</button>
   </div>
 </div>
@@ -4337,6 +4519,12 @@
     <img class="clue-image" id="modalImage" alt="Imaging for this clue" hidden>
     <div class="answer-text" id="modalAnswer"></div>
 
+    <div class="type-live" id="typeLive" hidden>
+      <div class="type-live-head" id="typeLiveHead"></div>
+      <div class="type-live-teams" id="typeLiveTeams"></div>
+      <button class="btn-close" id="typeCloseBtn">Close answers now</button>
+    </div>
+
     <div class="buzz-queue" id="buzzQueue" hidden>
       <div class="buzz-queue-label">Buzzed in</div>
       <ol class="buzz-queue-list" id="buzzQueueList"></ol>
@@ -4347,7 +4535,8 @@
     </div>
 
     <div class="award-panel" id="awardPanel">
-      <div class="label">Award points</div>
+      <div class="type-judge" id="typeJudge" hidden></div>
+      <div class="label" id="awardLabel">Award points</div>
       <div class="award-row" id="awardRow"></div>
       <div class="award-status" id="awardStatus"></div>
       <div class="modal-actions">
@@ -6169,6 +6358,7 @@ function renderScoreboard() {
     card.append(nameInput, scoreDiv, btnRow);
     scoreboardEl.appendChild(card);
   });
+  BUZZ.syncTeams();   // phones pick from these teams
 
   const addBtn = document.createElement('button');
   addBtn.className = 'add-team-btn';
@@ -6284,16 +6474,18 @@ function openClue(tileEl, key, categoryName, clueObj, value) {
   revealRow.style.display = 'flex';
   awardPanel.classList.remove('shown');
 
-  renderAwardRow();
-  startClueTimer();
   overlay.classList.add('active');
-  BUZZ.arm();          // no-op unless a room is open and buzzers are on
-  BUZZ.showClue(current ? current.id : '', key);   // host console follows along
+  BUZZ.showClue(current ? current.id : '', key);   // host console and phones follow along
+  BUZZ.arm();          // no-op unless a room is open with phones on
+  renderAwardRow();
+  // Type-the-answer clues run their own countdown in the same corner.
+  if (BUZZ.typeClue()) stopClueTimer(); else startClueTimer();
 }
 
 function renderAwardRow() {
+  if (!current) { awardRow.innerHTML = ''; return; }
+  if (BUZZ.renderAwardRow()) return;   // type-the-answer mode: award-only toggles
   awardRow.innerHTML = '';
-  if (!current) return;
   stateFor(current).teams.forEach((team, i) => {
     const correctBtn = document.createElement('button');
     correctBtn.className = 'correct';
@@ -6368,6 +6560,7 @@ function applyAwardLock() {
 revealBtn.addEventListener('click', () => {
   revealed = true;
   BUZZ.lock();         // the answer is out; nothing left to buzz for
+  BUZZ.reveal();       // type-the-answer mode: show every team's answer to judge
   // Deliberation is over; hold the final time on screen rather than letting it
   // tick on through the scoring.
   stopClueTimer();
@@ -6760,7 +6953,23 @@ const BUZZ = (function () {
     const last = parts[parts.length - 1];
     if (event === 'patch') {
       if (typeof node[last] !== 'object' || node[last] === null) node[last] = {};
-      Object.keys(data || {}).forEach(k => { node[last][k] = data[k]; });
+      Object.keys(data || {}).forEach(k => {
+        // A multi-location patch arrives with keys like "round/open".
+        if (k.indexOf('/') !== -1) {
+          const sub = k.split('/').filter(Boolean);
+          let n = node[last];
+          for (let i = 0; i < sub.length - 1; i++) {
+            if (typeof n[sub[i]] !== 'object' || n[sub[i]] === null) n[sub[i]] = {};
+            n = n[sub[i]];
+          }
+          if (data[k] === null) delete n[sub[sub.length - 1]];
+          else n[sub[sub.length - 1]] = data[k];
+        } else if (data[k] === null) {
+          delete node[last][k];
+        } else {
+          node[last][k] = data[k];
+        }
+      });
     } else if (data === null) {
       delete node[last];
     } else {
@@ -6791,8 +7000,38 @@ const BUZZ = (function () {
     return c;
   };
 
+  const clockText = ms => {
+    const total = Math.max(0, Math.ceil(ms / 1000));
+    return Math.floor(total / 60) + ':' + String(total % 60).padStart(2, '0');
+  };
+
+  // Clue coordinates -> the clue, looked up in this page's own copy of GAMES.
+  // Only coordinates ever travel over the wire, never an answer.
+  function lookupClue(ref) {
+    if (!ref) return null;
+    const game = GAMES.find(g => g.id === ref.g);
+    const cat = game && (game.categories || [])[ref.c];
+    const clue = cat && (cat.clues || [])[ref.r];
+    return clue ? { game: game, cat: cat, clue: clue, value: valueOf(clue, ref.r) } : null;
+  }
+
+  // ---- grouping typed answers ----
+  // Two answers group when they match after the trivia is stripped: case,
+  // accents, punctuation, spacing, a leading "What is" or "the". Spelling is
+  // left alone on purpose — the judge decides whether "sertralin" counts.
+  function stripLead(text) {
+    return String(text || '').trim()
+      .replace(/^\s*(what|who|where|when|which)\s*('s|’s|\s+(is|are|was|were))\s+/i, '')
+      .replace(/^\s*(the|a|an)\s+/i, '')
+      .replace(/[\s?.!]+$/, '');
+  }
+  function answerKey(text) {
+    return stripLead(text).toLowerCase()
+      .normalize('NFKD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9α-ω]+/g, '');
+  }
+
   // ================= HOST =================
-  const panel = document.getElementById('buzzerPanel');
   const idleEl = document.getElementById('buzzerIdle');
   const liveEl = document.getElementById('buzzerLive');
   const codeEl = document.getElementById('buzzCode');
@@ -6804,8 +7043,39 @@ const BUZZ = (function () {
   const errEl = document.getElementById('buzzError');
   const queueEl = document.getElementById('buzzQueue');
   const queueList = document.getElementById('buzzQueueList');
+  const modeSeg = document.getElementById('buzzModeSeg');
+  const secsSeg = document.getElementById('buzzSecsSeg');
+  const modeNote = document.getElementById('buzzModeNote');
+  const typeLive = document.getElementById('typeLive');
+  const typeLiveHead = document.getElementById('typeLiveHead');
+  const typeLiveTeams = document.getElementById('typeLiveTeams');
+  const typeCloseBtn = document.getElementById('typeCloseBtn');
+  const typeJudge = document.getElementById('typeJudge');
+  const awardLabel = document.getElementById('awardLabel');
 
-  const host = { code: null, stream: null, room: {}, enabled: true, round: 0 };
+  const MODE_KEY = 'bsg.buzz.mode.v1';
+  const SECS_KEY = 'bsg.buzz.secs.v1';
+  const readPref = (k, fallback, ok) => {
+    try { const v = localStorage.getItem(k); return ok(v) ? v : fallback; } catch (e) { return fallback; }
+  };
+  const savePref = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) { /* fine */ } };
+
+  const host = {
+    code: null, stream: null, room: {}, enabled: true, round: 0, lastTeams: '',
+    mode: readPref(MODE_KEY, 'buzz', v => v === 'buzz' || v === 'type'),
+    secs: Number(readPref(SECS_KEY, '30', v => v === '30' || v === '45' || v === '60')),
+  };
+
+  // The open clue, when it is being played in type-the-answer mode.
+  //   open      phones may still write
+  //   closedAt  when answering stopped (late keystrokes are still taken for a
+  //             moment after this, so a phone that was mid-word isn't cut off)
+  //   snap      the answers as the judge sees them once revealed
+  //   split     teams pulled out of their group by the judge
+  //   verdict   tid -> true (awarded) / false (not correct)
+  const T = { active: false, open: false, endsAt: 0, tick: null, closedAt: 0, why: '',
+              revealed: false, snap: {}, split: {}, verdict: {} };
+  const LATE_MS = 1500;
 
   function hostError(msg) {
     errEl.textContent = msg;
@@ -6816,15 +7086,54 @@ const BUZZ = (function () {
     return joinBase() + '#buzz-' + code;
   }
 
+  // Scoreboard teams get a stable id the first time a room needs them, so a
+  // phone stays on its team when another team is renamed or removed.
+  function teamList() {
+    if (!current) return [];
+    return stateFor(current).teams.map(t => {
+      if (!t.id) t.id = 't' + Math.random().toString(36).slice(2, 9);
+      return t;
+    });
+  }
+  function teamsPayload() {
+    const out = {};
+    teamList().forEach((t, i) => { out[t.id] = { name: t.name, n: i }; });
+    return out;
+  }
+  function syncTeams() {
+    if (!host.code || !current) return;
+    const payload = teamsPayload();
+    const json = JSON.stringify(payload);
+    if (json === host.lastTeams) return;
+    host.lastTeams = json;
+    put('/rooms/' + host.code + '/teams', payload).catch(() => { host.lastTeams = ''; });
+  }
+
+  function playersByTeam() {
+    const players = host.room.players || {};
+    const by = {};
+    Object.keys(players).forEach(k => {
+      const p = players[k];
+      if (!p || !p.name) return;
+      const key = p.team || '';
+      (by[key] = by[key] || []).push(p.name);
+    });
+    return by;
+  }
+
   function renderHost() {
     const players = host.room.players || {};
     const names = Object.keys(players).map(k => players[k] && players[k].name).filter(Boolean);
+    const by = playersByTeam();
+    const parts = teamList().filter(t => by[t.id]).map(t => t.name + ': ' + by[t.id].join(', '));
+    if (by['']) parts.push('picking a team: ' + by[''].join(', '));
     playersEl.textContent = names.length
-      ? names.length + (names.length === 1 ? ' player: ' : ' players: ') + names.join(', ')
+      ? names.length + (names.length === 1 ? ' player — ' : ' players — ') + parts.join(' · ')
       : 'No one has joined yet';
     // The join screen is usually up while people are still arriving.
-    JOIN.setNote(names.length ? 'In: ' + names.join(', ') : 'Nobody has joined yet');
+    JOIN.setNote(names.length ? 'In: ' + parts.join(' · ') : 'Nobody has joined yet');
     renderQueue();
+    if (T.active) onTypeRoomChange();
   }
 
   function buzzOrder() {
@@ -6835,8 +7144,13 @@ const BUZZ = (function () {
       .sort((a, b) => a.t - b.t);
   }
 
+  function teamNameOf(tid) {
+    const t = teamList().find(x => x.id === tid);
+    return t ? t.name : '';
+  }
+
   function renderQueue() {
-    if (!host.code || !host.enabled) { queueEl.hidden = true; return; }
+    if (!host.code || !host.enabled || T.active) { queueEl.hidden = true; return; }
     queueEl.hidden = !overlay.classList.contains('active');
     const order = buzzOrder();
     queueList.innerHTML = '';
@@ -6853,7 +7167,8 @@ const BUZZ = (function () {
       const rank = document.createElement('span');
       rank.className = 'rank'; rank.textContent = (i + 1) + '.';
       const name = document.createElement('span');
-      name.textContent = b.name;
+      const team = b.team ? teamNameOf(b.team) : '';
+      name.textContent = b.name + (team ? ' · ' + team : '');
       li.append(rank, name);
       if (i > 0) {
         const gap = document.createElement('span');
@@ -6865,25 +7180,69 @@ const BUZZ = (function () {
     });
   }
 
+  // ---- mode and timer controls ----
+  function renderModeControls() {
+    const busy = overlay.classList.contains('active');
+    [...modeSeg.children].forEach(b => {
+      b.setAttribute('aria-pressed', String(b.dataset.mode === host.mode));
+      b.disabled = busy;
+    });
+    [...secsSeg.children].forEach(b => {
+      b.setAttribute('aria-pressed', String(Number(b.dataset.secs) === host.secs));
+      b.disabled = busy;
+    });
+    secsSeg.hidden = host.mode !== 'type';
+    modeNote.textContent = busy
+      ? 'Finish this clue to change how phones answer.'
+      : host.mode === 'type'
+        ? 'Each team types one answer; anyone on the team can lock it in. Answers show on this screen when you reveal. No points are taken away.'
+        : 'First to buzz shows here, in order.';
+    toggleLabel();
+  }
+  function toggleLabel() {
+    const word = host.mode === 'type' ? 'Answers' : 'Buzzers';
+    toggleBtn.textContent = word + (host.enabled ? ' on' : ' off');
+    toggleBtn.setAttribute('aria-pressed', String(host.enabled));
+  }
+  modeSeg.addEventListener('click', e => {
+    const b = e.target.closest('button[data-mode]');
+    if (!b || b.disabled) return;
+    host.mode = b.dataset.mode;
+    savePref(MODE_KEY, host.mode);
+    renderModeControls();
+    if (host.code) patch('/rooms/' + host.code, { mode: host.mode, secs: host.secs }).catch(() => {});
+  });
+  secsSeg.addEventListener('click', e => {
+    const b = e.target.closest('button[data-secs]');
+    if (!b || b.disabled) return;
+    host.secs = Number(b.dataset.secs);
+    savePref(SECS_KEY, host.secs);
+    renderModeControls();
+    if (host.code) patch('/rooms/' + host.code, { secs: host.secs }).catch(() => {});
+  });
+
   function openRoom() {
     const code = randomCode();
     hostError('');
     startBtn.disabled = true;
     put('/rooms/' + code, {
       meta: { created: SERVER_TIME, game: current ? current.title : '' },
-      round: { id: 0, open: false }
+      round: { id: 0, open: false },
+      mode: host.mode,
+      secs: host.secs,
+      teams: teamsPayload()
     }).then(() => {
       host.code = code; host.round = 0; host.room = {}; host.enabled = true;
+      host.lastTeams = JSON.stringify(teamsPayload());
       codeEl.textContent = code;
       joinUrlEl.textContent = joinLink(code);
       document.getElementById('buzzHostUrl').textContent = joinBase() + '#host-' + code;
       document.getElementById('buzzQr').innerHTML =
-        qrSVG(joinLink(code), 132, 'Scan to join buzzer room ' + code);
-      toggleBtn.textContent = 'Buzzers on';
-      toggleBtn.setAttribute('aria-pressed', 'true');
+        qrSVG(joinLink(code), 132, 'Scan to join room ' + code);
       idleEl.hidden = true; liveEl.hidden = false;
+      renderModeControls();
       host.stream = listen('/rooms/' + code, room => { host.room = room; renderHost(); },
-        () => hostError('Lost contact with the buzzer service — reconnecting…'));
+        () => hostError('Lost contact with the phone service — reconnecting…'));
       renderHost();
     }).catch(e => {
       hostError('Could not open a room: ' + e.message + '. Check the connection and try again.');
@@ -6894,7 +7253,8 @@ const BUZZ = (function () {
     if (!host.code) return;
     const code = host.code;
     if (host.stream) { host.stream.close(); host.stream = null; }
-    host.code = null; host.room = {};
+    if (T.active) endTypeClue();
+    host.code = null; host.room = {}; host.lastTeams = '';
     idleEl.hidden = false; liveEl.hidden = true;
     queueEl.hidden = true;
     document.getElementById('buzzQr').innerHTML = '';
@@ -6902,21 +7262,325 @@ const BUZZ = (function () {
     del('/rooms/' + code);
   }
 
-  // Arm the buzzers for a fresh clue: clears the queue and bumps the round, so
-  // a buzz from the previous clue can never land in this one.
+  // Arm the phones for a fresh clue: bumps the round, so a buzz or an answer
+  // from the previous clue can never land in this one.
   function armRound() {
+    renderModeControls();
     if (!host.code || !host.enabled) { queueEl.hidden = true; return; }
     host.round += 1;
+    if (host.mode === 'type') { armTypeRound(); return; }
     host.room.buzzes = {};
     renderQueue();
     del('/rooms/' + host.code + '/buzzes')
-      .then(() => patch('/rooms/' + host.code + '/round', { id: host.round, open: true }))
+      .then(() => patch('/rooms/' + host.code + '/round', { id: host.round, open: true, mode: 'buzz', revealed: false }))
       .catch(() => hostError('Could not arm the buzzers.'));
   }
 
   function lockRound() {
     if (!host.code) return;
+    if (T.active) { closeAnswers('closed'); return; }
     patch('/rooms/' + host.code + '/round', { open: false }).catch(() => {});
+  }
+
+  // ================= TYPE THE ANSWER: HOST =================
+  function armTypeRound() {
+    T.active = true; T.open = true; T.revealed = false; T.why = '';
+    T.snap = {}; T.split = {}; T.verdict = {}; T.closedAt = 0;
+    host.room.answers = {};
+    host.room.verdicts = null;
+    T.endsAt = Date.now() + host.secs * 1000;
+    clearInterval(T.tick);
+    T.tick = setInterval(tickCountdown, 200);
+    tickCountdown();
+    typeLive.hidden = false;
+    typeJudge.hidden = true;
+    renderTypeLive();
+    const code = host.code, round = host.round;
+    Promise.all([del('/rooms/' + code + '/answers'), del('/rooms/' + code + '/verdicts')])
+      .then(() => patch('/rooms/' + code + '/round',
+        { id: round, open: true, mode: 'type', secs: host.secs, start: SERVER_TIME, revealed: false, closed: null }))
+      .then(() => {
+        // Phones time the clue from the moment the server opened it, so the
+        // screen does too — it would otherwise run ahead by the setup writes.
+        if (T.active && T.open && host.round === round) T.endsAt = Date.now() + host.secs * 1000;
+      })
+      .catch(() => hostError('Could not open answers on the phones.'));
+  }
+
+  function tickCountdown() {
+    if (!T.active) return;
+    clueTimerEl.classList.add('countdown', 'shown');
+    clueTimerEl.classList.remove('stopped');
+    if (!T.open) {
+      clueTimerEl.classList.remove('urgent');
+      clueTimerEl.classList.add('over');
+      clueTimerEl.textContent = T.why === 'all' ? 'All in' : T.why === 'time' ? "Time's up" : 'Closed';
+      return;
+    }
+    const left = T.endsAt - Date.now();
+    clueTimerEl.classList.remove('over');
+    clueTimerEl.classList.toggle('urgent', left <= 10000);
+    clueTimerEl.textContent = clockText(left);
+    if (left <= 0) closeAnswers('time');
+  }
+
+  function closeAnswers(why) {
+    if (!T.active || !T.open) return;
+    T.open = false; T.why = why; T.closedAt = Date.now();
+    clearInterval(T.tick); T.tick = null;
+    tickCountdown();
+    renderTypeLive();
+    if (host.code) patch('/rooms/' + host.code + '/round', { open: false, closed: why }).catch(() => {});
+  }
+
+  // This round's answers, keyed by team id.
+  function liveAnswers() {
+    const all = host.room.answers || {};
+    const out = {};
+    Object.keys(all).forEach(tid => {
+      const a = all[tid];
+      if (a && a.round === host.round) out[tid] = a;
+    });
+    return out;
+  }
+
+  // Teams that count: anyone with a phone on them, plus anyone who answered.
+  function playingTeams(answers) {
+    const by = playersByTeam();
+    return teamList().filter(t => by[t.id] || answers[t.id]);
+  }
+
+  function onTypeRoomChange() {
+    if (!T.revealed) {
+      renderTypeLive();
+      if (T.open) {
+        const answers = liveAnswers();
+        const teams = playingTeams(answers);
+        if (teams.length && teams.every(t => answers[t.id] && answers[t.id].locked)) closeAnswers('all');
+      }
+    } else if (Date.now() - T.closedAt < LATE_MS) {
+      // A phone that was mid-word when time ran out sends what it had.
+      T.snap = JSON.parse(JSON.stringify(liveAnswers()));
+      renderJudge();
+    }
+  }
+
+  function renderTypeLive() {
+    if (!T.active) return;
+    typeLive.hidden = T.revealed;
+    if (T.revealed) return;
+    const answers = liveAnswers();
+    const teams = playingTeams(answers);
+    const lockedN = teams.filter(t => answers[t.id] && answers[t.id].locked).length;
+    typeLiveHead.textContent = !teams.length
+      ? 'No phones on a team yet'
+      : T.open
+        ? lockedN + ' of ' + teams.length + (teams.length === 1 ? ' team' : ' teams') + ' locked in'
+        : 'Answers closed — reveal to see them';
+    typeLiveTeams.innerHTML = '';
+    teams.forEach(t => {
+      const a = answers[t.id];
+      const chip = document.createElement('span');
+      const state = a && a.locked ? 'locked' : a && a.text ? 'typing' : '';
+      chip.className = 'type-chip' + (state ? ' ' + state : '');
+      chip.append(t.name);
+      const small = document.createElement('small');
+      small.textContent = state === 'locked' ? 'Locked ✓'
+        : state === 'typing' ? (T.open ? 'Typing…' : 'Not locked')
+        : (T.open ? 'Waiting' : 'No answer');
+      chip.appendChild(small);
+      typeLiveTeams.appendChild(chip);
+    });
+    typeCloseBtn.hidden = !T.open;
+  }
+
+  typeCloseBtn.addEventListener('click', () => closeAnswers('closed'));
+
+  function revealTyped() {
+    if (!T.active) return;
+    closeAnswers('closed');
+    T.revealed = true;
+    T.snap = JSON.parse(JSON.stringify(liveAnswers()));
+    typeLive.hidden = true;
+    if (host.code) patch('/rooms/' + host.code + '/round', { revealed: true }).catch(() => {});
+    renderJudge();
+  }
+
+  // Groups of identical answers, biggest first. A team the judge pulled out
+  // sits on its own; teams with nothing typed share one "No answer" card.
+  function buildGroups() {
+    const teams = playingTeams(T.snap);
+    const groups = [];
+    const byKey = new Map();
+    teams.forEach(t => {
+      const a = T.snap[t.id];
+      const text = a && a.text ? String(a.text).trim() : '';
+      const key = !text ? '__blank' : T.split[t.id] ? '__solo:' + t.id : answerKey(text) || '__raw:' + text;
+      let g = byKey.get(key);
+      if (!g) {
+        g = { key: key, blank: !text, solo: !!(text && T.split[t.id]), members: [] };
+        byKey.set(key, g); groups.push(g);
+      }
+      g.members.push({ tid: t.id, name: t.name, text: text, locked: !!(a && a.locked), by: a && a.by });
+    });
+    groups.forEach(g => {
+      // Show the spelling most of the group used.
+      const counts = {};
+      g.members.forEach(m => { const k = stripLead(m.text); counts[k] = (counts[k] || 0) + 1; });
+      g.label = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0] || '';
+    });
+    groups.sort((a, b) => (a.blank - b.blank) || (b.members.length - a.members.length));
+    return groups;
+  }
+
+  function teamIndex(tid) { return teamList().findIndex(t => t.id === tid); }
+
+  function setVerdict(tids, val) {
+    const teams = teamList();
+    tids.forEach(tid => {
+      const prev = T.verdict[tid];
+      if (prev === val) return;
+      const t = teams.find(x => x.id === tid);
+      if (!t) return;
+      if (prev === true) t.score -= currentValue;
+      if (val === true) t.score += currentValue;
+      if (val === undefined) delete T.verdict[tid]; else T.verdict[tid] = val;
+    });
+    renderScoreboard();
+    renderJudge();
+    renderAwardRowTyped();
+    pushVerdicts();
+  }
+
+  function pushVerdicts() {
+    if (!host.code) return;
+    const v = {};
+    Object.keys(T.verdict).forEach(k => { v[k] = T.verdict[k]; });
+    put('/rooms/' + host.code + '/verdicts', { round: host.round, v: v, value: currentValue }).catch(() => {});
+  }
+
+  function renderJudge() {
+    if (!T.active || !T.revealed) { typeJudge.hidden = true; return; }
+    typeJudge.hidden = false;
+    typeJudge.innerHTML = '';
+    const groups = buildGroups();
+    if (!groups.length) {
+      const note = document.createElement('div');
+      note.className = 'tj-note';
+      note.textContent = 'No team answered from a phone. Award points below if a team answered out loud.';
+      typeJudge.appendChild(note);
+      return;
+    }
+    groups.forEach(g => {
+      const tids = g.members.map(m => m.tid);
+      const vals = tids.map(tid => T.verdict[tid]);
+      const allYes = vals.every(v => v === true);
+      const allNo = vals.every(v => v === false);
+      const card = document.createElement('div');
+      card.className = 'tj-group' + (g.blank ? ' blank' : allYes ? ' right' : allNo ? ' nope' : '');
+
+      const top = document.createElement('div');
+      top.className = 'tj-top';
+      const text = document.createElement('div');
+      text.className = 'tj-text';
+      text.textContent = g.blank ? 'No answer' : g.label;
+      top.appendChild(text);
+      if (g.members.length > 1) {
+        const count = document.createElement('span');
+        count.className = 'tj-count';
+        count.textContent = g.members.length + ' teams';
+        top.appendChild(count);
+      }
+      if (g.solo) {
+        const back = document.createElement('button');
+        back.className = 'tj-rejoin';
+        back.textContent = 'Put back in group';
+        back.title = 'Group this answer with any others that match it';
+        back.onclick = () => { delete T.split[g.members[0].tid]; renderJudge(); };
+        top.appendChild(back);
+      }
+      card.appendChild(top);
+
+      const mem = document.createElement('div');
+      mem.className = 'tj-members';
+      g.members.forEach(m => {
+        const chip = document.createElement('span');
+        chip.className = 'tj-member' + (g.members.length > 1 && !g.blank ? '' : ' solo');
+        const b = document.createElement('b');
+        b.textContent = m.name;
+        chip.appendChild(b);
+        // The exact spelling, whenever it differs from the card's heading.
+        if (!g.blank && stripLead(m.text) !== g.label) {
+          const i = document.createElement('i');
+          i.textContent = '“' + m.text + '”';
+          chip.appendChild(i);
+        }
+        if (!g.blank && !m.locked) {
+          const i = document.createElement('i');
+          i.textContent = '(not locked)';
+          i.style.color = 'var(--muted-dim)';
+          chip.appendChild(i);
+        }
+        if (g.members.length > 1 && !g.blank) {
+          const x = document.createElement('button');
+          x.className = 'tj-split';
+          x.textContent = '✕ Remove';
+          x.title = 'Remove from grouping — judge this team on its own';
+          x.setAttribute('aria-label', 'Remove ' + m.name + ' from this group');
+          x.onclick = () => { T.split[m.tid] = true; renderJudge(); };
+          chip.appendChild(x);
+        }
+        mem.appendChild(chip);
+      });
+      card.appendChild(mem);
+
+      if (!g.blank) {
+        const acts = document.createElement('div');
+        acts.className = 'tj-acts';
+        const yes = document.createElement('button');
+        yes.className = 'yes';
+        yes.textContent = (allYes ? '✓ ' : '') + 'Correct +' + currentValue + (tids.length > 1 ? ' each' : '');
+        yes.setAttribute('aria-pressed', String(allYes));
+        yes.onclick = () => setVerdict(tids, allYes ? undefined : true);
+        const no = document.createElement('button');
+        no.className = 'no';
+        no.textContent = 'Not correct';
+        no.setAttribute('aria-pressed', String(allNo));
+        no.onclick = () => setVerdict(tids, allNo ? undefined : false);
+        acts.append(yes, no);
+        card.appendChild(acts);
+      }
+      typeJudge.appendChild(card);
+    });
+  }
+
+  // In type mode the award row is one "+value" toggle per team, sharing its
+  // state with the cards above — so a team that answered out loud can still
+  // be given its points, and nothing can be scored twice.
+  function renderAwardRowTyped() {
+    if (!T.active) return false;
+    awardLabel.textContent = 'Award points — nothing is taken away in this mode';
+    awardRow.innerHTML = '';
+    teamList().forEach(t => {
+      const on = T.verdict[t.id] === true;
+      const btn = document.createElement('button');
+      btn.className = 'correct' + (on ? ' picked' : '');
+      btn.textContent = (on ? '✓ ' : '') + t.name + ' +' + currentValue;
+      btn.setAttribute('aria-pressed', String(on));
+      btn.onclick = () => setVerdict([t.id], on ? undefined : true);
+      awardRow.appendChild(btn);
+    });
+    const won = teamList().filter(t => T.verdict[t.id] === true).map(t => t.name + ' +' + currentValue);
+    awardStatus.textContent = won.length ? won.join('   ') : '';
+    return true;
+  }
+
+  function endTypeClue() {
+    clearInterval(T.tick); T.tick = null;
+    T.active = false; T.open = false; T.revealed = false;
+    typeLive.hidden = true; typeJudge.hidden = true; typeJudge.innerHTML = '';
+    awardLabel.textContent = 'Award points';
+    clueTimerEl.classList.remove('countdown', 'urgent', 'over', 'shown');
   }
 
   startBtn.addEventListener('click', openRoom);
@@ -6925,16 +7589,16 @@ const BUZZ = (function () {
   // hidden host button and its own button never arms.
   document.getElementById('buzzShowJoinBtn').addEventListener('click', () => {
     if (!host.code) return;
-    JOIN.show('Join the buzzer', host.code, joinLink(host.code), playersEl.textContent);
+    JOIN.show('Join the game', host.code, joinLink(host.code), playersEl.textContent);
   });
   closeBtn.addEventListener('click', closeRoom);
   toggleBtn.addEventListener('click', () => {
     host.enabled = !host.enabled;
-    toggleBtn.textContent = host.enabled ? 'Buzzers on' : 'Buzzers off';
-    toggleBtn.setAttribute('aria-pressed', String(host.enabled));
+    toggleLabel();
     if (!host.enabled) { lockRound(); queueEl.hidden = true; }
-    else if (overlay.classList.contains('active')) armRound();
+    else if (overlay.classList.contains('active') && !T.active && host.mode === 'buzz') armRound();
   });
+  renderModeControls();
 
   // ================= PLAYER =================
   const view = document.getElementById('buzzerView');
@@ -6949,26 +7613,117 @@ const BUZZ = (function () {
   const playerNameEl = document.getElementById('buzzPlayerName');
   const roomTagEl = document.getElementById('buzzRoomTag');
   const leaveBtn = document.getElementById('buzzLeaveBtn');
+  const teamLine = document.getElementById('buzzTeamLine');
+  const teamNameEl = document.getElementById('buzzTeamName');
+  const teamSwitch = document.getElementById('buzzTeamSwitch');
+  const teamPane = document.getElementById('buzzTeamPane');
+  const teamPick = document.getElementById('buzzTeamPick');
+  const buzzPane = document.getElementById('buzzBuzzPane');
+  const typePane = document.getElementById('buzzTypePane');
+  const tCard = document.getElementById('typeCard');
+  const tCat = document.getElementById('typeCardCat');
+  const tVal = document.getElementById('typeCardVal');
+  const tText = document.getElementById('typeCardText');
+  const tImg = document.getElementById('typeCardImg');
+  const tClock = document.getElementById('typeClock');
+  const tEntry = document.getElementById('typeEntry');
+  const tInput = document.getElementById('typeInput');
+  const tLock = document.getElementById('typeLockBtn');
+  const tStatus = document.getElementById('typeStatus');
+  const tResult = document.getElementById('typeResult');
 
-  const player = { code: null, id: null, name: '', stream: null, round: -1, buzzed: false };
+  const player = {
+    code: null, id: null, name: '', team: null, stream: null, room: null,
+    round: -1, buzzed: false, picking: false,
+    // type mode
+    tRound: -1, endsAt: 0, tick: null, draftTimer: null, sent: '', lastEdit: 0,
+    offset: null, joinedAt: 0, clueKey: '',
+  };
 
   const NAME_KEY = 'bsg.buzz.name.v1';
 
-  function setStatus(html) { statusEl.innerHTML = ''; statusEl.append(...html); }
+  function resetToJoin(msg) {
+    if (player.stream) { player.stream.close(); player.stream = null; }
+    clearInterval(player.tick); player.tick = null;
+    clearTimeout(player.draftTimer); player.draftTimer = null;
+    player.code = null; player.id = null; player.team = null; player.room = null;
+    player.buzzed = false; player.round = -1; player.tRound = -1; player.offset = null;
+    playPane.hidden = true; joinPane.hidden = false;
+    joinNote.className = 'wiz-note';
+    joinNote.textContent = msg || '';
+  }
 
   function renderPlayer(room) {
+    player.room = room;
     // The host closed the room (or it was cleared): say so rather than leaving
     // the player staring at a button that will never light up.
-    if (player.code && (!room || !room.meta)) {
-      if (player.stream) { player.stream.close(); player.stream = null; }
-      player.code = null; player.id = null; player.buzzed = false; player.round = -1;
-      playPane.hidden = true; joinPane.hidden = false;
-      joinNote.className = 'wiz-note';
-      joinNote.textContent = 'The host closed that room.';
+    if (player.code && (!room || !room.meta)) { resetToJoin('The host closed that room.'); return; }
+
+    // Clock offset to the server, from the timestamp the server put on our own
+    // join. Good to a round trip — plenty for a 30-second answer clock.
+    const me = (room.players || {})[player.id];
+    if (player.offset === null && me && typeof me.joined === 'number' && player.joinedAt) {
+      player.offset = me.joined - player.joinedAt;
+    }
+
+    const teams = room.teams || {};
+    const onTeam = player.team && teams[player.team];
+    if (!onTeam || player.picking) { showTeamPicker(teams); return; }
+    teamPane.hidden = true;
+    teamLine.hidden = false;
+    teamNameEl.textContent = teams[player.team].name;
+
+    const round = room.round || {};
+    // A clue in play keeps the mode it was opened in; between clues the phone
+    // follows the host's current setting.
+    const typing = room.clue && round.id > 0 && round.mode
+      ? round.mode === 'type'
+      : room.mode === 'type';
+    buzzPane.hidden = typing;
+    typePane.hidden = !typing;
+    if (typing) renderTypePlayer(room); else renderBuzzPlayer(room);
+  }
+
+  function showTeamPicker(teams) {
+    teamPane.hidden = false;
+    teamLine.hidden = true;
+    buzzPane.hidden = true;
+    typePane.hidden = true;
+    teamPick.innerHTML = '';
+    const ids = Object.keys(teams).sort((a, b) => (teams[a].n || 0) - (teams[b].n || 0));
+    const players = (player.room && player.room.players) || {};
+    if (!ids.length) {
+      const note = document.createElement('div');
+      note.className = 'buzz-status';
+      note.textContent = 'The host has not set up any teams yet.';
+      teamPick.appendChild(note);
       return;
     }
+    ids.forEach(tid => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = teams[tid].name;
+      const mates = Object.keys(players).filter(k => k !== player.id && players[k] && players[k].team === tid)
+        .map(k => players[k].name);
+      const small = document.createElement('small');
+      small.textContent = mates.length ? 'With ' + mates.join(', ') : 'No one yet';
+      b.appendChild(small);
+      b.onclick = () => chooseTeam(tid);
+      teamPick.appendChild(b);
+    });
+  }
+
+  function chooseTeam(tid) {
+    if (!player.code) return;
+    player.team = tid;
+    player.picking = false;
+    patch('/rooms/' + player.code + '/players/' + player.id, { team: tid }).catch(() => {});
+    if (player.room) renderPlayer(player.room);
+  }
+
+  function renderBuzzPlayer(room) {
     const round = room.round || {};
-    const open = !!round.open;
+    const open = !!round.open && round.mode !== 'type';
     if (round.id !== player.round) { player.round = round.id; player.buzzed = false; }
 
     const buzzes = room.buzzes || {};
@@ -6997,11 +7752,203 @@ const BUZZ = (function () {
     }
   }
 
+  // ================= TYPE THE ANSWER: PHONE =================
+  function teamAnswer(room) {
+    const a = ((room.answers || {})[player.team]);
+    return a && a.round === (room.round || {}).id ? a : null;
+  }
+
+  function setTypeStatus(parts, cls) {
+    tStatus.className = 'type-status' + (cls ? ' ' + cls : '');
+    tStatus.innerHTML = '';
+    parts.forEach(p => {
+      if (typeof p === 'string') tStatus.append(p);
+      else { const b = document.createElement('b'); b.textContent = p.b; tStatus.appendChild(b); }
+    });
+  }
+
+  function renderTypePlayer(room) {
+    const round = room.round || {};
+    const found = room.clue ? lookupClue(room.clue) : null;
+    const live = found && round.mode === 'type' && round.id > 0;
+
+    if (!live) {
+      stopPhoneClock();
+      tCard.hidden = true; tClock.hidden = true; tEntry.hidden = true; tResult.hidden = true;
+      setTypeStatus(['Waiting for the host to open a clue']);
+      return;
+    }
+
+    // A new clue: start from an empty box and a fresh clock.
+    if (round.id !== player.tRound) {
+      player.tRound = round.id;
+      player.sent = '';
+      player.lastEdit = 0;
+      clearTimeout(player.draftTimer); player.draftTimer = null;
+      tInput.value = '';
+      player.endsAt = 0;
+    }
+    if (!player.endsAt && round.open) {
+      const secs = Number(round.secs) || 30;
+      player.endsAt = typeof round.start === 'number' && player.offset !== null
+        ? round.start - player.offset + secs * 1000
+        : Date.now() + secs * 1000;
+    }
+
+    const key = room.clue.g + '/' + room.clue.c + '/' + room.clue.r;
+    if (key !== player.clueKey) {
+      player.clueKey = key;
+      tCat.textContent = found.cat.name || '';
+      tVal.textContent = '$' + found.value;
+      tText.textContent = found.clue.clue || '';
+      if (found.clue.image) { tImg.src = found.clue.image; tImg.hidden = false; }
+      else { tImg.hidden = true; tImg.removeAttribute('src'); }
+    }
+    tCard.hidden = false;
+
+    const ans = teamAnswer(room);
+    const open = !!round.open;
+    const locked = !!(ans && ans.locked);
+
+    adoptTeamText(room);
+    if (locked) tInput.value = ans.text || '';
+
+    tClock.hidden = false;
+    if (open) startPhoneClock(); else { stopPhoneClock(); flushDraft(true); }
+    paintClock();
+
+    const expired = !!player.endsAt && Date.now() >= player.endsAt;
+    tEntry.hidden = round.revealed && !ans;
+    tInput.disabled = !open || locked || expired;
+    tLock.hidden = !open || locked;
+    tLock.disabled = !tInput.value.trim() || expired;
+
+    if (round.revealed) {
+      showResult(room, found, ans);
+    } else {
+      tResult.hidden = true;
+      if (locked) {
+        setTypeStatus(ans.pid === player.id ? ['Locked in for your team.'] : ['Locked in by ', { b: ans.by || 'a teammate' }, '.'], 'ok');
+      } else if (!open) {
+        setTypeStatus(ans && ans.text ? ['Time’s up — your team’s answer: ', { b: ans.text }] : ['Time’s up — no answer from your team.']);
+      } else if (ans && ans.pid !== player.id && ans.text) {
+        setTypeStatus([{ b: ans.by || 'A teammate' }, ' is typing for your team.']);
+      } else {
+        setTypeStatus(['One answer per team — anyone can lock it in.']);
+      }
+    }
+  }
+
+  function showResult(room, found, ans) {
+    tResult.hidden = false;
+    tResult.innerHTML = '';
+    const k = document.createElement('div'); k.className = 'k'; k.textContent = 'Correct response';
+    const a = document.createElement('div'); a.className = 'ans'; a.textContent = found.clue.answer || '';
+    tResult.append(k, a);
+    const vd = room.verdicts && room.verdicts.round === (room.round || {}).id ? room.verdicts : null;
+    const mine = vd && vd.v ? vd.v[player.team] : undefined;
+    const line = document.createElement('div');
+    line.className = 'verdict' + (mine === true ? ' yes' : mine === false ? ' no' : '');
+    line.textContent = mine === true ? 'Your team gets +' + (vd.value || found.value) + '!'
+      : mine === false ? 'Not this time.'
+      : ans && ans.text ? 'Waiting for the judge…' : 'Your team didn’t send an answer.';
+    tResult.appendChild(line);
+    setTypeStatus(ans && ans.text ? ['Your team said: ', { b: ans.text }] : []);
+  }
+
+  // Pick up what a teammate typed — unless this phone is mid-word. Runs on
+  // every room change and on every clock tick, so two people typing at once
+  // settle on whichever answer reached the server last.
+  function adoptTeamText(room) {
+    const round = room.round || {};
+    const ans = teamAnswer(room);
+    if (!round.open || !ans || ans.locked || ans.pid === player.id) return;
+    if (Date.now() - player.lastEdit <= 1500) return;
+    const text = ans.text || '';
+    if (tInput.value !== text) {
+      tInput.value = text;
+      tLock.disabled = !text.trim();
+    }
+    player.sent = text;
+  }
+
+  function paintClock() {
+    const round = (player.room && player.room.round) || {};
+    if (player.room) adoptTeamText(player.room);
+    if (!round.open) {
+      tClock.className = 'type-clock over';
+      tClock.textContent = round.closed === 'all' ? 'All teams in' : round.revealed ? 'Answer revealed' : 'Time’s up';
+      return;
+    }
+    const left = player.endsAt - Date.now();
+    tClock.className = 'type-clock' + (left <= 10000 ? ' urgent' : '');
+    tClock.textContent = clockText(left);
+    if (left <= 0) {
+      // The screen closes the round; until that arrives, stop taking keys and
+      // send whatever is in the box.
+      tInput.disabled = true; tLock.disabled = true;
+      flushDraft(true);
+    }
+  }
+  function startPhoneClock() {
+    if (player.tick) return;
+    player.tick = setInterval(paintClock, 250);
+  }
+  function stopPhoneClock() { clearInterval(player.tick); player.tick = null; }
+
+  function writeAnswer(text, locked) {
+    if (!player.code || !player.team) return Promise.resolve();
+    const round = (player.room && player.room.round) || {};
+    const data = { text: text, by: player.name, pid: player.id, locked: !!locked, round: round.id };
+    if (locked) data.t = SERVER_TIME;
+    return put('/rooms/' + player.code + '/answers/' + player.team, data);
+  }
+
+  function canWrite() {
+    const room = player.room || {};
+    const ans = teamAnswer(room);
+    return !(ans && ans.locked) && (room.round || {}).mode === 'type';
+  }
+
+  // Drafts go up as you type, so a team's answer survives the clock running
+  // out before anyone presses Lock.
+  function flushDraft(final) {
+    clearTimeout(player.draftTimer); player.draftTimer = null;
+    const text = tInput.value.trim();
+    if (text === player.sent || !canWrite()) return;
+    if (!final && !(player.room.round || {}).open) return;
+    // Only the phone that typed it sends it after the bell.
+    if (final && !player.lastEdit) return;
+    player.sent = text;
+    writeAnswer(text, false).catch(() => { player.sent = ''; });
+  }
+
+  tInput.addEventListener('input', () => {
+    player.lastEdit = Date.now();
+    tLock.disabled = !tInput.value.trim();
+    clearTimeout(player.draftTimer);
+    player.draftTimer = setTimeout(() => flushDraft(false), 300);
+  });
+  tInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); if (!tLock.disabled && !tLock.hidden) tLock.click(); }
+  });
+  tLock.addEventListener('click', () => {
+    const text = tInput.value.trim();
+    if (!text || !canWrite() || !((player.room.round || {}).open)) return;
+    clearTimeout(player.draftTimer); player.draftTimer = null;
+    tLock.disabled = true; tInput.disabled = true;
+    player.sent = text;
+    writeAnswer(text, true).catch(() => {
+      setTypeStatus(['That didn’t go through — try Lock again.']);
+      tLock.disabled = false; tInput.disabled = false;
+    });
+  });
+
   function joinRoom() {
     const code = (codeInput.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
     const name = (nameInput.value || '').trim();
     if (code.length < 4) { joinNote.className = 'wiz-note warn'; joinNote.textContent = 'Enter the 4-letter room code from the host screen.'; return; }
-    if (!name) { joinNote.className = 'wiz-note warn'; joinNote.textContent = 'Enter a name so the host knows who buzzed.'; return; }
+    if (!name) { joinNote.className = 'wiz-note warn'; joinNote.textContent = 'Enter a name so the host knows who is playing.'; return; }
     joinNote.className = 'wiz-note'; joinNote.textContent = 'Joining…';
     joinBtn.disabled = true;
 
@@ -7009,16 +7956,22 @@ const BUZZ = (function () {
       if (!meta) throw new Error('no such room');
       player.code = code;
       player.name = name;
+      player.team = null;
+      player.offset = null;
       player.id = 'p' + Math.random().toString(36).slice(2, 10);
       try { localStorage.setItem(NAME_KEY, name); } catch (e) { /* fine */ }
-      return put('/rooms/' + code + '/players/' + player.id, { name: name, joined: SERVER_TIME });
+      player.joinedAt = Date.now();
+      return put('/rooms/' + code + '/players/' + player.id, { name: name, joined: SERVER_TIME })
+        .then(r => { player.joinedAt = (player.joinedAt + Date.now()) / 2; return r; });
     }).then(() => {
       joinNote.textContent = '';
       joinPane.hidden = true; playPane.hidden = false;
       playerNameEl.textContent = player.name;
       roomTagEl.textContent = 'Room ' + player.code;
+      showTeamPicker({});
       player.stream = listen('/rooms/' + player.code, renderPlayer, () => {
         statusEl.textContent = 'Connection dropped — trying to reconnect…';
+        tStatus.textContent = 'Connection dropped — trying to reconnect…';
       });
     }).catch(() => {
       joinNote.className = 'wiz-note warn';
@@ -7027,10 +7980,8 @@ const BUZZ = (function () {
   }
 
   function leaveRoom() {
-    if (player.stream) { player.stream.close(); player.stream = null; }
     if (player.code && player.id) del('/rooms/' + player.code + '/players/' + player.id);
-    player.code = null; player.id = null; player.buzzed = false; player.round = -1;
-    playPane.hidden = true; joinPane.hidden = false;
+    resetToJoin('');
   }
 
   bigBtn.addEventListener('click', () => {
@@ -7039,9 +7990,13 @@ const BUZZ = (function () {
     bigBtn.classList.remove('armed'); bigBtn.classList.add('sent');
     bigBtn.disabled = true; bigBtn.textContent = 'Sent';
     put('/rooms/' + player.code + '/buzzes/' + player.id,
-        { name: player.name, round: player.round, t: SERVER_TIME })
+        { name: player.name, team: player.team || '', round: player.round, t: SERVER_TIME })
       .catch(() => { statusEl.textContent = 'That buzz did not get through — tap again.';
                      player.buzzed = false; bigBtn.disabled = false; bigBtn.classList.add('armed'); });
+  });
+  teamSwitch.addEventListener('click', () => {
+    player.picking = true;
+    if (player.room) renderPlayer(player.room);
   });
   joinBtn.addEventListener('click', joinRoom);
   leaveBtn.addEventListener('click', leaveRoom);
@@ -7066,17 +8021,10 @@ const BUZZ = (function () {
   const consoleClue = document.getElementById('hostClue');
   const consoleAnswer = document.getElementById('hostAnswer');
   const consoleBuzz = document.getElementById('hostBuzz');
+  const consoleTeams = document.getElementById('hostTeams');
   const consoleLeave = document.getElementById('hostLeaveBtn');
 
   const console_ = { code: null, stream: null };
-
-  function lookupClue(ref) {
-    if (!ref) return null;
-    const game = GAMES.find(g => g.id === ref.g);
-    const cat = game && (game.categories || [])[ref.c];
-    const clue = cat && (cat.clues || [])[ref.r];
-    return clue ? { game: game, cat: cat, clue: clue } : null;
-  }
 
   function renderConsole(room) {
     if (console_.code && (!room || !room.meta)) {
@@ -7087,16 +8035,37 @@ const BUZZ = (function () {
     consoleWrap.hidden = !found;
     consoleIdle.hidden = !!found;
     if (!found) return;
-    consoleCat.textContent = found.cat.name + '  ·  $' + (found.clue.value != null ? found.clue.value : '');
+    consoleCat.textContent = found.cat.name + '  ·  $' + found.value;
     consoleClue.textContent = found.clue.clue;
     consoleAnswer.textContent = found.clue.answer;
 
-    const round = (room.round || {}).id;
+    const roundObj = room.round || {};
+    const round = roundObj.id;
+    consoleBuzz.textContent = '';
+    consoleTeams.innerHTML = '';
+    consoleTeams.hidden = roundObj.mode !== 'type';
+
+    if (roundObj.mode === 'type') {
+      // The judge's phone sees every team's answer as it is typed.
+      const teams = room.teams || {};
+      const answers = room.answers || {};
+      Object.keys(teams).sort((a, b) => (teams[a].n || 0) - (teams[b].n || 0)).forEach(tid => {
+        const a = answers[tid] && answers[tid].round === round ? answers[tid] : null;
+        const row = document.createElement('div');
+        const b = document.createElement('b'); b.textContent = teams[tid].name + ': ';
+        const i = document.createElement('i'); i.textContent = a && a.text ? a.text : '—';
+        row.append(b, i);
+        if (a && a.locked) row.append(' (locked by ' + (a.by || 'team') + ')');
+        consoleTeams.appendChild(row);
+      });
+      consoleBuzz.textContent = roundObj.open ? 'Phones are answering…' : 'Answers closed.';
+      return;
+    }
+
     const buzzes = Object.keys(room.buzzes || {})
       .map(k => room.buzzes[k])
       .filter(b => b && b.round === round && typeof b.t === 'number')
       .sort((a, b) => a.t - b.t);
-    consoleBuzz.textContent = '';
     if (buzzes.length) {
       consoleBuzz.append('First in: ');
       const b = document.createElement('b');
@@ -7158,6 +8127,8 @@ const BUZZ = (function () {
         .catch(() => {});
     },
     hideClue() {
+      if (T.active) endTypeClue();
+      renderModeControls();
       if (!host.code) return;
       del('/rooms/' + host.code + '/clue');
     },
@@ -7173,9 +8144,16 @@ const BUZZ = (function () {
     // clue hooks
     arm: armRound,
     lock() { lockRound(); },
+    reveal: revealTyped,
     refreshQueue: renderQueue,
+    syncTeams: syncTeams,
+    // true while the open clue is being played by typing on phones
+    typeClue() { return T.active; },
+    renderAwardRow: renderAwardRowTyped,
     active() { return !!host.code && host.enabled; },
-    endHosting: closeRoom
+    endHosting: closeRoom,
+    // exposed for tests
+    _test: { answerKey: answerKey, stripLead: stripLead, T: T, host: host, player: player },
   };
 })();
 
