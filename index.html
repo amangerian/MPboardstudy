@@ -3599,7 +3599,7 @@
   <div class="section-label soon-label" id="soonLabel" hidden>Coming soon</div>
   <div class="game-grid" id="soonGrid" hidden></div>
 
-  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 7 October 2026</footer>
+  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 19 October 2026</footer>
 </div>
 
 <!-- ===================== GAME VIEW ===================== -->
@@ -5610,9 +5610,9 @@ const GAMES = [
   // Six board-review boards built from the ABPN gap analysis (Sept 2026):
   // substance use, anxiety & OCD, personality disorders, bipolar, forensics/
   // ethics/biostatistics, and psychiatric genetics. All are wizard-ready
-  // (short + two decoys on every clue) and fact-checked. All but bipolar
-  // (live since October 2026) are parked with comingSoon: true. Delete that
-  // line on a board to switch it on.
+  // (short + two decoys on every clue) and fact-checked. Bipolar and anxiety &
+  // OCD went live in October 2026; the rest are parked with comingSoon: true.
+  // Delete that line on a board to switch it on.
   {
     id: "substance-jeopardy",
     title: "Substance Use Jeopardy",
@@ -5688,7 +5688,6 @@ const GAMES = [
     id: "anxiety-ocd-jeopardy",
     title: "Anxiety & OCD Jeopardy",
     kind: "Jeopardy",
-    comingSoon: true,
     blurb: "Panic and agoraphobia, GAD, social and specific phobia, anxiolytic pharmacology, OCD and its treatment, the obsessive-compulsive related disorders, and separation anxiety and cultural syndromes.",
     tags: ["Board review", "6 categories", "30 clues"],
     subtitle: "Panic · GAD & Phobias · Anxiolytics · OCD · OC-Related · Separation & Culture",
@@ -5697,7 +5696,7 @@ const GAMES = [
         name: "Panic & Agoraphobia",
         clues: [
           { value: 100, clue: "A panic attack requires at least this many of the 13 listed symptoms.", answer: "What is four? Fewer than four is a limited-symptom attack.", short: "Four", decoys: ["Three", "Five"] },
-          { value: 200, clue: "Panic disorder requires at least one attack followed by this long of persistent worry or behavior change.", answer: "What is 1 month? The attacks must also be unexpected, and at least some must come out of the blue.", short: "1 month", decoys: ["2 weeks", "6 months"] },
+          { value: 200, clue: "Panic disorder requires at least one attack followed by this long of persistent worry or behavior change.", answer: "What is 1 month? Attacks must be recurrent (more than one) and unexpected, out of the blue; expected attacks may also occur.", short: "1 month", decoys: ["2 weeks", "6 months"] },
           { value: 300, clue: "Agoraphobia requires fear or avoidance in at least this many of the five listed situation types.", answer: "What is two? The five are public transport, open spaces, enclosed places, lines or crowds, and being outside the home alone. It is diagnosed independently of panic disorder.", short: "Two", decoys: ["One", "Three"] },
           { value: 400, clue: "In CBT for panic, running up stairs or breathing through a straw are examples of this technique.", answer: "What is interoceptive exposure? It deliberately provokes feared body sensations so the patient learns they are not dangerous.", short: "Interoceptive exposure", decoys: ["In vivo exposure", "Imaginal exposure"] },
           { value: 500, clue: "Paroxysmal hypertension with pounding headache, sweating and palpitations should prompt this test before calling it panic.", answer: "What are plasma free metanephrines (to screen for pheochromocytoma)? Other medical mimics of panic to rule out include hyperthyroidism, arrhythmia, hypoglycemia and pulmonary embolism.", short: "Plasma free metanephrines", decoys: ["Morning serum cortisol", "TSH"] }
@@ -5716,21 +5715,21 @@ const GAMES = [
       {
         name: "Anxiolytics",
         clues: [
-          { value: 100, clue: "This 5-HT1A partial agonist helps GAD but not panic disorder, and takes weeks to work.", answer: "What is buspirone? It has no abuse or dependence liability, and it tends to work less well in patients previously treated with benzodiazepines.", short: "Buspirone", decoys: ["Hydroxyzine", "Pregabalin"] },
+          { value: 100, clue: "This 5-HT1A partial agonist helps GAD but not panic disorder, and takes weeks to work.", answer: "What is buspirone? It has no abuse or dependence liability, but it works less well in patients who stopped a benzodiazepine within the past month.", short: "Buspirone", decoys: ["Hydroxyzine", "Pregabalin"] },
           { value: 200, clue: "By binding GABA-A receptors, benzodiazepines increase how often this ion channel opens.", answer: "What is the chloride channel? Benzodiazepines increase opening frequency, while barbiturates prolong opening duration.", short: "Chloride channel", decoys: ["Sodium channel", "Calcium channel"] },
           { value: 300, clue: "For social anxiety disorder that fails SSRIs and SNRIs, this MAOI has the strongest evidence.", answer: "What is phenelzine? It needs a tyramine-restricted diet and careful drug-interaction checks.", short: "Phenelzine", decoys: ["Selegiline", "Moclobemide"] },
           { value: 400, clue: "A single dose of this beta-blocker before a recital blunts the tremor and palpitations of performance anxiety.", answer: "What is propranolol? Take it 30–60 minutes beforehand. It treats the physical symptoms, not generalized social anxiety.", short: "Propranolol", decoys: ["Clonidine", "Prazosin"] },
-          { value: 500, clue: "A patient on alprazolam wakes at 4 a.m. with panic; the short half-life causes this.", answer: "What is interdose (rebound) withdrawal? Switching to a longer-acting agent such as clonazepam smooths it out.", short: "Interdose rebound anxiety", decoys: ["Paradoxical disinhibition", "Serotonin syndrome"] }
+          { value: 500, clue: "A patient on alprazolam wakes at 4 a.m. with panic; the short half-life causes this.", answer: "What is interdose rebound anxiety? Switching to a longer-acting agent such as clonazepam smooths it out.", short: "Interdose rebound anxiety", decoys: ["Paradoxical disinhibition", "Serotonin syndrome"] }
         ]
       },
       {
         name: "OCD",
         clues: [
           { value: 100, clue: "Apart from distress or impairment, OCD symptoms qualify when they take more than this much time a day.", answer: "What is 1 hour? Obsessions are intrusive and unwanted; compulsions are meant to neutralize them.", short: "1 hour", decoys: ["30 minutes", "3 hours"] },
-          { value: 200, clue: "In adults, OCD is distributed this way between the sexes.", answer: "What is roughly equally (slight female excess in adults)? Adult OCD has no strong sex skew, unlike most anxiety disorders. Males have earlier onset and predominate in childhood OCD.", short: "Roughly equally", decoys: ["2:1 female", "2:1 male"] },
+          { value: 200, clue: "In adults, OCD is distributed this way between the sexes.", answer: "What is roughly equally (slight female excess in adults)? Adult OCD has no strong sex skew, unlike most anxiety disorders (a 2020 meta-analysis found about 1.6:1 female). Males have earlier onset and predominate in childhood OCD.", short: "Roughly equally", decoys: ["3:1 female", "2:1 male"] },
           { value: 300, clue: "This psychotherapy is the treatment of choice for OCD.", answer: "What is exposure and response prevention (ERP)? Graded exposure to triggers while blocking the rituals.", short: "Exposure and response prevention", decoys: ["Dialectical behavior therapy", "Psychodynamic therapy"] },
-          { value: 400, clue: "After OCD remits on an SRI, keep the full dose for at least this long before trying a slow taper.", answer: "What is 1 to 2 years? Relapse after stopping is common. SRIs for OCD usually need high doses and a 10–12 week trial.", short: "1 to 2 years", decoys: ["3 to 6 months", "5 years"] },
-          { value: 500, clue: "This insight specifier applies when a patient is completely convinced the OCD beliefs are true.", answer: "What is “with absent insight/delusional beliefs”? It is still OCD, not a psychotic disorder, when no other psychotic symptoms are present.", short: "With absent insight/delusional beliefs", decoys: ["With poor insight", "With psychotic features"] }
+          { value: 400, clue: "After OCD remits on an SRI, keep the full dose for at least this long before trying a slow taper.", answer: "What is 1 to 2 years? Relapse after stopping is common. SRIs for OCD usually need high doses and an 8–12 week trial.", short: "1 to 2 years", decoys: ["3 to 6 months", "5 years"] },
+          { value: 500, clue: "This insight specifier applies when a patient is completely convinced the OCD beliefs are true.", answer: "What is “with absent insight/delusional beliefs”? It is still OCD, not a psychotic disorder, when no other psychotic symptoms are present.", short: "With absent insight", decoys: ["With poor insight", "With psychotic features"] }
         ]
       },
       {
@@ -5739,17 +5738,17 @@ const GAMES = [
           { value: 100, clue: "Preoccupation with a flaw others can barely see, plus mirror checking and camouflaging, defines this.", answer: "What is body dysmorphic disorder? Suicidal ideation is very common, and cosmetic procedures rarely help.", short: "Body dysmorphic disorder", decoys: ["Illness anxiety disorder", "Olfactory reference disorder"] },
           { value: 200, clue: "A weightlifter convinced he's too small and insufficiently muscular gets this BDD specifier.", answer: "What is with muscle dysmorphia? It occurs almost exclusively in men and is linked to anabolic steroid misuse.", short: "With muscle dysmorphia", decoys: ["With good insight", "With actual flaws"] },
           { value: 300, clue: "This behavioral therapy is first-line for trichotillomania and skin-picking disorder.", answer: "What is habit reversal training? Its components include awareness training and a competing response.", short: "Habit reversal training", decoys: ["Exposure and response prevention", "Dialectical behavior therapy"] },
-          { value: 400, clue: "This glutamate-modulating supplement has evidence for hair pulling and skin picking, alone or with an SSRI.", answer: "What is N-acetylcysteine (NAC)? Clomipramine and SSRIs are other options, with mixed evidence.", short: "N-acetylcysteine", decoys: ["Memantine", "Inositol"] },
+          { value: 400, clue: "This glutamate-modulating supplement has evidence for hair pulling and skin picking, alone or with an SSRI.", answer: "What is N-acetylcysteine (NAC)? Clomipramine and SSRIs are other options, with mixed evidence; memantine, a prescription drug, also beat placebo in a 2023 RCT.", short: "N-acetylcysteine", decoys: ["St. John's wort", "Inositol"] },
           { value: 500, clue: "In hoarding disorder, this specifier applies to the large majority who also buy or collect free items.", answer: "What is with excessive acquisition? It applies in roughly 80–90%. Hoarding is often chronic and is most severe in older adults.", short: "With excessive acquisition", decoys: ["With poor insight", "With animal hoarding"] }
         ]
       },
       {
         name: "Separation & Culture",
         clues: [
-          { value: 100, clue: "In adults, separation anxiety disorder typically requires symptoms lasting at least this long.", answer: "What is 6 months? Children and adolescents need only 4 weeks. Most adult cases begin in adulthood rather than persisting from childhood.", short: "6 months", decoys: ["4 weeks", "1 year"] },
+          { value: 100, clue: "In adults, separation anxiety disorder typically requires symptoms lasting at least this long.", answer: "What is 6 months? Children and adolescents need only 4 weeks. Many adult cases begin in adulthood rather than persisting from childhood.", short: "6 months", decoys: ["4 weeks", "1 year"] },
           { value: 200, clue: "Selective mutism requires failure to speak in specific settings for at least this long, not just the first month of school.", answer: "What is 1 month? It is treated behaviorally with graded exposure; it often overlaps with social anxiety.", short: "1 month", decoys: ["2 weeks", "6 months"] },
-          { value: 300, clue: "In this cultural syndrome described mainly in Southeast and East Asia, the core fear is that the genitals will retract into the body.", answer: "What is koro? It is a cultural syndrome described mainly in Southeast Asia. Dhat, a South Asian syndrome, centers on fear of semen loss.", short: "Koro", decoys: ["Dhat syndrome", "Taijin kyofusho"] },
-          { value: 400, clue: "A form of taijin kyofusho, this is fear that one's body odor offends others.", answer: "What is olfactory reference disorder (jikoshu-kyofu)? It is an example of other specified obsessive-compulsive and related disorder.", short: "Olfactory reference disorder", decoys: ["Body dysmorphic disorder", "Delusional disorder, somatic type"] },
+          { value: 300, clue: "In this cultural syndrome described mainly in Southeast and East Asia, the core fear is that the genitals will retract into the body.", answer: "What is koro? It occurs mainly in Southeast Asia and southern China, often in epidemics. Dhat, a South Asian syndrome, centers on fear of semen loss.", short: "Koro", decoys: ["Dhat syndrome", "Taijin kyofusho"] },
+          { value: 400, clue: "Listed in DSM-5 as jikoshu-kyofu, this is preoccupation with emitting a body odor that offends others.", answer: "What is olfactory reference disorder? DSM-5-TR lists it as an example of other specified obsessive-compulsive and related disorder and dropped the Japanese term; ICD-11 makes it a standalone diagnosis.", short: "Olfactory reference disorder", decoys: ["Body dysmorphic disorder", "Delusional disorder, somatic type"] },
           { value: 500, clue: "This Cambodian cultural syndrome features panic-like “wind attacks” with catastrophic fears about the body.", answer: "What is khyâl cap? It is an example of other specified anxiety disorder, along with ataque de nervios.", short: "Khyâl cap", decoys: ["Ataque de nervios", "Koro"] }
         ]
       }
