@@ -1668,6 +1668,8 @@
     color: #ffd0d0; background: rgba(10,4,20,.55);
     text-shadow: 0 2px 6px #000;
   }
+  /* survival for two: cleared, waiting on the other wizard */
+  .pane-verdict.good { color: #c9fff0; background: rgba(6,24,22,.62); }
 
   /* ---- results: the walk out ---- */
   /* Matches the backdrop's own 480x150 so the castle and moon stay in frame at
@@ -3599,7 +3601,7 @@
   <div class="section-label soon-label" id="soonLabel" hidden>Coming soon</div>
   <div class="game-grid" id="soonGrid" hidden></div>
 
-  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 19 October 2026</footer>
+  <footer class="hint">Built for teaching and board review &nbsp;&bull;&nbsp; educational use only, not clinical guidance &nbsp;&bull;&nbsp; last updated 21 October 2026</footer>
 </div>
 
 <!-- ===================== GAME VIEW ===================== -->
@@ -4400,6 +4402,7 @@
           <h3>Wizards</h3>
           <div class="seg" id="wizMode">
             <button type="button" data-mode="survival" aria-pressed="false">Survival<span class="seg-note">Three lives, clear the deck</span></button>
+            <button type="button" data-mode="survival2" aria-pressed="false">Survival for two<span class="seg-note">Split screen, three lives each</span></button>
             <button type="button" data-mode="1" aria-pressed="true">One wizard<span class="seg-note">Escape for score</span></button>
             <button type="button" data-mode="2" aria-pressed="false">Two wizards<span class="seg-note">Split screen race</span></button>
           </div>
@@ -4505,7 +4508,7 @@
     <div class="wiz-panel" id="wizResultBody"></div>
   </div>
 
-  <footer class="hint">Keys &nbsp;&bull;&nbsp; one wizard: 1 2 3 &nbsp;&bull;&nbsp; two wizards: A S D and J K L &nbsp;&bull;&nbsp; survival: whoever is not on a phone &nbsp;&bull;&nbsp; M: music on/off</footer>
+  <footer class="hint">Keys &nbsp;&bull;&nbsp; one wizard: 1 2 3 &nbsp;&bull;&nbsp; two wizards and survival for two: A S D and J K L &nbsp;&bull;&nbsp; survival: whoever is not on a phone &nbsp;&bull;&nbsp; M: music on/off</footer>
 </div>
 
 <!-- ===================== CLUE MODAL ===================== -->
@@ -6124,7 +6127,7 @@ const EXTRAS = [
     kind: "Arcade · 1–4 wizards",
     arcane: true,
     blurb: "Blast your way out of a haunted castle. Three identical hiding places block every exit — pick the right answer to shatter one and move on. The faster you answer, the stronger the spell.",
-    tags: ["Survival for up to four", "Speed round", "Split-screen race", "Uses every game's questions"]
+    tags: ["Survival for up to four", "Survival for two on one screen", "Speed round", "Split-screen race", "Uses every game's questions"]
   },
   {
     id: "receptor-lab",
@@ -6929,18 +6932,42 @@ const BUZZ = (function () {
   const SERVER_TIME = { '.sv': 'timestamp' };
 
   const url = path => DB + path + '.json';
-  const write = (method, path, data) =>
-    fetch(url(path), { method: method, body: JSON.stringify(data) })
-      .then(r => { if (!r.ok) throw new Error(method + ' ' + path + ' -> ' + r.status); return r; });
+  // Every write from this page goes out one at a time, in the order it was
+  // made. Sent side by side, two writes can reach the server in either order:
+  // a phone's auto-saved draft could land after its Lock and unlock it, and
+  // the host's "clue closed" could land after the next clue opened and leave
+  // the phones on "Waiting". A write that hangs gives up after a few seconds
+  // so it can't hold up the ones behind it.
+  let writeChain = Promise.resolve();
+  const WRITE_TIMEOUT_MS = 8000;
+  function write(method, path, data) {
+    const run = () => {
+      const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+      const timer = ctl ? setTimeout(() => ctl.abort(), WRITE_TIMEOUT_MS) : null;
+      const opts = { method: method };
+      if (ctl) opts.signal = ctl.signal;
+      if (data !== undefined) opts.body = JSON.stringify(data);
+      return fetch(url(path), opts).then(r => {
+        clearTimeout(timer);
+        if (!r.ok) throw new Error(method + ' ' + path + ' -> ' + r.status);
+        return r;
+      }, e => { clearTimeout(timer); throw e; });
+    };
+    const p = writeChain.then(run, run);
+    writeChain = p.catch(() => {});
+    return p;
+  }
   const put = (path, data) => write('PUT', path, data);
   const patch = (path, data) => write('PATCH', path, data);
-  const del = path => fetch(url(path), { method: 'DELETE' });
+  const del = path => write('DELETE', path).catch(() => {});
 
   // Apply one streaming event onto a local mirror of the room.
   function applyEvent(root, event, path, data) {
     if (path === '/') {
       if (event === 'put') return data === null ? {} : data;
-      Object.keys(data || {}).forEach(k => { root[k] = data[k]; });
+      Object.keys(data || {}).forEach(k => {
+        if (data[k] === null) delete root[k]; else root[k] = data[k];
+      });
       return root;
     }
     const parts = path.split('/').filter(Boolean);
@@ -6977,20 +7004,61 @@ const BUZZ = (function () {
     return root;
   }
 
+  // A live view of one path. Phones are hard on long-lived connections: a
+  // locked screen, a switch to another app or a hop between Wi-Fi and cell
+  // can leave the stream dead, or worse, open but silent, so the phone sits
+  // on an old screen. So the stream is reopened (and the whole room re-read)
+  // when the page comes back into view, when the network returns, when the
+  // browser gives up on it, and when it has been silent longer than the
+  // server's keep-alive allows.
+  const STREAM_SILENT_MS = 75000;
   function listen(path, onChange, onError) {
-    const es = new EventSource(url(path));
-    let mirror = {};
+    let es = null, mirror = {}, last = 0, closed = false, hiddenAt = 0, retry = null;
     const handle = kind => e => {
+      last = Date.now();
       let payload;
       try { payload = JSON.parse(e.data); } catch (err) { return; }
       if (!payload) return;
       mirror = applyEvent(mirror, kind, payload.path, payload.data);
       onChange(mirror);
     };
-    es.addEventListener('put', handle('put'));
-    es.addEventListener('patch', handle('patch'));
-    es.addEventListener('error', () => { if (onError) onError(); });
-    return es;
+    function open() {
+      if (closed) return;
+      clearTimeout(retry); retry = null;
+      if (es) es.close();
+      last = Date.now();
+      const s = es = new EventSource(url(path));
+      s.addEventListener('put', handle('put'));
+      s.addEventListener('patch', handle('patch'));
+      s.addEventListener('keep-alive', () => { last = Date.now(); });
+      s.addEventListener('error', () => {
+        if (s !== es) return;
+        if (onError) onError();
+        // The browser retries by itself unless it has closed the stream.
+        if (s.readyState === 2 && !retry) retry = setTimeout(open, 1500);
+      });
+    }
+    const onVisible = () => {
+      if (document.visibilityState === 'hidden') { hiddenAt = Date.now(); return; }
+      if (hiddenAt && Date.now() - hiddenAt > 2000) open();
+      hiddenAt = 0;
+    };
+    const onOnline = () => open();
+    const dog = setInterval(() => {
+      if (document.visibilityState !== 'hidden' && Date.now() - last > STREAM_SILENT_MS) open();
+    }, 5000);
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('online', onOnline);
+    open();
+    return {
+      close() {
+        closed = true;
+        clearInterval(dog); clearTimeout(retry);
+        document.removeEventListener('visibilitychange', onVisible);
+        window.removeEventListener('online', onOnline);
+        if (es) es.close();
+      },
+    };
   }
 
   const randomCode = () => {
@@ -7005,13 +7073,32 @@ const BUZZ = (function () {
   };
 
   // Clue coordinates -> the clue, looked up in this page's own copy of GAMES.
-  // Only coordinates ever travel over the wire, never an answer.
+  // The room carries the coordinates plus the clue's text, category and value
+  // (all on the big screen anyway) — never the answer. The text is there for
+  // a phone holding an older copy of the site, where those coordinates may
+  // point at a different clue or at nothing: it still shows the right
+  // question, just without a picture. `stale` marks that case, so the host
+  // console doesn't show an answer from the wrong clue.
   function lookupClue(ref) {
     if (!ref) return null;
     const game = GAMES.find(g => g.id === ref.g);
     const cat = game && (game.categories || [])[ref.c];
     const clue = cat && (cat.clues || [])[ref.r];
-    return clue ? { game: game, cat: cat, clue: clue, value: valueOf(clue, ref.r) } : null;
+    if (clue && (typeof ref.t !== 'string' || ref.t === (clue.clue || ''))) {
+      return { game: game, cat: cat, clue: clue, value: valueOf(clue, ref.r) };
+    }
+    if (typeof ref.t !== 'string') return null;
+    return { game: game || null, cat: { name: ref.k || '' }, clue: { clue: ref.t },
+             value: typeof ref.v === 'number' ? ref.v : 0, stale: true };
+  }
+  function clueRef(gameId, key) {
+    const parts = String(key).split('-');
+    const ref = { g: gameId, c: Number(parts[0]), r: Number(parts[1]) };
+    const game = GAMES.find(g => g.id === gameId);
+    const cat = game && (game.categories || [])[ref.c];
+    const clue = cat && (cat.clues || [])[ref.r];
+    if (clue) { ref.t = clue.clue || ''; ref.k = cat.name || ''; ref.v = valueOf(clue, ref.r); }
+    return ref;
   }
 
   // ---- grouping typed answers ----
@@ -7061,6 +7148,7 @@ const BUZZ = (function () {
 
   const host = {
     code: null, stream: null, room: {}, enabled: true, round: 0, lastTeams: '',
+    clue: null,   // the clue on the big screen, as a clueRef()
     mode: readPref(MODE_KEY, 'buzz', v => v === 'buzz' || v === 'type'),
     secs: Number(readPref(SECS_KEY, '30', v => v === '30' || v === '45' || v === '60')),
   };
@@ -7263,16 +7351,37 @@ const BUZZ = (function () {
 
   // Arm the phones for a fresh clue: bumps the round, so a buzz or an answer
   // from the previous clue can never land in this one.
+  //
+  // The clue, the new round and the clearing of the last clue's buzzes,
+  // answers and verdicts all go in ONE write. Phones therefore never see the
+  // new clue alongside the old round — which is how a phone used to show the
+  // new clue's "revealed" screen for a moment before its answer box.
   function armRound() {
     renderModeControls();
-    if (!host.code || !host.enabled) { queueEl.hidden = true; return; }
+    if (!host.code) { queueEl.hidden = true; return; }
     host.round += 1;
-    if (host.mode === 'type') { armTypeRound(); return; }
-    host.room.buzzes = {};
-    renderQueue();
-    del('/rooms/' + host.code + '/buzzes')
-      .then(() => patch('/rooms/' + host.code + '/round', { id: host.round, open: true, mode: 'buzz', revealed: false }))
-      .catch(() => hostError('Could not arm the buzzers.'));
+    const id = host.round;
+    let round;
+    if (!host.enabled) {
+      queueEl.hidden = true;
+      round = { id: id, open: false, mode: 'off' };
+    } else if (host.mode === 'type') {
+      armTypeRound();
+      round = { id: id, open: true, mode: 'type', secs: host.secs, start: SERVER_TIME, revealed: false };
+    } else {
+      host.room.buzzes = {};
+      renderQueue();
+      round = { id: id, open: true, mode: 'buzz', revealed: false };
+    }
+    const clue = host.clue ? Object.assign({}, host.clue, { n: id }) : null;
+    patch('/rooms/' + host.code, { clue: clue, round: round, buzzes: null, answers: null, verdicts: null })
+      .then(() => {
+        // Phones time the clue from the moment the server opened it, so the
+        // screen does too — it would otherwise run ahead by the write.
+        if (round.mode === 'type' && T.active && T.open && host.round === id) T.endsAt = Date.now() + host.secs * 1000;
+      })
+      .catch(() => hostError(round.mode === 'type' ? 'Could not open answers on the phones.'
+        : round.mode === 'buzz' ? 'Could not arm the buzzers.' : 'Could not update the phones.'));
   }
 
   function lockRound() {
@@ -7294,16 +7403,7 @@ const BUZZ = (function () {
     typeLive.hidden = false;
     typeJudge.hidden = true;
     renderTypeLive();
-    const code = host.code, round = host.round;
-    Promise.all([del('/rooms/' + code + '/answers'), del('/rooms/' + code + '/verdicts')])
-      .then(() => patch('/rooms/' + code + '/round',
-        { id: round, open: true, mode: 'type', secs: host.secs, start: SERVER_TIME, revealed: false, closed: null }))
-      .then(() => {
-        // Phones time the clue from the moment the server opened it, so the
-        // screen does too — it would otherwise run ahead by the setup writes.
-        if (T.active && T.open && host.round === round) T.endsAt = Date.now() + host.secs * 1000;
-      })
-      .catch(() => hostError('Could not open answers on the phones.'));
+    // armRound() sends the round to the phones along with the clue.
   }
 
   function tickCountdown() {
@@ -7637,6 +7737,7 @@ const BUZZ = (function () {
     // type mode
     tRound: -1, endsAt: 0, tick: null, draftTimer: null, sent: '', lastEdit: 0,
     offset: null, joinedAt: 0, clueKey: '',
+    locking: -1,   // round id this phone has pressed Lock in, until the server echoes it
   };
 
   const NAME_KEY = 'bsg.buzz.name.v1';
@@ -7646,7 +7747,7 @@ const BUZZ = (function () {
     clearInterval(player.tick); player.tick = null;
     clearTimeout(player.draftTimer); player.draftTimer = null;
     player.code = null; player.id = null; player.team = null; player.room = null;
-    player.buzzed = false; player.round = -1; player.tRound = -1; player.offset = null;
+    player.buzzed = false; player.round = -1; player.tRound = -1; player.offset = null; player.locking = -1;
     playPane.hidden = true; joinPane.hidden = false;
     joinNote.className = 'wiz-note';
     joinNote.textContent = msg || '';
@@ -7675,7 +7776,7 @@ const BUZZ = (function () {
     const round = room.round || {};
     // A clue in play keeps the mode it was opened in; between clues the phone
     // follows the host's current setting.
-    const typing = room.clue && round.id > 0 && round.mode
+    const typing = clueInPlay(room) && round.mode
       ? round.mode === 'type'
       : room.mode === 'type';
     buzzPane.hidden = typing;
@@ -7751,6 +7852,15 @@ const BUZZ = (function () {
     }
   }
 
+  // The clue on screen belongs to the current round. The host writes both in
+  // one go, so they always match; the check keeps a phone from ever pairing
+  // a clue with another clue's round (and its "revealed" state).
+  function clueInPlay(room) {
+    const round = room.round || {};
+    const c = room.clue;
+    return !!(c && round.id > 0 && (typeof c.n !== 'number' || c.n === round.id));
+  }
+
   // ================= TYPE THE ANSWER: PHONE =================
   function teamAnswer(room) {
     const a = ((room.answers || {})[player.team]);
@@ -7768,7 +7878,7 @@ const BUZZ = (function () {
 
   function renderTypePlayer(room) {
     const round = room.round || {};
-    const found = room.clue ? lookupClue(room.clue) : null;
+    const found = clueInPlay(room) ? lookupClue(room.clue) : null;
     const live = found && round.mode === 'type' && round.id > 0;
 
     if (!live) {
@@ -7786,6 +7896,7 @@ const BUZZ = (function () {
       clearTimeout(player.draftTimer); player.draftTimer = null;
       tInput.value = '';
       player.endsAt = 0;
+      player.locking = -1;
     }
     if (!player.endsAt && round.open) {
       const secs = Number(round.secs) || 30;
@@ -7794,7 +7905,7 @@ const BUZZ = (function () {
         : Date.now() + secs * 1000;
     }
 
-    const key = room.clue.g + '/' + room.clue.c + '/' + room.clue.r;
+    const key = room.clue.g + '/' + room.clue.c + '/' + room.clue.r + '/' + (found.clue.clue || '');
     if (key !== player.clueKey) {
       player.clueKey = key;
       tCat.textContent = found.cat.name || '';
@@ -7808,6 +7919,9 @@ const BUZZ = (function () {
     const ans = teamAnswer(room);
     const open = !!round.open;
     const locked = !!(ans && ans.locked);
+    // This phone pressed Lock and the server hasn't echoed it yet. Until it
+    // does, an earlier draft coming back must not bring the button back.
+    const pending = !locked && player.locking === round.id;
 
     adoptTeamText(room);
     if (locked) tInput.value = ans.text || '';
@@ -7818,15 +7932,17 @@ const BUZZ = (function () {
 
     const expired = !!player.endsAt && Date.now() >= player.endsAt;
     tEntry.hidden = round.revealed && !ans;
-    tInput.disabled = !open || locked || expired;
-    tLock.hidden = !open || locked;
+    tInput.disabled = !open || locked || pending || expired;
+    tLock.hidden = !open || locked || pending;
     tLock.disabled = !tInput.value.trim() || expired;
 
     if (round.revealed) {
       showResult(room, found, ans);
     } else {
       tResult.hidden = true;
-      if (locked) {
+      if (pending) {
+        setTypeStatus(['Locking in…'], 'ok');
+      } else if (locked) {
         setTypeStatus(ans.pid === player.id ? ['Locked in for your team.'] : ['Locked in by ', { b: ans.by || 'a teammate' }, '.'], 'ok');
       } else if (!open) {
         setTypeStatus(ans && ans.text ? ['Time’s up — your team’s answer: ', { b: ans.text }] : ['Time’s up — no answer from your team.']);
@@ -7838,12 +7954,12 @@ const BUZZ = (function () {
     }
   }
 
+  // After the reveal a phone shows only how its own team did. The correct
+  // response stays on the big screen (and the host console), never on the
+  // players' phones.
   function showResult(room, found, ans) {
     tResult.hidden = false;
     tResult.innerHTML = '';
-    const k = document.createElement('div'); k.className = 'k'; k.textContent = 'Correct response';
-    const a = document.createElement('div'); a.className = 'ans'; a.textContent = found.clue.answer || '';
-    tResult.append(k, a);
     const vd = room.verdicts && room.verdicts.round === (room.round || {}).id ? room.verdicts : null;
     const mine = vd && vd.v ? vd.v[player.team] : undefined;
     const line = document.createElement('div');
@@ -7862,6 +7978,7 @@ const BUZZ = (function () {
     const round = room.round || {};
     const ans = teamAnswer(room);
     if (!round.open || !ans || ans.locked || ans.pid === player.id) return;
+    if (player.locking === round.id) return;
     if (Date.now() - player.lastEdit <= 1500) return;
     const text = ans.text || '';
     if (tInput.value !== text) {
@@ -7906,7 +8023,8 @@ const BUZZ = (function () {
   function canWrite() {
     const room = player.room || {};
     const ans = teamAnswer(room);
-    return !(ans && ans.locked) && (room.round || {}).mode === 'type';
+    const round = room.round || {};
+    return !(ans && ans.locked) && round.mode === 'type' && player.locking !== round.id;
   }
 
   // Drafts go up as you type, so a team's answer survives the clock running
@@ -7929,19 +8047,51 @@ const BUZZ = (function () {
     player.draftTimer = setTimeout(() => flushDraft(false), 300);
   });
   tInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); if (!tLock.disabled && !tLock.hidden) tLock.click(); }
+    if (e.key === 'Enter') { e.preventDefault(); if (!tLock.disabled && !tLock.hidden) lockIn(); }
   });
-  tLock.addEventListener('click', () => {
+
+  // One tap locks. The write queues behind any draft still on its way, so
+  // the draft can't land after the lock and undo it; and the phone shows
+  // "Locking in…" straight away instead of waiting for the server.
+  function lockIn() {
+    const room = player.room || {};
+    const round = room.round || {};
     const text = tInput.value.trim();
-    if (!text || !canWrite() || !((player.room.round || {}).open)) return;
+    if (!text || !canWrite() || !round.open) return;
+    if (player.endsAt && Date.now() >= player.endsAt) return;
     clearTimeout(player.draftTimer); player.draftTimer = null;
-    tLock.disabled = true; tInput.disabled = true;
+    player.locking = round.id;
     player.sent = text;
+    tLock.hidden = true; tInput.disabled = true;
+    setTypeStatus(['Locking in…'], 'ok');
     writeAnswer(text, true).catch(() => {
-      setTypeStatus(['That didn’t go through — try Lock again.']);
-      tLock.disabled = false; tInput.disabled = false;
+      if (player.locking !== round.id) return;
+      player.locking = -1;
+      player.sent = '';
+      if (player.room) renderPlayer(player.room);
+      setTypeStatus(['That didn’t go through — tap Lock again.']);
     });
-  });
+  }
+  tLock.addEventListener('click', lockIn);
+  // With the keyboard up, a tap on the button first closes the keyboard; the
+  // page jumps, and on some phones the tap is spent on that and never becomes
+  // a click — hence the second tap. Locking on the touch itself avoids it.
+  // preventDefault stops the click that would otherwise follow, and keeps the
+  // box from losing focus (and the page from jumping) before the lock runs.
+  let lockTouch = null;
+  tLock.addEventListener('touchstart', e => {
+    const t = e.changedTouches[0];
+    lockTouch = t ? { x: t.clientX, y: t.clientY } : null;
+  }, { passive: true });
+  tLock.addEventListener('touchend', e => {
+    const t = e.changedTouches[0];
+    const start = lockTouch; lockTouch = null;
+    if (!t || !start || Math.abs(t.clientX - start.x) > 12 || Math.abs(t.clientY - start.y) > 12) return;
+    e.preventDefault();
+    if (!tLock.disabled && !tLock.hidden) lockIn();
+  }, { passive: false });
+  // Mouse and stylus: keep focus in the box until the click lands.
+  tLock.addEventListener('mousedown', e => e.preventDefault());
 
   function joinRoom() {
     const code = (codeInput.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -8004,9 +8154,9 @@ const BUZZ = (function () {
   });
 
   // ================= HOST CONSOLE =================
-  // Only the *coordinates* of the open clue go into the database — never the
-  // answer. The console looks the answer up in its own copy of GAMES, so the
-  // text never travels over the wire.
+  // Only the open clue's coordinates and question go into the database —
+  // never the answer. The console looks the answer up in its own copy of
+  // GAMES, so the answer never travels over the wire.
   const consoleView = document.getElementById('hostView');
   const consoleJoin = document.getElementById('hostJoinPane');
   const consoleLive = document.getElementById('hostLivePane');
@@ -8036,7 +8186,9 @@ const BUZZ = (function () {
     if (!found) return;
     consoleCat.textContent = found.cat.name + '  ·  $' + found.value;
     consoleClue.textContent = found.clue.clue;
-    consoleAnswer.textContent = found.clue.answer;
+    consoleAnswer.textContent = found.stale
+      ? 'This phone has an older copy of the site — reload the page to see the answer.'
+      : found.clue.answer;
 
     const roundObj = room.round || {};
     const round = roundObj.id;
@@ -8118,14 +8270,13 @@ const BUZZ = (function () {
       if (code && !console_.code) consoleCode.value = code.toUpperCase();
     },
     closeConsole() { consoleView.hidden = true; },
-    // the screen tells the room which clue is live (coordinates only)
+    // The screen says which clue is live; arm() then sends it to the room
+    // together with the new round (never the answer — see clueRef()).
     showClue(gameId, key) {
-      if (!host.code || !key) return;
-      const parts = String(key).split('-');
-      patch('/rooms/' + host.code, { clue: { g: gameId, c: Number(parts[0]), r: Number(parts[1]) } })
-        .catch(() => {});
+      host.clue = key ? clueRef(gameId, key) : null;
     },
     hideClue() {
+      host.clue = null;
       if (T.active) endTypeClue();
       renderModeControls();
       if (!host.code) return;
@@ -9610,6 +9761,10 @@ const WIZ = (function () {
     } else {
       startBtn.disabled = false;
       noteEl.className = 'wiz-note';
+      if (variant === 'survival' && mode === 2) {
+        noteEl.textContent = `Two wizards, one screen: you both get the same ${n} rooms side by side, on one clock — three lives each. Wizard 1 is the left room (A S D), Wizard 2 the right (J K L); on a phone, tap your own half. Lose your third life and you drop out while the other carries on. Clear all ${n} for a full clear.`;
+        return;
+      }
       if (variant === 'survival') {
         const seated = net.code ? seatList().filter(p => p.slot >= 0).length : 0;
         noteEl.textContent = seated > 1
@@ -9640,8 +9795,8 @@ const WIZ = (function () {
       modeSeg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', 'false'));
       b.setAttribute('aria-pressed', 'true');
       const v = b.dataset.mode;
-      variant = v === 'survival' ? 'survival' : 'escape';
-      mode = v === '2' ? 2 : 1;
+      variant = v === 'survival' || v === 'survival2' ? 'survival' : 'escape';
+      mode = v === '2' || v === 'survival2' ? 2 : 1;
       name2Wrap.hidden = mode !== 2;
       name1Label.textContent = mode === 2 ? 'Wizard 1' : 'Your initials';
       roomsBlock.hidden = variant === 'survival';  // no fixed castle to size
@@ -9971,7 +10126,8 @@ const WIZ = (function () {
   const net = { code: null, stream: null, seats: {}, roundHandled: -1, mirror: {}, rtt: 0 };
   const MAX_LEAD = 300;   // ms the arming write may be sent ahead of the screen
 
-  const seatCapacity = () => (variant === 'survival' ? MAX_COVEN : mode);
+  // Survival for two has a wizard per half of the screen, so two seats.
+  const seatCapacity = () => (variant === 'survival' ? (mode === 2 ? 2 : MAX_COVEN) : mode);
 
   function seatList() {
     return Object.keys(net.seats)
@@ -9983,14 +10139,17 @@ const WIZ = (function () {
     const list = seatList();
     roomSeatsEl.innerHTML = '';
     if (!list.length) { roomSeatsEl.textContent = 'Waiting for players…'; return; }
-    list.forEach((p, i) => {
+    // Seated players first; anyone turned away from a full game waits at the end.
+    const seatLabel = p => (p.slot >= 0 ? 'Seat ' + (p.slot + 1) : 'Waiting');
+    const shown = list.filter(p => p.slot >= 0).concat(list.filter(p => p.slot < 0));
+    shown.forEach((p, i) => {
       if (i) roomSeatsEl.append(' · ');
       const b = document.createElement('b');
-      b.textContent = 'Seat ' + (p.slot + 1);
+      b.textContent = seatLabel(p);
       roomSeatsEl.append(b, ' ' + p.name);
     });
-    JOIN.setNote(list.length
-      ? list.map(p => 'Seat ' + (p.slot + 1) + ' ' + p.name).join('  ·  ')
+    JOIN.setNote(shown.length
+      ? shown.map(p => seatLabel(p) + ' ' + p.name).join('  ·  ')
       : 'Waiting for players…');
     // How many are seated changes what survival is about to build.
     refreshStart();
@@ -10024,8 +10183,10 @@ const WIZ = (function () {
       // A coven shares one room, so the seat picks out a wizard rather than a
       // pane — every one of them is answering off pane 0.
       const coven = run.variant === 'survival';
-      const paneIdx = coven ? 0 : Math.min(seat.slot, run.panes.length - 1);
-      const actor = coven ? run.wizards.findIndex(w => w.slot === seat.slot) : paneIdx;
+      const actor = coven ? run.wizards.findIndex(w => w.slot === seat.slot)
+        : Math.min(seat.slot, run.panes.length - 1);
+      // Survival for two: the wizard answers off their own half.
+      const paneIdx = coven ? (run.duo ? actor : 0) : actor;
       const pane = run.panes[paneIdx];
       if (actor < 0 || !pane) return;
       const entry = pane.buttons[sent.choice];
@@ -10213,7 +10374,28 @@ const WIZ = (function () {
       // Survival has no fixed number of rooms to pip out, so the HUD shows how
       // deep you are and how many lives are left.
       let pips = null, lives = null, depth = null;
-      if (run.variant === 'survival') {
+      if (run.duo) {
+        // Survival for two: each half carries its own wizard's name, lives and
+        // score, plus the shared depth.
+        const w = run.wizards[i];
+        nameEl.textContent = 'Wizard ' + (i + 1);
+        if (w.name !== 'Wizard ' + (i + 1)) {
+          const b = document.createElement('b');
+          b.textContent = w.name;
+          nameEl.append(' · ', b);
+        }
+        depth = document.createElement('div');
+        depth.className = 'depth';
+        depth.textContent = 'Room 1';
+        lives = document.createElement('div');
+        lives.className = 'lives';
+        for (let l = 0; l < SURVIVAL_LIVES; l++) {
+          const life = document.createElement('span');
+          life.className = 'life';
+          lives.appendChild(life);
+        }
+        hud.append(nameEl, depth, lives, score);
+      } else if (run.variant === 'survival') {
         // Lives and score belong to individual wizards now and ride on their own
         // cards down in the room, so the HUD carries only what the room shares.
         nameEl.textContent = run.wizards.length > 1 ? 'The coven' : 'Survival';
@@ -10232,7 +10414,7 @@ const WIZ = (function () {
         hud.append(nameEl, pips, score);
       }
 
-      const coven = run.variant === 'survival';
+      const coven = run.variant === 'survival' && !run.duo;
       const scene = document.createElement('div');
       scene.className = 'scene' + (coven ? ' coven' : '');
       scene.innerHTML = sceneChrome(coven, i);   // a race gets two different wizards
@@ -10255,8 +10437,12 @@ const WIZ = (function () {
         score: score,
         coven: scene.querySelector('.coven-row'),
       };
+      if (run.duo) {
+        // The wizard's "card" is their half's HUD.
+        run.wizards[i].el = { card: null, float: null, lives: lives, score: score, orb: null };
+      }
     });
-    if (run.variant === 'survival') buildCoven(run.panes[0]);
+    if (run.variant === 'survival' && !run.duo) buildCoven(run.panes[0]);
   }
 
   function start() {
@@ -10298,15 +10484,34 @@ const WIZ = (function () {
   // ends when the last wizard's lives do or when the last question is answered.
   // Reaching the end with lives left is the win; clearing every room is a full
   // clear, which is the only thing the shared board singles out.
+  //
+  // Survival for two (mode 2) is the same run on a split screen: each wizard
+  // has their own half, showing the same room on the same clock. A phone
+  // seated in seat 1 or 2 can stand in for that half's keys.
   function startSurvival(pool) {
     if (pool.length < 1) return;
-    mode = 1;
-    const seated = seatList().filter(p => p.slot >= 0).slice(0, MAX_COVEN);
-    const wizards = seated.length
-      ? seated.map((p, i) => makeWizard(p.name, p.slot, i))
-      : [makeWizard(cleanInitials(nameInput1.value) || 'You', -1, 0)];
+    const duo = mode === 2;
+    let wizards;
+    if (duo) {
+      const seats = seatList();
+      wizards = [0, 1].map(i => {
+        const seat = seats.find(p => p.slot === i);
+        const typed = cleanInitials(i === 0 ? nameInput1.value : nameInput2.value);
+        const w = makeWizard(seat ? seat.name : (typed || 'Wizard ' + (i + 1)), seat ? i : -1, i);
+        w.pane = i;
+        return w;
+      });
+    } else {
+      mode = 1;
+      const seated = seatList().filter(p => p.slot >= 0).slice(0, MAX_COVEN);
+      wizards = seated.length
+        ? seated.map((p, i) => makeWizard(p.name, p.slot, i))
+        : [makeWizard(cleanInitials(nameInput1.value) || 'You', -1, 0)];
+    }
+    const blankPane = () => ({ rooms: 0, score: 0, streak: 0, wrongs: new Set(), misses: [], buttons: [], el: null });
     run = {
       variant: 'survival',
+      duo: duo,
       questions: pool.slice(),
       // The ceiling for this run: more games selected, more rooms on offer.
       poolSize: pool.length,
@@ -10321,8 +10526,9 @@ const WIZ = (function () {
       wizards: wizards,
       // Clicks and the 1/2/3 keys belong to whoever is not on a phone. With a
       // full coven that is nobody, and the screen stops taking answers at all.
-      localWiz: wizards.findIndex(w => w.slot < 0),
-      panes: [{ rooms: 0, score: 0, streak: 0, wrongs: new Set(), misses: [], buttons: [], el: null }],
+      // In survival for two, each half answers for its own wizard instead.
+      localWiz: duo ? -1 : wizards.findIndex(w => w.slot < 0),
+      panes: duo ? [blankPane(), blankPane()] : [blankPane()],
     };
     setupEl.hidden = true;
     resultEl.hidden = true;
@@ -10362,7 +10568,7 @@ const WIZ = (function () {
     run.resolved = false;
     run.roomStart = performance.now();
     if (run.variant === 'survival') {
-      if (run.panes[0].el.depth) run.panes[0].el.depth.textContent = 'Room ' + (run.idx + 1) + ' / ' + run.poolSize;
+      run.panes.forEach(p => { if (p.el.depth) p.el.depth.textContent = 'Room ' + (run.idx + 1) + ' / ' + run.poolSize; });
       run.wizards.forEach(w => {
         if (w.out) return;
         w.done = false; w.cleared = false; w.wrongs = new Set();
@@ -10419,11 +10625,14 @@ const WIZ = (function () {
         btn.append(key, art, label);
         // In survival the three pieces are shared, so a click is an answer from
         // whoever is playing on this screen rather than from "pane pi".
-        btn.onclick = () => pick(run.variant === 'survival' ? run.localWiz : pi, optIdx, btn);
+        // In survival for two, each half answers for its own wizard.
+        btn.onclick = () => pick(run.variant === 'survival' ? (run.duo ? pi : run.localWiz) : pi, optIdx, btn);
         pane.el.row.appendChild(btn);
         pane.buttons.push({ btn: btn, optIdx: optIdx });
       });
     });
+    // A wizard who is out of lives keeps their half, dark, while the other runs on.
+    if (run.duo) run.wizards.forEach(w => { if (w.out) duoVerdict(w, 'Out of lives', true); });
 
     startPowerLoop();
     if (run.armedIdx !== run.idx) netArmRoom(run.idx, order);
@@ -10545,15 +10754,36 @@ const WIZ = (function () {
   function renderCoven() {
     run.wizards.forEach(w => {
       if (!w.el) return;
-      w.el.card.classList.toggle('out', w.out);
-      w.el.card.classList.toggle('cleared', w.cleared && !w.out);
+      if (w.el.card) {
+        w.el.card.classList.toggle('out', w.out);
+        w.el.card.classList.toggle('cleared', w.cleared && !w.out);
+      }
       [...w.el.lives.children].forEach((el, i) => el.classList.toggle('out', i >= w.lives));
       w.el.score.textContent = w.score;
     });
   }
 
+  // Survival for two: the half a wizard plays on.
+  const paneOf = w => run.panes[run.duo ? w.pane : 0];
+
+  // Survival for two: a banner over one wizard's half. "Through" holds a
+  // wizard who has cleared the room until the other finishes it, without
+  // showing which piece was right; "Out of lives" stays for the rest of the run.
+  function duoVerdict(w, text, bad) {
+    const pane = paneOf(w);
+    const old = pane.el.scene.querySelector('.pane-verdict');
+    if (old) old.remove();
+    pane.buttons.forEach(b => { b.btn.disabled = true; });
+    pane.el.scene.classList.toggle('dimmed', !!bad);
+    const v = document.createElement('div');
+    v.className = 'pane-verdict' + (bad ? '' : ' good');
+    v.textContent = text;
+    pane.el.scene.appendChild(v);
+  }
+
   // Points and misses read off the wizard they happened to, not off the room.
   function wizFloat(w, text, bad) {
+    if (run && run.duo) { toast(paneOf(w), text, bad); return; }
     if (!w.el) return;
     const f = w.el.float;
     f.className = 'cw-float';
@@ -10575,7 +10805,7 @@ const WIZ = (function () {
     pane.el.scene.classList.remove('flash-soft-good', 'flash-soft-bad');
     pane.el.scene.classList.add(wash);
     setTimeout(() => { if (run) pane.el.scene.classList.remove(wash); }, 620);
-    if (!w.el) return;
+    if (!w.el || !w.el.card) return;
     w.el.card.classList.add('casting');
     setTimeout(() => { if (w.el) w.el.card.classList.remove('casting'); }, 600);
   }
@@ -10596,9 +10826,11 @@ const WIZ = (function () {
     const w = run.wizards[wIdx];
     if (!w || w.out || w.done || w.wrongs.has(optIdx)) return;
 
-    const pane = run.panes[0];
+    const pane = paneOf(w);
     const q = run.questions[run.idx];
-    const solo = run.wizards.length === 1;
+    // Survival for two sits side by side, so the full spell is only safe once
+    // the other wizard is out and there is nobody left to give it away to.
+    const solo = run.duo ? liveWizards().length === 1 : run.wizards.length === 1;
 
     if (q.options[optIdx] === q.correct) {
       w.done = true;
@@ -10615,7 +10847,7 @@ const WIZ = (function () {
       // spell lands in full: bolt, splinters, and the door swinging open.
       if (solo) {
         pane.el.scene.classList.add('casting', 'flash-good');
-        const at = boltFrom(pane, btn, w.el && w.el.orb);
+        const at = boltFrom(pane, btn, (w.el && w.el.orb) || undefined);
         setTimeout(() => {
           shards(pane, at);
           btn.classList.add('spent');
@@ -10624,6 +10856,7 @@ const WIZ = (function () {
         setTimeout(() => pane.el.scene.classList.remove('casting', 'flash-good'), 700);
       } else {
         castSoft(pane, w, true);
+        if (run.duo) duoVerdict(w, 'Through \u2014 waiting', false);
       }
       wizFloat(w, '+' + gained + (clean && w.streak > 1 ? '  \u00d7' + w.streak : ''), false);
     } else {
@@ -10633,7 +10866,7 @@ const WIZ = (function () {
       // piece to rule out. Marking the piece dead is only honest when one wizard
       // is playing; with a coven the others have not tried it yet.
       if (solo) {
-        fizzle(pane, btn, w.el && w.el.orb, true);
+        fizzle(pane, btn, (w.el && w.el.orb) || undefined, true);
         btn.classList.add('wrong');
         btn.disabled = true;
       } else {
@@ -10641,6 +10874,7 @@ const WIZ = (function () {
       }
       covenLoseLife(w);
       if (w.slot >= 0) netResult(w.slot, false, w.out);
+      if (run.duo && w.out) duoVerdict(w, 'Out of lives', true);
     }
 
     renderCoven();
@@ -10662,26 +10896,46 @@ const WIZ = (function () {
     const pane = run.panes[0];
 
     const knockedOut = [];
+    const lateSet = new Set();   // wizards the clock caught this room
     if (timedOut) {
       liveWizards().forEach(w => {
         if (w.done) return;
         w.done = true;
         logMiss(w, null);
         covenLoseLife(w);
+        lateSet.add(w);
         if (w.out && w.slot >= 0) knockedOut.push(w.slot);
       });
-      pane.el.scene.classList.add('flash-bad');
-      setTimeout(() => { if (run) pane.el.scene.classList.remove('flash-bad'); }, 700);
+      // Survival for two flashes only the half that was caught by the clock.
+      const hit = run.duo ? [...lateSet].map(paneOf) : [pane];
+      hit.forEach(p => p.el.scene.classList.add('flash-bad'));
+      setTimeout(() => { if (run) hit.forEach(p => p.el.scene.classList.remove('flash-bad')); }, 700);
     }
 
-    revealCorrect(pane);
-    if (run.wizards.some(w => w.cleared)) pane.el.scene.classList.add('open');
+    if (run.duo) {
+      // The room is over, so both halves may now see the answer: lift the
+      // "Through" banners and show it (dimly, under the banner, on a half
+      // whose wizard is out).
+      run.wizards.forEach(w => {
+        const p = paneOf(w);
+        const banner = p.el.scene.querySelector('.pane-verdict.good');
+        if (banner) banner.remove();
+        revealCorrect(p);
+        if (w.cleared) p.el.scene.classList.add('open');
+        if (w.out) duoVerdict(w, 'Out of lives', true);
+      });
+    } else {
+      revealCorrect(pane);
+      if (run.wizards.some(w => w.cleared)) pane.el.scene.classList.add('open');
+    }
     renderCoven();
 
     const over = !liveWizards().length;
     netLockRoom(null, knockedOut);
     if (!over) prearmNext(RESOLVE_PAUSE + (timedOut ? 400 : 0));
-    if (over) {
+    if (over && run.duo) {
+      run.wizards.forEach(w => duoVerdict(w, 'Both wizards are out', true));
+    } else if (over) {
       pane.el.scene.classList.add('dimmed');
       const v = document.createElement('div');
       v.className = 'pane-verdict';
@@ -11482,7 +11736,7 @@ const WIZ = (function () {
       if (slot >= 0) {
         e.preventDefault();
         const target = run.panes[pi].buttons[slot];
-        const actor = run.variant === 'survival' ? run.localWiz : pi;
+        const actor = run.variant === 'survival' ? (run.duo ? pi : run.localWiz) : pi;
         if (actor >= 0 && target && !target.btn.disabled) pick(actor, target.optIdx, target.btn);
         return;
       }

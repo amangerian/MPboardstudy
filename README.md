@@ -318,8 +318,9 @@ a room per question — so with a small category selection the castle shrinks to
 size the question pool can actually finish.
 
 **Survival** is the third mode, and it changes the rules: three lives, and no
-exit. There is no fixed castle — rooms keep coming, and the deck loops once you
-have seen everything you selected. A wrong answer costs a life instead of costing
+exit. There is no fixed castle — rooms keep coming until every question in the
+games you selected has been asked once; reach the end with a life left and it's
+a full clear. A wrong answer costs a life instead of costing
 nothing, and so does letting the clock run out; the clock itself starts at 14
 seconds and tightens by 0.4 seconds a room down to a floor of 6. The score is
 filed under how many rooms you cleared.
@@ -347,6 +348,23 @@ room, green or red, plus the caster's own staff swinging on their card. It is
 deliberately dim: it fires while the others are still reading. Playing survival
 alone, there is nobody to give anything away to, so the full bolt-and-splinters
 spell lands as it always did.
+
+**Survival for two** plays survival on a split screen, for two people at one
+laptop or either side of a phone laid flat (the top half is turned round, as in
+the race). Both halves show the same room on one shared clock, and each wizard
+has their own three lives and score in their half's header: Wizard 1 is the
+left room and `A S D`, Wizard 2 the right room and `J K L`, or each just taps
+their own half. The room ends once both are through or the clock runs out. Side
+by side, a pick must not give the answer away, so a correct pick shows only a
+soft flash and a *Through — waiting* banner over that wizard's half (no bolt to
+the right piece), and a wrong one a red flash and *−1 life*; the answer is shown
+in both halves once the room ends. Lose your third life and your half goes dark
+(*Out of lives*) while the other wizard carries on — and from then on, with
+nobody left to copy, they get the full bolt-and-splinters spell. The run ends on
+the same standings table as a coven, and both wizards can post to the shared
+board. A phone room works here too: whoever takes seat 1 or 2 plays that half
+from their phone (and sees the question on it), and a third phone is told the
+game is full.
 
 Each wizard is drawn from a rotation of six looks — robe, hat shape, beard and
 staff all change together — so four of them in one room are tellable apart at a
@@ -492,7 +510,11 @@ gets the time that is left, not a fresh clock.
   person types appears on their teammates' phones (with "Ana is typing for your
   team"), and if two people type at once the team settles on whichever reached
   the server last. Anyone on the team can press **Lock in for the team** (or
-  Enter), which fixes it for everyone on that team.
+  Enter), which fixes it for everyone on that team. One tap does it: the phone
+  shows *Locking in…* at once, and the lock is queued behind any draft still on
+  its way, so a draft arriving late can't undo it (that used to bring the
+  button back and need a second tap). The button also acts on the touch
+  itself, so the keyboard closing and the page jumping can't swallow the tap.
 - **The big screen never shows what anyone typed until the reveal** — just a chip
   per team: Waiting, Typing…, or Locked ✓, and "2 of 3 teams locked in".
 - **Answering ends** when the clock runs out, when every team with a phone has
@@ -518,15 +540,30 @@ card.
   shows one **+value** toggle per team in step with the cards, so a team that
   answered out loud can still be given its points, and nothing scores twice.
 
-After the judge rules, each phone shows the correct response and "Your team gets
-+400!" or "Not this time." The host console (below) shows every team's answer
-live as it is typed, with who locked it.
+After the judge rules, each phone shows "Your team gets +400!" or "Not this
+time." **The correct response is never shown on players' phones** — it stays on
+the big screen (and the host console). The host console (below) shows every
+team's answer live as it is typed, with who locked it.
 
 A **host console** runs alongside it: the room panel shows a second link
 (`#host-<code>`) that opens a phone-sized view of whichever clue is live —
 with the answer — while the room still sees only the question. The answer never
-travels over the network: the room stores just the clue's coordinates, and the
-console looks the text up in its own copy of the page.
+travels over the network: the room stores the clue's coordinates and its
+question text, and the console looks the answer up in its own copy of the page.
+The question text is there so a phone holding an older copy of the site (cached
+from before an update) still shows the right question; in that case the console
+says to reload rather than show an answer from the wrong clue.
+
+**Keeping phones in step.** Opening a clue sends the clue and its fresh round
+(and clears the last clue's buzzes, answers and verdicts) in **one** write, so a
+phone never sees the new clue next to the old clue's state — which is how
+phones used to flash the new clue's answer, or sit on "Waiting for the host",
+when a clue opened. Every write from a page also goes out one at a time, in
+order, so the host's "clue closed" can never land after the next clue opened.
+Each phone's live connection reopens itself (and re-reads the whole room) when
+the phone is unlocked or the app comes back to the front, when the network
+returns, and if it has gone silent for over a minute — a locked screen or a
+Wi-Fi hop otherwise leaves a phone stuck on an old screen.
 
 **Wizard's Escape uses the same rooms.** "Play from phones" on its setup screen
 opens one; players join at the same kind of link and get three big numbered
@@ -545,8 +582,9 @@ To keep the phones in step with the screen, each new room is announced in one
 write (it used to be two back to back), and that write is sent just ahead of
 the screen drawing the room, by about the time a write takes to land, which the
 screen measures as it plays. A tap that beats the screen is held and counted the
-moment the room appears. It works for all three modes: a solo run, a
-two-wizard race with both rooms on the screen, and survival for up to four.
+moment the room appears. It works for every mode: a solo run, a
+two-wizard race with both rooms on the screen, survival for up to four, and
+survival for two.
 Whoever is not on a phone keeps the keyboard; with every seat taken the screen
 stops accepting answers of its own.
 
