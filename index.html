@@ -6116,7 +6116,8 @@ const GAMES = [
   // Anxiety II (Oct 2026): a second, anxiety-only board (no OCD) that avoids
   // every fact on Anxiety & OCD Jeopardy. Sources: DSM-5-TR; FDA labels
   // (paroxetine, clonazepam, alprazolam, hydroxyzine, venlafaxine XR); EMA
-  // pregabalin SmPC; Kessler et al. 2012; McLean et al. 2011; Ruscio et al. 2017;
+  // pregabalin SmPC; Kessler et al. 2005 (NCS-R) and 2012; McLean et al. 2011;
+  // Ruscio et al. 2017;
   // Kagan 1988; Clauss & Blackford 2012; Mowrer 1960; Pitts & McClure 1967;
   // Klein 1993; Wolpe 1958; Hayes et al. 2006 (ACT); Ost 1989; Hoge et al. 2023
   // (JAMA Psychiatry); Bouton 2004; Mayo Clinic Labs 5-HIAA; APF porphyria guide;
@@ -6125,7 +6126,6 @@ const GAMES = [
     id: "anxiety-2-jeopardy",
     title: "Anxiety Jeopardy II",
     kind: "Jeopardy",
-    comingSoon: true,
     blurb: "A second anxiety round, no OCD: who gets anxiety disorders and when, the fear circuit and learning theory, medical and substance mimics, choosing medications, the exposure and third-wave therapy toolbox, and diagnostic vignettes.",
     tags: ["Board review", "6 categories", "30 clues + Final"],
     subtitle: "By the Numbers · Fear Circuits · Mimics & Triggers · Medication Picks · Therapy Toolbox · Which Diagnosis? · Final Jeopardy",
@@ -6134,10 +6134,10 @@ const GAMES = [
         name: "By the Numbers",
         clues: [
           { value: 100, clue: "Taken as a group, anxiety disorders affect women about this many times as often as men.", answer: "What is about twice as often (roughly 2:1)? The female excess shows up by adolescence and holds across most anxiety disorders; the gap is narrowest for social anxiety disorder, which shows little or no sex difference in some US surveys.", short: "About twice", decoys: ["About equally", "About four times"] },
-          { value: 200, clue: "In US community surveys, this is the most prevalent anxiety disorder over a 12-month period.", answer: "What is specific phobia? Roughly 8–12% of US adults have it in a given year, with social anxiety disorder close behind at about 7%. Few seek treatment, so it is far commoner in the community than in clinics.", short: "Specific phobia", decoys: ["Panic disorder", "Generalized anxiety disorder"] },
-          { value: 300, clue: "In the United States, social anxiety disorder has a median age of onset of about this.", answer: "What is 13 years? About three-quarters of cases begin between ages 8 and 15. Adult onset is less common and often follows a humiliating experience or a new role, such as a promotion.", short: "13 years", decoys: ["21 years", "30 years"] },
-          { value: 400, clue: "With a US median onset age of about 35, this anxiety disorder typically begins later than the others.", answer: "What is generalized anxiety disorder? Many patients describe feeling anxious and nervous their whole lives, yet new cases keep appearing across adulthood and late-life onset is common. New anxiety in an older adult still calls for a check of medical causes, medications and depression.", short: "Generalized anxiety disorder", decoys: ["Panic disorder", "Social anxiety disorder"] },
-          { value: 500, clue: "Agoraphobia usually starts by the mid-30s, but it shows a second rise in incidence after this age.", answer: "What is about 40? Most cases begin in late adolescence or early adulthood, and childhood onset is rare. The course is usually persistent, and full remission without treatment is uncommon.", short: "Age 40", decoys: ["Age 25", "Age 65"] }
+          { value: 200, clue: "In US community surveys, this is the most prevalent anxiety disorder over a 12-month period.", answer: "What is specific phobia? US surveys put its 12-month prevalence at roughly 9–12% (8.7% in the NCS-R; 12.1% in a 2012 reanalysis that included teens), with social anxiety disorder next at about 7%. Few seek treatment, so it is far commoner in the community than in clinics.", short: "Specific phobia", decoys: ["Panic disorder", "Generalized anxiety disorder"] },
+          { value: 300, clue: "In the United States, social anxiety disorder has a median age of onset of about this.", answer: "What is 13 years? In the NCS-R, half of cases began between ages 8 and 15, and three-quarters had begun by 15. Adult onset is less common and often follows a humiliating experience or a new role, such as a promotion.", short: "13 years", decoys: ["21 years", "30 years"] },
+          { value: 400, clue: "In US survey data, this anxiety disorder has the latest median age of onset, at around 31 years.", answer: "What is generalized anxiety disorder? The NCS-R put its median onset at 31, versus 24 for panic disorder. Using DSM-5 criteria, the World Mental Health surveys found a median of 36 in high-income countries, with new cases appearing steadily across adulthood, so late-life onset is common. New anxiety in an older adult still calls for a check of medical causes, medications and depression.", short: "Generalized anxiety disorder", decoys: ["Panic disorder", "Social anxiety disorder"] },
+          { value: 500, clue: "In the NCS-R, agoraphobia without panic disorder had a median age of onset of about this.", answer: "What is 20 years? That is earlier than panic disorder (24) but well after the childhood-onset phobias. The course tends to be persistent, and avoidance can become severe enough to keep a person homebound.", short: "20 years", decoys: ["10 years", "35 years"] }
         ]
       },
       {
