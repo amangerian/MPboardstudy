@@ -6112,6 +6112,91 @@ const GAMES = [
         ]
       }
     ]
+  },
+  // Anxiety II (Oct 2026): a second, anxiety-only board (no OCD) that avoids
+  // every fact on Anxiety & OCD Jeopardy. Sources: DSM-5-TR; FDA labels
+  // (paroxetine, clonazepam, alprazolam, hydroxyzine, venlafaxine XR); EMA
+  // pregabalin SmPC; Kessler et al. 2012; McLean et al. 2011; Ruscio et al. 2017;
+  // Kagan 1988; Clauss & Blackford 2012; Mowrer 1960; Pitts & McClure 1967;
+  // Klein 1993; Wolpe 1958; Hayes et al. 2006 (ACT); Ost 1989; Hoge et al. 2023
+  // (JAMA Psychiatry); Bouton 2004; Mayo Clinic Labs 5-HIAA; APF porphyria guide;
+  // Dugas et al. 1998. Wizard-ready and fact-checked.
+  {
+    id: "anxiety-2-jeopardy",
+    title: "Anxiety Jeopardy II",
+    kind: "Jeopardy",
+    comingSoon: true,
+    blurb: "A second anxiety round, no OCD: who gets anxiety disorders and when, the fear circuit and learning theory, medical and substance mimics, choosing medications, the exposure and third-wave therapy toolbox, and diagnostic vignettes.",
+    tags: ["Board review", "6 categories", "30 clues + Final"],
+    subtitle: "By the Numbers · Fear Circuits · Mimics & Triggers · Medication Picks · Therapy Toolbox · Which Diagnosis? · Final Jeopardy",
+    categories: [
+      {
+        name: "By the Numbers",
+        clues: [
+          { value: 100, clue: "Taken as a group, anxiety disorders affect women about this many times as often as men.", answer: "What is about twice as often (roughly 2:1)? The female excess shows up by adolescence and holds across most anxiety disorders; the gap is narrowest for social anxiety disorder, which shows little or no sex difference in some US surveys.", short: "About twice", decoys: ["About equally", "About four times"] },
+          { value: 200, clue: "In US community surveys, this is the most prevalent anxiety disorder over a 12-month period.", answer: "What is specific phobia? Roughly 8–12% of US adults have it in a given year, with social anxiety disorder close behind at about 7%. Few seek treatment, so it is far commoner in the community than in clinics.", short: "Specific phobia", decoys: ["Panic disorder", "Generalized anxiety disorder"] },
+          { value: 300, clue: "In the United States, social anxiety disorder has a median age of onset of about this.", answer: "What is 13 years? About three-quarters of cases begin between ages 8 and 15. Adult onset is less common and often follows a humiliating experience or a new role, such as a promotion.", short: "13 years", decoys: ["21 years", "30 years"] },
+          { value: 400, clue: "With a US median onset age of about 35, this anxiety disorder typically begins later than the others.", answer: "What is generalized anxiety disorder? Many patients describe feeling anxious and nervous their whole lives, yet new cases keep appearing across adulthood and late-life onset is common. New anxiety in an older adult still calls for a check of medical causes, medications and depression.", short: "Generalized anxiety disorder", decoys: ["Panic disorder", "Social anxiety disorder"] },
+          { value: 500, clue: "Agoraphobia usually starts by the mid-30s, but it shows a second rise in incidence after this age.", answer: "What is about 40? Most cases begin in late adolescence or early adulthood, and childhood onset is rare. The course is usually persistent, and full remission without treatment is uncommon.", short: "Age 40", decoys: ["Age 25", "Age 65"] }
+        ]
+      },
+      {
+        name: "Fear Circuits",
+        clues: [
+          { value: 100, clue: "This almond-shaped temporal lobe structure assigns threat value to cues and drives conditioned fear.", answer: "What is the amygdala? Its central nucleus triggers the autonomic and behavioral fear response through the hypothalamus and brainstem. Anxiety disorders show heightened amygdala and insula responses to threat cues.", short: "Amygdala", decoys: ["Hippocampus", "Caudate nucleus"] },
+          { value: 200, clue: "This pontine nucleus is the brain's main source of norepinephrine and has long been implicated in panic.", answer: "What is the locus coeruleus? Stimulating it produces fear-like behavior in animals, and alpha-2 agonists such as clonidine slow its firing. The raphe nuclei, by contrast, are the main source of serotonin.", short: "Locus coeruleus", decoys: ["Dorsal raphe nucleus", "Substantia nigra"] },
+          { value: 300, clue: "Jerome Kagan's term for a young child's consistent wariness and withdrawal when facing unfamiliar people and situations.", answer: "What is behavioral inhibition? About 15% of children show it in marked form. It is partly heritable, tends to persist, and is one of the strongest early risk factors for social anxiety disorder (a 2012 meta-analysis found more than a sevenfold increase in risk).", short: "Behavioral inhibition", decoys: ["Effortful control", "Disinhibition"] },
+          { value: 400, clue: "In Mowrer's two-factor theory, avoidance keeps a fear alive by being reinforced through this kind of learning.", answer: "What is operant conditioning (negative reinforcement)? Classical conditioning creates the fear; escaping or avoiding the cue brings relief, which rewards avoidance and prevents the extinction that exposure therapy relies on.", short: "Operant conditioning", decoys: ["Classical conditioning", "Observational learning"] },
+          { value: 500, clue: "Besides breathing 35% carbon dioxide, an IV infusion of this salt commonly triggers panic attacks in people with panic disorder.", answer: "What is sodium lactate? These panic-challenge findings underlie Donald Klein's false suffocation alarm theory, which proposes an oversensitive brainstem system for detecting suffocation.", short: "Sodium lactate", decoys: ["Magnesium sulfate", "Sodium chloride"] }
+        ]
+      },
+      {
+        name: "Mimics & Triggers",
+        clues: [
+          { value: 100, clue: "Weight loss, heat intolerance, a fine tremor and a racing heart in a 'nervous' patient call for this blood test first.", answer: "What is TSH (thyroid-stimulating hormone)? Hyperthyroidism is the classic medical mimic of GAD and panic. Treating the thyroid often settles the anxiety, and a beta-blocker helps in the meantime.", short: "TSH", decoys: ["Morning cortisol", "Fasting glucose"] },
+          { value: 200, clue: "Anxiety, perioral tingling and carpopedal spasm a day after thyroid surgery point to this electrolyte disturbance.", answer: "What is hypocalcemia, from surgical hypoparathyroidism? Check an ionized or albumin-corrected calcium. Hyperventilation during panic can cause similar tingling and spasm by lowering ionized calcium through respiratory alkalosis.", short: "Hypocalcemia", decoys: ["Hyponatremia", "Hyperkalemia"] },
+          { value: 300, clue: "Anxiety that began two weeks after starting prednisone earns this DSM-5-TR specifier for substance/medication-induced anxiety disorder.", answer: "What is 'with onset after medication use'? The other two specifiers are 'with onset during intoxication' and 'with onset during withdrawal'. The diagnosis requires that the drug can cause anxiety and that the symptoms are not better explained by an independent anxiety disorder.", short: "With onset after medication use", decoys: ["With onset during intoxication", "With onset during withdrawal"] },
+          { value: 400, clue: "Spells of flushing, watery diarrhea and wheezing mistaken for panic call for this 24-hour urine test.", answer: "What is 5-HIAA (5-hydroxyindoleacetic acid), the main serotonin breakdown product, to screen for carcinoid syndrome? The full syndrome usually means liver metastases from a midgut neuroendocrine tumor. Bananas, walnuts and avocados can falsely raise the result.", short: "Urine 5-HIAA", decoys: ["Urine metanephrines", "Urine free cortisol"] },
+          { value: 500, clue: "Attacks of severe abdominal pain, anxiety and muscle weakness, plus urine that darkens on standing, suggest this disorder.", answer: "What is acute intermittent porphyria? Porphobilinogen in the urine oxidizes to dark porphobilin, so check a spot urine porphobilinogen during an attack. Barbiturates and carbamazepine are among the drugs that can precipitate attacks. Treat with IV hemin and remove the trigger; glucose loading is reserved for mild attacks.", short: "Acute intermittent porphyria", decoys: ["Hereditary angioedema", "Familial Mediterranean fever"] }
+        ]
+      },
+      {
+        name: "Medication Picks",
+        clues: [
+          { value: 100, clue: "Because they work well and carry little misuse risk, these two drug classes are first-line for GAD, panic disorder and social anxiety disorder.", answer: "What are SSRIs and SNRIs? Start low and go slow, since early jitteriness can scare anxious patients off treatment, and allow several weeks for a response. Benzodiazepines act faster but bring sedation, dependence and falls.", short: "SSRIs and SNRIs", decoys: ["TCAs and MAOIs", "Benzos and gabapentinoids"] },
+          { value: 200, clue: "This first-generation antihistamine is FDA-labeled for anxiety and is a common as-needed option with little misuse potential.", answer: "What is hydroxyzine? It is an H1 antagonist with anticholinergic effects, so it is on the Beers list for older adults, and it can prolong the QT interval.", short: "Hydroxyzine", decoys: ["Diphenhydramine", "Promethazine"] },
+          { value: 300, clue: "This long-acting benzodiazepine is FDA-approved for panic disorder and seizure disorders, but not for GAD.", answer: "What is clonazepam? Alprazolam is the other benzodiazepine approved for panic disorder, and it is also labeled for GAD. Clonazepam's half-life of roughly 30–40 hours allows once- or twice-daily dosing.", short: "Clonazepam", decoys: ["Lorazepam", "Diazepam"] },
+          { value: 400, clue: "Among the SSRIs, only this one is FDA-approved for all three: panic disorder, GAD and social anxiety disorder.", answer: "What is paroxetine (immediate release)? Sertraline lacks a GAD indication, and escitalopram lacks panic and social anxiety. Venlafaxine XR is the SNRI with all three. Paroxetine's anticholinergic effects and harsh discontinuation syndrome limit its use.", short: "Paroxetine", decoys: ["Sertraline", "Escitalopram"] },
+          { value: 500, clue: "This gabapentinoid is approved for generalized anxiety disorder in the European Union but not by the FDA.", answer: "What is pregabalin? It binds the alpha-2-delta subunit of voltage-gated calcium channels and can work within about a week. It is Schedule V in the US, with misuse risk especially in people who use opioids. Gabapentin's evidence in anxiety is weaker.", short: "Pregabalin", decoys: ["Gabapentin", "Mirogabalin"] }
+        ]
+      },
+      {
+        name: "Therapy Toolbox",
+        clues: [
+          { value: 100, clue: "Wolpe's technique pairs relaxation training with gradual steps up a fear hierarchy.", answer: "What is systematic desensitization? Wolpe based it on reciprocal inhibition: a relaxed state is incompatible with anxiety. Flooding takes the opposite approach, starting at the top of the hierarchy with no escape.", short: "Systematic desensitization", decoys: ["Exposure and response prevention", "Implosive therapy"] },
+          { value: 200, clue: "This third-wave therapy aims for psychological flexibility, using defusion from anxious thoughts and action guided by personal values.", answer: "What is acceptance and commitment therapy (ACT), developed by Steven Hayes? Rather than disputing thoughts as classic CBT does, it treats the struggle to control anxiety as the main problem. It has trial evidence across the anxiety disorders.", short: "Acceptance-commitment therapy", decoys: ["Interpersonal psychotherapy", "Mentalization-based therapy"] },
+          { value: 300, clue: "In a 2023 JAMA Psychiatry trial, eight weeks of mindfulness-based stress reduction proved noninferior to this drug for anxiety disorders.", answer: "What is escitalopram? Hoge and colleagues randomized 276 adults with GAD, social anxiety, panic disorder or agoraphobia (208 in the primary per-protocol analysis). Both arms improved similarly on clinician-rated severity, and MBSR had fewer adverse events.", short: "Escitalopram", decoys: ["Sertraline", "Venlafaxine XR"] },
+          { value: 400, clue: "Öst's one-session treatment for a specific phobia, such as a fear of spiders, lasts up to about this long.", answer: "What is about 3 hours? It is one massed session of graduated in vivo exposure with therapist modeling, followed by self-directed practice. Gains are large and durable, and it works in children as well as adults.", short: "3 hours", decoys: ["1 hour", "8 hours"] },
+          { value: 500, clue: "Fear extinguished in the therapist's office returns when the patient meets the cue in a new setting. This return of fear is called this.", answer: "What is renewal? Extinction builds a new, context-bound safety memory rather than erasing the fear memory. Spontaneous recovery comes with the passage of time; reinstatement follows an unexpected re-encounter with the aversive event. Varying exposure settings guards against renewal.", short: "Renewal", decoys: ["Spontaneous recovery", "Reinstatement"] }
+        ]
+      },
+      {
+        name: "Which Diagnosis?",
+        clues: [
+          { value: 100, clue: "For a year, a teacher has worried uncontrollably about money, her children's safety and her job, with muscle tension, fatigue and poor sleep.", answer: "What is generalized anxiety disorder? The worry is excessive, hard to control and spread across many topics. Ask about caffeine, alcohol, thyroid disease and depression, which often travel with it.", short: "Generalized anxiety disorder", decoys: ["Panic disorder", "Illness anxiety disorder"] },
+          { value: 200, clue: "A man skips team lunches and meetings because he's sure others will notice him blushing and judge him.", answer: "What is social anxiety disorder? The core fear is negative evaluation, including for visible anxiety such as blushing, sweating or trembling. Fear of blushing (erythrophobia) is a common presentation.", short: "Social anxiety disorder", decoys: ["Agoraphobia", "Generalized anxiety disorder"] },
+          { value: 300, clue: "Fear of heights falls under this DSM-5-TR specific phobia subtype.", answer: "What is the natural environment type (heights, storms, water)? The situational type covers planes, elevators and enclosed places, and 'other' covers fears such as choking or vomiting. Most people with specific phobia fear more than one thing, and each type is coded.", short: "Natural environment type", decoys: ["Situational type", "Other type"] },
+          { value: 400, clue: "A 40-year-old can't sleep unless her husband is home and texts him all day, afraid he'll die in an accident.", answer: "What is separation anxiety disorder? It is not only a childhood diagnosis, and in adults the attachment figure is often a partner or child. The worry centers on harm to, or separation from, that person; in GAD the worries range widely.", short: "Separation anxiety disorder", decoys: ["Generalized anxiety disorder", "Illness anxiety disorder"] },
+          { value: 500, clue: "A man with social anxiety disorder has panic attacks only when he must speak in meetings. DSM-5-TR adds this to his diagnosis.", answer: "What is the 'with panic attacks' specifier? Panic disorder requires recurrent unexpected attacks; cued attacks within another disorder get the specifier instead. It can be added to almost any DSM-5-TR diagnosis, including depressive, psychotic and substance use disorders.", short: "With panic attacks", decoys: ["Panic disorder", "Agoraphobia"] }
+        ]
+      },
+      {
+        name: "Final Jeopardy ★",
+        clues: [
+          { value: 1000, clue: "Dugas's cognitive model places this trait at the core of GAD: finding uncertain outcomes unacceptable, however unlikely the bad outcome.", answer: "What is intolerance of uncertainty? In the model, worry is an attempt to prepare for or control uncertain outcomes, and CBT for GAD targets it with behavioral experiments that build tolerance of not knowing. Anxiety sensitivity, the fear of anxiety's own body sensations, is the comparable driver in panic disorder; thought-action fusion is linked to OCD.", short: "Intolerance of uncertainty", decoys: ["Anxiety sensitivity", "Thought-action fusion"] }
+        ]
+      }
+    ]
   }
 ];
 /* ===================== END GAME REGISTRY ===================== */

@@ -35,12 +35,13 @@ Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its o
 | Forensics, Ethics & Biostatistics | Jeopardy, 6 × 5 · *coming soon* | Landmark cases, insanity and malpractice, consent and capacity, statistics, test validity, study design and bias |
 | Psychiatric Genetics Jeopardy | Jeopardy, 6 × 5 · *coming soon* | GWAS and polygenic scores, epigenetics, heritability, repeat-expansion syndromes, pharmacogenomics, gene–disorder links |
 | Sleep-Wake Jeopardy | Jeopardy, 6 × 5 | Sleep stages and testing, insomnia and CBT-I, hypnotics, narcolepsy, sleep apnea and circadian disorders, parasomnias and restless legs |
+| Anxiety Jeopardy II | Jeopardy, 6 × 5 + Final · *coming soon* | Anxiety only, no OCD, and no overlap with Anxiety & OCD Jeopardy: epidemiology and onset ages, fear circuitry and learning theory, medical and substance mimics, medication choices and FDA labels, exposure and third-wave therapies, diagnostic vignettes |
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
 | Case Rounds *(beta)* | Case simulation, solo | One patient across visits in five chapters: interview on a clock, examine, order from the full formulary, set follow-up, live with the consequences; a review with teaching points after each chapter and an evidence-cited debrief. Case 1: a 28-year-old brought in by her sister |
 
-The eight *coming soon* boards are finished and wizard-ready — every clue carries
+The nine *coming soon* boards are finished and wizard-ready — every clue carries
 its `short` label and two hand-written `decoys` — but each is parked with
 `comingSoon: true`, so no card is clickable and none of their categories reach
 Wizard's Escape yet. Deleting that one line on a game switches it fully on. The
@@ -49,7 +50,9 @@ genetics and sleep boards were built from the ABPN blueprint gap analysis (the s
 board is now live, after a second fact-check in October 2026, and the bipolar and
 anxiety & OCD boards went live later that month); those and
 the rewritten development and sexuality/gender/dissociation boards were each checked
-by a separate fact-checking pass.
+by a separate fact-checking pass. Anxiety Jeopardy II (October 2026) is a second,
+anxiety-only board written to avoid every fact on the first one; it was fact-checked
+the same way and is parked until reviewed.
 
 **Receptor Lab** is the odd one out — no clues, no teams, no buzzer, and its own
 cauldron-lit palette instead of the navy and gold. You get an empty cell and a
