@@ -6197,6 +6197,116 @@ const GAMES = [
         ]
       }
     ]
+  },
+  {
+    // Written from primary sources (DSM-5-TR; VA/DoD PTSD CPG 2023; APA PTSD guideline 2017;
+    // FDA labels; ISSTD DID guidelines 2011; original trials cited per clue below).
+    // Its two dissociation categories avoid every fact on the Sexuality, Gender & Dissociation board.
+    id: "trauma-stress-jeopardy",
+    title: "Trauma, Stress & Dissociation",
+    kind: "Jeopardy",
+    blurb: "PTSD criteria and specifiers, trauma-focused therapy and the medication evidence, acute stress and adjustment disorders, trauma in young children and the attachment disorders, and the dissociative disorders: identity, amnesia and depersonalization.",
+    tags: ["Board review", "6 categories", "30 clues + Final"],
+    subtitle: "PTSD Diagnosis · PTSD Treatment · Acute Stress & Adjustment · Young Children & Attachment · Dissociative Identity · Amnesia & Detachment · Final Jeopardy",
+    categories: [
+      {
+        name: "PTSD Diagnosis",
+        clues: [
+          // DSM-5-TR PTSD criterion B
+          { value: 100, clue: "In DSM-5-TR, flashbacks are counted as this type of PTSD symptom.", answer: "What is intrusion? Flashbacks are listed as dissociative reactions within the intrusion cluster, alongside intrusive memories, distressing dreams, and psychological or physiological reactivity to cues. At least one intrusion symptom is required.", short: "Intrusion", decoys: ["Avoidance", "Hyperarousal"] },
+          // DSM-5-TR PTSD criterion A4
+          { value: 200, clue: "Watching a disaster unfold on TV or social media counts as PTSD exposure only if the viewing is this.", answer: "What is work-related? A first responder or content moderator reviewing images as part of the job can meet the exposure criterion. Otherwise, exposure means experiencing, witnessing in person, learning it happened to a close family member or friend (violent or accidental if a death was involved), or repeated exposure to aversive details.", short: "Work-related", decoys: ["Repeated daily", "Watched live"] },
+          // DSM-5-TR PTSD specifiers
+          { value: 300, clue: "This PTSD specifier is used when the full syndrome first emerges half a year or more after the event.", answer: "What is “with delayed expression”? Some symptoms usually show up early; it is the complete picture that arrives late. Delayed-onset PTSD is well described in military veterans.", short: "With delayed expression", decoys: ["With dissociative symptoms", "With prominent anxiety"] },
+          // DSM-5-TR PTSD criterion E
+          { value: 400, clue: "Reckless or self-destructive behavior, added to PTSD in DSM-5, sits in this symptom cluster.", answer: "What is alterations in arousal and reactivity? The cluster also includes irritability or aggression, hypervigilance, exaggerated startle, poor concentration and sleep disturbance; two are required.", short: "Arousal and reactivity", decoys: ["Avoidance of reminders", "Intrusion symptoms"] },
+          // DSM-5-TR PTSD specifier; Lanius et al., Am J Psychiatry 2010
+          { value: 500, clue: "PTSD's dissociative specifier requires persistent or recurrent depersonalization or this.", answer: "What is derealization? It means the surroundings feel unreal, dreamlike, distant or distorted. The symptoms must not come from a substance, such as an alcohol blackout, or from a medical condition, such as complex partial seizures.", short: "Derealization", decoys: ["Dissociative amnesia", "Identity alteration"] }
+        ]
+      },
+      {
+        name: "PTSD Treatment",
+        clues: [
+          // VA/DoD PTSD CPG 2023; American Psychological Association PTSD guideline 2025
+          { value: 100, clue: "VA/DoD and American Psychological Association guidelines prefer this kind of psychotherapy over medication as first-line treatment for PTSD.", answer: "What is trauma-focused psychotherapy? VA/DoD strongly recommends prolonged exposure, cognitive processing therapy and EMDR. Paroxetine, sertraline or venlafaxine is the option when such therapy isn't available or wanted.", short: "Trauma-focused therapy", decoys: ["Supportive therapy", "Psychodynamic therapy"] },
+          // VA/DoD PTSD CPG 2023
+          { value: 200, clue: "This trauma-focused therapy has the patient hold the memory in mind during sets of side-to-side eye movements or tapping.", answer: "What is eye movement desensitization and reprocessing (EMDR)? Cognitive processing therapy (CPT) works on trauma-related beliefs instead. Whether the bilateral stimulation adds anything beyond exposure remains debated, but EMDR is a first-line VA/DoD therapy.", short: "EMDR", decoys: ["CPT", "DBT"] },
+          // FDA labels (Zoloft, Paxil); VA/DoD PTSD CPG 2023; Otsuka/Lundbeck CRL release, Sept 2025
+          { value: 300, clue: "Sertraline and this SSRI are the only medications FDA-approved for PTSD.", answer: "What is paroxetine? Venlafaxine is also guideline-recommended (VA/DoD 2023) but is off-label for PTSD. In 2025 the FDA declined to approve brexpiprazole added to sertraline for PTSD.", short: "Paroxetine", decoys: ["Fluoxetine", "Escitalopram"] },
+          // Raskind et al., NEJM 2018; VA/DoD PTSD CPG 2023
+          { value: 400, clue: "A 2018 VA trial of 304 veterans found prazosin no better than placebo for this PTSD symptom.", answer: "What is trauma-related nightmares? Raskind and colleagues (NEJM 2018) also found no benefit for sleep quality. Earlier, smaller trials were positive. The 2023 VA/DoD guideline nonetheless suggests prazosin (weak for) for PTSD nightmares, while suggesting against it for PTSD overall.", short: "Nightmares", decoys: ["Flashbacks", "Hypervigilance"] },
+          // Sloan et al., JAMA Psychiatry 2018
+          { value: 500, clue: "In this five-session therapy, patients spend each session writing about their trauma for 30 minutes. A 2018 trial found it noninferior to CPT.", answer: "What is written exposure therapy (WET)? Sloan and colleagues (JAMA Psychiatry 2018) found it noninferior to 12-session cognitive processing therapy, with far fewer dropouts. VA/DoD 2023 suggests WET (weak for).", short: "Written exposure therapy", decoys: ["Present-centered therapy", "Imagery rehearsal therapy"] }
+        ]
+      },
+      {
+        name: "Acute Stress & Adjustment",
+        clues: [
+          // DSM-5-TR acute stress disorder
+          { value: 100, clue: "Acute stress disorder covers trauma reactions lasting from 3 days up to this long.", answer: "What is 1 month? If symptoms persist beyond 1 month and meet criteria, the diagnosis becomes PTSD. Acute stress disorder needs 9 of 14 symptoms from any category.", short: "1 month", decoys: ["2 weeks", "3 months"] },
+          // DSM-5-TR adjustment disorders
+          { value: 200, clue: "Adjustment disorder symptoms must begin within this long after the stressor starts.", answer: "What is 3 months? The stressor doesn't need to be traumatic: a breakup, job loss or new diagnosis qualifies. The reaction must be out of proportion to the stressor or impair function.", short: "3 months", decoys: ["2 weeks", "6 months"] },
+          // DSM-5-TR adjustment disorders
+          { value: 300, clue: "Once a stressor and its consequences end, adjustment disorder symptoms can't last more than this much longer.", answer: "What is 6 months? Adjustment disorder isn't diagnosed if another mental disorder accounts for the symptoms, or if the reaction is normal grief.", short: "6 months", decoys: ["1 month", "12 months"] },
+          // Rose et al., Cochrane 2002; WHO 2013; NICE NG116 2018
+          { value: 400, clue: "A single structured session, often in a group, to recount a trauma right after it. Guidelines advise against it; one trial linked it to more PTSD.", answer: "What is single-session psychological debriefing? Cochrane reviews found no benefit and possible harm. Psychological first aid, which covers safety, calming, connection and practical help without pressing for details, is preferred.", short: "Psychological debriefing", decoys: ["Psychological first aid", "Stress inoculation training"] },
+          // Guina et al., J Psychiatr Pract 2015; VA/DoD PTSD CPG 2023
+          { value: 500, clue: "In a 2015 meta-analysis, people given this drug class early after trauma were more likely to develop PTSD.", answer: "What is benzodiazepines? Guina and colleagues found benzodiazepines ineffective for PTSD and linked them to a higher risk of PTSD after recent trauma. The VA/DoD guideline strongly recommends against them.", short: "Benzodiazepines", decoys: ["Opioid analgesics", "Beta-blockers"] }
+        ]
+      },
+      {
+        name: "Young Children & Attachment",
+        clues: [
+          // DSM-5-TR reactive attachment disorder
+          { value: 100, clue: "Reactive attachment disorder must be evident before this age.", answer: "What is age 5? Both reactive attachment disorder and disinhibited social engagement disorder require a history of extremely insufficient care, such as neglect, frequent caregiver changes or institutional rearing.", short: "Age 5", decoys: ["Age 2", "Age 8"] },
+          // DSM-5-TR RAD and DSED
+          { value: 200, clue: "Neither attachment disorder can be diagnosed until a child reaches this developmental age.", answer: "What is 9 months? Before then, infants haven't yet formed selective attachments, so their absence can't be judged.", short: "9 months", decoys: ["3 months", "24 months"] },
+          // DSM-5-TR reactive attachment disorder
+          { value: 300, clue: "Reactive attachment disorder can't be diagnosed if the child meets criteria for this neurodevelopmental disorder.", answer: "What is autism spectrum disorder? Both involve limited social reciprocity, but children with autism usually show selective attachment for their developmental level and have restricted, repetitive behaviors. Children with RAD have a history of severe neglect, and attachment behavior typically emerges once caregiving improves.", short: "Autism spectrum disorder", decoys: ["Intellectual disability", "Tourette's disorder"] },
+          // DSM-5-TR PTSD in children 6 years and younger
+          { value: 400, clue: "In children 6 and younger, PTSD intrusion symptoms may appear only as this, which may not look distressing.", answer: "What is reenactment in play? Young children may also have frightening dreams without clear trauma content. DSM-5-TR has separate PTSD criteria for children 6 and younger.", short: "Reenactment in play", decoys: ["Motor tics", "Selective mutism"] },
+          // DSM-5-TR PTSD in children 6 years and younger
+          { value: 500, clue: "For children 6 and younger, DSM-5-TR folds avoidance into one cluster with this, needing only one symptom across both.", answer: "What is negative alterations in cognitions and mood? Adults need one avoidance symptom plus two negative-cognition symptoms. Young children often can't report self-blame or distorted beliefs, so the bar is lower.", short: "Negative cognitions and mood", decoys: ["Intrusion symptoms", "Arousal and reactivity"] }
+        ]
+      },
+      {
+        name: "Dissociative Identity",
+        clues: [
+          // DSM-5-TR dissociative identity disorder
+          { value: 100, clue: "Dissociative identity disorder requires at least this many distinct personality states.", answer: "What is two? The disruption of identity can be reported by the patient or observed by others. DID also requires recurrent gaps in memory beyond ordinary forgetting.", short: "Two", decoys: ["Three", "Five"] },
+          // Bernstein & Putnam, J Nerv Ment Dis 1986
+          { value: 200, clue: "This 28-item self-report questionnaire is the most widely used screen for dissociative symptoms.", answer: "What is the Dissociative Experiences Scale (DES)? High scores call for a structured interview, such as the SCID-D. It is a screen, not a diagnostic test.", short: "Dissociative Experiences Scale", decoys: ["PTSD Checklist (PCL-5)", "Impact of Event Scale"] },
+          // DSM-5-TR dissociative identity disorder
+          { value: 300, clue: "In children, DID symptoms must not be better explained by this normal phenomenon.", answer: "What is imaginary playmates or other fantasy play? Experiences that are part of a broadly accepted cultural or religious practice are also excluded.", short: "Imaginary playmates", decoys: ["Night terrors", "Separation anxiety"] },
+          // ISSTD Guidelines for Treating DID in Adults, 2011
+          { value: 400, clue: "The first phase of ISSTD's phase-oriented treatment for DID focuses on this.", answer: "What is safety and stabilization? Processing traumatic memories comes second, and integration and rehabilitation come third. The phases often overlap and are revisited.", short: "Safety and stabilization", decoys: ["Trauma processing", "Integration of identities"] },
+          // Lilienfeld et al., Psychol Bull 1999; Dalenberg et al., Psychol Bull 2012
+          { value: 500, clue: "This DID model holds that alters are shaped by suggestion, therapist cues and cultural expectations, rather than arising directly from early trauma.", answer: "What is the sociocognitive model? It is the main rival to the trauma model, which links DID to severe early abuse and is the model ISSTD guidelines follow.", short: "Sociocognitive model", decoys: ["Trauma model", "Psychodynamic model"] }
+        ]
+      },
+      {
+        name: "Amnesia & Detachment",
+        clues: [
+          // DSM-5-TR dissociative amnesia
+          { value: 100, clue: "Dissociative amnesia is an inability to recall this kind of information, usually about traumatic or stressful events.", answer: "What is autobiographical information? It goes beyond ordinary forgetting. Localized amnesia for a circumscribed period is the most common form.", short: "Autobiographical", decoys: ["Procedural", "Semantic"] },
+          // DSM-5-TR dissociative amnesia
+          { value: 200, clue: "Amnesia for one category of information, such as everything involving one family member, is this type.", answer: "What is systematized amnesia? Localized amnesia covers a span of time, selective amnesia covers some events within that span, and generalized amnesia covers one's whole life history.", short: "Systematized", decoys: ["Selective", "Generalized"] },
+          // Hodges & Warlow criteria, JNNP 1990
+          { value: 300, clue: "A 60-year-old suddenly can't form new memories for several hours and keeps asking the same questions, yet is alert and knows who he is.", answer: "What is transient global amnesia? It resolves within 24 hours, and identity is intact throughout. Dissociative amnesia instead involves loss of autobiographical memory, usually for a stressful or traumatic period. Loss of identity occurs only in the rare generalized form.", short: "Transient global amnesia", decoys: ["Dissociative amnesia", "Korsakoff syndrome"] },
+          // DSM-5-TR depersonalization/derealization disorder
+          { value: 400, clue: "Depersonalization/derealization disorder typically begins at about this age.", answer: "What is about 16? Over 80% of cases begin before 20 and only about 5% after 25. Onset well into adulthood is unusual and should prompt a medical work-up for seizures, brain lesions or sleep apnea.", short: "Age 16", decoys: ["Age 30", "Age 45"] },
+          // DSM-5-TR other specified dissociative disorder
+          { value: 500, clue: "Identity change after prolonged coercive persuasion, such as in a cult or as a political prisoner, is diagnosed as this.", answer: "What is other specified dissociative disorder? DSM-5-TR lists it as an example, along with chronic mixed dissociative symptoms and acute dissociative reactions to stress.", short: "Other specified dissociative", decoys: ["Dissociative identity", "Dissociative amnesia"] }
+        ]
+      },
+      {
+        name: "Final Jeopardy ★",
+        clues: [
+          // FDA complete response letter to Lykos Therapeutics, Aug 2024; resubmission reported Aug 2026. RECHECK STATUS BEFORE EACH PUBLISH
+          { value: 1000, clue: "In August 2024 the FDA declined to approve this drug as part of an assisted-therapy treatment for PTSD and asked for another phase 3 trial.", answer: "What is MDMA (midomafetamine)? The FDA advisory committee voted against it in June 2024, citing unblinding, missing abuse-liability data and conduct concerns in the trials. The sponsor, now Resilient Pharmaceuticals, resubmitted in August 2026 without a new trial. As of late 2026, no psychedelic is FDA-approved for PTSD.", short: "MDMA", decoys: ["Psilocybin", "Ketamine"] }
+        ]
+      }
+    ]
   }
 ];
 /* ===================== END GAME REGISTRY ===================== */

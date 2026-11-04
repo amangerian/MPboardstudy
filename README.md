@@ -36,6 +36,7 @@ Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its o
 | Psychiatric Genetics Jeopardy | Jeopardy, 6 × 5 · *coming soon* | GWAS and polygenic scores, epigenetics, heritability, repeat-expansion syndromes, pharmacogenomics, gene–disorder links |
 | Sleep-Wake Jeopardy | Jeopardy, 6 × 5 | Sleep stages and testing, insomnia and CBT-I, hypnotics, narcolepsy, sleep apnea and circadian disorders, parasomnias and restless legs |
 | Anxiety Jeopardy II | Jeopardy, 6 × 5 + Final | Anxiety only, no OCD, and no overlap with Anxiety & OCD Jeopardy: epidemiology and onset ages, fear circuitry and learning theory, medical and substance mimics, medication choices and FDA labels, exposure and third-wave therapies, diagnostic vignettes |
+| Trauma, Stress & Dissociation | Jeopardy, 6 × 5 + Final | PTSD criteria and specifiers, trauma-focused therapy and the medication evidence (VA/DoD 2023), acute stress and adjustment disorders, PTSD in young children and the attachment disorders, dissociative identity disorder, dissociative amnesia and depersonalization/derealization — none of it repeating the Sexuality, Gender & Dissociation board |
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
@@ -53,7 +54,13 @@ the rewritten development and sexuality/gender/dissociation boards were each che
 by a separate fact-checking pass. Anxiety Jeopardy II (October 2026) is a second,
 anxiety-only board written to avoid every fact on the first one; it was fact-checked
 the same way, its epidemiology figures were rechecked against the NCS-R and WMH
-surveys, and it went live the same day.
+surveys, and it went live the same day. Trauma, Stress & Dissociation (November 2026) was
+written from DSM-5-TR, the 2023 VA/DoD PTSD guideline, FDA labels, the ISSTD DID
+guidelines and the original trials, fact-checked by a separate pass, and went live
+the day it was built; all 31 of its clues play in Wizard's Escape. Its two
+dissociation categories cover only facts the parked sexuality board doesn't, so
+they reach Wizard's Escape now. Its Final Jeopardy (MDMA for PTSD) depends on a
+pending FDA decision, so recheck it before each upload.
 
 **Receptor Lab** is the odd one out — no clues, no teams, no buzzer, and its own
 cauldron-lit palette instead of the navy and gold. You get an empty cell and a
