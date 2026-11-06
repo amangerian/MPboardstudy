@@ -52,6 +52,14 @@
     letter-spacing: 3px;
     text-transform: uppercase;
   }
+  /* Optional author credit (game.byline), set under the subtitle. */
+  .titlebar p.byline {
+    margin-top: 6px;
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: .3px;
+    text-transform: none;
+  }
 
   /* ---------- BACK LINK ---------- */
   .topbar { padding: 4px 0 0; }
@@ -115,6 +123,13 @@
     line-height: 1.5;
     color: #dfe2ff;
     flex: 1;
+  }
+  .game-card .byline {
+    margin: 6px 0 0;
+    font-size: 12.5px;
+    font-style: italic;
+    line-height: 1.4;
+    color: #b9b6e0;
   }
   .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
   .tag {
@@ -3611,6 +3626,7 @@
   <div class="titlebar">
     <h1 id="gameTitle"></h1>
     <p id="gameSubtitle"></p>
+    <p id="gameByline" class="byline" hidden></p>
   </div>
 
   <div class="scoreboard" id="scoreboard"></div>
@@ -3675,6 +3691,7 @@
   <div class="titlebar">
     <h1 id="c4Title"></h1>
     <p id="c4Subtitle"></p>
+    <p id="c4Byline" class="byline" hidden></p>
   </div>
 
   <div class="c4-teams" id="c4Teams"></div>
@@ -5334,6 +5351,7 @@ const GAMES = [
   {
     id: "antipsychotic-jeopardy",
     title: "Antipsychotic Jeopardy",
+    byline: "by Christine B. Kwak, MD - WRNMMC Combined Internal Medicine/Psychiatry Program",
     kind: "Jeopardy",
     blurb: "First- and second-generation agents, clozapine, long-acting injectables, movement side effects and phases of care, plus mystery receptor binding profiles to name.",
     tags: ["Psychopharm", "7 categories", "35 clues"],
@@ -5417,6 +5435,7 @@ const GAMES = [
   {
     id: "antipsychotic-connect-four",
     title: "Antipsychotic Pharmacology",
+    byline: "by Christine B. Kwak, MD - WRNMMC Combined Internal Medicine/Psychiatry Program",
     kind: "Connect Four",
     format: "connect-four",
     blurb: "Two teams race to line up four. Pick a column, answer the question where your disc lands, and steal the spot when the other team misses. Mechanisms, potency, LAIs, interactions and side effects.",
@@ -6370,6 +6389,7 @@ const hubLabel = document.getElementById('hubLabel');
 const hubTopbar = document.getElementById('hubTopbar');
 const gameTitleEl = document.getElementById('gameTitle');
 const gameSubtitleEl = document.getElementById('gameSubtitle');
+const gameBylineEl = document.getElementById('gameByline');
 const scoreboardEl = document.getElementById('scoreboard');
 const boardEl = document.getElementById('board');
 const overlay = document.getElementById('overlay');
@@ -6466,7 +6486,15 @@ function makeCard(game) {
   const blurb = document.createElement('p');
   blurb.textContent = game.blurb || '';
 
-  card.append(kind, h2, blurb);
+  card.append(kind, h2);
+  if (game.byline) {
+    // A div, not a p: card paragraphs flex to fill, and the credit shouldn't.
+    const by = document.createElement('div');
+    by.className = 'byline';
+    by.textContent = game.byline;
+    card.appendChild(by);
+  }
+  card.appendChild(blurb);
 
   if (game.tags && game.tags.length) {
     const tagRow = document.createElement('div');
@@ -12257,6 +12285,7 @@ const C4 = (function () {
   const view = document.getElementById('c4View');
   const titleEl = document.getElementById('c4Title');
   const subtitleEl = document.getElementById('c4Subtitle');
+  const bylineEl = document.getElementById('c4Byline');
   const teamsEl = document.getElementById('c4Teams');
   const statusEl = document.getElementById('c4Status');
   const boardEl = document.getElementById('c4Board');
@@ -12626,6 +12655,8 @@ const C4 = (function () {
       const st = stateOf(g);
       titleEl.textContent = g.title;
       subtitleEl.textContent = g.subtitle || '';
+      bylineEl.textContent = g.byline || '';
+      bylineEl.hidden = !g.byline;
       view.hidden = false;
       render();
       if (st.pending) showQuestion(st);   // came back mid-question
@@ -20386,6 +20417,8 @@ function route() {
   gameView.hidden = false;
   gameTitleEl.textContent = game.title;
   gameSubtitleEl.textContent = game.subtitle || '';
+  gameBylineEl.textContent = game.byline || '';
+  gameBylineEl.hidden = !game.byline;
   document.title = game.title;
   renderScoreboard();
   renderBoard();
