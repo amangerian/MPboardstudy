@@ -2054,6 +2054,175 @@
   @media (prefers-reduced-motion: reduce) {
     .c4-disc.drop, .c4-cell.target, .c4-cell.win .c4-disc, .c4-cell.win .c4-disc.drop { animation: none; }
   }
+  /* ---------- FEUD ---------- */
+  .fd-teams {
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    margin: 18px 0 10px;
+  }
+  .fd-team {
+    display: flex; align-items: center; gap: 14px;
+    min-width: 230px;
+    background: linear-gradient(180deg, var(--tile-blue-light), var(--tile-blue));
+    border: 2px solid #4a52ff; border-radius: 10px;
+    padding: 10px 16px;
+    box-shadow: 0 4px 0 rgba(0,0,0,.35);
+  }
+  .fd-team input.team-name {
+    flex: 1; min-width: 0;
+    background: transparent; border: none; border-bottom: 1px dashed #7d83ff;
+    color: var(--gold); font-weight: 700; font-size: 15px; text-align: left;
+    padding: 2px 0 4px; font-family: inherit; letter-spacing: .5px; text-transform: uppercase;
+  }
+  .fd-team input.team-name:focus { outline: none; border-bottom: 1px solid var(--gold); }
+  .fd-score {
+    font-family: Georgia, serif; font-weight: 700; font-size: 26px; color: var(--white);
+    min-width: 56px; text-align: right;
+  }
+
+  .fd-rounds { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 4px 0 14px; }
+  .fd-rounds button {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: transparent; color: var(--muted-dim);
+    border: 2px solid #4a52ff; cursor: pointer;
+    font-family: Arial, sans-serif; font-weight: 700; font-size: 14px;
+  }
+  .fd-rounds button.done { color: var(--muted); border-color: #7d83ff; background: rgba(74,82,255,.18); }
+  .fd-rounds button[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--board-navy-deep); }
+  .fd-rounds button:hover { border-color: var(--gold); }
+
+  .fd-stage {
+    max-width: 960px; margin: 0 auto;
+    background: radial-gradient(ellipse at 50% 0%, #1a22b8, var(--board-navy-deep) 80%);
+    border: 4px solid #ff9d3c; border-radius: 26px;
+    box-shadow: 0 0 0 4px #7a3a00, 0 0 0 7px #ffb766, 0 18px 50px rgba(0,0,0,.55);
+    padding: clamp(16px, 3vw, 30px);
+  }
+  .fd-eyebrow {
+    color: var(--gold); text-align: center; text-transform: uppercase;
+    letter-spacing: 3px; font-size: 12px; font-weight: 700;
+  }
+  .fd-prompt {
+    font-family: Georgia, serif; font-weight: 700; text-align: center;
+    font-size: clamp(19px, 2.8vw, 28px); line-height: 1.3;
+    margin: 8px 0 18px; text-shadow: 0 2px 0 var(--text-shadow-c);
+  }
+  .fd-board {
+    --rows: 3;
+    display: grid; gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(var(--rows), auto);
+    grid-auto-flow: column;
+    padding: 12px; border-radius: 12px; background: #000; border: 3px solid #ffb766;
+  }
+  .fd-slot {
+    all: unset; box-sizing: border-box;
+    display: flex; align-items: center; gap: 10px;
+    min-height: 64px; padding: 8px 12px;
+    border-radius: 6px; border: 2px solid #c9d2ff;
+    background: linear-gradient(180deg, #3550e6, #1c2fb0 55%, #142394);
+    box-shadow: inset 0 0 0 2px #0a1172;
+    cursor: pointer; perspective: 600px;
+  }
+  .fd-slot.blank { cursor: default; opacity: .55; background: linear-gradient(180deg, #1c2a8f, #0d1666); }
+  .fd-slot:not(.shown):not(.blank):hover { border-color: var(--gold); }
+  .fd-slot:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .fd-num {
+    margin: 0 auto; display: grid; place-items: center;
+    width: 44px; height: 34px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #2e48e0, #0b1680);
+    border: 2px solid #c9d2ff; color: var(--white);
+    font-family: Georgia, serif; font-weight: 700; font-size: 20px;
+  }
+  .fd-slot.shown { cursor: default; background: linear-gradient(180deg, #2c43d6, #1a2aa6); }
+  .fd-slot.flip { animation: fd-flip .55s ease-out; }
+  @keyframes fd-flip {
+    0% { transform: rotateX(90deg); filter: brightness(1.8); }
+    60% { transform: rotateX(-12deg); }
+    100% { transform: none; filter: none; }
+  }
+  .fd-ans { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .fd-text {
+    color: var(--white); font-weight: 700; text-transform: uppercase; letter-spacing: .4px;
+    font-size: clamp(13px, 1.6vw, 16px); line-height: 1.25; text-shadow: 0 1px 0 #000;
+  }
+  .fd-detail { color: var(--muted); font-size: 12.5px; line-height: 1.3; }
+  .fd-pts {
+    flex: none; min-width: 44px; padding: 6px 0; text-align: center;
+    background: #0b1680; border-left: 2px solid #c9d2ff; border-radius: 0 4px 4px 0;
+    margin: -8px -12px -8px 0; align-self: stretch; display: grid; place-items: center;
+    font-family: Georgia, serif; font-weight: 700; font-size: 22px; color: var(--white);
+  }
+  .fd-slot.unbanked .fd-text, .fd-slot.unbanked .fd-pts { color: var(--muted-dim); }
+
+  .fd-bankrow {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    margin-top: 16px;
+  }
+  .fd-bank {
+    color: var(--muted); text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 700;
+  }
+  .fd-bank b {
+    display: inline-block; margin-left: 8px; padding: 4px 14px; border-radius: 6px;
+    background: #000; border: 2px solid #ffb766;
+    color: var(--gold); font-family: Georgia, serif; font-size: 24px; letter-spacing: 0;
+  }
+  .fd-strikes { display: flex; gap: 6px; }
+  .fd-x {
+    width: 38px; height: 38px; display: grid; place-items: center;
+    border: 2px solid #5a1f1f; border-radius: 6px;
+    color: #5a1f1f; font-weight: 900; font-size: 24px; font-family: Arial, sans-serif;
+  }
+  .fd-x.on { color: #fff; background: var(--wrong); border-color: #ff8a8a; box-shadow: 0 0 12px rgba(212,59,59,.7); }
+  .fd-note {
+    margin-top: 14px; padding: 10px 14px; border-radius: 8px;
+    background: rgba(255,204,77,.1); border: 1px solid rgba(255,204,77,.45);
+    color: var(--muted); font-size: 14px; line-height: 1.45; text-align: center;
+  }
+
+  .fd-controls {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    margin: 18px auto 0; max-width: 960px;
+  }
+  .fd-btn {
+    background: var(--board-navy-deep); color: var(--white);
+    border: 2px solid #7d83ff; border-radius: 8px;
+    padding: 11px 16px; cursor: pointer;
+    font-family: Arial, sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: .5px; text-transform: uppercase;
+  }
+  .fd-btn:disabled { opacity: .4; cursor: default; }
+  .fd-btn.strike { border-color: var(--wrong); }
+  .fd-btn.strike:not(:disabled):hover { background: var(--wrong); }
+  .fd-btn.award { border-color: var(--correct); }
+  .fd-btn.award:not(:disabled):hover { background: var(--correct); }
+  .fd-btn.next { border-color: var(--gold); color: var(--gold); }
+  .fd-btn.next:hover { background: var(--gold); color: var(--board-navy-deep); }
+  .fd-btn.rest:not(:disabled):hover { border-color: var(--muted); }
+
+  .fd-xflash {
+    position: fixed; inset: 0; z-index: 60; pointer-events: none;
+    display: grid; place-items: center;
+    color: var(--wrong); font-family: Arial, sans-serif; font-weight: 900;
+    font-size: clamp(120px, 26vw, 300px); letter-spacing: -.05em;
+    -webkit-text-stroke: 6px #fff; text-shadow: 0 0 40px rgba(212,59,59,.8);
+    opacity: 0; visibility: hidden;
+  }
+  .fd-xflash.show { visibility: visible; animation: fd-xflash 1.1s ease-out forwards; }
+  @keyframes fd-xflash {
+    0% { opacity: 0; transform: scale(1.4); }
+    15% { opacity: 1; transform: scale(1); }
+    75% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @media (max-width: 640px) {
+    .fd-board { grid-template-columns: 1fr; grid-auto-flow: row; grid-template-rows: none; }
+    .fd-slot.blank { display: none; }
+    .fd-team { min-width: 0; flex: 1 1 140px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fd-slot.flip { animation: none; }
+    .fd-xflash.show { animation: none; opacity: 1; }
+  }
   /* ===================== RECEPTOR LAB ===================== */
   /* The lab keeps to itself: every token below is scoped to #rlabView, so the
      cauldron palette never leaks into the Jeopardy boards. Cold iron, bog
@@ -4581,6 +4750,42 @@
   </div>
 </div>
 
+<!-- ===================== FEUD VIEW ===================== -->
+<div class="wrap" id="feudView" hidden>
+  <div class="topbar"><a class="back-link" href="#games">&larr; Jeopardy &amp; Learning Games</a></div>
+
+  <div class="titlebar">
+    <h1 id="fdTitle"></h1>
+    <p id="fdSubtitle"></p>
+    <p id="fdByline" class="byline" hidden></p>
+  </div>
+
+  <div class="fd-teams" id="fdTeams"></div>
+  <div class="fd-rounds" id="fdRounds" role="group" aria-label="Rounds"></div>
+
+  <div class="fd-stage">
+    <div class="fd-eyebrow" id="fdEyebrow"></div>
+    <div class="fd-prompt" id="fdPrompt"></div>
+    <div class="fd-board" id="fdBoard"></div>
+    <div class="fd-bankrow">
+      <div class="fd-bank">Round points <b id="fdBank">0</b></div>
+      <div class="fd-strikes" id="fdStrikes"></div>
+    </div>
+    <div class="fd-note" id="fdNote" hidden></div>
+  </div>
+  <div class="fd-controls" id="fdControls"></div>
+
+  <div class="board-actions">
+    <button class="reset-board-btn" id="fdUndoBtn">Undo</button>
+    <button class="reset-board-btn" id="fdNewBtn">New game</button>
+    <button class="reset-board-btn anki-btn" id="fdAnkiBtn"
+            title="Downloads a .apkg you can open straight into Anki — it lands in its own deck.">Download Anki deck (.apkg)</button>
+  </div>
+
+  <footer class="hint" id="fdHint"></footer>
+</div>
+<div class="fd-xflash" id="fdXFlash" aria-hidden="true"></div>
+
 <!-- ===================== CASE ROUNDS ===================== -->
 <div class="wrap cr-wrap" id="caseView" hidden>
   <div class="rl-topbar cr-topbar">
@@ -4639,6 +4844,9 @@
  *               Connect Four engine instead: its clues are one shuffled pile
  *               (values are ignored), usually a single category, and it still
  *               feeds Wizard's Escape and the Anki export like any other game.
+ *               "feud" opens it on the Feud survey board: `rounds[]` of
+ *               { prompt, note?, answers: [{ text, points, detail? }] }. Its
+ *               `categories` hold single-ask clues for Wizard's Escape and Anki.
  *   comingSoon  true parks the game: its card renders unclickable ("Coming
  *               soon"), the router refuses to open it (GAMES.find(... &&
  *               !g.comingSoon)), and it is skipped by allCategories(), so it
@@ -6325,6 +6533,163 @@ const GAMES = [
         ]
       }
     ]
+  },
+  // Feud keeps its survey rounds in `rounds` (answers are listed as written;
+  // the board ranks them by points). Its `categories` are single-ask clues
+  // drawn from the same material for Wizard's Escape and the Anki export.
+  // Sources: DSM-5-TR; Bush-Francis Catatonia Rating Scale (1996); van Erp et al,
+  // Mol Psychiatry 2016 (ENIGMA); Glantz & Lewis, Arch Gen Psychiatry 2000;
+  // Dalmau et al, Lancet Neurol 2011; Pedersen & Mortensen, Arch Gen Psychiatry 2001.
+  {
+    id: "psychosis-feud",
+    title: "Psychosis Feud",
+    byline: "by Christine B. Kwak, MD - WRNMMC Combined Internal Medicine/Psychiatry Program",
+    kind: "Feud",
+    format: "feud",
+    blurb: "Survey says! Two teams name the top answers on a Family Feud–style board: diagnostic time cut-offs, prognosis, catatonia signs and treatment, the neurobiology, secondary causes, risk factors and brain findings in schizophrenia.",
+    tags: ["Psychosis", "Feud", "8 rounds", "32 speed-round clues"],
+    subtitle: "Survey board · Time Cut-offs · Prognosis · Catatonia · Neurobiology · Secondary Causes · Risk Factors · Brain Findings",
+    rounds: [
+      {
+        prompt: "Time cut-offs for diagnoses on the psychotic spectrum",
+        note: "Delusional disorder is not a < 1 month diagnosis: it needs delusions lasting at least 1 month.",
+        answers: [
+          { text: "< 1 month", points: 19, detail: "Brief psychotic disorder: at least 1 day but under 1 month, with full return to baseline" },
+          { text: "1 to < 6 months", points: 18, detail: "Schizophreniform disorder" },
+          { text: "≥ 6 months", points: 18, detail: "Schizophrenia: 6 months of continuous signs, including at least 1 month of active-phase symptoms" },
+          { text: "≥ 2 weeks", points: 15, detail: "Schizoaffective disorder: delusions or hallucinations for 2+ weeks with no major mood episode" }
+        ]
+      },
+      {
+        prompt: "Indicators of a good prognosis in schizophrenia",
+        note: "Other favorable features: being married and female sex.",
+        answers: [
+          { text: "Late age at onset", points: 29 },
+          { text: "Acute onset", points: 27, detail: "Often with an obvious precipitant" },
+          { text: "Good premorbid functioning", points: 24, detail: "Social, sexual and work history" },
+          { text: "Mood disorder symptoms", points: 13, detail: "Especially depressive symptoms, or a family history of mood disorder" },
+          { text: "Positive symptoms", points: 7, detail: "Predominantly positive rather than negative symptoms" },
+          { text: "Good support systems", points: 2 }
+        ]
+      },
+      {
+        prompt: "Name at least 3 catatonic signs (DSM-5-TR lists 12)",
+        note: "The other six: mannerisms, stereotypy, agitation, grimacing, echolalia and echopraxia. Catatonia needs 3 of the 12. The Bush-Francis scale scores these too, with posturing and catalepsy as one item.",
+        answers: [
+          { text: "Posturing", points: 30, detail: "Actively holding an odd posture against gravity" },
+          { text: "Stupor", points: 28, detail: "No psychomotor activity; not actively relating to the environment" },
+          { text: "Catalepsy", points: 22, detail: "Passively keeping a posture the examiner puts the patient in" },
+          { text: "Negativism", points: 20, detail: "Opposing or not responding to instructions or external stimuli" },
+          { text: "Waxy flexibility", points: 15, detail: "Slight, even resistance as the examiner repositions a limb" },
+          { text: "Mutism", points: 10, detail: "Little or no verbal response" }
+        ]
+      },
+      {
+        prompt: "Top 4 neurobiological bases of psychotic disorders",
+        answers: [
+          { text: "Mesostriatal D2 hyperactivity", points: 38, detail: "Excess subcortical dopamine: positive symptoms" },
+          { text: "Cortical NMDA hypofunction", points: 28, detail: "Glutamate model: ketamine and PCP reproduce positive, negative and cognitive symptoms" },
+          { text: "Mesocortical D1 deficiency", points: 20, detail: "Too little prefrontal dopamine: negative and cognitive symptoms" },
+          { text: "Cortical 5-HT2A overexcitation", points: 14, detail: "Serotonin model: hallucinogens are 5-HT2A agonists" }
+        ]
+      },
+      {
+        prompt: "5 management options for catatonia",
+        answers: [
+          { text: "Benzodiazepine challenge", points: 38, detail: "Lorazepam, IV or IM; improvement supports the diagnosis and is also the first-line treatment" },
+          { text: "ECT", points: 38, detail: "For benzodiazepine-resistant or malignant catatonia" },
+          { text: "Amantadine", points: 14, detail: "NMDA antagonist, off-label for benzodiazepine-resistant cases" },
+          { text: "Memantine", points: 14, detail: "NMDA antagonist, off-label for benzodiazepine-resistant cases" },
+          { text: "Supportive care", points: 10, detail: "Fluids, nutrition, VTE prophylaxis, pressure-injury prevention" }
+        ]
+      },
+      {
+        prompt: "Name 5 medical or substance causes of secondary psychosis",
+        answers: [
+          { text: "Anti-NMDA receptor encephalitis", points: 32, detail: "Look for ovarian teratoma, seizures, dyskinesias, autonomic instability" },
+          { text: "Stimulants", points: 24, detail: "Amphetamines, methamphetamine, cocaine" },
+          { text: "Dissociative substances", points: 18, detail: "PCP, ketamine, dextromethorphan" },
+          { text: "Thyroid storm / myxedema", points: 15, detail: "Psychosis in severe hypothyroidism is \"myxedema madness\"" },
+          { text: "Neuropsychiatric lupus", points: 11, detail: "Linked to anti-ribosomal P antibodies" }
+        ]
+      },
+      {
+        prompt: "Name any 3 factors linked to a higher risk of developing schizophrenia",
+        note: "Childhood trauma also raises risk.",
+        answers: [
+          { text: "Urban upbringing", points: 32, detail: "Risk rises with years lived in a city during childhood" },
+          { text: "Premorbid cannabis use", points: 24, detail: "Especially heavy, high-potency use in adolescence" },
+          { text: "Second-generation migrant", points: 18, detail: "Both first- and second-generation migrants carry higher risk" },
+          { text: "Family history", points: 15, detail: "Roughly 10% lifetime risk with one affected parent, versus about 1% in the general population" },
+          { text: "Prenatal infection / hypoxia / low birth weight", points: 13, detail: "Maternal infection and obstetric complications" },
+          { text: "Advanced paternal age", points: 11 }
+        ]
+      },
+      {
+        prompt: "Name any 3 brain findings in schizophrenia (imaging or postmortem)",
+        answers: [
+          { text: "↓ Hippocampal volume", points: 32, detail: "The largest subcortical volume reduction on MRI" },
+          { text: "↓ Dendritic spine density", points: 24, detail: "A postmortem finding on prefrontal pyramidal neurons, not an imaging one" },
+          { text: "Ventriculomegaly", points: 18, detail: "Enlarged lateral ventricles" },
+          { text: "↓ Gray matter volume", points: 15, detail: "Especially frontal and temporal cortex" },
+          { text: "Hypoactivation of DLPFC, ACC and thalamus", points: 11, detail: "Functional imaging during cognitive tasks; DLPFC underactivity is \"hypofrontality\"" }
+        ]
+      }
+    ],
+    categories: [
+      {
+        name: "Diagnosis & Prognosis",
+        clues: [
+          { clue: "Psychotic symptoms lasting at least 1 day but under 1 month, then full recovery, point to this diagnosis.", answer: "What is brief psychotic disorder? Symptoms last at least 1 day but less than 1 month, with eventual full return to premorbid functioning.", short: "Brief psychotic disorder", decoys: ["Schizophreniform disorder", "Delusional disorder"] },
+          { clue: "Schizophrenia-like psychosis lasting 1 month to under 6 months, with no mood episode, is this diagnosis.", answer: "What is schizophreniform disorder? Once the disturbance reaches 6 months, the diagnosis becomes schizophrenia.", short: "Schizophreniform disorder", decoys: ["Brief psychotic disorder", "Schizoaffective disorder"] },
+          { clue: "Schizophrenia requires continuous signs of the disturbance for at least this long.", answer: "What is 6 months? That period includes at least 1 month of active-phase symptoms and may include prodromal or residual periods.", short: "6 months", decoys: ["3 months", "12 months"] },
+          { clue: "Schizoaffective disorder requires delusions or hallucinations without a major mood episode for at least this long.", answer: "What is 2 weeks? Mood episodes must still be present for the majority of the illness's total duration.", short: "2 weeks", decoys: ["1 week", "1 month"] },
+          { clue: "Delusional disorder requires delusions lasting at least this long.", answer: "What is 1 month? Functioning is otherwise not markedly impaired, and criterion A for schizophrenia has never been met.", short: "1 month", decoys: ["2 weeks", "6 months"] },
+          { clue: "This kind of illness onset predicts a better prognosis in schizophrenia.", answer: "What is acute onset? Late onset, an obvious precipitant and good premorbid functioning are also favorable.", short: "Acute onset", decoys: ["Insidious onset", "Adolescent onset"] },
+          { clue: "This symptom profile predicts a better prognosis in schizophrenia.", answer: "What is predominantly positive symptoms? Prominent negative symptoms predict a poorer course.", short: "Mostly positive symptoms", decoys: ["Mostly negative symptoms", "Prominent cognitive deficits"] },
+          { clue: "Which accompanying feature predicts a better prognosis in schizophrenia?", answer: "What is mood symptoms, especially depression? A family history of mood disorder is also favorable, while prominent negative symptoms and comorbid substance use predict a worse course.", short: "Mood symptoms", decoys: ["Negative symptoms", "Substance use disorder"] }
+        ]
+      },
+      {
+        name: "Catatonia",
+        clues: [
+          { clue: "By DSM-5-TR definitions, a patient who spontaneously holds an odd posture against gravity shows which sign?", answer: "What is posturing? Posturing is active and spontaneous; catalepsy is a posture the examiner places the patient in.", short: "Posturing", decoys: ["Catalepsy", "Stereotypy"] },
+          { clue: "By DSM-5-TR definitions, a patient who passively keeps an arm where you placed it shows which sign?", answer: "What is catalepsy? The posture is induced by someone else; in posturing the patient adopts it on their own.", short: "Catalepsy", decoys: ["Posturing", "Negativism"] },
+          { clue: "As you reposition a patient's limb you feel a slight, even resistance, like bending a candle. Which sign?", answer: "What is waxy flexibility? Contrast cogwheel rigidity, the ratchet-like resistance of parkinsonism.", short: "Waxy flexibility", decoys: ["Cogwheel rigidity", "Negativism"] },
+          { clue: "A catatonic patient opposes or ignores instructions and external stimuli, without apparent motive. Which sign?", answer: "What is negativism? It is one of the 12 catatonic features DSM-5-TR lists.", short: "Negativism", decoys: ["Echopraxia", "Mutism"] },
+          { clue: "A catatonic patient repeats the examiner's words back. Which sign?", answer: "What is echolalia? Mimicking the examiner's movements is echopraxia.", short: "Echolalia", decoys: ["Echopraxia", "Perseveration"] },
+          { clue: "This drug, given as a challenge dose, is both a diagnostic test and first-line treatment for catatonia.", answer: "What is lorazepam? A typical challenge is 1-2 mg IV or IM; a clear response supports the diagnosis.", short: "Lorazepam", decoys: ["Haloperidol", "Benztropine"] },
+          { clue: "Malignant catatonia, with fever and autonomic instability, calls for urgent use of this treatment.", answer: "What is ECT? It is also used when catatonia doesn't respond to a lorazepam trial.", short: "ECT", decoys: ["rTMS", "VNS"] },
+          { clue: "These two NMDA antagonists are used off-label for benzodiazepine-resistant catatonia.", answer: "What are amantadine and memantine? Supportive care (fluids, nutrition, VTE prophylaxis) runs alongside any specific treatment.", short: "Amantadine and memantine", decoys: ["Valbenazine and tetrabenazine", "Benztropine and trihexyphenidyl"] }
+        ]
+      },
+      {
+        name: "Neurobiology & Imaging",
+        clues: [
+          { clue: "Excess dopamine in this pathway is linked to the positive symptoms of schizophrenia.", answer: "What is the mesolimbic (mesostriatal) pathway? Imaging shows raised presynaptic dopamine synthesis and release in the striatum.", short: "Mesolimbic", decoys: ["Mesocortical", "Tuberoinfundibular"] },
+          { clue: "Too little dopamine in this pathway is linked to negative and cognitive symptoms of schizophrenia.", answer: "What is the mesocortical pathway? Low prefrontal dopamine means understimulated D1 receptors.", short: "Mesocortical", decoys: ["Nigrostriatal", "Tuberoinfundibular"] },
+          { clue: "Ketamine and PCP support a model of schizophrenia based on hypofunction of this receptor.", answer: "What is the NMDA glutamate receptor? NMDA antagonists reproduce positive, negative and cognitive symptoms.", short: "NMDA receptor", decoys: ["AMPA receptor", "Kainate receptor"] },
+          { clue: "Psilocybin and LSD produce hallucinations mainly through agonism at this receptor.", answer: "What is the 5-HT2A receptor? Pimavanserin, a 5-HT2A inverse agonist, treats Parkinson disease psychosis.", short: "5-HT2A", decoys: ["5-HT1A", "5-HT3"] },
+          { clue: "Enlargement of these structures is one of the best-replicated brain findings in schizophrenia.", answer: "What are the lateral ventricles? Ventriculomegaly was among the first structural findings in schizophrenia on CT.", short: "Lateral ventricles", decoys: ["Hippocampi", "Amygdalae"] },
+          { clue: "Among subcortical structures, this one shows the largest volume reduction in schizophrenia.", answer: "What is the hippocampus? In the ENIGMA meta-analysis the hippocampus had the largest reduction, while the pallidum and lateral ventricles were larger.", short: "Hippocampus", decoys: ["Globus pallidus", "Lateral ventricle"] },
+          { clue: "Postmortem studies in schizophrenia find reduced density of these on prefrontal pyramidal neurons.", answer: "What are dendritic spines? Fewer spines and less neuropil, without substantial loss of cortical neurons, fits the synaptic pruning hypothesis.", short: "Dendritic spines", decoys: ["Neuron cell bodies", "Blood vessels"] },
+          { clue: "Hypofrontality refers to underactivation of this region during working-memory tasks in schizophrenia.", answer: "What is the dorsolateral prefrontal cortex (DLPFC)? The anterior cingulate and thalamus are also often underactive.", short: "Dorsolateral PFC", decoys: ["Primary motor cortex", "Occipital cortex"] }
+        ]
+      },
+      {
+        name: "Risk Factors & Secondary Psychosis",
+        clues: [
+          { clue: "New psychosis, seizures and dyskinesias in a young woman with an ovarian teratoma suggest this.", answer: "What is anti-NMDA receptor encephalitis? Check CSF for anti-NMDAR antibodies; tumor removal and immunotherapy are the treatment.", short: "Anti-NMDAR encephalitis", decoys: ["Neuropsychiatric lupus", "Hashimoto encephalopathy"] },
+          { clue: "PCP, ketamine and dextromethorphan cause psychosis and belong to this drug class.", answer: "What are dissociatives? They are NMDA antagonists.", short: "Dissociatives", decoys: ["Stimulants", "Classic psychedelics"] },
+          { clue: "Psychosis caused by severe untreated hypothyroidism has this classic name.", answer: "What is myxedema madness? Thyroid storm can also present with psychosis.", short: "Myxedema madness", decoys: ["Thyroid storm", "Wernicke encephalopathy"] },
+          { clue: "Anti-ribosomal P antibodies are linked to psychosis in this autoimmune disease.", answer: "What is systemic lupus erythematosus? Psychosis is one of the neuropsychiatric lupus syndromes.", short: "Lupus (SLE)", decoys: ["Sjögren syndrome", "Rheumatoid arthritis"] },
+          { clue: "Stimulant psychosis is driven mainly by excess of this neurotransmitter.", answer: "What is dopamine? Amphetamines and cocaine raise synaptic dopamine.", short: "Dopamine", decoys: ["Serotonin", "GABA"] },
+          { clue: "Heavy use of this substance in adolescence, especially high-potency forms, raises the risk of schizophrenia.", answer: "What is cannabis? Risk rises with potency and frequency of use.", short: "Cannabis", decoys: ["Caffeine", "Opioids"] },
+          { clue: "Being raised in this kind of setting raises schizophrenia risk, more so with more years lived there.", answer: "What is an urban setting? Other environmental risks include migrant status, childhood trauma and obstetric complications.", short: "Urban", decoys: ["Rural", "Suburban"] },
+          { clue: "A child with one parent with schizophrenia has roughly this lifetime risk of schizophrenia.", answer: "What is about 10%? The general population risk is about 1%; with two affected parents or an affected identical twin it is classically about 40-50%, though recent registry data run lower.", short: "About 10%", decoys: ["About 1%", "About 45%"] }
+        ]
+      }
+    ]
   }
 ];
 /* ===================== END GAME REGISTRY ===================== */
@@ -6450,10 +6815,10 @@ const COLLECTION = {
   get blurb() {
     const live = GAMES.filter(g => !g.comingSoon).length;
     const soon = GAMES.length - live;
-    return 'Every Jeopardy board plus Connect Four — ' + live + ' ready to play' +
+    return 'Every Jeopardy board plus Connect Four and Feud — ' + live + ' ready to play' +
       (soon ? ', ' + soon + ' coming soon.' : '.');
   },
-  tags: ['Jeopardy', 'Connect Four', 'Anki export'],
+  tags: ['Jeopardy', 'Connect Four', 'Feud', 'Anki export'],
   cue: 'Browse games →',
 };
 
@@ -12663,6 +13028,350 @@ const C4 = (function () {
     close() {
       view.hidden = true;
       ov.classList.remove('active');
+      game = null;
+    },
+  };
+})();
+
+// ---------------- FEUD ----------------
+// A GAMES entry with format: "feud" plays here: a survey board in the Family
+// Feud style. Each round is one prompt with its ranked answers face down. The
+// host clicks an answer (or presses its number) to flip it, and its points go
+// into the round bank; a wrong guess is a strike. Three strikes and the other
+// team gets one guess to steal. Whoever wins the round is awarded the bank.
+// Rounds live in `rounds`, not `categories`: the categories on a feud entry
+// are its single-ask speed-round clues, which feed Wizard's Escape and the
+// Anki export like any other game's.
+const FEUD = (function () {
+  const view = document.getElementById('feudView');
+  const titleEl = document.getElementById('fdTitle');
+  const subtitleEl = document.getElementById('fdSubtitle');
+  const bylineEl = document.getElementById('fdByline');
+  const teamsEl = document.getElementById('fdTeams');
+  const roundsEl = document.getElementById('fdRounds');
+  const eyebrowEl = document.getElementById('fdEyebrow');
+  const promptEl = document.getElementById('fdPrompt');
+  const boardEl = document.getElementById('fdBoard');
+  const bankEl = document.getElementById('fdBank');
+  const strikesEl = document.getElementById('fdStrikes');
+  const noteEl = document.getElementById('fdNote');
+  const controlsEl = document.getElementById('fdControls');
+  const undoBtn = document.getElementById('fdUndoBtn');
+  const newBtn = document.getElementById('fdNewBtn');
+  const ankiBtn = document.getElementById('fdAnkiBtn');
+  const hintEl = document.getElementById('fdHint');
+  const flashEl = document.getElementById('fdXFlash');
+
+  const MAX_STRIKES = 3;
+  const states = new Map();   // per game id, kept for the session like the other boards
+  let game = null;
+  let flashTimer = null;
+  let justFlipped = -1;       // the slot to animate on the next render
+
+  const roundsOf = g => g.rounds || [];
+  // Highest points first, ties in the order written.
+  const ranked = round => (round.answers || [])
+    .map((a, i) => ({ ...a, i }))
+    .sort((a, b) => (b.points - a.points) || (a.i - b.i));
+
+  function freshRounds(g) {
+    return roundsOf(g).map(() => ({ shown: [], banked: [], strikes: 0, awarded: null, allShown: false }));
+  }
+  function stateOf(g) {
+    if (!states.has(g.id)) {
+      states.set(g.id, {
+        teams: [{ name: 'Team 1', score: 0 }, { name: 'Team 2', score: 0 }],
+        round: 0, rounds: freshRounds(g), history: [], celebrated: false,
+      });
+    }
+    return states.get(g.id);
+  }
+  const snapshot = st => JSON.parse(JSON.stringify({
+    scores: st.teams.map(t => t.score), round: st.round, rounds: st.rounds, celebrated: st.celebrated,
+  }));
+  function push(st) {
+    st.history.push(snapshot(st));
+    if (st.history.length > 200) st.history.shift();
+  }
+  function bankOf(st, ri) {
+    const rs = st.rounds[ri], ans = roundsOf(game)[ri].answers;
+    return rs.banked.reduce((n, i) => n + (ans[i].points || 0), 0);
+  }
+  const roundDone = rs => rs.awarded !== null;
+
+  // ---- rendering ----
+  function renderTeams(st) {
+    teamsEl.innerHTML = '';
+    st.teams.forEach((t, i) => {
+      const card = document.createElement('div');
+      card.className = 'fd-team t' + i;
+      const input = document.createElement('input');
+      input.className = 'team-name';
+      input.value = t.name;
+      input.setAttribute('aria-label', 'Team ' + (i + 1) + ' name');
+      // Update in place rather than re-rendering, which would steal the focus.
+      input.oninput = () => { t.name = input.value.trim() || 'Team ' + (i + 1); renderControls(st); };
+      const score = document.createElement('div');
+      score.className = 'fd-score';
+      score.textContent = t.score;
+      card.append(input, score);
+      teamsEl.appendChild(card);
+    });
+  }
+
+  function renderRounds(st) {
+    roundsEl.innerHTML = '';
+    roundsOf(game).forEach((r, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = i + 1;
+      b.className = roundDone(st.rounds[i]) ? 'done' : '';
+      b.setAttribute('aria-pressed', String(st.round === i));
+      b.setAttribute('aria-label', 'Round ' + (i + 1) + (roundDone(st.rounds[i]) ? ' (played)' : ''));
+      b.onclick = () => goRound(i);
+      roundsEl.appendChild(b);
+    });
+  }
+
+  function renderBoard(st) {
+    const round = roundsOf(game)[st.round];
+    const rs = st.rounds[st.round];
+    const list = ranked(round);
+    const rows = Math.max(2, Math.ceil(list.length / 2));
+    eyebrowEl.textContent = 'Round ' + (st.round + 1) + ' of ' + roundsOf(game).length + ' · ' +
+      list.length + ' answers on the board';
+    promptEl.textContent = round.prompt;
+    boardEl.style.setProperty('--rows', rows);
+    boardEl.innerHTML = '';
+    for (let k = 0; k < rows * 2; k++) {
+      const a = list[k];
+      if (!a) {
+        const blank = document.createElement('div');
+        blank.className = 'fd-slot blank';
+        boardEl.appendChild(blank);
+        continue;
+      }
+      const shown = rs.shown.includes(a.i);
+      const slot = document.createElement('button');
+      slot.type = 'button';
+      slot.className = 'fd-slot' + (shown ? ' shown' : '') +
+        (shown && !rs.banked.includes(a.i) ? ' unbanked' : '') + (justFlipped === a.i ? ' flip' : '');
+      slot.disabled = shown;
+      slot.setAttribute('aria-label', shown ? (a.text + ', ' + a.points + ' points') : 'Reveal answer ' + (k + 1));
+      slot.onclick = () => reveal(a.i);
+      if (shown) {
+        const body = document.createElement('span');
+        body.className = 'fd-ans';
+        const text = document.createElement('span');
+        text.className = 'fd-text';
+        text.textContent = a.text;
+        body.appendChild(text);
+        if (a.detail) {
+          const d = document.createElement('span');
+          d.className = 'fd-detail';
+          d.textContent = a.detail;
+          body.appendChild(d);
+        }
+        const pts = document.createElement('span');
+        pts.className = 'fd-pts';
+        pts.textContent = a.points;
+        slot.append(body, pts);
+      } else {
+        const num = document.createElement('span');
+        num.className = 'fd-num';
+        num.textContent = k + 1;
+        slot.appendChild(num);
+      }
+      boardEl.appendChild(slot);
+    }
+    justFlipped = -1;
+
+    bankEl.textContent = bankOf(st, st.round);
+    strikesEl.innerHTML = '';
+    for (let s = 0; s < MAX_STRIKES; s++) {
+      const x = document.createElement('span');
+      x.className = 'fd-x' + (s < rs.strikes ? ' on' : '');
+      x.textContent = '✕';
+      strikesEl.appendChild(x);
+    }
+    strikesEl.setAttribute('aria-label', rs.strikes + ' of ' + MAX_STRIKES + ' strikes');
+
+    const allShown = rs.shown.length === list.length;
+    noteEl.hidden = !(round.note && allShown);
+    noteEl.textContent = round.note || '';
+  }
+
+  function renderControls(st) {
+    const rs = st.rounds[st.round];
+    const bank = bankOf(st, st.round);
+    const total = ranked(roundsOf(game)[st.round]).length;
+    controlsEl.innerHTML = '';
+    const btn = (label, cls, fn, disabled) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'fd-btn ' + cls;
+      b.textContent = label;
+      b.disabled = !!disabled;
+      b.onclick = fn;
+      controlsEl.appendChild(b);
+      return b;
+    };
+    btn('✕ Strike', 'strike', strike, roundDone(rs) || rs.strikes >= MAX_STRIKES);
+    st.teams.forEach((t, i) => {
+      const label = roundDone(rs) && rs.awarded === i ? t.name + ' won the round' : 'Award ' + bank + ' to ' + t.name;
+      btn(label, 'award t' + i, () => award(i), roundDone(rs) || bank === 0);
+    });
+    btn('Reveal the rest', 'rest', revealRest, rs.shown.length === total);
+    btn(st.round < roundsOf(game).length - 1 ? 'Next round →' : 'Final scores', 'next', next);
+    undoBtn.disabled = !st.history.length;
+    undoBtn.style.opacity = undoBtn.disabled ? .45 : '';
+  }
+
+  function render() {
+    if (!game) return;
+    const st = stateOf(game);
+    renderTeams(st);
+    renderRounds(st);
+    renderBoard(st);
+    renderControls(st);
+  }
+
+  // ---- actions ----
+  function reveal(i) {
+    const st = stateOf(game), rs = st.rounds[st.round];
+    if (rs.shown.includes(i)) return;
+    push(st);
+    rs.shown.push(i);
+    // Points only bank while the round is live; flips after it is won are for show.
+    if (!roundDone(rs) && !rs.allShown) rs.banked.push(i);
+    justFlipped = i;
+    render();
+  }
+
+  function revealRest() {
+    const st = stateOf(game), rs = st.rounds[st.round];
+    const all = roundsOf(game)[st.round].answers.map((a, i) => i);
+    if (rs.shown.length === all.length) return;
+    push(st);
+    all.forEach(i => { if (!rs.shown.includes(i)) rs.shown.push(i); });
+    rs.allShown = true;
+    render();
+  }
+
+  function strike() {
+    const st = stateOf(game), rs = st.rounds[st.round];
+    if (roundDone(rs) || rs.strikes >= MAX_STRIKES) return;
+    push(st);
+    rs.strikes++;
+    render();
+    flash(rs.strikes);
+  }
+
+  function flash(n) {
+    flashEl.textContent = '✕'.repeat(n);
+    flashEl.classList.remove('show');
+    void flashEl.offsetWidth;   // restart the animation on a quick second strike
+    flashEl.classList.add('show');
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => flashEl.classList.remove('show'), 1100);
+  }
+
+  function award(team) {
+    const st = stateOf(game), rs = st.rounds[st.round];
+    const bank = bankOf(st, st.round);
+    if (roundDone(rs) || !bank) return;
+    push(st);
+    st.teams[team].score += bank;
+    rs.awarded = team;
+    render();
+  }
+
+  function goRound(i) {
+    const st = stateOf(game);
+    if (i < 0 || i >= roundsOf(game).length || i === st.round) return;
+    st.round = i;
+    render();
+  }
+
+  function next() {
+    const st = stateOf(game);
+    if (st.round < roundsOf(game).length - 1) { goRound(st.round + 1); return; }
+    finish(st);
+  }
+
+  function finish(st) {
+    st.celebrated = true;
+    showCelebration('Survey complete', winnerLine(st.teams).title, st.teams.map(t => [t.name, t.score]));
+  }
+
+  function undo() {
+    const st = stateOf(game);
+    if (!st.history.length) return;
+    const s = st.history.pop();
+    s.scores.forEach((v, i) => { st.teams[i].score = v; });
+    st.round = s.round;
+    st.rounds = s.rounds;
+    st.celebrated = s.celebrated;
+    endCelebration();
+    render();
+  }
+
+  function newGame() {
+    const st = stateOf(game);
+    const started = st.rounds.some(rs => rs.shown.length || rs.strikes);
+    if (started && !confirm('Start a new game? Scores and the board will be cleared.')) return;
+    st.teams.forEach(t => { t.score = 0; });
+    st.round = 0;
+    st.rounds = freshRounds(game);
+    st.history = [];
+    st.celebrated = false;
+    endCelebration();
+    render();
+  }
+
+  // The Anki deck gets the speed-round clues plus one card per survey round.
+  function ankiGame(g) {
+    const survey = roundsOf(g).map(r => ({
+      clue: r.prompt,
+      answer: ranked(r).map(a => a.text + (a.detail ? ' (' + a.detail + ')' : '')).join('; ') +
+        (r.note ? '. ' + r.note : ''),
+    }));
+    return { ...g, categories: [...(g.categories || []), { name: 'Survey Rounds', clues: survey }] };
+  }
+
+  undoBtn.onclick = undo;
+  newBtn.onclick = newGame;
+  ankiBtn.onclick = () => downloadAnki(ankiGame(game), ankiBtn);
+
+  document.addEventListener('keydown', e => {
+    if (view.hidden || !game || !celebrationEl.hidden || JOIN.isOpen()) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target instanceof HTMLElement && e.target.matches('input, textarea')) return;
+    const st = stateOf(game);
+    const list = ranked(roundsOf(game)[st.round]);
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= list.length) { e.preventDefault(); reveal(list[n - 1].i); }
+    else if (e.key === 'x' || e.key === 'X') { e.preventDefault(); strike(); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); goRound(st.round + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goRound(st.round - 1); }
+  });
+
+  hintEl.textContent = 'Click an answer or press its number to flip it • X for a strike • three strikes and the other team ' +
+    'gets one guess to steal • award the round points to whichever team wins the round • ← → change rounds';
+
+  return {
+    open(g) {
+      game = g;
+      titleEl.textContent = g.title;
+      subtitleEl.textContent = g.subtitle || '';
+      bylineEl.textContent = g.byline || '';
+      bylineEl.hidden = !g.byline;
+      view.hidden = false;
+      render();
+    },
+    close() {
+      view.hidden = true;
+      flashEl.classList.remove('show');
       game = null;
     },
   };
@@ -20277,6 +20986,7 @@ const CASE = (function () {
 function route() {
   const id = decodeURIComponent(location.hash.replace(/^#/, ''));
   C4.close();   // reopened below if this hash is a Connect Four game
+  FEUD.close(); // or a Feud survey board
   RLAB.close(); // likewise — reopened below if this hash is the Receptor Lab
   SLAB.close(); // and the Signal Lab
   ARENA.close(); // and the Wizard Arena
@@ -20407,6 +21117,16 @@ function route() {
     gameView.hidden = true;
     document.title = game.title + ' — Connect Four';
     C4.open(game);
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  if (game.format === 'feud') {
+    current = null;
+    hubView.hidden = true;
+    gameView.hidden = true;
+    document.title = game.title + ' — Feud';
+    FEUD.open(game);
     window.scrollTo(0, 0);
     return;
   }

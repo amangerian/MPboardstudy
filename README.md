@@ -2,8 +2,8 @@
 
 A small collection of browser-based review games for psychiatry / internal
 medicine residents and med students. The landing page has six tiles: **Jeopardy
-& Learning Games** (which opens a list of every Jeopardy board and the Connect Four
-game, playable ones first and *coming soon* ones below), plus Wizard's Escape,
+& Learning Games** (which opens a list of every Jeopardy board, the Connect Four
+game and the Feud survey board, playable ones first and *coming soon* ones below), plus Wizard's Escape,
 Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its own link,
 `…/MPboardstudy/#games`.
 
@@ -37,6 +37,7 @@ Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its o
 | Sleep-Wake Jeopardy | Jeopardy, 6 × 5 | Sleep stages and testing, insomnia and CBT-I, hypnotics, narcolepsy, sleep apnea and circadian disorders, parasomnias and restless legs |
 | Anxiety Jeopardy II | Jeopardy, 6 × 5 + Final | Anxiety only, no OCD, and no overlap with Anxiety & OCD Jeopardy: epidemiology and onset ages, fear circuitry and learning theory, medical and substance mimics, medication choices and FDA labels, exposure and third-wave therapies, diagnostic vignettes |
 | Trauma, Stress & Dissociation | Jeopardy, 6 × 5 + Final | PTSD criteria and specifiers, trauma-focused therapy and the medication evidence (VA/DoD 2023), acute stress and adjustment disorders, PTSD in young children and the attachment disorders, dissociative identity disorder, dissociative amnesia and depersonalization/derealization — none of it repeating the Sexuality, Gender & Dissociation board |
+| Psychosis Feud | Feud survey board, 8 rounds | Psychotic-disorder time cut-offs, prognosis in schizophrenia, catatonia signs and treatment, neurobiology, secondary causes, risk factors, brain findings. By Christine B. Kwak, MD. Its 32 single-ask clues on the same material play in Wizard's Escape (4 categories × 8) |
 | Receptor Lab | Click & drop, solo | Two shelves. 19 antipsychotics: which receptors each binds, what it does there, and how tightly. 25 antidepressants plus 2 "hidden" MAOIs: which receptors, transporters and MAO isoforms each acts on and what it does there — for an MAOI, reversible or irreversible. Guided brewing walks you through any of them one effect at a time |
 | Signal Lab | Cell map, solo | Second messengers: 18 antidepressant/serotonin cards and 8 mood-stabilizer cards — pick the pathway a receptor couples to and what the drug does to its messenger, or pin every site on a cell map where a mood stabilizer acts |
 | Wizard Arena | Battle, solo or two-wizard duel | Drug interactions: 32 psychiatric medications whose level is too weak or too strong — throw the CYP1A2/2C19/2D6/3A4 inhibitor or inducer that restores it, plus lithium's renal, valproate's and lamotrigine's glucuronidation twists |
@@ -417,6 +418,19 @@ game to game. Its questions sit in `GAMES` with `format: "connect-four"`, so the
 Anki export works as it does for the boards. Questions too long to read in a
 speed-round room (`wiz: false`, like full receptor mechanisms) stay out of
 Wizard's Escape.
+
+**Feud** is a Family Feud–style survey board for two teams. Each round is one
+prompt with its answers face down, ranked by points. The host clicks an answer
+(or presses its number) to flip it and its points go into the round bank; `X`
+marks a strike, and after three strikes the other team gets one guess to steal.
+Award the bank to whichever team wins the round. "Reveal the rest" shows the
+remaining answers without banking them, and the round's teaching note appears
+once every answer is up. Rounds can be played in any order, Undo steps back any
+action, and "Final scores" ends the game. A feud entry has `format: "feud"` and
+keeps its rounds in `rounds: [{ prompt, note?, answers: [{ text, points, detail? }] }]`;
+the survey answers are too list-like for a speed-round room, so its
+`categories` hold separate single-ask clues on the same material, which feed
+Wizard's Escape and the Anki export (the Anki deck also gets one card per round).
 
 ## One file
 
