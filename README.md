@@ -15,8 +15,8 @@ Receptor Lab, Wizard Arena, Signal Lab and Case Rounds. The games list has its o
 |---|---|---|
 | Antidepressant Jeopardy! | Jeopardy, 6 × 5 | SSRIs, SNRIs, atypicals, TCAs & MAOIs, receptor profiles, side effects & safety |
 | Depression Jeopardy! | Jeopardy, 5 × 5 + Final | MDD criteria, specifiers, sleep architecture & course, TCAs & MAOIs, newer treatments |
-| ABPN Neuro Jeopardy | Jeopardy, 6 × 5 | Epilepsy, stroke localisation, headache, neuropathy, cognitive impairment, CNS infection |
-| ABPN Neuro: Double Jeopardy | Jeopardy, 4 × 5 + Final | Movement disorders, neuroimaging, functional neuroanatomy, psychiatric genetics |
+| ABPN Neuro Jeopardy | Jeopardy, 6 × 5 | Epilepsy, stroke localisation, headache, neuropathy, cognitive impairment, CNS infection. By Paris Bean, MD |
+| ABPN Neuro: Double Jeopardy | Jeopardy, 4 × 5 + Final | Movement disorders, neuroimaging, functional neuroanatomy, psychiatric genetics. By Paris Bean, MD |
 | Depression Pharmacology Jeopardy | Jeopardy, 6 × 5 | Receptors, CYP interactions, TCAs, sexual side effects, cautions, alternative agents |
 | Depression Treatment Jeopardy | Jeopardy, 5 × 5 | ECT/TMS/esketamine, treatment resistance, maintenance, DOD/VA guidelines, psychotherapies |
 | NCD Jeopardy: Diagnosis & Management | Jeopardy, 5 × 5 · *coming soon* | Diagnostic criteria and domains, cognitive assessment tools, the dementia work-up, safety and driving, agitation and psychosis |
